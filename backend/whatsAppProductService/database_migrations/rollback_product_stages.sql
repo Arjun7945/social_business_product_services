@@ -1,0 +1,95 @@
+-- Rollback Script: Remove Product Management Stages from AdminFlowStage Check Constraint
+-- Date: 2025-12-05
+-- Purpose: Revert the team_members table check constraint to the old setup (without product management stages)
+
+-- Step 1: Drop the current check constraint
+ALTER TABLE team_members DROP CONSTRAINT IF EXISTS team_members_current_admin_flow_stage_check;
+
+-- Step 2: Add back the OLD check constraint WITHOUT product management stages
+ALTER TABLE team_members ADD CONSTRAINT team_members_current_admin_flow_stage_check 
+CHECK (current_admin_flow_stage IN (
+    'IDLE',
+    -- Customer Management
+    'CUSTOMER_MENU',
+    'AWAITING_CUST_NAME',
+    'AWAITING_CUST_PHONE',
+    'AWAITING_CUST_WAPHONE',
+    'AWAITING_CUST_LOCATION',
+    'AWAITING_CUST_UPDATE_SELECTION',
+    'AWAITING_CUST_UPDATE_FIELD',
+    'AWAITING_CUST_DELETE_CONFIRMATION',
+    'CONFIRMING_CUST_ADD',
+    'CONFIRMING_CUST_UPDATE',
+    -- Delivery Person Management
+    'DELIVERY_MENU',
+    'AWAITING_DELIVERY_NAME',
+    'AWAITING_DELIVERY_PHONE',
+    'AWAITING_DELIVERY_WAPHONE',
+    'AWAITING_DELIVERY_STATUS',
+    'AWAITING_DELIVERY_UPDATE_SELECTION',
+    'AWAITING_DELIVERY_UPDATE_FIELD',
+    'AWAITING_DELIVERY_DELETE_CONFIRMATION',
+    'CONFIRMING_DELIVERY_ADD',
+    'CONFIRMING_DELIVERY_UPDATE',
+    -- Executive Management
+    'EXECUTIVE_MENU',
+    'AWAITING_EXEC_NAME',
+    'AWAITING_EXEC_PHONE',
+    'AWAITING_EXEC_WAPHONE',
+    'AWAITING_EXEC_STATUS',
+    'AWAITING_EXEC_UPDATE_SELECTION',
+    'AWAITING_EXEC_UPDATE_FIELD',
+    'AWAITING_EXEC_DELETE_CONFIRMATION',
+    'CONFIRMING_EXEC_ADD',
+    'CONFIRMING_EXEC_UPDATE',
+    -- Assistant Admin Management
+    'ASSISTANT_MENU',
+    'AWAITING_ASSISTANT_NAME',
+    'AWAITING_ASSISTANT_PHONE',
+    'AWAITING_ASSISTANT_WAPHONE',
+    'AWAITING_ASSISTANT_STATUS',
+    'AWAITING_ASSISTANT_UPDATE_SELECTION',
+    'AWAITING_ASSISTANT_UPDATE_FIELD',
+    'AWAITING_ASSISTANT_DELETE_CONFIRMATION',
+    'CONFIRMING_ASSISTANT_ADD',
+    'CONFIRMING_ASSISTANT_UPDATE',
+    -- Admin Management (For Developers only)
+    'ADMIN_MENU',
+    'AWAITING_ADMIN_NAME',
+    'AWAITING_ADMIN_PHONE',
+    'AWAITING_ADMIN_WAPHONE',
+    'AWAITING_ADMIN_STATUS',
+    'AWAITING_ADMIN_UPDATE_SELECTION',
+    'AWAITING_ADMIN_UPDATE_FIELD',
+    'AWAITING_ADMIN_DELETE_CONFIRMATION',
+    'CONFIRMING_ADMIN_ADD',
+    'CONFIRMING_ADMIN_UPDATE',
+    -- Broadcast Management
+    'AWAITING_BROADCAST_MESSAGE',
+    'CONFIRMING_BROADCAST'
+));
+
+-- Step 3: Reset any team members who are currently in product management stages back to IDLE
+UPDATE team_members 
+SET current_admin_flow_stage = 'IDLE' 
+WHERE current_admin_flow_stage IN (
+    'PRODUCT_MENU',
+    'AWAITING_PRODUCT_NAME',
+    'AWAITING_PRODUCT_PRICE',
+    'AWAITING_PRODUCT_DESCRIPTION',
+    'AWAITING_PRODUCT_AVAILABILITY',
+    'AWAITING_PRODUCT_IMAGES',
+    'CONFIRMING_PRODUCT_ADD',
+    'AWAITING_PRODUCT_UPDATE_SELECTION',
+    'AWAITING_PRODUCT_DELETE_CONFIRMATION'
+);
+
+-- Verify the constraint was updated
+SELECT conname, contype, pg_get_constraintdef(oid) 
+FROM pg_constraint 
+WHERE conname = 'team_members_current_admin_flow_stage_check';
+
+-- Verify no team members are in product stages
+SELECT id, name, wa_phone_number, current_admin_flow_stage 
+FROM team_members 
+WHERE current_admin_flow_stage LIKE '%PRODUCT%';

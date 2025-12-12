@@ -1,0 +1,133 @@
+@startuml
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam shadowing false
+
+title Complete System Flow - Customer, Executive, Delivery & Admin
+
+' Customer Section
+package "CUSTOMER" #E3F2FD {
+    usecase "Send Hi" as UC1
+    usecase "Register\n(Name, Phone, Location)" as UC2
+    usecase "Send start" as UC3
+    usecase "Browse Products" as UC4
+    usecase "Select Fish\n+ Quantity" as UC5
+    usecase "Click Checkout" as UC6
+    usecase "Click Confirm Order" as UC7 #2196F3
+    usecase "Receive:\nOrder Confirmed #123" as UC8 #4CAF50
+    usecase "Receive:\nDelivery Person Assigned" as UC9 #4CAF50
+}
+
+' Executive Section
+package "EXECUTIVE" #B2DFDB {
+    usecase "Send Hi" as E1
+    usecase "View Main Menu" as E2
+    usecase "Add Customer" as E3 #26A69A
+    usecase "View All Customers" as E4 #26A69A
+}
+
+' Admin Section
+package "ADMIN / DEVELOPER" #F3E5F5 {
+    usecase "Send Hi" as A1
+    usecase "View Admin Menu" as A2
+    usecase "Manage Customers" as A3 #9C27B0
+    usecase "Manage Delivery Persons" as A4 #9C27B0
+    usecase "Manage Executives" as A5 #9C27B0
+    usecase "Manage Assistant Admins" as A6 #9C27B0
+    usecase "Contact Developer" as A7 #9C27B0
+}
+
+' Backend Section
+package "BACKEND SYSTEM" #FFF9C4 {
+    usecase "Role-Based Routing" as B0 #FFE082
+    usecase "Create Order\nStatus: PENDING" as B1
+    database "Database" as DB
+    usecase "Send to\nDelivery Group" as B3
+    usecase "Validate\nDelivery Person Role" as B4 #FFE082
+    usecase "Update Order\nStatus: CONFIRMED" as B5 #81C784
+    usecase "Save Delivery\nPerson Details" as B6 #81C784
+    usecase "Admin CRUD\nOperations" as B7 #BA68C8
+}
+
+' Delivery Group Section
+package "DELIVERY GROUP" #FFB74D {
+    usecase "Receive Order\nNotification" as D1
+    usecase "NEW ORDER #123\n+ Confirm Button" as D2 #FF9800
+    usecase "Delivery Person\nClicks Button" as D3 #FF9800
+    usecase "Receive:\nORDER CONFIRMED\nwith DP details" as D4 #66BB6A
+}
+
+' Customer Flow
+UC1 --> UC2
+UC2 --> UC3
+UC3 --> UC4
+UC4 --> UC5
+UC5 --> UC6
+UC6 --> UC7
+
+' Order Placement Flow
+UC7 -right-> B1 : 10:00 AM
+B1 --> DB
+DB --> B3
+
+' Delivery Group Notification
+B3 -right-> D1 : 10:00 AM
+D1 --> D2
+D2 --> D3
+
+' Delivery Confirmation Flow
+D3 -left-> B4 : 10:05 AM
+B4 --> B5 : Role Verified
+B5 --> B6
+B6 --> DB
+
+' Notifications
+B6 ..> UC9 : Notify Customer
+UC7 ..> UC8 : Receives
+UC8 ..> UC9 : Later
+B6 -right-> D4 : 10:05 AM
+
+' Executive Flow
+E1 --> E2
+E2 --> E3
+E2 --> E4
+E3 --> DB
+E4 --> DB
+
+' Admin Flow
+A1 --> A2
+A2 --> A3
+A2 --> A4
+A2 --> A5
+A2 --> A6
+A2 --> A7
+A3 --> B7
+A4 --> B7
+A5 --> B7
+A6 --> B7
+B7 --> DB
+
+' Role-Based Routing
+UC1 --> B0
+E1 --> B0
+A1 --> B0
+
+legend right
+  |= Color |= Meaning |
+  | <#E3F2FD> | Customer Actions |
+  | <#2196F3> | Customer Confirm |
+  | <#4CAF50> | Success Messages |
+  | <#B2DFDB> | Executive Actions |
+  | <#26A69A> | Executive Operations |
+  | <#F3E5F5> | Admin/Developer Actions |
+  | <#9C27B0> | Admin Operations |
+  | <#BA68C8> | Admin CRUD |
+  | <#FFF9C4> | Backend Processing |
+  | <#FFE082> | Validation/Routing |
+  | <#81C784> | Database Updates |
+  | <#FFB74D> | Delivery Group |
+  | <#FF9800> | Delivery Actions |
+  | <#66BB6A> | Confirmation |
+endlegend
+
+@enduml

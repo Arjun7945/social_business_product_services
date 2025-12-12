@@ -1,0 +1,61 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+
+start
+:Delivery Person Clicks\n'Confirm Delivery' Button;
+#2196F3
+
+|Backend System|
+:Receive Button Click\nDELIVERY_TAKE_{orderId};
+
+:Fetch Order from Database;
+
+if (Order Status = CONFIRMED?) then (yes)
+  #F44336:Send Rejection:\n"Order already taken\nby {name}";
+  |Delivery Person|
+  :Receive Rejection\nMessage;
+  stop
+else (no)
+  :UserRoleLookupService\nFetch User by WA number;
+  
+  if (User Found?) then (no)
+    #F44336:Send Rejection:\n"Unauthorized Access\nNot registered";
+    |Delivery Person|
+    :Receive Rejection\nMessage;
+    stop
+  else (yes)
+    if (Role = DELIVERY_PERSON?) then (no)
+      #F44336:Send Rejection:\n"Unauthorized Access\nWrong role";
+      |Delivery Person|
+      :Receive Rejection\nMessage;
+      stop
+    else (yes)
+      #4CAF50:Update Order Status\nto CONFIRMED;
+      #4CAF50:Save Delivery Person\nDetails to Order;
+      #4CAF50:Set confirmed_at\nTimestamp;
+      
+      fork
+        |Customer|
+        :Receive Notification:\n"Delivery Person Assigned!";
+      fork again
+        |Delivery Group|
+        :Receive Confirmation:\n"ORDER CONFIRMED\nwith DP details";
+      end fork
+      
+      |Backend System|
+      #4CAF50:Log Success;
+      stop
+    endif
+  endif
+endif
+
+note right
+  **Role Validation:**
+  Uses UserRoleLookupService
+  to verify DELIVERY_PERSON role
+  before allowing confirmation
+end note
+
+@enduml

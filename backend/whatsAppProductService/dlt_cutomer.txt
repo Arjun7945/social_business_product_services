@@ -1,0 +1,11 @@
+delete customer:
+
+SELECT id, name, wa_phone_number FROM customers WHERE id IN (74);
+
+DELETE FROM shopping_carts WHERE customer_id IN (74);
+DELETE FROM order_items WHERE order_id IN (SELECT id FROM customer_orders WHERE customer_id IN (74));
+DELETE FROM customer_orders WHERE customer_id IN (74);
+
+DELETE FROM customers WHERE id IN (74);
+
+SELECT id, name FROM customers WHERE id IN (74);

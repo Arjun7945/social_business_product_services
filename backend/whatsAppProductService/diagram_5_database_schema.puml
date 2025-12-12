@@ -1,0 +1,123 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+
+entity "CUSTOMER" as customer {
+  * id : bigint <<PK>>
+  --
+  * name : string
+  * wa_phone_number : string <<UK>>
+  * phone_number : string
+  * location_lat : double
+  * location_lon : double
+  * distance_from_business_km : double
+  * current_flow_stage : enum
+  * role : enum (CUSTOMER)
+  * registered_at : datetime
+}
+
+entity "TEAM_MEMBER" as team {
+  * id : bigint <<PK>>
+  --
+  * name : string
+  * wa_phone_number : string <<UK>>
+  * phone_number : string <<UK>>
+  * role : enum
+  * is_active : boolean
+  --
+  **Executive Fields**
+  current_flow_stage : enum
+  temp_customer_id : bigint
+  temp_customer_name : string
+  temp_customer_phone : string
+  temp_customer_wa_phone : string
+  --
+  **Admin Fields**
+  current_admin_flow_stage : enum
+  temp_entity_type : string
+  temp_entity_id : bigint
+  temp_field_name : string
+  temp_field_value : string
+  temp_team_member_name : string
+  temp_team_member_phone : string
+  temp_team_member_wa_phone : string
+  temp_team_member_is_active : boolean
+}
+
+entity "CUSTOMER_ORDER" as order {
+  * id : bigint <<PK>>
+  --
+  * customer_id : bigint <<FK>>
+  * order_time : datetime
+  * total_amount : double
+  * status : enum
+  * payment_method : string
+  * team_member_id : bigint <<FK>>
+  * team_member_wa_id : string
+  * team_member_name : string
+  * confirmed_at : datetime
+}
+
+entity "ORDER_ITEM" as item {
+  * id : bigint <<PK>>
+  --
+  * order_id : bigint <<FK>>
+  * fish_product_id : bigint <<FK>>
+  * quantity_kg : double
+  * price_at_order : double
+}
+
+entity "FISH_PRODUCT" as product {
+  * id : bigint <<PK>>
+  --
+  * name : string
+  * price_per_kg : double
+  * is_available : boolean
+  * image_url : string
+}
+
+entity "CART_ITEM" as cart {
+  * id : bigint <<PK>>
+  --
+  * customer_id : bigint <<FK>>
+  * fish_product_id : bigint <<FK>>
+  * quantity_kg : double
+}
+
+customer ||--o{ order : "places"
+order ||--|{ item : "contains"
+order }o--|| team : "assigned to"
+product ||--o{ item : "ordered as"
+customer ||--o{ cart : "has"
+product ||--o{ cart : "in cart"
+
+note right of order::status
+  PENDING - Order created
+  CONFIRMED - Delivery person assigned
+  DELIVERED - Order completed
+end note
+
+note right of team::role
+  **New Roles:**
+  • ADMIN - Full system access
+  • DEVELOPER - Full system access
+  • ASSISTANT_ADMIN - Manage operations
+  
+  **Existing Roles:**
+  • EXECUTIVE - Can add customers
+  • DELIVERY_PERSON - Can confirm orders
+end note
+
+note right of team
+  **Admin Flow Fields:**
+  Used to track admin conversation
+  state and temporarily store data
+  during CRUD operations for:
+  • Customers
+  • Delivery Persons
+  • Executives
+  • Assistant Admins
+end note
+
+@enduml

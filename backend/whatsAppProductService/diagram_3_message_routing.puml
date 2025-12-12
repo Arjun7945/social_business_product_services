@@ -1,0 +1,84 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+
+start
+#9C27B0:WhatsApp Message\nReceived;
+
+:WebhookController;
+#673AB7
+
+:CustomerFlowService\nprocessIncomingMessage();
+#3F51B5
+
+:UserRoleLookupService\nlookupUserByWaPhoneNumber();
+#5C6BC0
+
+if (User Found?) then (YES)
+  if (Check Role) then (ADMIN or DEVELOPER)
+    #9C27B0:**AdminFlowService**\n**handleAdminMessage**;
+    
+    if (Message Type?) then (Text)
+      if (Command?) then (Hi/Hello)
+        #BA68C8:Show Admin Menu\n• Customers\n• Delivery\n• Executives\n• Assistants\n• Contact Dev;
+        stop
+      else (ABORT)
+        #BA68C8:Return to Main Menu;
+        stop
+      else (Input)
+        #BA68C8:Process Input\n(Name/Phone/etc);
+        stop
+      endif
+    elseif (Button Reply)
+      #BA68C8:Handle Button\n• Add Entity\n• Show All\n• Confirm/Cancel;
+      stop
+    elseif (Location)
+      #BA68C8:Save Customer Location;
+      stop
+    endif
+    
+  elseif (ASSISTANT_ADMIN)
+    #7B1FA2:AssistantAdminFlowService\n(Future Implementation);
+    stop
+    
+  elseif (EXECUTIVE)
+    #00BCD4:ExecutiveFlowService\nhandleExecutiveMessage;
+    #4DD0E1:Add Customer\nView Customers;
+    stop
+    
+  else (DELIVERY_PERSON)
+    if (Message Type?) then (Button Reply\nDELIVERY_TAKE_*)
+      #4CAF50:**DeliveryFlowService**\n**handleDeliveryConfirmation**\n✅ MAIN DELIVERY LOGIC;
+      note right
+        This is the core
+        delivery confirmation
+        logic with role
+        validation
+      end note
+      stop
+    else (Other)
+      #FF9800:Send: Please use\nconfirmation buttons\nin the group;
+      stop
+    endif
+  endif
+  
+else (NO - Unknown Number)
+  #2196F3:Create New Customer\nTreat as Customer;
+  
+  if (Message Type?) then (Text)
+    #64B5F6:Customer Text Flow\nRegistration/Shopping;
+    stop
+  elseif (Location)
+    #64B5F6:Location Handler\nValidate Delivery Area;
+    stop
+  elseif (Button Reply)
+    #64B5F6:Button Handler\nCheckout/Confirm;
+    stop
+  else (List Selection)
+    #64B5F6:List Handler\nProduct Selection;
+    stop
+  endif
+endif
+
+@enduml

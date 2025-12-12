@@ -1,0 +1,84 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+
+|Admin|
+start
+:Send "Hi" to\\nWhatsApp Business;
+
+|Backend System|
+:Receive Message;
+:UserRoleLookupService\\nlookup by WA number;
+
+if (User Found?) then (yes)
+  if (Role?) then (ADMIN/DEVELOPER)
+    :Route to AdminFlowService;
+    
+    |Admin|
+    :Receive Admin Menu:\\n• Customers\\n• Delivery\\n• Executives\\n• Assistants\\n• Contact Dev;
+    
+    :Select Section\\n(e.g., "Customers");
+    
+    |Backend System|
+    :Show Section Menu:\\n• Add\\n• Show All\\n• Back;
+    
+    |Admin|
+    :Select "Add";
+    
+    |Backend System|
+    :Request customer name;
+    
+    |Admin|
+    :Enter name;
+    
+    |Backend System|
+    :Request phone number;
+    
+    |Admin|
+    :Enter phone;
+    
+    |Backend System|
+    :Request WhatsApp number;
+    
+    |Admin|
+    :Enter WA number;
+    
+    |Backend System|
+    :Request location;
+    
+    |Admin|
+    :Share location;
+    
+    |Backend System|
+    #4CAF50:Calculate distance;
+    #4CAF50:Show confirmation\\nsummary;
+    
+    |Admin|
+    :Click "Confirm & Add";
+    
+    |Backend System|
+    #4CAF50:Save to Database;
+    #4CAF50:Send success message;
+    
+    |Admin|
+    :Receive:\\n"✅ Customer Added!";
+    stop
+    
+  else (EXECUTIVE)
+    :Route to ExecutiveFlowService;
+    stop
+  else (DELIVERY_PERSON)
+    :Route to DeliveryFlowService;
+    stop
+  else (CUSTOMER)
+    :Route to Customer Flow;
+    stop
+  endif
+else (no)
+  :Create new Customer;
+  :Route to Customer Flow;
+  stop
+endif
+
+@enduml

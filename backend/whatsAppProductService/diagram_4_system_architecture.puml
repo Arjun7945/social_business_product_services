@@ -1,0 +1,86 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+
+package "📱 CLIENTS" {
+  actor "Customer\nWhatsApp" as customer #2196F3
+  actor "Executive\nWhatsApp" as executive #00BCD4
+  actor "Delivery Person\nWhatsApp" as delivery #FF9800
+  actor "Admin/Developer\nWhatsApp" as admin #9C27B0
+  actor "Assistant Admin\nWhatsApp" as assistant #7B1FA2
+}
+
+cloud "☁️ WHATSAPP BUSINESS API" {
+  component "WhatsApp Cloud API\ngraph.facebook.com" as wapi #25D366
+}
+
+package "⚙️ SPRING BOOT BACKEND" {
+  component "WebhookController" as controller #673AB7
+  
+  package "Services Layer" {
+    component "CustomerFlowService\n(Message Routing)" as cfs #3F51B5
+    component "ExecutiveFlowService" as efs #00BCD4
+    component "DeliveryFlowService" as dfs #4CAF50
+    component "AdminFlowService\n⭐ NEW" as afs #9C27B0
+    component "AssistantAdminFlowService\n(Future)" as aafs #7B1FA2
+    component "UserRoleLookupService\n⭐ NEW" as urls #5C6BC0
+    component "WhatsAppService" as was #E91E63
+    component "ShoppingCartService" as scs #F06292
+    component "LocationValidationService" as lvs #EC407A
+  }
+  
+  package "Repository Layer" {
+    database "JPA Repositories\n• CustomerRepository\n• TeamMemberRepository\n• OrderRepository\n• ProductRepository" as repos #FF6F00
+  }
+}
+
+database "🗄️ PostgreSQL\nfishdb" as db #F57C00
+
+customer <--> wapi : Messages
+executive <--> wapi : Messages
+delivery <--> wapi : Messages
+admin <--> wapi : Messages
+assistant <--> wapi : Messages
+
+wapi <--> controller : Webhooks
+
+controller --> cfs
+
+cfs --> urls : Lookup Role
+cfs --> efs : EXECUTIVE
+cfs --> dfs : DELIVERY_PERSON
+cfs --> afs : ADMIN/DEVELOPER
+cfs --> aafs : ASSISTANT_ADMIN
+
+cfs --> was
+cfs --> scs
+cfs --> lvs
+
+efs --> was
+dfs --> was
+afs --> was
+aafs --> was
+
+cfs --> repos
+efs --> repos
+dfs --> repos
+afs --> repos
+aafs --> repos
+scs --> repos
+urls --> repos
+
+repos <--> db
+
+was --> wapi : Send Messages
+
+note right of afs
+  **Admin CRUD Operations:**
+  • Manage Customers
+  • Manage Delivery Persons
+  • Manage Executives
+  • Manage Assistant Admins
+  • Contact Developer
+end note
+
+@enduml

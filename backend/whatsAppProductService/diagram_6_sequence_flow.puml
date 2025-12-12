@@ -1,0 +1,93 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+
+actor "Customer" as C
+actor "Executive" as E
+actor "Admin" as A
+participant "WhatsApp" as WA
+participant "Backend\nService" as B
+database "Database" as DB
+participant "Delivery\nGroup" as DG
+actor "Delivery\nPerson" as DP
+
+== Customer Registration & Shopping ==
+C -> WA: Send "Hi"
+WA -> B: Webhook: Text Message
+B -> B: UserRoleLookupService\nNo match -> Create Customer
+B -> C: "What's your name?"
+C -> WA: Send Name
+B -> C: "Share your phone number"
+C -> WA: Send Phone
+B -> C: "Share your location"
+C -> WA: Send Location
+B -> B: Validate delivery area
+B -> DB: Save customer
+B -> C: "You're registered! Send 'start'"
+
+== Product Selection ==
+C -> WA: Send "start"
+B -> DB: Fetch available products
+B -> C: Product list (interactive)
+C -> WA: Select fish product
+B -> C: "How many KG?"
+C -> WA: Enter quantity (e.g., 2)
+B -> DB: Add to cart
+B -> C: "Added to cart!" + buttons
+
+== Checkout Process ==
+C -> WA: Click "Checkout"
+B -> DB: Get cart items
+B -> C: Cart summary + "Confirm Order" button
+C -> WA: Click "Confirm Order"
+
+== Order Placement ==
+B -> DB: Create order (status: PENDING)
+B -> DB: Create order items
+B -> DB: Clear cart
+B -> C: ✅ Order Confirmed! #123
+B -> DG: 🔔 NEW ORDER #123 + "Confirm Delivery" button
+
+== Delivery Assignment ==
+DP -> WA: Click "Confirm Delivery"
+WA -> B: Webhook: Button Reply
+B -> DB: Check if DP has DELIVERY_PERSON role
+
+alt Authorized Delivery Person
+    B -> DB: Update order (status: CONFIRMED)
+    B -> C: 🚚 Delivery Person Assigned!
+    B -> DG: ✅ ORDER CONFIRMED (with DP details)
+else Unauthorized User
+    B -> DP: ❌ Unauthorized Access
+end
+
+== Executive Flow (Add Customer) ==
+E -> WA: Send "Hi"
+WA -> B: Webhook
+B -> B: UserRoleLookupService\nFound: EXECUTIVE role
+B -> E: Executive Menu
+E -> WA: Select "Add Customer"
+B -> E: "Enter customer name"
+E -> WA: Send name
+B -> E: "Enter phone number"
+E -> WA: Send phone
+B -> E: "Share location"
+E -> WA: Send location
+B -> DB: Save customer
+B -> E: ✅ Customer added!
+
+== Admin Flow (Manage Entities) ==
+A -> WA: Send "Hi"
+WA -> B: Webhook
+B -> B: UserRoleLookupService\nFound: ADMIN role
+B -> A: Admin Menu\n• Customers\n• Delivery\n• Executives\n• Assistants\n• Contact Dev
+A -> WA: Select "Customers"
+B -> A: Customer Menu\n• Add\n• Show All\n• Back
+A -> WA: Select "Add"
+B -> A: "Enter customer name"
+A -> WA: Send details...
+B -> DB: Save customer
+B -> A: ✅ Customer added!
+
+@enduml
