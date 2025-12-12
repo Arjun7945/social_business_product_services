@@ -1,0 +1,35 @@
+name: ✨ Feature
+description: Use this template for major features derived from a parent Epic.
+title: '[Feature] <title>'
+labels: feature
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Summary
+        Describe the feature and its business value.
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: List clear, testable criteria for feature completion.
+      placeholder: 'List acceptance criteria...'
+  - type: textarea
+    id: related
+    attributes:
+      label: Related Epics/Stories
+      description: Link related epics, stories, or tasks (use issue numbers, e.g. #123).
+      placeholder: 'List related issues...'
+  - type: textarea
+    id: stakeholders
+    attributes:
+      label: Stakeholders
+      description: List key stakeholders and their roles.
+      placeholder: 'List stakeholders...'
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Notes
+      description: Any other relevant information.
+      placeholder: 'Add notes...'
