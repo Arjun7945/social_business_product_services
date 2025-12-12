@@ -1,0 +1,41 @@
+name: ⚙️ Task / Technical Debt
+description: Use this for technical work required to support a Story or Feature.
+title: '[Task] <title>'
+labels: task
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Summary
+        Describe the task and its purpose.
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Complete
+      description: List actionable steps required to complete the task.
+      placeholder: 'List steps...'
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: List clear, testable criteria for task completion.
+      placeholder: 'List acceptance criteria...'
+  - type: textarea
+    id: related
+    attributes:
+      label: Related Epics/Stories/Features
+      description: Link related epics, stories, or features (use issue numbers, e.g. #123).
+      placeholder: 'List related issues...'
+  - type: textarea
+    id: stakeholders
+    attributes:
+      label: Stakeholders
+      description: List key stakeholders and their roles.
+      placeholder: 'List stakeholders...'
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Notes
+      description: Any other relevant information.
+      placeholder: 'Add notes...'
