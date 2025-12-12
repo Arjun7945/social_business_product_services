@@ -1,0 +1,638 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< com.fishseller:whatsapp-service >-------------------
+[INFO] Building whatsapp-product-service 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ whatsapp-service ---
+[INFO] Deleting D:\social_business\gitplatform\social_business_product_services\backend\whatsAppProductService\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ whatsapp-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ whatsapp-service ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 59 source files with javac [debug parameters release 21] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[46,48] variable deliveryMessageService is already defined in class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[34,9] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.AdminController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[35,28] cannot find symbol
+  symbol:   method getName()
+  location: variable fishProduct of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[35,51] cannot find symbol
+  symbol:   method getPricePerKg()
+  location: variable fishProduct of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[35,80] cannot find symbol
+  symbol:   method isAvailable()
+  location: variable fishProduct of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[37,9] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.AdminController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[37,72] cannot find symbol
+  symbol:   method getId()
+  location: variable saved of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[37,87] cannot find symbol
+  symbol:   method isAvailable()
+  location: variable saved of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[43,9] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.AdminController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[44,32] cannot find symbol
+  symbol:   method getName()
+  location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[44,55] cannot find symbol
+  symbol:   method getPricePerKg()
+  location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[44,84] cannot find symbol
+  symbol:   method isAvailable()
+  location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[47,45] cannot find symbol
+  symbol:   method getName()
+  location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[48,51] cannot find symbol
+  symbol:   method getPricePerKg()
+  location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[49,49] cannot find symbol
+  symbol:   method getImageURL()
+  location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[50,52] cannot find symbol
+  symbol:   method getDescription()
+  location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[51,50] cannot find symbol
+  symbol:   method isAvailable()
+  location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[53,21] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.AdminController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[53,83] cannot find symbol
+  symbol:   method getId()
+  location: variable updated of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[53,100] cannot find symbol
+  symbol:   method isAvailable()
+  location: variable updated of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[85,43] cannot find symbol
+  symbol:   method getName()
+  location: variable details of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[86,50] cannot find symbol
+  symbol:   method getPhoneNumber()
+  location: variable details of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[87,45] cannot find symbol
+  symbol:   method isActive()
+  location: variable details of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[88,43] cannot find symbol
+  symbol:   method getRole()
+  location: variable details of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[124,61] cannot find symbol
+  symbol:   method getCustomerId()
+  location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[125,26] invalid method reference
+  cannot find symbol
+    symbol:   method getName()
+    location: class com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[128,13] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.AdminController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[128,73] cannot find symbol
+  symbol:   method getId()
+  location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[131,72] cannot find symbol
+  symbol:   method getItems()
+  location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[136,38] invalid method reference
+  cannot find symbol
+    symbol:   method getName()
+    location: class com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[139,25] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.AdminController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[142,71] cannot find symbol
+  symbol:   method builder()
+  location: class com.seller.whatsappservice.dto.OrderItemDto
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[153,63] cannot find symbol
+  symbol:   method builder()
+  location: class com.seller.whatsappservice.dto.CustomerOrderDto
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[154,26] cannot find symbol
+  symbol:   method getId()
+  location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[155,34] cannot find symbol
+  symbol:   method getCustomerId()
+  location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[157,35] cannot find symbol
+  symbol:   method getTotalAmount()
+  location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[158,30] cannot find symbol
+  symbol:   method getStatus()
+  location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[159,36] cannot find symbol
+  symbol:   method getTeamMemberId()
+  location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/model/FishProduct.java:[46,14] cannot find symbol
+  symbol:   method setProduct(com.seller.whatsappservice.model.FishProduct)
+  location: variable image of type com.seller.whatsappservice.model.ProductImage
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/model/FishProduct.java:[51,46] invalid method reference
+  cannot find symbol
+    symbol:   method getDisplayOrder()
+    location: class com.seller.whatsappservice.model.ProductImage
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/ProductImageController.java:[31,9] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.ProductImageController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/ProductImageController.java:[36,13] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.ProductImageController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/ProductImageController.java:[44,13] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.ProductImageController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/ProductImageController.java:[50,40] cannot find symbol
+  symbol:   method getImageData()
+  location: variable primaryImage of type com.seller.whatsappservice.model.ProductImage
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/ProductImageController.java:[53,13] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.ProductImageController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/ProductImageController.java:[57,39] cannot find symbol
+  symbol:   method getMimeType()
+  location: variable primaryImage of type com.seller.whatsappservice.model.ProductImage
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[27,55] cannot find symbol
+  symbol:   method getWebhookVerifyToken()
+  location: variable whatsAppConfig of type com.seller.whatsappservice.config.WhatsAppConfig
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[28,13] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.WebhookController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[31,13] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.WebhookController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[38,9] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.WebhookController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[40,23] cannot find symbol
+  symbol:   method getEntry()
+  location: variable webhookDto of type com.seller.whatsappservice.dto.WhatsAppWebhookDto
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[41,23] cannot find symbol
+  symbol:   method getEntry()
+  location: variable webhookDto of type com.seller.whatsappservice.dto.WhatsAppWebhookDto
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[49,41] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.WebhookController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[50,41] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.controller.WebhookController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[57,25] cannot find symbol
+  symbol:   method getMessages()
+  location: variable messageValue of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Value
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[57,63] cannot find symbol
+  symbol:   method getMessages()
+  location: variable messageValue of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Value
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[61,58] cannot find symbol
+  symbol:   method getMessages()
+  location: variable messageValue of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Value
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[62,34] cannot find symbol
+  symbol:   method getFrom()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[64,9] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[72,33] cannot find symbol
+  symbol:   method getRole()
+  location: variable lookupResult of type com.seller.whatsappservice.dto.UserLookupResult
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[74,21] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[74,90] cannot find symbol
+  symbol:   method getName()
+  location: class com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[80,21] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[80,76] cannot find symbol
+  symbol:   method getName()
+  location: variable developer of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[87,21] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[87,76] cannot find symbol
+  symbol:   method getName()
+  location: variable executive of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[94,21] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[94,80] cannot find symbol
+  symbol:   method getName()
+  location: variable deliveryPerson of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[97,32] cannot find symbol
+  symbol:   method getType()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[98,36] cannot find symbol
+  symbol:   method getInteractive()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[99,77] cannot find symbol
+  symbol:   method getInteractive()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[100,40] cannot find symbol
+  symbol:   method getId()
+  location: variable buttonReply of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.ButtonReply
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[101,70] cannot find symbol
+  symbol:   method getId()
+  location: variable buttonReply of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.ButtonReply
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[114,21] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[115,37] cannot find symbol
+  symbol:   method getName()
+  location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[115,66] cannot find symbol
+  symbol:   method getName()
+  location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[116,37] cannot find symbol
+  symbol:   method getCurrentFlowStage()
+  location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[121,21] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[126,13] cannot find symbol
+  symbol:   variable log
+  location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[127,44] cannot find symbol
+  symbol:   method builder()
+  location: class com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[143,20] cannot find symbol
+  symbol:   method getType()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[143,56] cannot find symbol
+  symbol:   method getText()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[144,34] cannot find symbol
+  symbol:   method getText()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[146,25] cannot find symbol
+  symbol:   method setCurrentFlowStage(com.seller.whatsappservice.model.enums.CustomerFlowStage)
+  location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[152,29] cannot find symbol
+  symbol:   method getCurrentFlowStage()
+  location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[153,33] cannot find symbol
+  symbol:   method getCurrentFlowStage()
+  location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[154,29] cannot find symbol
+  symbol:   method setCurrentFlowStage(com.seller.whatsappservice.model.enums.CustomerFlowStage)
+  location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[155,60] cannot find symbol
+  symbol:   method getWaPhoneNumber()
+  location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[156,82] cannot find symbol
+  symbol:   method getName()
+  location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[164,20] cannot find symbol
+  symbol:   method getType()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[164,56] cannot find symbol
+  symbol:   method getText()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[165,48] cannot find symbol
+  symbol:   method getText()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[166,27] cannot find symbol
+  symbol:   method getType()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[166,67] cannot find symbol
+  symbol:   method getLocation()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[167,52] cannot find symbol
+  symbol:   method getLocation()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[168,27] cannot find symbol
+  symbol:   method getType()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[169,24] cannot find symbol
+  symbol:   method getInteractive()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[170,52] cannot find symbol
+  symbol:   method getInteractive()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[171,31] cannot find symbol
+  symbol:   method getInteractive()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[172,50] cannot find symbol
+  symbol:   method getInteractive()
+  location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.827 s
+[INFO] Finished at: 2025-12-12T15:02:30+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project whatsapp-service: Compilation failure: Compilation failure: 
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[46,48] variable deliveryMessageService is already defined in class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[34,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.AdminController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[35,28] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable fishProduct of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[35,51] cannot find symbol
+[ERROR]   symbol:   method getPricePerKg()
+[ERROR]   location: variable fishProduct of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[35,80] cannot find symbol
+[ERROR]   symbol:   method isAvailable()
+[ERROR]   location: variable fishProduct of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[37,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.AdminController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[37,72] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable saved of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[37,87] cannot find symbol
+[ERROR]   symbol:   method isAvailable()
+[ERROR]   location: variable saved of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[43,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.AdminController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[44,32] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[44,55] cannot find symbol
+[ERROR]   symbol:   method getPricePerKg()
+[ERROR]   location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[44,84] cannot find symbol
+[ERROR]   symbol:   method isAvailable()
+[ERROR]   location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[47,45] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[48,51] cannot find symbol
+[ERROR]   symbol:   method getPricePerKg()
+[ERROR]   location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[49,49] cannot find symbol
+[ERROR]   symbol:   method getImageURL()
+[ERROR]   location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[50,52] cannot find symbol
+[ERROR]   symbol:   method getDescription()
+[ERROR]   location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[51,50] cannot find symbol
+[ERROR]   symbol:   method isAvailable()
+[ERROR]   location: variable fishDetails of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[53,21] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.AdminController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[53,83] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable updated of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[53,100] cannot find symbol
+[ERROR]   symbol:   method isAvailable()
+[ERROR]   location: variable updated of type com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[85,43] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable details of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[86,50] cannot find symbol
+[ERROR]   symbol:   method getPhoneNumber()
+[ERROR]   location: variable details of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[87,45] cannot find symbol
+[ERROR]   symbol:   method isActive()
+[ERROR]   location: variable details of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[88,43] cannot find symbol
+[ERROR]   symbol:   method getRole()
+[ERROR]   location: variable details of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[124,61] cannot find symbol
+[ERROR]   symbol:   method getCustomerId()
+[ERROR]   location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[125,26] invalid method reference
+[ERROR]   cannot find symbol
+[ERROR]     symbol:   method getName()
+[ERROR]     location: class com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[128,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.AdminController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[128,73] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[131,72] cannot find symbol
+[ERROR]   symbol:   method getItems()
+[ERROR]   location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[136,38] invalid method reference
+[ERROR]   cannot find symbol
+[ERROR]     symbol:   method getName()
+[ERROR]     location: class com.seller.whatsappservice.model.FishProduct
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[139,25] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.AdminController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[142,71] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.seller.whatsappservice.dto.OrderItemDto
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[153,63] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.seller.whatsappservice.dto.CustomerOrderDto
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[154,26] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[155,34] cannot find symbol
+[ERROR]   symbol:   method getCustomerId()
+[ERROR]   location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[157,35] cannot find symbol
+[ERROR]   symbol:   method getTotalAmount()
+[ERROR]   location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[158,30] cannot find symbol
+[ERROR]   symbol:   method getStatus()
+[ERROR]   location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/AdminController.java:[159,36] cannot find symbol
+[ERROR]   symbol:   method getTeamMemberId()
+[ERROR]   location: variable order of type com.seller.whatsappservice.model.CustomerOrder
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/model/FishProduct.java:[46,14] cannot find symbol
+[ERROR]   symbol:   method setProduct(com.seller.whatsappservice.model.FishProduct)
+[ERROR]   location: variable image of type com.seller.whatsappservice.model.ProductImage
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/model/FishProduct.java:[51,46] invalid method reference
+[ERROR]   cannot find symbol
+[ERROR]     symbol:   method getDisplayOrder()
+[ERROR]     location: class com.seller.whatsappservice.model.ProductImage
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/ProductImageController.java:[31,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.ProductImageController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/ProductImageController.java:[36,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.ProductImageController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/ProductImageController.java:[44,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.ProductImageController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/ProductImageController.java:[50,40] cannot find symbol
+[ERROR]   symbol:   method getImageData()
+[ERROR]   location: variable primaryImage of type com.seller.whatsappservice.model.ProductImage
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/ProductImageController.java:[53,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.ProductImageController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/ProductImageController.java:[57,39] cannot find symbol
+[ERROR]   symbol:   method getMimeType()
+[ERROR]   location: variable primaryImage of type com.seller.whatsappservice.model.ProductImage
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[27,55] cannot find symbol
+[ERROR]   symbol:   method getWebhookVerifyToken()
+[ERROR]   location: variable whatsAppConfig of type com.seller.whatsappservice.config.WhatsAppConfig
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[28,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.WebhookController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[31,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.WebhookController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[38,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.WebhookController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[40,23] cannot find symbol
+[ERROR]   symbol:   method getEntry()
+[ERROR]   location: variable webhookDto of type com.seller.whatsappservice.dto.WhatsAppWebhookDto
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[41,23] cannot find symbol
+[ERROR]   symbol:   method getEntry()
+[ERROR]   location: variable webhookDto of type com.seller.whatsappservice.dto.WhatsAppWebhookDto
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[49,41] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.WebhookController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/controller/WebhookController.java:[50,41] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.controller.WebhookController
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[57,25] cannot find symbol
+[ERROR]   symbol:   method getMessages()
+[ERROR]   location: variable messageValue of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Value
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[57,63] cannot find symbol
+[ERROR]   symbol:   method getMessages()
+[ERROR]   location: variable messageValue of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Value
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[61,58] cannot find symbol
+[ERROR]   symbol:   method getMessages()
+[ERROR]   location: variable messageValue of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Value
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[62,34] cannot find symbol
+[ERROR]   symbol:   method getFrom()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[64,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[72,33] cannot find symbol
+[ERROR]   symbol:   method getRole()
+[ERROR]   location: variable lookupResult of type com.seller.whatsappservice.dto.UserLookupResult
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[74,21] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[74,90] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: class com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[80,21] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[80,76] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable developer of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[87,21] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[87,76] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable executive of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[94,21] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[94,80] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable deliveryPerson of type com.seller.whatsappservice.model.TeamMember
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[97,32] cannot find symbol
+[ERROR]   symbol:   method getType()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[98,36] cannot find symbol
+[ERROR]   symbol:   method getInteractive()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[99,77] cannot find symbol
+[ERROR]   symbol:   method getInteractive()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[100,40] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable buttonReply of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.ButtonReply
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[101,70] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable buttonReply of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.ButtonReply
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[114,21] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[115,37] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[115,66] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[116,37] cannot find symbol
+[ERROR]   symbol:   method getCurrentFlowStage()
+[ERROR]   location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[121,21] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[126,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.seller.whatsappservice.service.CustomerFlowService
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[127,44] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[143,20] cannot find symbol
+[ERROR]   symbol:   method getType()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[143,56] cannot find symbol
+[ERROR]   symbol:   method getText()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[144,34] cannot find symbol
+[ERROR]   symbol:   method getText()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[146,25] cannot find symbol
+[ERROR]   symbol:   method setCurrentFlowStage(com.seller.whatsappservice.model.enums.CustomerFlowStage)
+[ERROR]   location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[152,29] cannot find symbol
+[ERROR]   symbol:   method getCurrentFlowStage()
+[ERROR]   location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[153,33] cannot find symbol
+[ERROR]   symbol:   method getCurrentFlowStage()
+[ERROR]   location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[154,29] cannot find symbol
+[ERROR]   symbol:   method setCurrentFlowStage(com.seller.whatsappservice.model.enums.CustomerFlowStage)
+[ERROR]   location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[155,60] cannot find symbol
+[ERROR]   symbol:   method getWaPhoneNumber()
+[ERROR]   location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[156,82] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable customer of type com.seller.whatsappservice.model.Customer
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[164,20] cannot find symbol
+[ERROR]   symbol:   method getType()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[164,56] cannot find symbol
+[ERROR]   symbol:   method getText()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[165,48] cannot find symbol
+[ERROR]   symbol:   method getText()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[166,27] cannot find symbol
+[ERROR]   symbol:   method getType()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[166,67] cannot find symbol
+[ERROR]   symbol:   method getLocation()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[167,52] cannot find symbol
+[ERROR]   symbol:   method getLocation()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[168,27] cannot find symbol
+[ERROR]   symbol:   method getType()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[169,24] cannot find symbol
+[ERROR]   symbol:   method getInteractive()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[170,52] cannot find symbol
+[ERROR]   symbol:   method getInteractive()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[171,31] cannot find symbol
+[ERROR]   symbol:   method getInteractive()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] /D:/social_business/gitplatform/social_business_product_services/backend/whatsAppProductService/src/main/java/com/seller/whatsappservice/service/CustomerFlowService.java:[172,50] cannot find symbol
+[ERROR]   symbol:   method getInteractive()
+[ERROR]   location: variable message of type com.seller.whatsappservice.dto.WhatsAppWebhookDto.Message
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

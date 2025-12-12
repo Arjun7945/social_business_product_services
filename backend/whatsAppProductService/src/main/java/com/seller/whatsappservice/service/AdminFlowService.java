@@ -35,6 +35,7 @@ public class AdminFlowService {
         private final DeliveryPersonManagementService deliveryPersonManagementService;
         private final ExecutiveManagementService executiveManagementService;
         private final AssistantAdminManagementService assistantAdminManagementService;
+        private final BotSessionService botSessionService;
         private final ProductManagementService productManagementService;
 
         /**
@@ -43,6 +44,10 @@ public class AdminFlowService {
         @Transactional
         public void handleAdminMessage(TeamMember admin, WhatsAppWebhookDto.Message message) {
                 log.info("Processing admin message from: {} ({})", admin.getName(), admin.getRole());
+
+                // Ensure a bot session exists for this user
+                botSessionService.getOrCreateSession(admin.getWaPhoneNumber(),
+                                com.seller.whatsappservice.model.enums.FlowType.ADMIN);
 
                 // Check for ABORT command at any stage
                 if (message.getType().equals("text") && message.getText() != null) {
@@ -98,6 +103,10 @@ public class AdminFlowService {
                                 break;
                         case AWAITING_CUST_WAPHONE:
                                 customerManagementService.handleCustomerWaPhoneInput(admin, text);
+                                break;
+                        case AWAITING_CUST_LOCATION:
+                                whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                                "❌ *Invalid Input*\n\nPlease share the location using the attachment (📎) button > Location.");
                                 break;
 
                         // Delivery Person Management
@@ -415,17 +424,19 @@ public class AdminFlowService {
         /**
          * Clear all temporary fields
          */
-        private void clearTempFields(TeamMember admin) {
-                admin.setTempEntityType(null);
-                admin.setTempEntityId(null);
-                admin.setTempFieldName(null);
-                admin.setTempFieldValue(null);
-                admin.setTempCustomerName(null);
-                admin.setTempCustomerPhone(null);
-                admin.setTempCustomerWaPhone(null);
-                admin.setTempTeamMemberName(null);
-                admin.setTempTeamMemberPhone(null);
-                admin.setTempTeamMemberWaPhone(null);
-                admin.setTempTeamMemberIsActive(null);
+        private void clearTempFields(TeamMember admin) { // Clear all temp fields
+                // admin.setTempEntityType(null);
+                // admin.setTempEntityId(null);
+                // admin.setTempFieldName(null);
+                // admin.setTempFieldValue(null);
+                // admin.setTempCustomerName(null);
+                // admin.setTempCustomerPhone(null);
+                // admin.setTempCustomerWaPhone(null);
+                // admin.setTempTeamMemberName(null);
+                // admin.setTempTeamMemberPhone(null);
+                // admin.setTempTeamMemberWaPhone(null);
+                // admin.setTempTeamMemberIsActive(null);
+
+                botSessionService.clearSession(admin.getWaPhoneNumber()); // Clears attributes but not flow stage
         }
 }

@@ -38,6 +38,12 @@ public class Customer {
     @Builder.Default
     private Boolean isPincodeValid = false; // Whether the customer's pincode is valid for delivery
 
+    private String pincode;
+
+    private String address;
+
+    private String segment;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
@@ -54,8 +60,8 @@ public class Customer {
 
     private LocalDateTime lastInteractionAt;
 
-    // Temporary field to store selected product ID while waiting for quantity
-    private Long tempSelectedProductId;
+    // Temp field removed. Use BotSessionService instead.
+    // private Long tempSelectedProductId;
 
     @PrePersist
     @PreUpdate

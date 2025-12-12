@@ -44,25 +44,23 @@ public class TeamMember {
     @Enumerated(EnumType.STRING)
     private ExecutiveFlowStage currentFlowStage;
 
-    private Long tempCustomerId; // Temporary storage during "Add Customer" flow
-
-    private String tempCustomerName;
-    private String tempCustomerPhone;
-    private String tempCustomerWaPhone;
-
     // Admin-specific fields
     @Enumerated(EnumType.STRING)
     private AdminFlowStage currentAdminFlowStage;
 
-    private String tempEntityType; // "CUSTOMER", "DELIVERY", "EXECUTIVE", "ASSISTANT"
-    private Long tempEntityId; // ID of entity being updated/deleted
-    private String tempFieldName; // Field being updated
-    private String tempFieldValue; // New value for field
-
-    // Temporary fields for adding new team members (delivery person, executive,
-    // assistant admin)
-    private String tempTeamMemberName;
-    private String tempTeamMemberPhone;
-    private String tempTeamMemberWaPhone;
-    private Boolean tempTeamMemberIsActive;
+    // All temp fields removed. Use BotSessionService instead.
+    /*
+     * private Long tempCustomerId;
+     * private String tempCustomerName;
+     * private String tempCustomerPhone;
+     * private String tempCustomerWaPhone;
+     * private String tempEntityType;
+     * private Long tempEntityId;
+     * private String tempFieldName;
+     * private String tempFieldValue;
+     * private String tempTeamMemberName;
+     * private String tempTeamMemberPhone;
+     * private String tempTeamMemberWaPhone;
+     * private Boolean tempTeamMemberIsActive;
+     */
 }

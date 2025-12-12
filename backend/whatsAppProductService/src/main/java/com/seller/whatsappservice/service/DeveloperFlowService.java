@@ -9,13 +9,9 @@ import com.seller.whatsappservice.repository.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * Service to handle developer conversation flow via WhatsApp
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -23,13 +19,14 @@ public class DeveloperFlowService {
 
     private final TeamMemberRepository teamMemberRepository;
     private final WhatsAppService whatsAppService;
+    private final BotSessionService botSessionService;
 
-    /**
-     * Process incoming message from a developer
-     */
-    @Transactional
     public void handleDeveloperMessage(TeamMember developer, WhatsAppWebhookDto.Message message) {
         log.info("Processing developer message from: {} ({})", developer.getName(), developer.getWaPhoneNumber());
+
+        // Ensure a bot session exists for this user
+        botSessionService.getOrCreateSession(developer.getWaPhoneNumber(),
+                com.seller.whatsappservice.model.enums.FlowType.DEVELOPER);
 
         // Handle different message types
         if (message.getType().equals("text") && message.getText() != null) {
@@ -57,8 +54,8 @@ public class DeveloperFlowService {
 
         // Handle ABORT command
         if (text.trim().equalsIgnoreCase("ABORT")) {
-            developer.setTempTeamMemberName(null);
-            developer.setTempTeamMemberPhone(null);
+            botSessionService.removeAttribute(developer.getWaPhoneNumber(), "tempTeamMemberName");
+            botSessionService.removeAttribute(developer.getWaPhoneNumber(), "tempTeamMemberPhone");
             showMainMenu(developer);
             return;
         }
@@ -88,8 +85,7 @@ public class DeveloperFlowService {
         if (text.trim().equalsIgnoreCase("hi") || text.trim().equalsIgnoreCase("hello")) {
             showMainMenu(developer);
         } else {
-            whatsAppService.sendSimpleText(developer.getWaPhoneNumber(),
-                    "👋 Send 'hi' to see the developer menu.");
+            whatsAppService.sendSimpleText(developer.getWaPhoneNumber(), "👋 Send 'hi' to see the developer menu.");
         }
     }
 
@@ -198,7 +194,7 @@ public class DeveloperFlowService {
      * Handle Admin Name Input
      */
     private void handleAwaitingAdminName(TeamMember developer, String text) {
-        developer.setTempTeamMemberName(text.trim());
+        botSessionService.setAttribute(developer.getWaPhoneNumber(), "tempTeamMemberName", text.trim());
         whatsAppService.sendSimpleText(developer.getWaPhoneNumber(),
                 "Great! Now please provide the Admin's *Phone Number*:");
         developer.setCurrentAdminFlowStage(AdminFlowStage.AWAITING_ADMIN_PHONE);
@@ -208,7 +204,7 @@ public class DeveloperFlowService {
      * Handle Admin Phone Input
      */
     private void handleAwaitingAdminPhone(TeamMember developer, String text) {
-        developer.setTempTeamMemberPhone(text.trim());
+        botSessionService.setAttribute(developer.getWaPhoneNumber(), "tempTeamMemberPhone", text.trim());
         whatsAppService.sendSimpleText(developer.getWaPhoneNumber(),
                 "Perfect! Now please provide the Admin's *WhatsApp Number* (with country code):");
         developer.setCurrentAdminFlowStage(AdminFlowStage.AWAITING_ADMIN_WAPHONE);
@@ -229,8 +225,8 @@ public class DeveloperFlowService {
         }
 
         TeamMember newAdmin = TeamMember.builder()
-                .name(developer.getTempTeamMemberName())
-                .phoneNumber(developer.getTempTeamMemberPhone())
+                .name(botSessionService.getAttribute(developer.getWaPhoneNumber(), "tempTeamMemberName"))
+                .phoneNumber(botSessionService.getAttribute(developer.getWaPhoneNumber(), "tempTeamMemberPhone"))
                 .waPhoneNumber(waPhone)
                 .role(UserRole.ADMIN)
                 .isActive(true)
@@ -239,22 +235,16 @@ public class DeveloperFlowService {
         teamMemberRepository.save(newAdmin);
 
         // Send welcome message to new admin
-        whatsAppService.sendTeamMemberWelcomeMessage(
-                newAdmin.getWaPhoneNumber(),
-                newAdmin.getName(),
-                newAdmin.getPhoneNumber(),
-                "Admin",
-                developer.getName(),
-                developer.getWaPhoneNumber());
+        whatsAppService.sendTeamMemberWelcomeMessage(newAdmin.getWaPhoneNumber(), newAdmin.getName(),
+                newAdmin.getPhoneNumber(), "Admin", developer.getName(), developer.getWaPhoneNumber());
 
         // Clear temp fields
-        developer.setTempTeamMemberName(null);
-        developer.setTempTeamMemberPhone(null);
+        botSessionService.removeAttribute(developer.getWaPhoneNumber(), "tempTeamMemberName");
+        botSessionService.removeAttribute(developer.getWaPhoneNumber(), "tempTeamMemberPhone");
         developer.setCurrentAdminFlowStage(AdminFlowStage.ADMIN_MENU);
 
-        whatsAppService.sendSimpleText(developer.getWaPhoneNumber(),
-                "✅ *Admin Added Successfully!* 🎉\n\nName: " + newAdmin.getName()
-                        + "\n\nA welcome message has been sent to the new admin. 📲");
+        whatsAppService.sendSimpleText(developer.getWaPhoneNumber(), "✅ *Admin Added Successfully!* 🎉\n\nName: "
+                + newAdmin.getName() + "\n\nA welcome message has been sent to the new admin. 📲");
 
         showAdminManagementMenu(developer);
     }

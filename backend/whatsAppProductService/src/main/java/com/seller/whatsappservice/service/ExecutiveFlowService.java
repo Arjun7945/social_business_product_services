@@ -27,9 +27,11 @@ import java.util.List;
 public class ExecutiveFlowService {
 
     private final TeamMemberRepository teamMemberRepository;
-    private final CustomerRepository customerRepository;
     private final WhatsAppService whatsAppService;
+    private final CustomerRepository customerRepository; // To save new customer
+    private final CustomerMessageService messageService;
     private final LocationValidationService locationValidationService;
+    private final BotSessionService botSessionService;
 
     /**
      * Process incoming message from an executive
@@ -37,6 +39,10 @@ public class ExecutiveFlowService {
     @Transactional
     public void handleExecutiveMessage(TeamMember executive, WhatsAppWebhookDto.Message message) {
         log.info("Processing executive message from: {} ({})", executive.getName(), executive.getWaPhoneNumber());
+
+        // Ensure a bot session exists for this user
+        botSessionService.getOrCreateSession(executive.getWaPhoneNumber(),
+                com.seller.whatsappservice.model.enums.FlowType.EXECUTIVE);
 
         // Handle different message types
         if (message.getType().equals("text") && message.getText() != null) {
@@ -162,7 +168,8 @@ public class ExecutiveFlowService {
      * Handle customer name input
      */
     private void handleAwaitingCustomerName(TeamMember executive, String text) {
-        executive.setTempCustomerName(text.trim());
+        // executive.setTempCustomerName(text.trim());
+        botSessionService.setAttribute(executive.getWaPhoneNumber(), "tempCustomerName", text.trim());
         whatsAppService.sendSimpleText(executive.getWaPhoneNumber(),
                 "Great! 👍 Now please provide the customer's *Phone Number*:");
         executive.setCurrentFlowStage(ExecutiveFlowStage.AWAITING_CUST_PHONE);
@@ -172,7 +179,8 @@ public class ExecutiveFlowService {
      * Handle customer phone number input
      */
     private void handleAwaitingCustomerPhone(TeamMember executive, String text) {
-        executive.setTempCustomerPhone(text.trim());
+        // executive.setTempCustomerPhone(text.trim());
+        botSessionService.setAttribute(executive.getWaPhoneNumber(), "tempCustomerPhone", text.trim());
         whatsAppService.sendSimpleText(executive.getWaPhoneNumber(),
                 "Perfect! 👌 Now please provide the customer's *WhatsApp Number* (with country code, e.g., 919876543210):");
         executive.setCurrentFlowStage(ExecutiveFlowStage.AWAITING_CUST_WAPHONE);
@@ -182,7 +190,8 @@ public class ExecutiveFlowService {
      * Handle customer WhatsApp number input
      */
     private void handleAwaitingCustomerWaPhone(TeamMember executive, String text) {
-        executive.setTempCustomerWaPhone(text.trim());
+        // executive.setTempCustomerWaPhone(text.trim());
+        botSessionService.setAttribute(executive.getWaPhoneNumber(), "tempCustomerWaPhone", text.trim());
         whatsAppService.sendSimpleText(executive.getWaPhoneNumber(),
                 "Excellent! 🌟 Finally, please share the customer's *Location*.\n\n" +
                         "📍 Tap the attachment icon (📎) → Location → Send location");
@@ -217,9 +226,9 @@ public class ExecutiveFlowService {
 
         // Create customer with REGISTERED flow stage
         Customer newCustomer = Customer.builder()
-                .name(executive.getTempCustomerName())
-                .phoneNumber(executive.getTempCustomerPhone())
-                .waPhoneNumber(executive.getTempCustomerWaPhone())
+                .name(botSessionService.getAttribute(executive.getWaPhoneNumber(), "tempCustomerName"))
+                .phoneNumber(botSessionService.getAttribute(executive.getWaPhoneNumber(), "tempCustomerPhone"))
+                .waPhoneNumber(botSessionService.getAttribute(executive.getWaPhoneNumber(), "tempCustomerWaPhone"))
                 .locationLat(customerLat)
                 .locationLon(customerLon)
                 .distanceFromBusinessKm(distance)
@@ -232,9 +241,9 @@ public class ExecutiveFlowService {
         customerRepository.save(newCustomer);
 
         // Clear temp fields
-        executive.setTempCustomerName(null);
-        executive.setTempCustomerPhone(null);
-        executive.setTempCustomerWaPhone(null);
+        botSessionService.removeAttribute(executive.getWaPhoneNumber(), "tempCustomerName");
+        botSessionService.removeAttribute(executive.getWaPhoneNumber(), "tempCustomerPhone");
+        botSessionService.removeAttribute(executive.getWaPhoneNumber(), "tempCustomerWaPhone");
         executive.setCurrentFlowStage(ExecutiveFlowStage.IDLE);
 
         // Notify executive

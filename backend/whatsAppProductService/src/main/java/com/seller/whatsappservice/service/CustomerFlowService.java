@@ -44,6 +44,7 @@ public class CustomerFlowService {
     private final CustomerMessageService messageService;
     private final DeliveryPersonMessageService deliveryMessageService;
     private final WhatsAppMediaService whatsAppMediaService;
+    private final BotSessionService botSessionService;
 
     /**
      * Main entry point for processing incoming WhatsApp messages
@@ -137,6 +138,10 @@ public class CustomerFlowService {
      * Handle messages from customers (both new and existing)
      */
     private void handleCustomerMessage(Customer customer, WhatsAppWebhookDto.Message message) {
+        // Ensure a bot session exists for this user
+        botSessionService.getOrCreateSession(customer.getWaPhoneNumber(),
+                com.seller.whatsappservice.model.enums.FlowType.CUSTOMER);
+
         // Allow customer to restart flow from any stage by sending "start" or "hi"
         if (message.getType().equals("text") && message.getText() != null) {
             String text = message.getText().getBody().trim();
@@ -255,12 +260,14 @@ public class CustomerFlowService {
 
         // Validate delivery area
         if (locationValidationService.isWithinDeliveryRadius(customerLat, customerLon)) {
+            customer.setIsPincodeValid(true);
             customer.setCurrentFlowStage(CustomerFlowStage.REGISTERED);
             customer.setRegisteredAt(LocalDateTime.now());
 
             whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
                     messageService.getLocationAccepted(customer.getName(), distance));
         } else {
+            customer.setIsPincodeValid(false);
             whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
                     messageService.getLocationRejected(customer.getName(), distance));
             customer.setCurrentFlowStage(CustomerFlowStage.NEW);
@@ -435,7 +442,9 @@ public class CustomerFlowService {
             FishProduct fish = fishOpt.get();
 
             // Store selected product temporarily
-            customer.setTempSelectedProductId(fishProductId);
+            // Store selected product temporarily
+            botSessionService.setAttribute(customer.getWaPhoneNumber(), "selectedProductId",
+                    String.valueOf(fishProductId));
             customer.setCurrentFlowStage(CustomerFlowStage.AWAITING_QUANTITY);
 
             whatsAppService.sendSimpleText(customer.getWaPhoneNumber(), messageService
@@ -470,7 +479,8 @@ public class CustomerFlowService {
         FishProduct fish = fishOpt.get();
 
         // Store selected product temporarily
-        customer.setTempSelectedProductId(fishProductId);
+        // Store selected product temporarily
+        botSessionService.setAttribute(customer.getWaPhoneNumber(), "selectedProductId", String.valueOf(fishProductId));
         customer.setCurrentFlowStage(CustomerFlowStage.AWAITING_QUANTITY);
 
         whatsAppService.sendSimpleText(customer.getWaPhoneNumber(), messageService
@@ -490,7 +500,13 @@ public class CustomerFlowService {
                 return;
             }
 
-            Long fishProductId = customer.getTempSelectedProductId();
+            String fishProductIdStr = botSessionService.getAttribute(customer.getWaPhoneNumber(), "selectedProductId");
+            if (fishProductIdStr == null) {
+                whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                        "Session expired. Please select product again.");
+                return;
+            }
+            Long fishProductId = Long.parseLong(fishProductIdStr);
 
             // Check if this is an edit or new add
             List<CartItemDto> items = shoppingCartService.getCartItems(customer.getId());
@@ -788,7 +804,8 @@ public class CustomerFlowService {
         if (items.size() == 1) {
             // Single item - go directly to quantity input
             CartItemDto item = items.get(0);
-            customer.setTempSelectedProductId(item.getFishProductId());
+            botSessionService.setAttribute(customer.getWaPhoneNumber(), "selectedProductId",
+                    String.valueOf(item.getFishProductId()));
 
             whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
                     messageService.getEditQuantityHeader(item.getFishName(), item.getQuantityKg()));
@@ -862,7 +879,7 @@ public class CustomerFlowService {
         Long fishProductId = Long.parseLong(buttonId.replace("EDIT_QTY_", ""));
 
         // Store the product ID for quantity update
-        customer.setTempSelectedProductId(fishProductId);
+        botSessionService.setAttribute(customer.getWaPhoneNumber(), "selectedProductId", String.valueOf(fishProductId));
 
         // Get current quantity
         List<CartItemDto> items = shoppingCartService.getCartItems(customer.getId());

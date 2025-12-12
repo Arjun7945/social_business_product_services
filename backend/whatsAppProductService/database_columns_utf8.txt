@@ -1,0 +1,87 @@
+﻿   table_name    |        column_name         |          data_type          
+-----------------+----------------------------+-----------------------------
+ button_clicks   | id                         | bigint
+ button_clicks   | button_id                  | character varying
+ button_clicks   | click_token                | character varying
+ button_clicks   | clicked_at                 | timestamp without time zone
+ button_clicks   | flow_stage                 | character varying
+ button_clicks   | message_id                 | character varying
+ button_clicks   | wa_phone_number            | character varying
+ cart_items      | id                         | bigint
+ cart_items      | added_at                   | timestamp without time zone
+ cart_items      | fish_product_id            | bigint
+ cart_items      | quantity_kg                | double precision
+ cart_items      | cart_id                    | bigint
+ customer_orders | id                         | bigint
+ customer_orders | customer_id                | bigint
+ customer_orders | team_member_id             | bigint
+ customer_orders | order_time                 | timestamp without time zone
+ customer_orders | payment_method             | character varying
+ customer_orders | status                     | character varying
+ customer_orders | total_amount               | double precision
+ customer_orders | confirmed_at               | timestamp without time zone
+ customer_orders | team_member_name           | character varying
+ customer_orders | team_member_wa_id          | character varying
+ customers       | id                         | bigint
+ customers       | current_flow_stage         | character varying
+ customers       | is_pincode_valid           | boolean
+ customers       | location_lat               | double precision
+ customers       | location_lon               | double precision
+ customers       | name                       | character varying
+ customers       | pincode                    | character varying
+ customers       | wa_phone_number            | character varying
+ customers       | distance_from_business_km  | double precision
+ customers       | last_interaction_at        | timestamp without time zone
+ customers       | phone_number               | character varying
+ customers       | registered_at              | timestamp without time zone
+ customers       | temp_selected_product_id   | bigint
+ customers       | role                       | character varying
+ customers       | added_by_executive_id      | bigint
+ fish_products   | id                         | bigint
+ fish_products   | description                | character varying
+ fish_products   | imageurl                   | character varying
+ fish_products   | is_available               | boolean
+ fish_products   | name                       | character varying
+ fish_products   | price_per_kg               | double precision
+ fish_products   | image_url                  | character varying
+ order_items     | id                         | bigint
+ order_items     | fish_product_id            | bigint
+ order_items     | price_at_order             | double precision
+ order_items     | quantity_kg                | double precision
+ order_items     | order_id                   | bigint
+ product_images  | id                         | bigint
+ product_images  | display_order              | integer
+ product_images  | file_size                  | bigint
+ product_images  | image_data                 | oid
+ product_images  | image_name                 | character varying
+ product_images  | media_expires_at           | timestamp without time zone
+ product_images  | mime_type                  | character varying
+ product_images  | uploaded_at                | timestamp without time zone
+ product_images  | whatsapp_media_id          | character varying
+ product_images  | product_id                 | bigint
+ shopping_carts  | id                         | bigint
+ shopping_carts  | created_at                 | timestamp without time zone
+ shopping_carts  | customer_id                | bigint
+ shopping_carts  | updated_at                 | timestamp without time zone
+ team_members    | id                         | bigint
+ team_members    | is_active                  | boolean
+ team_members    | name                       | character varying
+ team_members    | phone_number               | character varying
+ team_members    | wa_phone_number            | character varying
+ team_members    | role                       | character varying
+ team_members    | current_flow_stage         | character varying
+ team_members    | temp_customer_id           | bigint
+ team_members    | temp_customer_name         | character varying
+ team_members    | temp_customer_phone        | character varying
+ team_members    | temp_customer_wa_phone     | character varying
+ team_members    | current_admin_flow_stage   | character varying
+ team_members    | temp_entity_id             | bigint
+ team_members    | temp_entity_type           | character varying
+ team_members    | temp_field_name            | character varying
+ team_members    | temp_field_value           | character varying
+ team_members    | temp_team_member_is_active | boolean
+ team_members    | temp_team_member_name      | character varying
+ team_members    | temp_team_member_phone     | character varying
+ team_members    | temp_team_member_wa_phone  | character varying
+(83 rows)
+
