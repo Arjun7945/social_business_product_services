@@ -1,0 +1,41 @@
+name: 🚀 Epic
+description: Use this template for large initiatives tied directly to business objectives.
+title: '[Epic] <title>'
+labels: epic
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Summary
+        Briefly describe the business goal and value of this epic.
+  - type: textarea
+    id: goals
+    attributes:
+      label: Goals & Objectives
+      description: List the main objectives and outcomes expected from this epic.
+      placeholder: 'List goals and objectives...'
+  - type: textarea
+    id: success_criteria
+    attributes:
+      label: Success Criteria
+      description: Define measurable criteria for success (KPIs, deliverables, etc.).
+      placeholder: 'List success criteria...'
+  - type: textarea
+    id: related
+    attributes:
+      label: Related Features/Stories
+      description: Link related features, stories, or tasks (use issue numbers, e.g. #123).
+      placeholder: 'List related issues...'
+  - type: textarea
+    id: stakeholders
+    attributes:
+      label: Stakeholders
+      description: List key stakeholders and their roles.
+      placeholder: 'List stakeholders...'
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Notes
+      description: Any other relevant information.
+      placeholder: 'Add notes...'

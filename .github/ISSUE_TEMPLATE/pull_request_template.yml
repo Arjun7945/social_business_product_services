@@ -1,0 +1,29 @@
+name: 680 Pull Request
+description: Use this template for submitting a pull request.
+title: '[PR] <title>'
+labels: pr
+assignees: []
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the changes and their purpose.
+      placeholder: 'Describe what this PR does...'
+  - type: textarea
+    id: related_issues
+    attributes:
+      label: Related Issue(s)
+      description: "Link to related issue(s) (required):" 
+      placeholder: 'List related issues...'
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: Related issue linked (e.g. #123)
+        - label: Tests added/updated
+        - label: Documentation updated
+        - label: Ready for review
+        - label: Coding standards followed
+        - label: All acceptance criteria met
