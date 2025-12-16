@@ -1,0 +1,48 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (productImage(); as productImageRef) {
+      <div>
+        <h2 data-cy="productImageDetailsHeading">
+          <span jhiTranslate="whatsappProductServiceApp.productImage.detail.title">Product Image</span>
+        </h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ productImageRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="whatsappProductServiceApp.productImage.imageUrl">Image Url</span></dt>
+          <dd>
+            <span>{{ productImageRef.imageUrl }}</span>
+          </dd>
+          <dt><span jhiTranslate="whatsappProductServiceApp.productImage.displayOrder">Display Order</span></dt>
+          <dd>
+            <span>{{ productImageRef.displayOrder }}</span>
+          </dd>
+          <dt><span jhiTranslate="whatsappProductServiceApp.productImage.product">Product</span></dt>
+          <dd>
+            @if (productImage()!.product) {
+              <div>
+                <a [routerLink]="['/fish-product', productImage()!.product?.id, 'view']">{{ productImageRef.product?.name }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/product-image', productImageRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

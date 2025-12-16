@@ -1,0 +1,37 @@
+{
+  "annotations": {
+    "changelogDate": "20251215140331"
+  },
+  "applications": ["whatsappProductService"],
+  "documentation": "NEW ENTITY: BotSession\\nManages the conversation state and temporary data (scratchpad).\\nReplaces all temp_ variables in main entities.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "documentation": "Key to link to Customer or TeamMember",
+      "fieldName": "waPhoneNumber",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "documentation": "Checkpoints the user's flow (e.g., AWAITING_NAME)",
+      "fieldName": "currentState",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "documentation": "JSON blob to store temp variables like { \"tempProductId\": 123, \"tempName\": \"John\" }",
+      "fieldName": "sessionData",
+      "fieldType": "TextBlob"
+    },
+    {
+      "fieldName": "lastActiveAt",
+      "fieldType": "Instant"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "BotSession",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

@@ -1,0 +1,54 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (cartItem(); as cartItemRef) {
+      <div>
+        <h2 data-cy="cartItemDetailsHeading"><span jhiTranslate="whatsappProductServiceApp.cartItem.detail.title">Cart Item</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ cartItemRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="whatsappProductServiceApp.cartItem.quantityKg">Quantity Kg</span></dt>
+          <dd>
+            <span>{{ cartItemRef.quantityKg }}</span>
+          </dd>
+          <dt><span jhiTranslate="whatsappProductServiceApp.cartItem.addedAt">Added At</span></dt>
+          <dd>
+            <span>{{ cartItemRef.addedAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="whatsappProductServiceApp.cartItem.product">Product</span></dt>
+          <dd>
+            @if (cartItem()!.product) {
+              <div>
+                <a [routerLink]="['/fish-product', cartItem()!.product?.id, 'view']">{{ cartItemRef.product?.name }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="whatsappProductServiceApp.cartItem.cart">Cart</span></dt>
+          <dd>
+            @if (cartItem()!.cart) {
+              <div>
+                <a [routerLink]="['/shopping-cart', cartItem()!.cart?.id, 'view']">{{ cartItemRef.cart?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/cart-item', cartItemRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

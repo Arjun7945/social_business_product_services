@@ -1,0 +1,56 @@
+{
+  "annotations": {
+    "changelogDate": "20251215140324"
+  },
+  "applications": ["whatsappProductService"],
+  "documentation": "Product catalog entity.\\nIndexed in Elasticsearch for fast search.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "pricePerKg",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "imageUrl",
+      "fieldType": "String"
+    },
+    {
+      "documentation": "Increased length for SEO descriptions",
+      "fieldName": "description",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "2000"
+    },
+    {
+      "fieldName": "isAvailable",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "createdAt",
+      "fieldType": "Instant"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "FishProduct",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "documentation": "One Product has many Images",
+      "otherEntityName": "productImage",
+      "otherEntityRelationshipName": "product",
+      "relationshipName": "images",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceApp": {
+    "shoppingCart": {
+      "home": {
+        "title": "Shopping Carts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नवीन Shopping Cart तयार करा",
+        "createOrEditLabel": "Shopping Cart तयार किंवा संपादित करा",
+        "notFound": "No Shopping Carts found"
+      },
+      "created": "Shopping Cart [identifier: {{ param }}] तयार आहे",
+      "updated": "Shopping Cart [identifier: {{ param }}] सुधारित केले आहे",
+      "deleted": "Shopping Cart [identifier: {{ param }}] हटविले आहे",
+      "delete": {
+        "question": "Shopping Cart [id: {{ id }}] काढून टाकण्याबाबत पुष्टी?"
+      },
+      "detail": {
+        "title": "Shopping Cart"
+      },
+      "id": "ID",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "items": "Items",
+      "customer": "Customer"
+    }
+  }
+}

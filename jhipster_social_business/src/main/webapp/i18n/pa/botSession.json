@@ -1,0 +1,32 @@
+{
+  "whatsappProductServiceApp": {
+    "botSession": {
+      "home": {
+        "title": "Bot Sessions",
+        "refreshListLabel": "ਸੂਚੀ ਤਾਜ਼ਾ ਕਰੋ",
+        "createLabel": "ਇੱਕ ਨਵਾਂ Bot Session ਬਣਾਓ",
+        "createOrEditLabel": "ਇੱਕ Bot Session ਬਣਾਓ ਜਾਂ ਸੰਪਾਦਿਤ ਕਰੋ",
+        "notFound": "ਕੋਈ Bot Sessions ਨਹੀਂ ਮਿਲਿਆ"
+      },
+      "created": "ਇੱਕ ਨਵਾਂ Bot Session ਪਛਾਣਕਰਤਾ {{ param }} ਨਾਲ ਬਣਾਇਆ ਗਿਆ ਹੈ",
+      "updated": "ਇੱਕ Bot Session ਪਛਾਣਕਰਤਾ {{ param }} ਨਾਲ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ ਹੈ",
+      "deleted": "ਇੱਕ Bot Session ਪਛਾਣਕਰਤਾ {{ param }} ਨਾਲ ਮਿਟਾ ਦਿੱਤਾ ਗਿਆ ਹੈ",
+      "delete": {
+        "question": "ਕੀ ਤੁਸੀਂ ਨਿਸ਼ਚਤ ਰੂਪ ਤੋਂ Bot Session {{ id }} ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?"
+      },
+      "detail": {
+        "title": "Bot Session"
+      },
+      "id": "ID",
+      "waPhoneNumber": "Wa Phone Number",
+      "currentState": "Current State",
+      "sessionData": "Session Data",
+      "lastActiveAt": "Last Active At",
+      "help": {
+        "waPhoneNumber": "Key to link to Customer or TeamMember",
+        "currentState": "Checkpoints the user&#39;s flow (e.g., AWAITING_NAME)",
+        "sessionData": "JSON blob to store temp variables like { &#34;tempProductId&#34;: 123, &#34;tempName&#34;: &#34;John&#34; }"
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "whatsappProductServiceApp": {
+    "teamMember": {
+      "home": {
+        "title": "Team Members",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "కొత్త Team Member  సృష్టించండి",
+        "createOrEditLabel": "Team Member సృష్టించండి లేదా సవరించండి",
+        "notFound": "No Team Members found"
+      },
+      "created": "{{ param }} ఐడీ తో ఒక కొత్త Team Member సృష్టించబడినది",
+      "updated": "{{ param }} ఐడీ తో ఒక కొత్త Team Member సవరించబడినది",
+      "deleted": "{{ param }} ఐడీ తో ఒక కొత్త Team Member తొలగించబడినది",
+      "delete": {
+        "question": "మీరు Team Member {{ id }} ఖచ్చితంగా తొలగించాలనుకుంటున్నారా?"
+      },
+      "detail": {
+        "title": "Team Member"
+      },
+      "id": "ID",
+      "name": "Name",
+      "waPhoneNumber": "Wa Phone Number",
+      "phoneNumber": "Phone Number",
+      "role": "Role",
+      "isActive": "Is Active"
+    }
+  }
+}

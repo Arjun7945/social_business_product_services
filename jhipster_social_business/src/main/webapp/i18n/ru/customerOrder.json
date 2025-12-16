@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceApp": {
+    "customerOrder": {
+      "home": {
+        "title": "Customer Orders",
+        "refreshListLabel": "Обновить список",
+        "createLabel": "Создать новый Customer Order",
+        "createOrEditLabel": "Создать или отредактировать Customer Order",
+        "notFound": "Customer Orders не найдено"
+      },
+      "created": "Новый Customer Order создан с идентификатором {{ param }}",
+      "updated": "Customer Order обновлен с идентификатором {{ param }}",
+      "deleted": "Customer Order удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Customer Order {{ id }}?"
+      },
+      "detail": {
+        "title": "Customer Order"
+      },
+      "id": "ID",
+      "orderTime": "Order Time",
+      "totalAmount": "Total Amount",
+      "status": "Status",
+      "paymentMethod": "Payment Method",
+      "confirmedAt": "Confirmed At",
+      "items": "Items",
+      "deliveryPerson": "Delivery Person",
+      "customer": "Customer"
+    }
+  }
+}

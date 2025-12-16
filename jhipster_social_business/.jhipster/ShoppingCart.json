@@ -1,0 +1,43 @@
+{
+  "annotations": {
+    "changelogDate": "20251215140328"
+  },
+  "applications": ["whatsappProductService"],
+  "documentation": "Persistent Shopping Cart for a customer.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "createdAt",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "updatedAt",
+      "fieldType": "Instant"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "ShoppingCart",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "documentation": "One ShoppingCart has many CartItems",
+      "otherEntityName": "cartItem",
+      "otherEntityRelationshipName": "cart",
+      "relationshipName": "items",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "customer",
+      "otherEntityRelationshipName": "cart",
+      "relationshipName": "customer",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

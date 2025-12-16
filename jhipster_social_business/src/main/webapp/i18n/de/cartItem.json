@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceApp": {
+    "cartItem": {
+      "home": {
+        "title": "Cart Items",
+        "refreshListLabel": "Liste aktualisieren",
+        "createLabel": "Cart Item erstellen",
+        "createOrEditLabel": "Cart Item erstellen oder bearbeiten",
+        "notFound": "Keine Cart Items gefunden"
+      },
+      "created": "Cart Item erstellt mit ID {{ param }}",
+      "updated": "Cart Item aktualisiert mit ID {{ param }}",
+      "deleted": "Cart Item gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Cart Item {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Cart Item"
+      },
+      "id": "ID",
+      "quantityKg": "Quantity Kg",
+      "addedAt": "Added At",
+      "product": "Product",
+      "cart": "Cart"
+    }
+  }
+}

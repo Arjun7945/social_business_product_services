@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceApp": {
+    "customerOrder": {
+      "home": {
+        "title": "Customer Orders",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Customer Order جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Customer Order",
+        "notFound": "لم يتم العثور على Customer Orders"
+      },
+      "created": "Customer Order جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Customer Order تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Customer Order تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Customer Order {{ id }}؟"
+      },
+      "detail": {
+        "title": "Customer Order"
+      },
+      "id": "ID",
+      "orderTime": "Order Time",
+      "totalAmount": "Total Amount",
+      "status": "Status",
+      "paymentMethod": "Payment Method",
+      "confirmedAt": "Confirmed At",
+      "items": "Items",
+      "deliveryPerson": "Delivery Person",
+      "customer": "Customer"
+    }
+  }
+}

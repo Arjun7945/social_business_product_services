@@ -49,3 +49,6 @@ Thumbs.db
 
 # Husky
 .husky/_
+
+#target
+**/target/

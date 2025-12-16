@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceApp": {
+    "productImage": {
+      "home": {
+        "title": "Product Images",
+        "refreshListLabel": "Liste aktualisieren",
+        "createLabel": "Product Image erstellen",
+        "createOrEditLabel": "Product Image erstellen oder bearbeiten",
+        "notFound": "Keine Product Images gefunden"
+      },
+      "created": "Product Image erstellt mit ID {{ param }}",
+      "updated": "Product Image aktualisiert mit ID {{ param }}",
+      "deleted": "Product Image gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Product Image {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Product Image"
+      },
+      "id": "ID",
+      "imageUrl": "Image Url",
+      "displayOrder": "Display Order",
+      "product": "Product"
+    }
+  }
+}

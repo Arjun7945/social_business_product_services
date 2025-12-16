@@ -1,0 +1,23 @@
+{
+  "whatsappProductServiceApp": {
+    "adminAuthority": {
+      "home": {
+        "title": "Authorities",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Maak een nieuwe Authority",
+        "createOrEditLabel": "Maak of wijzig een Authority",
+        "notFound": "No Authorities found"
+      },
+      "created": "A new Authority is created with identifier {{ param }}",
+      "updated": "A Authority is updated with identifier {{ param }}",
+      "deleted": "A Authority is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Bent u zeker dat u Authority {{ id }} wilt verwijderen?"
+      },
+      "detail": {
+        "title": "Authority"
+      },
+      "name": "Name"
+    }
+  }
+}

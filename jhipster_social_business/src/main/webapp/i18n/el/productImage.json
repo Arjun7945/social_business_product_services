@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceApp": {
+    "productImage": {
+      "home": {
+        "title": "Product Images",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Δημιουργήστε ένα νέο Product Image",
+        "createOrEditLabel": "Δημιουργήστε η επεξεργαστείτε ένα Product Image",
+        "notFound": "No Product Images found"
+      },
+      "created": "Ένα νέο Product Image έχει δημιουργηθεί με αναγνωριστικό {{ param }}",
+      "updated": "Ένα Product Image έχει ενημερωθεί με αναγνωριστικό {{ param }}",
+      "deleted": "Ένα Product Image έχει διαγραφτεί με αναγνωριστικό {{ param }}",
+      "delete": {
+        "question": "Είστε βέβαιοι όταν θέλετε να διαγράψετε το ακόλουθο Product Image {{ id }};"
+      },
+      "detail": {
+        "title": "Product Image"
+      },
+      "id": "ID",
+      "imageUrl": "Image Url",
+      "displayOrder": "Display Order",
+      "product": "Product"
+    }
+  }
+}

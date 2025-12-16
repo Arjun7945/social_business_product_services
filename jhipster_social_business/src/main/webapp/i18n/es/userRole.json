@@ -1,0 +1,13 @@
+{
+  "whatsappProductServiceApp": {
+    "UserRole": {
+      "null": "",
+      "CUSTOMER": "CUSTOMER",
+      "EXECUTIVE": "EXECUTIVE",
+      "DELIVERY_PERSON": "DELIVERY_PERSON",
+      "ASSISTANT_ADMIN": "ASSISTANT_ADMIN",
+      "ADMIN": "ADMIN",
+      "DEVELOPER": "DEVELOPER"
+    }
+  }
+}

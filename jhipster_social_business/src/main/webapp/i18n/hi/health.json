@@ -1,0 +1,33 @@
+{
+  "health": {
+    "title": "स्वास्थ्य जाँच",
+    "refresh.button": "रिफ्रेश करें",
+    "stacktrace": "Stacktrace",
+    "details": {
+      "details": "विवरण",
+      "properties": "गुण",
+      "name": "नाम",
+      "value": "मान",
+      "error": "त्रुटि"
+    },
+    "indicator": {
+      "hazelcast": "Hazelcast",
+      "diskSpace": "डिस्क में जग़ह",
+      "mail": "ई-मेल",
+      "livenessState": "Liveness state",
+      "readinessState": "Readiness state",
+      "ping": "Application",
+      "db": "Database"
+    },
+    "table": {
+      "service": "सेवा का नाम",
+      "status": "स्थिति"
+    },
+    "status": {
+      "UNKNOWN": "अज्ञात स्थिति",
+      "UP": "ऊपर",
+      "OUT_OF_SERVICE": "OUT_OF_SERVICE",
+      "DOWN": "नीचे"
+    }
+  }
+}

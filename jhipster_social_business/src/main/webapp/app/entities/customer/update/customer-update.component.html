@@ -1,0 +1,220 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-customer-heading"
+        data-cy="CustomerCreateUpdateHeading"
+        jhiTranslate="whatsappProductServiceApp.customer.home.createOrEditLabel"
+      >
+        Create or edit a Customer
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="whatsappProductServiceApp.customer.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let waPhoneNumberRef = editForm.get('waPhoneNumber')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_waPhoneNumber" jhiTranslate="whatsappProductServiceApp.customer.waPhoneNumber"
+            >Wa Phone Number</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="waPhoneNumber"
+            id="field_waPhoneNumber"
+            data-cy="waPhoneNumber"
+            formControlName="waPhoneNumber"
+          />
+          @if (waPhoneNumberRef.invalid && (waPhoneNumberRef.dirty || waPhoneNumberRef.touched)) {
+            <div>
+              @if (editForm.get('waPhoneNumber')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_name" jhiTranslate="whatsappProductServiceApp.customer.name">Name</label>
+          <input type="text" class="form-control" name="name" id="field_name" data-cy="name" formControlName="name" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_phoneNumber" jhiTranslate="whatsappProductServiceApp.customer.phoneNumber"
+            >Phone Number</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="phoneNumber"
+            id="field_phoneNumber"
+            data-cy="phoneNumber"
+            formControlName="phoneNumber"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_locationLat" jhiTranslate="whatsappProductServiceApp.customer.locationLat"
+            >Location Lat</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="locationLat"
+            id="field_locationLat"
+            data-cy="locationLat"
+            formControlName="locationLat"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_locationLon" jhiTranslate="whatsappProductServiceApp.customer.locationLon"
+            >Location Lon</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="locationLon"
+            id="field_locationLon"
+            data-cy="locationLon"
+            formControlName="locationLon"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_address" jhiTranslate="whatsappProductServiceApp.customer.address">Address</label>
+          <input type="text" class="form-control" name="address" id="field_address" data-cy="address" formControlName="address" />
+        </div>
+
+        <div class="mb-3">
+          <label
+            class="form-label"
+            for="field_distanceFromBusinessKm"
+            jhiTranslate="whatsappProductServiceApp.customer.distanceFromBusinessKm"
+            >Distance From Business Km</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="distanceFromBusinessKm"
+            id="field_distanceFromBusinessKm"
+            data-cy="distanceFromBusinessKm"
+            formControlName="distanceFromBusinessKm"
+          />
+        </div>
+
+        @let isPincodeValidRef = editForm.get('isPincodeValid')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_isPincodeValid" jhiTranslate="whatsappProductServiceApp.customer.isPincodeValid"
+            >Is Pincode Valid</label
+          >
+          <input
+            type="checkbox"
+            class="form-check"
+            name="isPincodeValid"
+            id="field_isPincodeValid"
+            data-cy="isPincodeValid"
+            formControlName="isPincodeValid"
+          />
+          @if (isPincodeValidRef.invalid && (isPincodeValidRef.dirty || isPincodeValidRef.touched)) {
+            <div>
+              @if (editForm.get('isPincodeValid')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let roleRef = editForm.get('role')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_role" jhiTranslate="whatsappProductServiceApp.customer.role">Role</label>
+          <select class="form-control" name="role" formControlName="role" id="field_role" data-cy="role">
+            <option [ngValue]="null">{{ 'whatsappProductServiceApp.UserRole.null' | translate }}</option>
+            @for (userRole of userRoleValues; track $index) {
+              <option [value]="userRole">{{ 'whatsappProductServiceApp.UserRole.' + userRole | translate }}</option>
+            }
+          </select>
+          @if (roleRef.invalid && (roleRef.dirty || roleRef.touched)) {
+            <div>
+              @if (editForm.get('role')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_joinedAt" jhiTranslate="whatsappProductServiceApp.customer.joinedAt">Joined At</label>
+          <div class="d-flex">
+            <input
+              id="field_joinedAt"
+              data-cy="joinedAt"
+              type="datetime-local"
+              class="form-control"
+              name="joinedAt"
+              formControlName="joinedAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_lastInteractionAt" jhiTranslate="whatsappProductServiceApp.customer.lastInteractionAt"
+            >Last Interaction At</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_lastInteractionAt"
+              data-cy="lastInteractionAt"
+              type="datetime-local"
+              class="form-control"
+              name="lastInteractionAt"
+              formControlName="lastInteractionAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_addedBy" jhiTranslate="whatsappProductServiceApp.customer.addedBy">Added By</label>
+          <select
+            class="form-control"
+            id="field_addedBy"
+            data-cy="addedBy"
+            name="addedBy"
+            formControlName="addedBy"
+            [compareWith]="compareTeamMember"
+          >
+            <option [ngValue]="null"></option>
+            @for (teamMemberOption of teamMembersSharedCollection; track $index) {
+              <option [ngValue]="teamMemberOption">{{ teamMemberOption.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

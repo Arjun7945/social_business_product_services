@@ -1,0 +1,33 @@
+{
+  "whatsappProductServiceApp": {
+    "fishProduct": {
+      "home": {
+        "title": "FishProducts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नया Fish Product बनाएँ",
+        "createOrEditLabel": "Fish Product बनाएँ या संपादित करें",
+        "notFound": "No Fish Products found"
+      },
+      "created": "एक नया Fish Product [identifier: {{ param }}] तैयार है",
+      "updated": "एक Fish Product [identifier: {{ param }}] का अद्यतन हुआ है",
+      "deleted": "Fish Product [identifier: {{ param }}] हटा दिया है",
+      "delete": {
+        "question": "Fish Product [id: {{ id }}] हटाने की पुष्टि करें"
+      },
+      "detail": {
+        "title": "Fish Product"
+      },
+      "id": "ID",
+      "name": "Name",
+      "pricePerKg": "Price Per Kg",
+      "imageUrl": "Image Url",
+      "description": "Description",
+      "isAvailable": "Is Available",
+      "createdAt": "Created At",
+      "images": "Images",
+      "help": {
+        "description": "Increased length for SEO descriptions"
+      }
+    }
+  }
+}

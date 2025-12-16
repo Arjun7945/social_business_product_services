@@ -1,0 +1,30 @@
+{
+  "whatsappProductServiceApp": {
+    "orderItem": {
+      "home": {
+        "title": "Order Items",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Order Item جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Order Item",
+        "notFound": "لم يتم العثور على Order Items"
+      },
+      "created": "Order Item جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Order Item تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Order Item تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Order Item {{ id }}؟"
+      },
+      "detail": {
+        "title": "Order Item"
+      },
+      "id": "ID",
+      "quantityKg": "Quantity Kg",
+      "priceAtOrder": "Price At Order",
+      "product": "Product",
+      "order": "Order",
+      "help": {
+        "quantityKg": "Quantity remains Double as weight can be fractional"
+      }
+    }
+  }
+}

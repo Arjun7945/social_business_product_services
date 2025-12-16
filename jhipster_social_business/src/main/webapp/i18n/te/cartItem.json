@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceApp": {
+    "cartItem": {
+      "home": {
+        "title": "Cart Items",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "కొత్త Cart Item  సృష్టించండి",
+        "createOrEditLabel": "Cart Item సృష్టించండి లేదా సవరించండి",
+        "notFound": "No Cart Items found"
+      },
+      "created": "{{ param }} ఐడీ తో ఒక కొత్త Cart Item సృష్టించబడినది",
+      "updated": "{{ param }} ఐడీ తో ఒక కొత్త Cart Item సవరించబడినది",
+      "deleted": "{{ param }} ఐడీ తో ఒక కొత్త Cart Item తొలగించబడినది",
+      "delete": {
+        "question": "మీరు Cart Item {{ id }} ఖచ్చితంగా తొలగించాలనుకుంటున్నారా?"
+      },
+      "detail": {
+        "title": "Cart Item"
+      },
+      "id": "ID",
+      "quantityKg": "Quantity Kg",
+      "addedAt": "Added At",
+      "product": "Product",
+      "cart": "Cart"
+    }
+  }
+}

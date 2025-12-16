@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceApp": {
+    "customerOrder": {
+      "home": {
+        "title": "Customer Orders",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Δημιουργήστε ένα νέο Customer Order",
+        "createOrEditLabel": "Δημιουργήστε η επεξεργαστείτε ένα Customer Order",
+        "notFound": "No Customer Orders found"
+      },
+      "created": "Ένα νέο Customer Order έχει δημιουργηθεί με αναγνωριστικό {{ param }}",
+      "updated": "Ένα Customer Order έχει ενημερωθεί με αναγνωριστικό {{ param }}",
+      "deleted": "Ένα Customer Order έχει διαγραφτεί με αναγνωριστικό {{ param }}",
+      "delete": {
+        "question": "Είστε βέβαιοι όταν θέλετε να διαγράψετε το ακόλουθο Customer Order {{ id }};"
+      },
+      "detail": {
+        "title": "Customer Order"
+      },
+      "id": "ID",
+      "orderTime": "Order Time",
+      "totalAmount": "Total Amount",
+      "status": "Status",
+      "paymentMethod": "Payment Method",
+      "confirmedAt": "Confirmed At",
+      "items": "Items",
+      "deliveryPerson": "Delivery Person",
+      "customer": "Customer"
+    }
+  }
+}

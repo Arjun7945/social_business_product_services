@@ -1,0 +1,11 @@
+{
+  "whatsappProductServiceApp": {
+    "OrderStatus": {
+      "null": "",
+      "PENDING": "PENDING",
+      "CONFIRMED": "CONFIRMED",
+      "DELIVERED": "DELIVERED",
+      "CANCELLED": "CANCELLED"
+    }
+  }
+}

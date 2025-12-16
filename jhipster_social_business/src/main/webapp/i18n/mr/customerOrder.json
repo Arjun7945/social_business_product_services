@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceApp": {
+    "customerOrder": {
+      "home": {
+        "title": "Customer Orders",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नवीन Customer Order तयार करा",
+        "createOrEditLabel": "Customer Order तयार किंवा संपादित करा",
+        "notFound": "No Customer Orders found"
+      },
+      "created": "Customer Order [identifier: {{ param }}] तयार आहे",
+      "updated": "Customer Order [identifier: {{ param }}] सुधारित केले आहे",
+      "deleted": "Customer Order [identifier: {{ param }}] हटविले आहे",
+      "delete": {
+        "question": "Customer Order [id: {{ id }}] काढून टाकण्याबाबत पुष्टी?"
+      },
+      "detail": {
+        "title": "Customer Order"
+      },
+      "id": "ID",
+      "orderTime": "Order Time",
+      "totalAmount": "Total Amount",
+      "status": "Status",
+      "paymentMethod": "Payment Method",
+      "confirmedAt": "Confirmed At",
+      "items": "Items",
+      "deliveryPerson": "Delivery Person",
+      "customer": "Customer"
+    }
+  }
+}

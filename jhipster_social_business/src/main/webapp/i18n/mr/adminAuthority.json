@@ -1,0 +1,23 @@
+{
+  "whatsappProductServiceApp": {
+    "adminAuthority": {
+      "home": {
+        "title": "Authorities",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नवीन Authority तयार करा",
+        "createOrEditLabel": "Authority तयार किंवा संपादित करा",
+        "notFound": "No Authorities found"
+      },
+      "created": "Authority [identifier: {{ param }}] तयार आहे",
+      "updated": "Authority [identifier: {{ param }}] सुधारित केले आहे",
+      "deleted": "Authority [identifier: {{ param }}] हटविले आहे",
+      "delete": {
+        "question": "Authority [id: {{ id }}] काढून टाकण्याबाबत पुष्टी?"
+      },
+      "detail": {
+        "title": "Authority"
+      },
+      "name": "Name"
+    }
+  }
+}

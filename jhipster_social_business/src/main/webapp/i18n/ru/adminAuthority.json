@@ -1,0 +1,23 @@
+{
+  "whatsappProductServiceApp": {
+    "adminAuthority": {
+      "home": {
+        "title": "Authorities",
+        "refreshListLabel": "Обновить список",
+        "createLabel": "Создать новый Authority",
+        "createOrEditLabel": "Создать или отредактировать Authority",
+        "notFound": "Authorities не найдено"
+      },
+      "created": "Новый Authority создан с идентификатором {{ param }}",
+      "updated": "Authority обновлен с идентификатором {{ param }}",
+      "deleted": "Authority удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Authority {{ id }}?"
+      },
+      "detail": {
+        "title": "Authority"
+      },
+      "name": "Name"
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "annotations": {
+    "changelogDate": "20251215140330"
+  },
+  "applications": ["whatsappProductService"],
+  "documentation": "Internal Team Members (Admins, Executives, Delivery).\\nRefactored: Removed all temp_ fields.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "waPhoneNumber",
+      "fieldType": "String",
+      "fieldValidateRules": ["unique"]
+    },
+    {
+      "fieldName": "phoneNumber",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "role",
+      "fieldType": "UserRole",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "CUSTOMER,EXECUTIVE,DELIVERY_PERSON,ASSISTANT_ADMIN,ADMIN,DEVELOPER"
+    },
+    {
+      "fieldName": "isActive",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "TeamMember",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

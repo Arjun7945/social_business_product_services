@@ -1,0 +1,33 @@
+{
+  "whatsappProductServiceApp": {
+    "fishProduct": {
+      "home": {
+        "title": "Fish Products",
+        "refreshListLabel": "Refrescar lista",
+        "createLabel": "Crear nuevo Fish Product",
+        "createOrEditLabel": "Crear o editar Fish Product",
+        "notFound": "Ningún Fish Products encontrado"
+      },
+      "created": "Un nuevo Fish Product ha sido creado con el identificador {{ param }}",
+      "updated": "Un Fish Product ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Fish Product ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Fish Product {{ id }}?"
+      },
+      "detail": {
+        "title": "Fish Product"
+      },
+      "id": "ID",
+      "name": "Name",
+      "pricePerKg": "Price Per Kg",
+      "imageUrl": "Image Url",
+      "description": "Description",
+      "isAvailable": "Is Available",
+      "createdAt": "Created At",
+      "images": "Images",
+      "help": {
+        "description": "Increased length for SEO descriptions"
+      }
+    }
+  }
+}

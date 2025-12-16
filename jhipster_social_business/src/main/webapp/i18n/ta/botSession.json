@@ -1,0 +1,32 @@
+{
+  "whatsappProductServiceApp": {
+    "botSession": {
+      "home": {
+        "title": "Bot Sessions",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Bot Session-ஐ உருவாக்கு",
+        "createOrEditLabel": "Bot Session -ஐ மாற்று (அ) உருவாக்கு",
+        "notFound": "No Bot Sessions found"
+      },
+      "created": "Bot Session புதிதாக உருவாக்கப்பட்டது, அடையாளம் {{ param }}",
+      "updated": "Bot Session மாற்றப்பட்டது, அடையாளம்  {{ param }}",
+      "deleted": "A Bot Session நீக்கப்பட்டது, அடையாளம {{ param }}",
+      "delete": {
+        "question": "நீக்குவதற்கு உறுதி செய் Bot Session {{ id }}?"
+      },
+      "detail": {
+        "title": "Bot Session"
+      },
+      "id": "ID",
+      "waPhoneNumber": "Wa Phone Number",
+      "currentState": "Current State",
+      "sessionData": "Session Data",
+      "lastActiveAt": "Last Active At",
+      "help": {
+        "waPhoneNumber": "Key to link to Customer or TeamMember",
+        "currentState": "Checkpoints the user&#39;s flow (e.g., AWAITING_NAME)",
+        "sessionData": "JSON blob to store temp variables like { &#34;tempProductId&#34;: 123, &#34;tempName&#34;: &#34;John&#34; }"
+      }
+    }
+  }
+}

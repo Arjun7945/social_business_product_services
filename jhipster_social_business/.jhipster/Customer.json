@@ -1,0 +1,89 @@
+{
+  "annotations": {
+    "changelogDate": "20251215140323"
+  },
+  "applications": ["whatsappProductService"],
+  "documentation": "Customer entity representing the end-user.\\nStores WhatsApp details, location, and flow state.\\nRefactored: Removed temp fields, added address.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "waPhoneNumber",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "phoneNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "locationLat",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "locationLon",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "address",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "distanceFromBusinessKm",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "isPincodeValid",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "role",
+      "fieldType": "UserRole",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "CUSTOMER,EXECUTIVE,DELIVERY_PERSON,ASSISTANT_ADMIN,ADMIN,DEVELOPER"
+    },
+    {
+      "fieldName": "joinedAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "lastInteractionAt",
+      "fieldType": "Instant"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "Customer",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "documentation": "One Customer has many Orders",
+      "otherEntityName": "customerOrder",
+      "otherEntityRelationshipName": "customer",
+      "relationshipName": "orders",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "documentation": "One Customer has one Shopping Cart",
+      "otherEntityName": "shoppingCart",
+      "otherEntityRelationshipName": "customer",
+      "relationshipName": "cart",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "documentation": "TeamMember (Executive) who added the Customer",
+      "otherEntityField": "name",
+      "otherEntityName": "teamMember",
+      "relationshipName": "addedBy",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

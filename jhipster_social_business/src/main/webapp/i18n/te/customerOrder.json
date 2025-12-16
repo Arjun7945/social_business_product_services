@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceApp": {
+    "customerOrder": {
+      "home": {
+        "title": "Customer Orders",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "కొత్త Customer Order  సృష్టించండి",
+        "createOrEditLabel": "Customer Order సృష్టించండి లేదా సవరించండి",
+        "notFound": "No Customer Orders found"
+      },
+      "created": "{{ param }} ఐడీ తో ఒక కొత్త Customer Order సృష్టించబడినది",
+      "updated": "{{ param }} ఐడీ తో ఒక కొత్త Customer Order సవరించబడినది",
+      "deleted": "{{ param }} ఐడీ తో ఒక కొత్త Customer Order తొలగించబడినది",
+      "delete": {
+        "question": "మీరు Customer Order {{ id }} ఖచ్చితంగా తొలగించాలనుకుంటున్నారా?"
+      },
+      "detail": {
+        "title": "Customer Order"
+      },
+      "id": "ID",
+      "orderTime": "Order Time",
+      "totalAmount": "Total Amount",
+      "status": "Status",
+      "paymentMethod": "Payment Method",
+      "confirmedAt": "Confirmed At",
+      "items": "Items",
+      "deliveryPerson": "Delivery Person",
+      "customer": "Customer"
+    }
+  }
+}

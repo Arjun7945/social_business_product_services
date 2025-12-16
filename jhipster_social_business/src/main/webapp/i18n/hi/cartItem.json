@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceApp": {
+    "cartItem": {
+      "home": {
+        "title": "CartItems",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नया Cart Item बनाएँ",
+        "createOrEditLabel": "Cart Item बनाएँ या संपादित करें",
+        "notFound": "No Cart Items found"
+      },
+      "created": "एक नया Cart Item [identifier: {{ param }}] तैयार है",
+      "updated": "एक Cart Item [identifier: {{ param }}] का अद्यतन हुआ है",
+      "deleted": "Cart Item [identifier: {{ param }}] हटा दिया है",
+      "delete": {
+        "question": "Cart Item [id: {{ id }}] हटाने की पुष्टि करें"
+      },
+      "detail": {
+        "title": "Cart Item"
+      },
+      "id": "ID",
+      "quantityKg": "Quantity Kg",
+      "addedAt": "Added At",
+      "product": "Product",
+      "cart": "Cart"
+    }
+  }
+}

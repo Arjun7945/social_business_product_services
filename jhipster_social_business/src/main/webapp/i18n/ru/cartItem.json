@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceApp": {
+    "cartItem": {
+      "home": {
+        "title": "Cart Items",
+        "refreshListLabel": "Обновить список",
+        "createLabel": "Создать новый Cart Item",
+        "createOrEditLabel": "Создать или отредактировать Cart Item",
+        "notFound": "Cart Items не найдено"
+      },
+      "created": "Новый Cart Item создан с идентификатором {{ param }}",
+      "updated": "Cart Item обновлен с идентификатором {{ param }}",
+      "deleted": "Cart Item удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Cart Item {{ id }}?"
+      },
+      "detail": {
+        "title": "Cart Item"
+      },
+      "id": "ID",
+      "quantityKg": "Quantity Kg",
+      "addedAt": "Added At",
+      "product": "Product",
+      "cart": "Cart"
+    }
+  }
+}

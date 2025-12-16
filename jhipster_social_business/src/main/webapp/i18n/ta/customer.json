@@ -1,0 +1,37 @@
+{
+  "whatsappProductServiceApp": {
+    "customer": {
+      "home": {
+        "title": "Customers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Customer-ஐ உருவாக்கு",
+        "createOrEditLabel": "Customer -ஐ மாற்று (அ) உருவாக்கு",
+        "notFound": "No Customers found"
+      },
+      "created": "Customer புதிதாக உருவாக்கப்பட்டது, அடையாளம் {{ param }}",
+      "updated": "Customer மாற்றப்பட்டது, அடையாளம்  {{ param }}",
+      "deleted": "A Customer நீக்கப்பட்டது, அடையாளம {{ param }}",
+      "delete": {
+        "question": "நீக்குவதற்கு உறுதி செய் Customer {{ id }}?"
+      },
+      "detail": {
+        "title": "Customer"
+      },
+      "id": "ID",
+      "waPhoneNumber": "Wa Phone Number",
+      "name": "Name",
+      "phoneNumber": "Phone Number",
+      "locationLat": "Location Lat",
+      "locationLon": "Location Lon",
+      "address": "Address",
+      "distanceFromBusinessKm": "Distance From Business Km",
+      "isPincodeValid": "Is Pincode Valid",
+      "role": "Role",
+      "joinedAt": "Joined At",
+      "lastInteractionAt": "Last Interaction At",
+      "orders": "Orders",
+      "cart": "Cart",
+      "addedBy": "Added By"
+    }
+  }
+}

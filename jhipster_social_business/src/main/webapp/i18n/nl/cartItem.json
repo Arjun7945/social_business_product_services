@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceApp": {
+    "cartItem": {
+      "home": {
+        "title": "Cart Items",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Maak een nieuwe Cart Item",
+        "createOrEditLabel": "Maak of wijzig een Cart Item",
+        "notFound": "No Cart Items found"
+      },
+      "created": "A new Cart Item is created with identifier {{ param }}",
+      "updated": "A Cart Item is updated with identifier {{ param }}",
+      "deleted": "A Cart Item is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Bent u zeker dat u Cart Item {{ id }} wilt verwijderen?"
+      },
+      "detail": {
+        "title": "Cart Item"
+      },
+      "id": "ID",
+      "quantityKg": "Quantity Kg",
+      "addedAt": "Added At",
+      "product": "Product",
+      "cart": "Cart"
+    }
+  }
+}

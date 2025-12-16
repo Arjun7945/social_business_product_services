@@ -1,0 +1,133 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-cart-item-heading"
+        data-cy="CartItemCreateUpdateHeading"
+        jhiTranslate="whatsappProductServiceApp.cartItem.home.createOrEditLabel"
+      >
+        Create or edit a Cart Item
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="whatsappProductServiceApp.cartItem.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let quantityKgRef = editForm.get('quantityKg')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_quantityKg" jhiTranslate="whatsappProductServiceApp.cartItem.quantityKg">Quantity Kg</label>
+          <input
+            type="number"
+            class="form-control"
+            name="quantityKg"
+            id="field_quantityKg"
+            data-cy="quantityKg"
+            formControlName="quantityKg"
+          />
+          @if (quantityKgRef.invalid && (quantityKgRef.dirty || quantityKgRef.touched)) {
+            <div>
+              @if (editForm.get('quantityKg')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('quantityKg')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_addedAt" jhiTranslate="whatsappProductServiceApp.cartItem.addedAt">Added At</label>
+          <div class="d-flex">
+            <input
+              id="field_addedAt"
+              data-cy="addedAt"
+              type="datetime-local"
+              class="form-control"
+              name="addedAt"
+              formControlName="addedAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_product" jhiTranslate="whatsappProductServiceApp.cartItem.product">Product</label>
+          <select
+            class="form-control"
+            id="field_product"
+            data-cy="product"
+            name="product"
+            formControlName="product"
+            [compareWith]="compareFishProduct"
+          >
+            @if (!editForm.get('product')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (fishProductOption of fishProductsSharedCollection; track $index) {
+              <option [ngValue]="fishProductOption">{{ fishProductOption.name }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['product'])!.invalid && (editForm.get(['product'])!.dirty || editForm.get(['product'])!.touched)) {
+          <div>
+            @if (editForm.get(['product'])?.errors?.required) {
+              <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+            }
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_cart" jhiTranslate="whatsappProductServiceApp.cartItem.cart">Cart</label>
+          <select
+            class="form-control"
+            id="field_cart"
+            data-cy="cart"
+            name="cart"
+            formControlName="cart"
+            [compareWith]="compareShoppingCart"
+          >
+            @if (editForm.get(['cart'])!.value == null) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (shoppingCartOption of shoppingCartsSharedCollection; track $index) {
+              <option [ngValue]="shoppingCartOption">{{ shoppingCartOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['cart'])!.invalid && (editForm.get(['cart'])!.dirty || editForm.get(['cart'])!.touched)) {
+          <div>
+            @if (editForm.get(['cart'])?.errors?.required) {
+              <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

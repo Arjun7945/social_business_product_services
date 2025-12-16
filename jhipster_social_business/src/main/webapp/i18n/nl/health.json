@@ -1,0 +1,33 @@
+{
+  "health": {
+    "title": "Status controle",
+    "refresh.button": "Ververs",
+    "stacktrace": "Stacktrace",
+    "details": {
+      "details": "Details",
+      "properties": "Eigenschappen",
+      "name": "Naam",
+      "value": "Waarde",
+      "error": "Fout"
+    },
+    "indicator": {
+      "hazelcast": "Hazelcast",
+      "diskSpace": "Schijfruimte",
+      "mail": "Email",
+      "livenessState": "Liveness state",
+      "readinessState": "Readiness state",
+      "ping": "Application",
+      "db": "Databank"
+    },
+    "table": {
+      "service": "Dienstnaam",
+      "status": "Status"
+    },
+    "status": {
+      "UNKNOWN": "UNKNOWN",
+      "UP": "UP",
+      "OUT_OF_SERVICE": "OUT_OF_SERVICE",
+      "DOWN": "DOWN"
+    }
+  }
+}

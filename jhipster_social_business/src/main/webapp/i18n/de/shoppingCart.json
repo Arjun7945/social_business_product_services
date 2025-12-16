@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceApp": {
+    "shoppingCart": {
+      "home": {
+        "title": "Shopping Carts",
+        "refreshListLabel": "Liste aktualisieren",
+        "createLabel": "Shopping Cart erstellen",
+        "createOrEditLabel": "Shopping Cart erstellen oder bearbeiten",
+        "notFound": "Keine Shopping Carts gefunden"
+      },
+      "created": "Shopping Cart erstellt mit ID {{ param }}",
+      "updated": "Shopping Cart aktualisiert mit ID {{ param }}",
+      "deleted": "Shopping Cart gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Shopping Cart {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Shopping Cart"
+      },
+      "id": "ID",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "items": "Items",
+      "customer": "Customer"
+    }
+  }
+}

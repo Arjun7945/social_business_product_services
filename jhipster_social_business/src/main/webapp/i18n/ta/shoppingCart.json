@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceApp": {
+    "shoppingCart": {
+      "home": {
+        "title": "Shopping Carts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Shopping Cart-ஐ உருவாக்கு",
+        "createOrEditLabel": "Shopping Cart -ஐ மாற்று (அ) உருவாக்கு",
+        "notFound": "No Shopping Carts found"
+      },
+      "created": "Shopping Cart புதிதாக உருவாக்கப்பட்டது, அடையாளம் {{ param }}",
+      "updated": "Shopping Cart மாற்றப்பட்டது, அடையாளம்  {{ param }}",
+      "deleted": "A Shopping Cart நீக்கப்பட்டது, அடையாளம {{ param }}",
+      "delete": {
+        "question": "நீக்குவதற்கு உறுதி செய் Shopping Cart {{ id }}?"
+      },
+      "detail": {
+        "title": "Shopping Cart"
+      },
+      "id": "ID",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "items": "Items",
+      "customer": "Customer"
+    }
+  }
+}

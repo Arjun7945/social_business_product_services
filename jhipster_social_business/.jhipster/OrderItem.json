@@ -1,0 +1,48 @@
+{
+  "annotations": {
+    "changelogDate": "20251215140327"
+  },
+  "applications": ["whatsappProductService"],
+  "documentation": "Individual items within an order.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "documentation": "Quantity remains Double as weight can be fractional",
+      "fieldName": "quantityKg",
+      "fieldType": "Double",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "0.1"
+    },
+    {
+      "fieldName": "priceAtOrder",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "0"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "OrderItem",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "documentation": "OrderItem links to a Product (Snapshot needed? usually yes but simple link here)",
+      "otherEntityField": "name",
+      "otherEntityName": "fishProduct",
+      "relationshipName": "product",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "customerOrder",
+      "otherEntityRelationshipName": "items",
+      "relationshipName": "order",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

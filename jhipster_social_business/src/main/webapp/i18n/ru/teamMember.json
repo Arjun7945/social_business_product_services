@@ -1,0 +1,28 @@
+{
+  "whatsappProductServiceApp": {
+    "teamMember": {
+      "home": {
+        "title": "Team Members",
+        "refreshListLabel": "Обновить список",
+        "createLabel": "Создать новый Team Member",
+        "createOrEditLabel": "Создать или отредактировать Team Member",
+        "notFound": "Team Members не найдено"
+      },
+      "created": "Новый Team Member создан с идентификатором {{ param }}",
+      "updated": "Team Member обновлен с идентификатором {{ param }}",
+      "deleted": "Team Member удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Team Member {{ id }}?"
+      },
+      "detail": {
+        "title": "Team Member"
+      },
+      "id": "ID",
+      "name": "Name",
+      "waPhoneNumber": "Wa Phone Number",
+      "phoneNumber": "Phone Number",
+      "role": "Role",
+      "isActive": "Is Active"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "whatsappProductServiceApp": {
+    "adminAuthority": {
+      "home": {
+        "title": "Authorities",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Δημιουργήστε ένα νέο Authority",
+        "createOrEditLabel": "Δημιουργήστε η επεξεργαστείτε ένα Authority",
+        "notFound": "No Authorities found"
+      },
+      "created": "Ένα νέο Authority έχει δημιουργηθεί με αναγνωριστικό {{ param }}",
+      "updated": "Ένα Authority έχει ενημερωθεί με αναγνωριστικό {{ param }}",
+      "deleted": "Ένα Authority έχει διαγραφτεί με αναγνωριστικό {{ param }}",
+      "delete": {
+        "question": "Είστε βέβαιοι όταν θέλετε να διαγράψετε το ακόλουθο Authority {{ id }};"
+      },
+      "detail": {
+        "title": "Authority"
+      },
+      "name": "Name"
+    }
+  }
+}

@@ -1,0 +1,162 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-order-item-heading"
+        data-cy="OrderItemCreateUpdateHeading"
+        jhiTranslate="whatsappProductServiceApp.orderItem.home.createOrEditLabel"
+      >
+        Create or edit a Order Item
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="whatsappProductServiceApp.orderItem.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let quantityKgRef = editForm.get('quantityKg')!;
+        <div class="mb-3">
+          <label
+            class="form-label"
+            for="field_quantityKg"
+            [ngbTooltip]="'whatsappProductServiceApp.orderItem.help.quantityKg' | translate"
+            jhiTranslate="whatsappProductServiceApp.orderItem.quantityKg"
+            >Quantity Kg</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="quantityKg"
+            id="field_quantityKg"
+            data-cy="quantityKg"
+            formControlName="quantityKg"
+          />
+          @if (quantityKgRef.invalid && (quantityKgRef.dirty || quantityKgRef.touched)) {
+            <div>
+              @if (editForm.get('quantityKg')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              @if (editForm.get('quantityKg')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >This field should be at least 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('quantityKg')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let priceAtOrderRef = editForm.get('priceAtOrder')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_priceAtOrder" jhiTranslate="whatsappProductServiceApp.orderItem.priceAtOrder"
+            >Price At Order</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="priceAtOrder"
+            id="field_priceAtOrder"
+            data-cy="priceAtOrder"
+            formControlName="priceAtOrder"
+          />
+          @if (priceAtOrderRef.invalid && (priceAtOrderRef.dirty || priceAtOrderRef.touched)) {
+            <div>
+              @if (editForm.get('priceAtOrder')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              @if (editForm.get('priceAtOrder')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >This field should be at least 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('priceAtOrder')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_product" jhiTranslate="whatsappProductServiceApp.orderItem.product">Product</label>
+          <select
+            class="form-control"
+            id="field_product"
+            data-cy="product"
+            name="product"
+            formControlName="product"
+            [compareWith]="compareFishProduct"
+          >
+            @if (!editForm.get('product')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (fishProductOption of fishProductsSharedCollection; track $index) {
+              <option [ngValue]="fishProductOption">{{ fishProductOption.name }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['product'])!.invalid && (editForm.get(['product'])!.dirty || editForm.get(['product'])!.touched)) {
+          <div>
+            @if (editForm.get(['product'])?.errors?.required) {
+              <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+            }
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_order" jhiTranslate="whatsappProductServiceApp.orderItem.order">Order</label>
+          <select
+            class="form-control"
+            id="field_order"
+            data-cy="order"
+            name="order"
+            formControlName="order"
+            [compareWith]="compareCustomerOrder"
+          >
+            @if (editForm.get(['order'])!.value == null) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (customerOrderOption of customerOrdersSharedCollection; track $index) {
+              <option [ngValue]="customerOrderOption">{{ customerOrderOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['order'])!.invalid && (editForm.get(['order'])!.dirty || editForm.get(['order'])!.touched)) {
+          <div>
+            @if (editForm.get(['order'])?.errors?.required) {
+              <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

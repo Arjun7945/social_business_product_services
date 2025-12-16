@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceApp": {
+    "cartItem": {
+      "home": {
+        "title": "CartItems",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Cart Item",
+        "createOrEditLabel": "Créer ou éditer un Cart Item",
+        "notFound": "Aucun Cart Item trouvé"
+      },
+      "created": "Un nouveau Cart Item a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Cart Item avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Cart Item avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Cart Item {{ id }} ?"
+      },
+      "detail": {
+        "title": "Cart Item"
+      },
+      "id": "ID",
+      "quantityKg": "Quantity Kg",
+      "addedAt": "Added At",
+      "product": "Product",
+      "cart": "Cart"
+    }
+  }
+}

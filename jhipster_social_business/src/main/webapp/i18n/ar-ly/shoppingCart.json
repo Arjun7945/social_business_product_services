@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceApp": {
+    "shoppingCart": {
+      "home": {
+        "title": "Shopping Carts",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Shopping Cart جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Shopping Cart",
+        "notFound": "لم يتم العثور على Shopping Carts"
+      },
+      "created": "Shopping Cart جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Shopping Cart تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Shopping Cart تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Shopping Cart {{ id }}؟"
+      },
+      "detail": {
+        "title": "Shopping Cart"
+      },
+      "id": "ID",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "items": "Items",
+      "customer": "Customer"
+    }
+  }
+}

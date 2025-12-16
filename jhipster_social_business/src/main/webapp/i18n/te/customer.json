@@ -1,0 +1,37 @@
+{
+  "whatsappProductServiceApp": {
+    "customer": {
+      "home": {
+        "title": "Customers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "కొత్త Customer  సృష్టించండి",
+        "createOrEditLabel": "Customer సృష్టించండి లేదా సవరించండి",
+        "notFound": "No Customers found"
+      },
+      "created": "{{ param }} ఐడీ తో ఒక కొత్త Customer సృష్టించబడినది",
+      "updated": "{{ param }} ఐడీ తో ఒక కొత్త Customer సవరించబడినది",
+      "deleted": "{{ param }} ఐడీ తో ఒక కొత్త Customer తొలగించబడినది",
+      "delete": {
+        "question": "మీరు Customer {{ id }} ఖచ్చితంగా తొలగించాలనుకుంటున్నారా?"
+      },
+      "detail": {
+        "title": "Customer"
+      },
+      "id": "ID",
+      "waPhoneNumber": "Wa Phone Number",
+      "name": "Name",
+      "phoneNumber": "Phone Number",
+      "locationLat": "Location Lat",
+      "locationLon": "Location Lon",
+      "address": "Address",
+      "distanceFromBusinessKm": "Distance From Business Km",
+      "isPincodeValid": "Is Pincode Valid",
+      "role": "Role",
+      "joinedAt": "Joined At",
+      "lastInteractionAt": "Last Interaction At",
+      "orders": "Orders",
+      "cart": "Cart",
+      "addedBy": "Added By"
+    }
+  }
+}

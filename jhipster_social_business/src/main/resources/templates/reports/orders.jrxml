@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" 
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" 
+              name="OrdersReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e30822c3-7cc9-46c6-841f-27db5d042f27">
+    
+    <parameter name="ReportTitle" class="java.lang.String"/>
+    <parameter name="IssueTo" class="java.lang.String"/>
+    <parameter name="InvoiceNo" class="java.lang.String"/>
+    <parameter name="DateIssued" class="java.lang.String"/>
+    <parameter name="TotalPaid" class="java.math.BigDecimal"/>
+    <parameter name="TotalUnpaid" class="java.math.BigDecimal"/>
+    <parameter name="BrandLogo" class="java.io.InputStream"/>
+    <parameter name="FooterLogo" class="java.io.InputStream"/>
+    
+    <field name="id" class="java.lang.Long"/>
+    <field name="totalAmount" class="java.math.BigDecimal"/>
+    <field name="status" class="java.lang.Object"/>
+    <field name="customer.name" class="java.lang.String"/>
+    <field name="customer.phoneNumber" class="java.lang.String"/>
+    
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    
+    <title>
+        <band height="150">
+            <!-- Brand Logo (Top Left) -->
+            <image>
+                <reportElement x="0" y="0" width="100" height="50" uuid="a1b2c3d4-e5f6-7890-1234-567890abcdef"/>
+                <imageExpression><![CDATA[$P{BrandLogo}]]></imageExpression>
+            </image>
+            
+            <!-- Main Title Invoice style -->
+            <staticText>
+                <reportElement x="200" y="20" width="200" height="40" uuid="1a2b3c4d-5e6f-4a8b-9c0d-1e2f3a4b5c6d"/>
+                <textElement textAlignment="Center">
+                    <font size="32" isBold="true" fontName="SansSerif"/>
+                </textElement>
+                <text><![CDATA[Invoice]]></text>
+            </staticText>
+            
+            <!-- Header Fields Row -->
+            <!-- ISSUE TO -->
+            <staticText>
+                <reportElement x="10" y="80" width="100" height="15" uuid="2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"/>
+                <textElement><font size="10" isBold="true"/></textElement>
+                <text><![CDATA[ISSUE TO]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="10" y="95" width="150" height="20" uuid="3c4d5e6f-7a8b-4c9d-0e1f-2a3b4c5d6e7f"/>
+                <textFieldExpression><![CDATA[$P{IssueTo}]]></textFieldExpression>
+            </textField>
+            
+            <!-- INVOICE NO -->
+            <staticText>
+                <reportElement x="200" y="80" width="100" height="15" uuid="4d5e6f7a-8b9c-4d0e-1f2a-3b4c5d6e7f8a"/>
+                <textElement><font size="10" isBold="true"/></textElement>
+                <text><![CDATA[INVOICE NO.]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="200" y="95" width="150" height="20" uuid="5e6f7a8b-9c0d-4e1f-2a3b-4c5d6e7f8a9b"/>
+                <textFieldExpression><![CDATA[$P{InvoiceNo}]]></textFieldExpression>
+            </textField>
+            
+            <!-- DATE ISSUED -->
+            <staticText>
+                <reportElement x="400" y="80" width="100" height="15" uuid="6f7a8b9c-0d1e-4f2a-3b4c-5d6e7f8a9b0c"/>
+                <textElement><font size="10" isBold="true"/></textElement>
+                <text><![CDATA[DATE ISSUED]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="400" y="95" width="150" height="20" uuid="7a8b9c0d-1e2f-4a3b-4c5d-6e7f8a9b0c1d"/>
+                <textFieldExpression><![CDATA[$P{DateIssued}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    
+    <!-- Table Header (Black Background as per image) -->
+    <columnHeader>
+        <band height="30">
+            <rectangle>
+                 <reportElement x="0" y="0" width="555" height="30" backcolor="#000000" uuid="8b9c0d1e-2f3a-4b4c-5d6e-7f8a9b0c1d2e"/>
+            </rectangle>
+            
+            <staticText>
+                <reportElement x="10" y="5" width="200" height="20" forecolor="#FFFFFF" uuid="9c0d1e2f-3a4b-4c5d-6e7f-8a9b0c1d2e3f"/>
+                <textElement verticalAlignment="Middle"><font isBold="true"/></textElement>
+                <text><![CDATA[ITEM DESCRIPTION (Customer/Status)]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="250" y="5" width="100" height="20" forecolor="#FFFFFF" uuid="0d1e2f3a-4b5c-4d6e-7f8a-9b0c1d2e3f4a"/>
+                 <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true"/></textElement>
+                <text><![CDATA[ORDER ID]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="350" y="5" width="100" height="20" forecolor="#FFFFFF" uuid="1e2f3a4b-5c6d-4e7f-8a9b-0c1d2e3f4a5b"/>
+                 <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true"/></textElement>
+                <text><![CDATA[STATUS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="450" y="5" width="95" height="20" forecolor="#FFFFFF" uuid="2f3a4b5c-6d7e-4f8a-9b0c-1d2e3f4a5b6c"/>
+                 <textElement textAlignment="Right" verticalAlignment="Middle"><font isBold="true"/></textElement>
+                <text><![CDATA[TOTAL]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    
+    <detail>
+        <band height="40">
+            <!-- Alternating rows could be done with conditional style, keeping simple white for now -->
+            <textField>
+                <reportElement x="10" y="10" width="230" height="20" uuid="3a4b5c6d-7e8f-4a9b-0c1d-2e3f4a5b6c7d"/>
+                <textFieldExpression><![CDATA[$F{customer.name} + " (" + $F{customer.phoneNumber} + ")"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="250" y="10" width="100" height="20" uuid="4b5c6d7e-8f9a-4b0c-1d2e-3f4a5b6c7d8e"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="350" y="10" width="100" height="20" uuid="5c6d7e8f-9a0b-4c1d-2e3f-4a5b6c7d8e9f"/>
+                 <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA["" + $F{status}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="450" y="10" width="95" height="20" uuid="6d7e8f9a-0b1c-4d2e-3f4a-5b6c7d8e9f0a"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA[$F{totalAmount}]]></textFieldExpression>
+            </textField>
+            
+            <!-- Separator Line -->
+            <line>
+                <reportElement x="0" y="39" width="555" height="1" forecolor="#EEEEEE" uuid="7e8f9a0b-1c2d-4e3f-4a5b-6c7d8e9f0a1b"/>
+            </line>
+        </band>
+    </detail>
+    
+    <pageFooter>
+        <band height="80">
+            <!-- Footer Logo (Centered, above text) -->
+            <image hAlign="Center" vAlign="Middle">
+                <reportElement x="227" y="0" width="100" height="40" uuid="b2c3d4e5-f6a7-8901-2345-678901abcdef"/>
+                <imageExpression><![CDATA[$P{FooterLogo}]]></imageExpression>
+            </image>
+            
+            <textField>
+                 <reportElement x="0" y="45" width="555" height="30" forecolor="#9e9e9e" uuid="2d3e4f5a-6b7c-4d8e-9f0a-1b2c3d4e5f6b"/>
+                 <textElement textAlignment="Center" verticalAlignment="Middle">
+                     <font size="8"/>
+                 </textElement>
+                 <textFieldExpression><![CDATA["powered by LXI Technologies\nReport based on T & C\nAll rights reserved"]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+
+    <summary>
+        <band height="100">
+            <!-- Total Amount Paid -->
+            <staticText>
+                <reportElement x="300" y="20" width="150" height="20" uuid="8f9a0b1c-2d3e-4f4a-5b6c-7d8e9f0a1b2c"/>
+                <textElement textAlignment="Right"><font isBold="true"/></textElement>
+                <text><![CDATA[TOTAL AMOUNT PAID:]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="460" y="20" width="90" height="20" uuid="9a0b1c2d-3e4f-4a5b-6c7d-8e9f0a1b2c3d"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA[$P{TotalPaid}]]></textFieldExpression>
+            </textField>
+            
+            <!-- Total Unpaid Amount -->
+            <staticText>
+                <reportElement x="300" y="50" width="150" height="20" forecolor="#D32F2F" uuid="0b1c2d3e-4f5a-4b6c-7d8e-9f0a1b2c3d4e"/>
+                <textElement textAlignment="Right"><font isBold="true"/></textElement>
+                <text><![CDATA[TOTAL UNPAID AMOUNT:]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="460" y="50" width="90" height="20" forecolor="#D32F2F" uuid="1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA[$P{TotalUnpaid}]]></textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+</jasperReport>

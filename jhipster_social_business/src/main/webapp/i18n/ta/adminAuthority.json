@@ -1,0 +1,23 @@
+{
+  "whatsappProductServiceApp": {
+    "adminAuthority": {
+      "home": {
+        "title": "Authorities",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Authority-ஐ உருவாக்கு",
+        "createOrEditLabel": "Authority -ஐ மாற்று (அ) உருவாக்கு",
+        "notFound": "No Authorities found"
+      },
+      "created": "Authority புதிதாக உருவாக்கப்பட்டது, அடையாளம் {{ param }}",
+      "updated": "Authority மாற்றப்பட்டது, அடையாளம்  {{ param }}",
+      "deleted": "A Authority நீக்கப்பட்டது, அடையாளம {{ param }}",
+      "delete": {
+        "question": "நீக்குவதற்கு உறுதி செய் Authority {{ id }}?"
+      },
+      "detail": {
+        "title": "Authority"
+      },
+      "name": "Name"
+    }
+  }
+}

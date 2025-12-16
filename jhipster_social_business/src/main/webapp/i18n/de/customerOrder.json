@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceApp": {
+    "customerOrder": {
+      "home": {
+        "title": "Customer Orders",
+        "refreshListLabel": "Liste aktualisieren",
+        "createLabel": "Customer Order erstellen",
+        "createOrEditLabel": "Customer Order erstellen oder bearbeiten",
+        "notFound": "Keine Customer Orders gefunden"
+      },
+      "created": "Customer Order erstellt mit ID {{ param }}",
+      "updated": "Customer Order aktualisiert mit ID {{ param }}",
+      "deleted": "Customer Order gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Customer Order {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Customer Order"
+      },
+      "id": "ID",
+      "orderTime": "Order Time",
+      "totalAmount": "Total Amount",
+      "status": "Status",
+      "paymentMethod": "Payment Method",
+      "confirmedAt": "Confirmed At",
+      "items": "Items",
+      "deliveryPerson": "Delivery Person",
+      "customer": "Customer"
+    }
+  }
+}

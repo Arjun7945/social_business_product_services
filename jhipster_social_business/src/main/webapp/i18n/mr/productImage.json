@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceApp": {
+    "productImage": {
+      "home": {
+        "title": "Product Images",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नवीन Product Image तयार करा",
+        "createOrEditLabel": "Product Image तयार किंवा संपादित करा",
+        "notFound": "No Product Images found"
+      },
+      "created": "Product Image [identifier: {{ param }}] तयार आहे",
+      "updated": "Product Image [identifier: {{ param }}] सुधारित केले आहे",
+      "deleted": "Product Image [identifier: {{ param }}] हटविले आहे",
+      "delete": {
+        "question": "Product Image [id: {{ id }}] काढून टाकण्याबाबत पुष्टी?"
+      },
+      "detail": {
+        "title": "Product Image"
+      },
+      "id": "ID",
+      "imageUrl": "Image Url",
+      "displayOrder": "Display Order",
+      "product": "Product"
+    }
+  }
+}

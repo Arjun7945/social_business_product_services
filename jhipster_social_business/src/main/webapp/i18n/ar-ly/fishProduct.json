@@ -1,0 +1,33 @@
+{
+  "whatsappProductServiceApp": {
+    "fishProduct": {
+      "home": {
+        "title": "Fish Products",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Fish Product جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Fish Product",
+        "notFound": "لم يتم العثور على Fish Products"
+      },
+      "created": "Fish Product جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Fish Product تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Fish Product تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Fish Product {{ id }}؟"
+      },
+      "detail": {
+        "title": "Fish Product"
+      },
+      "id": "ID",
+      "name": "Name",
+      "pricePerKg": "Price Per Kg",
+      "imageUrl": "Image Url",
+      "description": "Description",
+      "isAvailable": "Is Available",
+      "createdAt": "Created At",
+      "images": "Images",
+      "help": {
+        "description": "Increased length for SEO descriptions"
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "annotations": {
+    "changelogDate": "20251215140329"
+  },
+  "applications": ["whatsappProductService"],
+  "documentation": "Items currently in the shopping cart.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "quantityKg",
+      "fieldType": "Double",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "addedAt",
+      "fieldType": "Instant"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "CartItem",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "documentation": "CartItem links to a Product",
+      "otherEntityField": "name",
+      "otherEntityName": "fishProduct",
+      "relationshipName": "product",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "shoppingCart",
+      "otherEntityRelationshipName": "items",
+      "relationshipName": "cart",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

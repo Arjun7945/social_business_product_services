@@ -1,0 +1,30 @@
+{
+  "whatsappProductServiceApp": {
+    "orderItem": {
+      "home": {
+        "title": "Order Items",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नवीन Order Item तयार करा",
+        "createOrEditLabel": "Order Item तयार किंवा संपादित करा",
+        "notFound": "No Order Items found"
+      },
+      "created": "Order Item [identifier: {{ param }}] तयार आहे",
+      "updated": "Order Item [identifier: {{ param }}] सुधारित केले आहे",
+      "deleted": "Order Item [identifier: {{ param }}] हटविले आहे",
+      "delete": {
+        "question": "Order Item [id: {{ id }}] काढून टाकण्याबाबत पुष्टी?"
+      },
+      "detail": {
+        "title": "Order Item"
+      },
+      "id": "ID",
+      "quantityKg": "Quantity Kg",
+      "priceAtOrder": "Price At Order",
+      "product": "Product",
+      "order": "Order",
+      "help": {
+        "quantityKg": "Quantity remains Double as weight can be fractional"
+      }
+    }
+  }
+}

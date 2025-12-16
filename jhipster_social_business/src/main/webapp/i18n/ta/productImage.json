@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceApp": {
+    "productImage": {
+      "home": {
+        "title": "Product Images",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Product Image-ஐ உருவாக்கு",
+        "createOrEditLabel": "Product Image -ஐ மாற்று (அ) உருவாக்கு",
+        "notFound": "No Product Images found"
+      },
+      "created": "Product Image புதிதாக உருவாக்கப்பட்டது, அடையாளம் {{ param }}",
+      "updated": "Product Image மாற்றப்பட்டது, அடையாளம்  {{ param }}",
+      "deleted": "A Product Image நீக்கப்பட்டது, அடையாளம {{ param }}",
+      "delete": {
+        "question": "நீக்குவதற்கு உறுதி செய் Product Image {{ id }}?"
+      },
+      "detail": {
+        "title": "Product Image"
+      },
+      "id": "ID",
+      "imageUrl": "Image Url",
+      "displayOrder": "Display Order",
+      "product": "Product"
+    }
+  }
+}
