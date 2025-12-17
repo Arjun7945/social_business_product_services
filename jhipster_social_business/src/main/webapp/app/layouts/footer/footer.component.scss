@@ -1,0 +1,16 @@
+.footer {
+    padding: 20px 0;
+    border-top: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    width: 100%;
+}
+
+.contact-link {
+    text-decoration: none;
+    color: inherit;
+
+    &:hover {
+        text-decoration: underline;
+        color: #0056b3;
+    }
+}

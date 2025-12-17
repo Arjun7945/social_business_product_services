@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { TranslateDirective } from 'app/shared/language';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'jhi-footer',
   templateUrl: './footer.component.html',
-  imports: [TranslateDirective],
+  styleUrl: './footer.component.scss',
+  imports: [FontAwesomeModule],
 })
 export default class FooterComponent {}
