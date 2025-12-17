@@ -6,16 +6,12 @@ import com.aps.domain.TeamMember;
 import com.aps.service.WhatsAppService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Strategy for handling Razorpay Payment Links.
  */
 @Component("razorpayLinkStrategy")
 public class RazorpayLinkStrategy implements PaymentStrategy {
-
-    private final Logger log = LoggerFactory.getLogger(RazorpayLinkStrategy.class);
 
     private final RazorpayService razorpayService;
     private final WhatsAppService whatsAppService;

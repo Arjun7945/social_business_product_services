@@ -228,3 +228,8 @@ jhipster:
 # ===================================================================
 
 # application:
+
+razorpay:
+  key-id: rzp_test_RshgtaFKamUyGc
+  key-secret: h61PSTYMvmWgQ1hqfBL3deEZ
+  webhook-secret: social_business_webhook_secret

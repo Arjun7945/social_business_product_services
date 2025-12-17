@@ -7,16 +7,12 @@ import com.aps.service.WhatsAppService;
 // import com.aps.service.DeliveryFlowService; // Circular dependency if used
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Strategy for handling Razorpay QR Code payments.
  */
 @Component("razorpayQrStrategy")
 public class RazorpayQrStrategy implements PaymentStrategy {
-
-    private final Logger log = LoggerFactory.getLogger(RazorpayQrStrategy.class);
 
     private final RazorpayService razorpayService;
     private final WhatsAppService whatsAppService;

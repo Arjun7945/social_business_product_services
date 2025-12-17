@@ -117,9 +117,9 @@ public class OrderService {
         customerOrderRepository.findById(orderId).ifPresent(order -> {
             log.info("Processing Payment Success for Order: {}", orderId);
 
-            // Update Status
-            order.setStatus(OrderStatus.CONFIRMED);
-            // Ideally store paymentId in order or payment entity, but redundant for MVP
+            // Update Status to DELIVERED as payment on delivery confirms handover
+            order.setStatus(OrderStatus.DELIVERED);
+            // Ideally store paymentId in order or payment entity
             customerOrderRepository.save(order);
 
             // Notify Customer
@@ -144,8 +144,9 @@ public class OrderService {
         customerOrderRepository.findById(orderId).ifPresent(order -> {
             log.warn("Processing Payment Failure for Order: {}", orderId);
 
-            // Keep status as PENDING or move to PAYMENT_FAILED if exists
-            // order.setStatus(OrderStatus.PAYMENT_FAILED); // If enum exists
+            // Status remains as is (likely CONFIRMED) so delivery person can retry or
+            // handle it.
+            // order.setStatus(OrderStatus.PAYMENT_FAILED); // Enum doesn't exist yet
 
             // Notify Customer
             String custMsg = customerMessageService.getPaymentFailedMessage(paymentId, orderId);

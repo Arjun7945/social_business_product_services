@@ -22,15 +22,25 @@ public class RazorpayService {
     private final RestTemplate restTemplate;
     private final com.aps.service.OrderService orderService;
 
-    // Hardcoded for Phase 2 as requested, but ideally should be in properties
-    private static final String KEY_ID = "rzp_test_RshgtaFKamUyGc";
-    private static final String KEY_SECRET = "h61PSTYMvmWgQ1hqfBL3deEZ";
+    @org.springframework.beans.factory.annotation.Value("${razorpay.key-id}")
+    private String keyId;
+
+    @org.springframework.beans.factory.annotation.Value("${razorpay.key-secret}")
+    private String keySecret;
+
+    @org.springframework.beans.factory.annotation.Value("${razorpay.webhook-secret}")
+    private String webhookSecret;
+
     private static final String RAZORPAY_API_BASE = "https://api.razorpay.com/v1";
 
     public RazorpayService(RestTemplateBuilder restTemplateBuilder,
-            @org.springframework.context.annotation.Lazy com.aps.service.OrderService orderService) {
+            @org.springframework.context.annotation.Lazy com.aps.service.OrderService orderService,
+            @org.springframework.beans.factory.annotation.Value("${razorpay.key-id}") String keyId,
+            @org.springframework.beans.factory.annotation.Value("${razorpay.key-secret}") String keySecret) {
+        this.keyId = keyId;
+        this.keySecret = keySecret;
         this.restTemplate = restTemplateBuilder
-                .basicAuthentication(KEY_ID, KEY_SECRET)
+                .basicAuthentication(keyId, keySecret)
                 .build();
         this.orderService = orderService;
     }
@@ -86,12 +96,6 @@ public class RazorpayService {
             if (customerId != null) {
                 request.put("customer_id", customerId);
             }
-
-            // close_by is required for single_use? Docs say "You should ideally send...".
-            // Let's set it to 15 mins (900 secs) from now to avoid issues?
-            // Or leave it valid for defaults (2 hours).
-            // Docs: "If close_by is NULL, the system sets a 2-hour expiry". So safe to
-            // omit.
 
             log.info("Creating QR with payload: {} at URL: {}", request, url);
 
@@ -163,9 +167,9 @@ public class RazorpayService {
 
     public boolean verifySignature(String payload, String signature) {
         try {
-            String secret = "social_business_webhook_secret"; // Hardcoded as per plan
             javax.crypto.Mac sha256_HMAC = javax.crypto.Mac.getInstance("HmacSHA256");
-            javax.crypto.spec.SecretKeySpec secret_key = new javax.crypto.spec.SecretKeySpec(secret.getBytes("UTF-8"),
+            javax.crypto.spec.SecretKeySpec secret_key = new javax.crypto.spec.SecretKeySpec(
+                    webhookSecret.getBytes("UTF-8"),
                     "HmacSHA256");
             sha256_HMAC.init(secret_key);
 
@@ -179,7 +183,7 @@ public class RazorpayService {
             String calculatedSignature = result.toString();
             if (!calculatedSignature.equals(signature)) {
                 log.error("Signature Mismatch! Expected: {}, Received: {}", calculatedSignature, signature);
-                log.error("Secret used: {}", secret); // Be careful with secrets in prod logs, ok for dev debug
+                log.error("Secret used hash: {}", webhookSecret.hashCode());
             }
             return calculatedSignature.equals(signature);
         } catch (Exception e) {
@@ -188,6 +192,7 @@ public class RazorpayService {
         }
     }
 
+    @org.springframework.scheduling.annotation.Async
     public void processWebhookEvent(String payloadJson) {
         try {
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
@@ -246,12 +251,14 @@ public class RazorpayService {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, Object> getPaymentEntity(Map<String, Object> payload) {
         Map<String, Object> contain = (Map<String, Object>) payload.get("payload");
         Map<String, Object> payment = (Map<String, Object>) contain.get("payment");
         return (Map<String, Object>) payment.get("entity");
     }
 
+    @SuppressWarnings("unchecked")
     private Long extractOrderId(Map<String, Object> paymentEntity) {
         try {
             // Try notes first
