@@ -17,6 +17,7 @@ public class WhatsAppMessageDto {
     private TextDto text;
     private InteractiveDto interactive;
     private DocumentDto document;
+    private ImageDto image;
 
     // Default constructor
     public WhatsAppMessageDto() {
@@ -120,6 +121,19 @@ public class WhatsAppMessageDto {
 
     public WhatsAppMessageDto document(DocumentDto document) {
         this.document = document;
+        return this;
+    }
+
+    public ImageDto getImage() {
+        return image;
+    }
+
+    public void setImage(ImageDto image) {
+        this.image = image;
+    }
+
+    public WhatsAppMessageDto image(ImageDto image) {
+        this.image = image;
         return this;
     }
 

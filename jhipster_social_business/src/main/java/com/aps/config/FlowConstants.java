@@ -34,6 +34,11 @@ public final class FlowConstants {
     public static final String PREFIX_SHIPPED = "shipped_";
     public static final String PREFIX_DELIVERED = "delivered_";
 
+    // Payment Mode Prefixes
+    public static final String PREFIX_PAY_COD = "PAY_COD_";
+    public static final String PREFIX_PAY_QR = "PAY_QR_";
+    public static final String PREFIX_PAY_LINK = "PAY_LINK_";
+
     // Fallback Images
     public static final String WHATSAPP_LOGO_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/1200px-WhatsApp.svg.png";
 

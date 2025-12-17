@@ -247,6 +247,12 @@ public class CustomerFlowService {
         }
     }
 
+    public void sendReOrderFlow(Customer customer) {
+        BotSession session = sessionManager.getSession(customer.getWaPhoneNumber());
+        whatsAppService.sendSimpleText(customer.getWaPhoneNumber(), messageService.getOrderAgainPrompt());
+        showProductCatalog(customer, session);
+    }
+
     private void showProductCatalog(Customer customer, BotSession session) {
         List<FishProduct> products = fishProductRepository.findByIsAvailableTrue();
 

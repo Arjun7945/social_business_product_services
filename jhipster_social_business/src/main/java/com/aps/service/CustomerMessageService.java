@@ -9,6 +9,37 @@ import org.springframework.stereotype.Service;
 public class CustomerMessageService {
 
     // ========================================
+    // CATEGORY 9: PAYMENT MESSAGES
+    // ========================================
+
+    public String getPaymentQrCaption(double amount) {
+        return String.format("📱 *Scan & Pay* \n\n" +
+                "\u20B9%.2f\n\n" +
+                "താങ്കളുടെ ഓർഡറിനുള്ള പേയ്മെൻ്റ് ചെയ്യാൻ ഈ QR Code സ്കാൻ ചെയ്യുക. 🤝", amount);
+    }
+
+    public String getPaymentLinkMessage(String link, double amount) {
+        return String.format("🔗 *പേയ്മെന്റ് ലിങ്ക്* \n\n" +
+                "തുക: \u20B9%.2f\n\n" +
+                "പേയ്മെൻ്റ് ചെയ്യാൻ താഴെ കാണുന്ന ലിങ്കിൽ ക്ലിക്ക് ചെയ്യുക: 👇\n%s", amount, link);
+    }
+
+    public String getPaymentCapturedMessage(String paymentId, double amount, Long orderId) {
+        return String.format("🎉 *പേയ്മെന്റ് വിജയിച്ചു!* ✅\n\n" +
+                "ഓർഡർ #%d\n" +
+                "തുക: \u20B9%.2f\n" +
+                "Ref: *%s*\n\n" +
+                "നിങ്ങളുടെ ഓർഡർ സ്ഥിരീകരിച്ചു! നന്ദി! 🙏", orderId, amount, paymentId);
+    }
+
+    public String getPaymentFailedMessage(String paymentId, Long orderId) {
+        return String.format("❌ *പേയ്മെന്റ് പരാജയപ്പെട്ടു!* ⚠️\n\n" +
+                "ഓർഡർ #%d\n" +
+                "Ref: *%s*\n\n" +
+                "ദയവായി വീണ്ടും ശ്രമിക്കുക അല്ലെങ്കിൽ ക്യാഷ് (COD) തിരഞ്ഞെടുക്കുക.", orderId, paymentId);
+    }
+
+    // ========================================
     // CATEGORY 1: REGISTRATION FLOW MESSAGES
     // ========================================
 
@@ -204,6 +235,21 @@ public class CustomerMessageService {
                 "📞 *WhatsApp:* %s\n\n" +
                 "ഡെലിവറിക്കായി അവർ ഉടൻ നിങ്ങളെ ബന്ധപ്പെടും. 📦",
                 deliveryPersonName, deliveryPersonPhone);
+    }
+
+    public String getOrderShippedMessage() {
+        return "🚚 *ഓർഡർ വഴിയിലാണ്!*\n\n" +
+                "നിങ്ങളുടെ ഓർഡർ ഡെലിവറിക്കായി പുറപ്പെട്ടു!";
+    }
+
+    public String getOrderDeliveredMessage() {
+        return "📦 *ഓർഡർ ഡെലിവർ ചെയ്തു!*\n\n" +
+                "നിങ്ങളുടെ ഓർഡർ ഡെലിവർ ചെയ്തു. ഞങ്ങളോടൊപ്പം ഷോപ്പിംഗ് നടത്തിയതിന് നന്ദി! 🐟";
+    }
+
+    public String getOrderAgainPrompt() {
+        return "🔄 *വീണ്ടും ഓർഡർ ചെയ്യണോ?*\n\n" +
+                "പുതിയ സാധനങ്ങൾ ഓർഡർ ചെയ്യണമെങ്കിൽ, താഴെ നിന്ന് തിരഞ്ഞെടുക്കൂ... 👇";
     }
 
     public String getOrderCancelled(String customerName) {

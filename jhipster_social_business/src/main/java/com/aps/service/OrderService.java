@@ -10,7 +10,6 @@ import com.aps.repository.FishProductRepository;
 import com.aps.repository.OrderItemRepository;
 import com.aps.service.dto.CartItemDetailsDTO;
 import com.aps.service.event.OrderPlacedEvent;
-import com.aps.service.payment.PaymentStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Service for business logic related to Orders.
@@ -37,20 +35,26 @@ public class OrderService {
     private final FishProductRepository fishProductRepository;
     private final CartService cartService;
     private final ApplicationEventPublisher eventPublisher;
-    private final Map<String, PaymentStrategy> paymentStrategies;
+    private final WhatsAppService whatsAppService;
+    private final CustomerMessageService customerMessageService;
+    private final DeliveryPersonMessageService deliveryPersonMessageService;
 
     public OrderService(CustomerOrderRepository customerOrderRepository,
             OrderItemRepository orderItemRepository,
             FishProductRepository fishProductRepository,
             CartService cartService,
             ApplicationEventPublisher eventPublisher,
-            Map<String, PaymentStrategy> paymentStrategies) {
+            WhatsAppService whatsAppService,
+            CustomerMessageService customerMessageService,
+            DeliveryPersonMessageService deliveryPersonMessageService) {
         this.customerOrderRepository = customerOrderRepository;
         this.orderItemRepository = orderItemRepository;
         this.fishProductRepository = fishProductRepository;
         this.cartService = cartService;
         this.eventPublisher = eventPublisher;
-        this.paymentStrategies = paymentStrategies;
+        this.whatsAppService = whatsAppService;
+        this.customerMessageService = customerMessageService;
+        this.deliveryPersonMessageService = deliveryPersonMessageService;
     }
 
     /**
@@ -66,17 +70,6 @@ public class OrderService {
         Double totalDouble = cartService.calculateCartTotal(customer.getId());
         BigDecimal total = BigDecimal.valueOf(totalDouble);
 
-        // 2. Select Payment Strategy
-        PaymentStrategy strategy = paymentStrategies.get(paymentMethodName.toLowerCase() + "PaymentStrategy");
-        if (strategy == null) {
-            // Fallback: search by method name
-            strategy = paymentStrategies.values().stream()
-                    .filter(s -> s.getPaymentMethodName().equalsIgnoreCase(paymentMethodName))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid payment method: " + paymentMethodName));
-        }
-
-        // 3. Create Draft Order
         CustomerOrder order = new CustomerOrder();
         order.setCustomer(customer);
         order.setOrderTime(Instant.now());
@@ -84,11 +77,9 @@ public class OrderService {
         order.setStatus(OrderStatus.PENDING);
         order.setPaymentMethod(paymentMethodName.toUpperCase());
 
-        // 4. Process Payment
-        boolean paymentSuccess = strategy.processPayment(order);
-        if (!paymentSuccess) {
-            throw new RuntimeException("Payment processing failed for method: " + paymentMethodName);
-        }
+        // 4. Set Initial Status
+        // Payment processing is handled separately (Async or Delivery Flow)
+        order.setStatus(OrderStatus.PENDING);
 
         // 5. Save Order
         order = customerOrderRepository.save(order);
@@ -116,5 +107,55 @@ public class OrderService {
         eventPublisher.publishEvent(new OrderPlacedEvent(this, order, customer, items));
 
         return order;
+    }
+
+    /**
+     * Processes a successful payment notification.
+     */
+    @Transactional
+    public void processPaymentSuccess(Long orderId, String paymentId, Double amount) {
+        customerOrderRepository.findById(orderId).ifPresent(order -> {
+            log.info("Processing Payment Success for Order: {}", orderId);
+
+            // Update Status
+            order.setStatus(OrderStatus.CONFIRMED);
+            // Ideally store paymentId in order or payment entity, but redundant for MVP
+            customerOrderRepository.save(order);
+
+            // Notify Customer
+            String custMsg = customerMessageService.getPaymentCapturedMessage(
+                    paymentId, amount, orderId);
+            whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(), custMsg);
+
+            // Notify Delivery Person (if assigned)
+            if (order.getDeliveryPerson() != null) {
+                String dpMsg = deliveryPersonMessageService.getPaymentReceivedMessage(
+                        paymentId, amount, orderId);
+                whatsAppService.sendSimpleText(order.getDeliveryPerson().getWaPhoneNumber(), dpMsg);
+            }
+        });
+    }
+
+    /**
+     * Processes a failed payment notification.
+     */
+    @Transactional
+    public void processPaymentFailure(Long orderId, String paymentId) {
+        customerOrderRepository.findById(orderId).ifPresent(order -> {
+            log.warn("Processing Payment Failure for Order: {}", orderId);
+
+            // Keep status as PENDING or move to PAYMENT_FAILED if exists
+            // order.setStatus(OrderStatus.PAYMENT_FAILED); // If enum exists
+
+            // Notify Customer
+            String custMsg = customerMessageService.getPaymentFailedMessage(paymentId, orderId);
+            whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(), custMsg);
+
+            // Notify Delivery Person (if assigned)
+            if (order.getDeliveryPerson() != null) {
+                String dpMsg = deliveryPersonMessageService.getPaymentFailedMessage(paymentId, orderId);
+                whatsAppService.sendSimpleText(order.getDeliveryPerson().getWaPhoneNumber(), dpMsg);
+            }
+        });
     }
 }

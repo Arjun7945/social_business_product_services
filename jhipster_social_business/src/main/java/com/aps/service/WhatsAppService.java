@@ -73,6 +73,19 @@ public class WhatsAppService {
                 sendToMeta(message);
         }
 
+        public void sendImageMessage(String toWaId, String imageUrl, String caption) {
+                WhatsAppMessageDto message = WhatsAppMessageDto.builder()
+                                .to(toWaId)
+                                .type("image")
+                                .image(WhatsAppMessageDto.ImageDto.builder()
+                                                .link(imageUrl)
+                                                .caption(caption)
+                                                .build())
+                                .build();
+
+                sendToMeta(message);
+        }
+
         public void sendInteractiveOrderAlert(String toWaId, String bodyText, Long orderId) {
                 WhatsAppMessageDto message = WhatsAppMessageDto.builder()
                                 .to(toWaId)

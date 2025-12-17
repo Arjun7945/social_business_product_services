@@ -60,7 +60,12 @@ public class SecurityConfiguration {
                                                                 mvc.pattern("/*.json"), mvc.pattern("/*.map"),
                                                                 mvc.pattern("/*.css"))
                                                 .permitAll()
-                                                .requestMatchers(mvc.pattern("/api/v1/webhook")).permitAll()
+                                                .requestMatchers(mvc.pattern("/api/v1/webhook")).permitAll() // Support
+                                                                                                             // Legacy
+                                                .requestMatchers(mvc.pattern("/api/webhooks/**")).permitAll() // Support
+                                                                                                              // New
+                                                                                                              // Razorpay
+                                                                                                              // Webhook
                                                 .requestMatchers(mvc.pattern("/api/product-images/public/**"))
                                                 .permitAll()
                                                 .requestMatchers(mvc.pattern("/*.ico"), mvc.pattern("/*.png"),

@@ -8,12 +8,12 @@ import com.aps.domain.CustomerOrder;
 public interface PaymentStrategy {
 
     /**
-     * Process the payment for the given order.
+     * Initiates the payment process.
      * 
-     * @param order The order to process payment for.
-     * @return true if payment successful, false otherwise.
+     * @param order          The order to process payment for.
+     * @param deliveryPerson The delivery person initiating the payment.
      */
-    boolean processPayment(CustomerOrder order);
+    void initiatePayment(CustomerOrder order, com.aps.domain.TeamMember deliveryPerson);
 
     /**
      * Get the name of the payment method this strategy handles.
