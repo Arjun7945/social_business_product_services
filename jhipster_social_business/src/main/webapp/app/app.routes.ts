@@ -12,6 +12,16 @@ const routes: Routes = [
     title: 'home.title',
   },
   {
+    path: 'contact-dev',
+    loadComponent: () => import('./contact-dev/contact-dev.component'),
+    title: 'home.link.contact',
+  },
+  {
+    path: 'raise-ticket',
+    loadComponent: () => import('./raise-ticket/raise-ticket.component'),
+    title: 'home.link.ticket',
+  },
+  {
     path: '',
     loadComponent: () => import('./layouts/navbar/navbar.component'),
     outlet: 'navbar',
