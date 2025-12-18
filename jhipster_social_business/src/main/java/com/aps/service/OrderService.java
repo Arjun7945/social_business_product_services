@@ -86,9 +86,20 @@ public class OrderService {
         log.info("Order {} created for customer {}", order.getId(), customer.getId());
 
         // 6. Save Order Items
+        // 6. Save Order Items
+        // Optimization: Fetch all products in one query to avoid N+1
+        java.util.Set<Long> productIds = items.stream()
+                .map(CartItemDetailsDTO::getFishProductId)
+                .collect(java.util.stream.Collectors.toSet());
+
+        java.util.Map<Long, FishProduct> productMap = fishProductRepository.findAllById(productIds).stream()
+                .collect(java.util.stream.Collectors.toMap(FishProduct::getId, java.util.function.Function.identity()));
+
         for (CartItemDetailsDTO item : items) {
-            FishProduct product = fishProductRepository.findById(item.getFishProductId())
-                    .orElseThrow(() -> new RuntimeException("Product not found: " + item.getFishProductId()));
+            FishProduct product = productMap.get(item.getFishProductId());
+            if (product == null) {
+                throw new RuntimeException("Product not found: " + item.getFishProductId());
+            }
 
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);

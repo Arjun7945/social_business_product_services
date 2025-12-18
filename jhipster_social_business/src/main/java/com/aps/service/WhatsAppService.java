@@ -24,26 +24,18 @@ public class WhatsAppService {
         private final Logger log = LoggerFactory.getLogger(WhatsAppService.class);
 
         private final WhatsAppConfig whatsAppConfig;
-        private final RestClient.Builder restClientBuilder;
+        private final RestClient restClient;
         private final CustomerMessageService messageService;
         private final DeliveryPersonMessageService deliveryMessageService;
 
         public WhatsAppService(WhatsAppConfig whatsAppConfig,
-                        RestClient.Builder restClientBuilder,
+                        RestClient whatsAppRestClient,
                         CustomerMessageService messageService,
                         DeliveryPersonMessageService deliveryMessageService) {
                 this.whatsAppConfig = whatsAppConfig;
-                this.restClientBuilder = restClientBuilder;
+                this.restClient = whatsAppRestClient;
                 this.messageService = messageService;
                 this.deliveryMessageService = deliveryMessageService;
-        }
-
-        private RestClient getRestClient() {
-                return restClientBuilder
-                                .baseUrl(whatsAppConfig.getApiBaseUrl())
-                                .defaultHeader("Authorization", "Bearer " + whatsAppConfig.getApiToken())
-                                .defaultHeader("Content-Type", "application/json")
-                                .build();
         }
 
         public void sendSimpleText(String toWaId, String text) {
@@ -230,7 +222,7 @@ public class WhatsAppService {
                         // String jsonPreview = objectMapper.writeValueAsString(message);
                         // log.debug("Sending message payload: {}", jsonPreview);
 
-                        getRestClient().post()
+                        restClient.post()
                                         .uri("/" + whatsAppConfig.getPhoneNumberId() + "/messages")
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .body(message)

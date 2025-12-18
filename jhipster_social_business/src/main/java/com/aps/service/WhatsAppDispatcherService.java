@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import org.springframework.scheduling.annotation.Async;
 import java.util.Optional;
 
 @Service
@@ -45,6 +46,7 @@ public class WhatsAppDispatcherService {
         this.customerFlowService = customerFlowService;
     }
 
+    @Async
     public void handleIncomingMessage(WhatsAppWebhookDto.Value payloadValue, WhatsAppWebhookDto.Message message) {
         String from = message.getFrom();
         log.info("Received message from: {}", from);

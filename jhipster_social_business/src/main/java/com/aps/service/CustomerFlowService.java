@@ -14,6 +14,7 @@ import com.aps.service.dto.CartItemDetailsDTO;
 import com.aps.domain.CustomerOrder;
 import com.aps.service.dto.WhatsAppMessageDto;
 import com.aps.service.dto.WhatsAppWebhookDto;
+import com.aps.service.util.InputValidator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,6 +50,7 @@ public class CustomerFlowService {
     private final WhatsAppMediaService whatsAppMediaService;
     private final BotSessionManager sessionManager;
     private final ObjectMapper objectMapper;
+    private final InputValidator inputValidator;
 
     @Value("${app.server.url}")
     private String appServerUrl;
@@ -62,7 +64,8 @@ public class CustomerFlowService {
             CustomerMessageService messageService,
             WhatsAppMediaService whatsAppMediaService,
             BotSessionManager sessionManager,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            InputValidator inputValidator) {
         this.customerRepository = customerRepository;
         this.fishProductRepository = fishProductRepository;
         this.orderService = orderService;
@@ -73,6 +76,7 @@ public class CustomerFlowService {
         this.whatsAppMediaService = whatsAppMediaService;
         this.sessionManager = sessionManager;
         this.objectMapper = objectMapper;
+        this.inputValidator = inputValidator;
     }
 
     /**
@@ -175,12 +179,7 @@ public class CustomerFlowService {
     private void handleAwaitingName(Customer customer, BotSession session, String text) {
         String inputName = text.trim();
         // Validation: Check for common invalid names
-        if (inputName.equalsIgnoreCase("Hi") ||
-                inputName.equalsIgnoreCase("Hello") ||
-                inputName.equalsIgnoreCase("Start") ||
-                inputName.equalsIgnoreCase("Test") ||
-                inputName.equalsIgnoreCase("Guest") ||
-                inputName.length() < 2) {
+        if (!inputValidator.isValidName(inputName)) {
             whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
                     "Please enter your *real full name* to continue.");
             return;
@@ -195,7 +194,7 @@ public class CustomerFlowService {
     private void handleAwaitingPhone(Customer customer, BotSession session, String text) {
         String phone = text.trim();
         // Allow digits, spaces, and + for country code. Min length 7, max 16.
-        if (!phone.matches("^[0-9+ ]{7,16}$")) {
+        if (!inputValidator.isValidPhoneNumber(phone)) {
             whatsAppService.sendSimpleText(customer.getWaPhoneNumber(), messageService.getInvalidPhoneNumber());
             return;
         }
