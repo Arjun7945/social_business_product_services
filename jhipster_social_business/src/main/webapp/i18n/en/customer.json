@@ -31,7 +31,8 @@
       "lastInteractionAt": "Last Interaction At",
       "orders": "Orders",
       "cart": "Cart",
-      "addedBy": "Added By"
+      "addedBy": "Added By",
+      "selfAdded": "SELF_ADDED"
     }
   }
 }

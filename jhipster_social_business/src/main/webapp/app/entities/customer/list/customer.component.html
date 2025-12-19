@@ -160,6 +160,8 @@
             <div>
               <a [routerLink]="['/team-member', customer.addedBy.id, 'view']">{{ customer.addedBy.name }}</a>
             </div>
+            } @else {
+            <span jhiTranslate="whatsappProductServiceApp.customer.selfAdded">SELF_ADDED</span>
             }
           </td>
           <td class="text-end">
