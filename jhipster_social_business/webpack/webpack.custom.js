@@ -5,7 +5,7 @@ const { hashElement } = require('folder-hash');
 const MergeJsonWebpackPlugin = require('merge-jsons-webpack-plugin');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const WebpackNotifierPlugin = require('webpack-notifier');
+
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
@@ -25,10 +25,6 @@ module.exports = async (config, options, targetOptions) => {
       new ESLintPlugin({
         configType: 'flat',
         extensions: ['ts', 'js', 'html'],
-      }),
-      new WebpackNotifierPlugin({
-        title: 'Whatsapp Product Service',
-        contentImage: path.join(__dirname, 'logo-jhipster.png'),
       }),
     );
   }

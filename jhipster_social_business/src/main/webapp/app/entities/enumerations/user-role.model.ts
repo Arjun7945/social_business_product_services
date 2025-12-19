@@ -10,4 +10,6 @@ export enum UserRole {
   ADMIN = 'ADMIN',
 
   DEVELOPER = 'DEVELOPER',
+
+  ACCOUNTS_TEAM = 'ACCOUNTS_TEAM',
 }
