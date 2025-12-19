@@ -5,6 +5,12 @@ package com.aps.domain.enumeration;
  */
 public enum CustomerFlowStage {
     NEW,
+    UNKNOWN_GREETING,
+    UNKNOWN_NAME_CONFIRM,
+    UNKNOWN_NAME_INPUT,
+    UNKNOWN_PHONE_CHECK,
+    UNKNOWN_PHONE_INPUT,
+    UNKNOWN_LOCATION,
     AWAITING_NAME,
     AWAITING_PHONE,
     AWAITING_LOCATION,

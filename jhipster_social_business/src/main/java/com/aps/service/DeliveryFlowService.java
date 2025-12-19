@@ -107,7 +107,7 @@ public class DeliveryFlowService {
                 // Live implementation of Shipped/Delivered Logic
                 if (buttonId.startsWith(FlowConstants.PREFIX_SHIPPED)) {
                         Long orderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_SHIPPED, ""));
-                        updateOrderStatus(deliveryPerson, orderId, OrderStatus.CONFIRMED);
+                        updateOrderStatus(deliveryPerson, orderId, OrderStatus.DELIVERY_ONWAY);
 
                         notifyCustomerOrderShipped(orderId);
                         whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
@@ -115,7 +115,7 @@ public class DeliveryFlowService {
 
                 } else if (buttonId.startsWith(FlowConstants.PREFIX_DELIVERED)) {
                         Long orderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_DELIVERED, ""));
-                        updateOrderStatus(deliveryPerson, orderId, OrderStatus.DELIVERED);
+                        updateOrderStatus(deliveryPerson, orderId, OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
                 }
         }
 
@@ -177,7 +177,7 @@ public class DeliveryFlowService {
                 order.setStatus(newStatus);
                 customerOrderRepository.save(order);
 
-                if (newStatus == OrderStatus.DELIVERED) {
+                if (newStatus == OrderStatus.ORDER_DELIVERED_SUCESSFULLY) {
                         whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
                                         deliveryPersonMessageService.getOrderDeliveredSuccess());
                         // Notify Customer
@@ -259,15 +259,7 @@ public class DeliveryFlowService {
                 CustomerOrder order = customerOrderRepository.findById(orderId)
                                 .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
 
-                // 2. Check if order already confirmed
-                if (order.getStatus() == OrderStatus.CONFIRMED || order.getStatus() == OrderStatus.DELIVERED) {
-                        String status = order.getStatus().toString();
-                        whatsAppService.sendSimpleText(deliveryPersonWaId,
-                                        deliveryPersonMessageService.getOrderAlreadyTaken(orderId, status));
-                        return;
-                }
-
-                // 3. Validate delivery person role
+                // 2. Validate delivery person role (Moved up to use in check)
                 Optional<TeamMember> teamMemberOpt = teamMemberRepository.findByWaPhoneNumber(deliveryPersonWaId);
 
                 if (teamMemberOpt.isEmpty()) {
@@ -288,8 +280,17 @@ public class DeliveryFlowService {
                         return;
                 }
 
+                // 3. Check if order already confirmed
+                if (order.getStatus() == OrderStatus.DELIVERY_ONWAY && order.getDeliveryPerson() != null
+                                && order.getDeliveryPerson().equals(teamMember)) {
+                        String status = order.getStatus().toString();
+                        whatsAppService.sendSimpleText(deliveryPersonWaId,
+                                        deliveryPersonMessageService.getOrderAlreadyTaken(orderId, status));
+                        return;
+                }
+
                 // 4. Update order with delivery person details
-                order.setStatus(OrderStatus.CONFIRMED);
+                order.setStatus(OrderStatus.DELIVERY_ONWAY);
                 order.setDeliveryPerson(teamMember);
                 order.setConfirmedAt(Instant.now());
                 customerOrderRepository.save(order);

@@ -74,12 +74,12 @@ public class OrderService {
         order.setCustomer(customer);
         order.setOrderTime(Instant.now());
         order.setTotalAmount(total);
-        order.setStatus(OrderStatus.PENDING);
+        order.setStatus(OrderStatus.ORDER_NOT_TAKEN);
         order.setPaymentMethod(paymentMethodName.toUpperCase());
 
         // 4. Set Initial Status
         // Payment processing is handled separately (Async or Delivery Flow)
-        order.setStatus(OrderStatus.PENDING);
+        order.setStatus(OrderStatus.ORDER_NOT_TAKEN);
 
         // 5. Save Order
         order = customerOrderRepository.save(order);
@@ -129,7 +129,7 @@ public class OrderService {
             log.info("Processing Payment Success for Order: {}", orderId);
 
             // Update Status to DELIVERED as payment on delivery confirms handover
-            order.setStatus(OrderStatus.DELIVERED);
+            order.setStatus(OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
             // Ideally store paymentId in order or payment entity
             customerOrderRepository.save(order);
 
@@ -155,9 +155,9 @@ public class OrderService {
         customerOrderRepository.findById(orderId).ifPresent(order -> {
             log.warn("Processing Payment Failure for Order: {}", orderId);
 
-            // Status remains as is (likely CONFIRMED) so delivery person can retry or
-            // handle it.
-            // order.setStatus(OrderStatus.PAYMENT_FAILED); // Enum doesn't exist yet
+            // Update status to FAILED
+            order.setStatus(OrderStatus.ORDER_FAILED);
+            customerOrderRepository.save(order);
 
             // Notify Customer
             String custMsg = customerMessageService.getPaymentFailedMessage(paymentId, orderId);

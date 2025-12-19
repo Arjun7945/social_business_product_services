@@ -54,7 +54,7 @@ public class ReportService {
     public byte[] generateCompletedOrdersReport(String issueToName) {
         log.info("Generating Completed Orders Report...");
         try {
-            List<CustomerOrder> orders = orderRepository.findAllByStatus(OrderStatus.DELIVERED);
+            List<CustomerOrder> orders = orderRepository.findAllByStatus(OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
             return generateReport(orders, "Completed Orders", issueToName);
         } catch (Exception e) {
             log.error("Failed to generate Completed Orders report", e);
@@ -65,8 +65,9 @@ public class ReportService {
     public byte[] generateUnpaidOrdersReport(String issueToName) {
         log.info("Generating Unpaid Orders Report...");
         try {
-            // Assuming CONFIRMED + PENDING acts as proxy for unpaid/active orders for now
-            List<CustomerOrder> orders = orderRepository.findAllByStatus(OrderStatus.CONFIRMED);
+            // Assuming DELIVERY_ONWAY + ORDER_NOT_TAKEN acts as proxy for unpaid/active
+            // orders for now
+            List<CustomerOrder> orders = orderRepository.findAllByStatus(OrderStatus.DELIVERY_ONWAY);
             return generateReport(orders, "Unpaid Orders (Confirmed)", issueToName);
         } catch (Exception e) {
             log.error("Failed to generate Unpaid Orders report", e);
@@ -85,9 +86,10 @@ public class ReportService {
         BigDecimal totalUnpaid = BigDecimal.ZERO;
 
         for (CustomerOrder order : orders) {
-            if (order.getStatus() == OrderStatus.DELIVERED) {
+            if (order.getStatus() == OrderStatus.ORDER_DELIVERED_SUCESSFULLY && order.getConfirmedAt() != null) {
                 totalPaid = totalPaid.add(order.getTotalAmount());
-            } else if (order.getStatus() == OrderStatus.PENDING || order.getStatus() == OrderStatus.CONFIRMED) {
+            } else if (order.getStatus() == OrderStatus.ORDER_DELIVERED_SUCESSFULLY
+                    || order.getStatus() == OrderStatus.DELIVERY_ONWAY) {
                 totalUnpaid = totalUnpaid.add(order.getTotalAmount());
             }
         }

@@ -54,7 +54,7 @@ public class CustomerOrder implements Serializable {
     /**
      * One Order has many OrderItems
      */
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "product", "order" }, allowSetters = true)
     private Set<OrderItem> items = new HashSet<>();
@@ -207,7 +207,8 @@ public class CustomerOrder implements Serializable {
         return this;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 
     @Override
     public boolean equals(Object o) {
@@ -222,7 +223,8 @@ public class CustomerOrder implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -230,12 +232,12 @@ public class CustomerOrder implements Serializable {
     @Override
     public String toString() {
         return "CustomerOrder{" +
-            "id=" + getId() +
-            ", orderTime='" + getOrderTime() + "'" +
-            ", totalAmount=" + getTotalAmount() +
-            ", status='" + getStatus() + "'" +
-            ", paymentMethod='" + getPaymentMethod() + "'" +
-            ", confirmedAt='" + getConfirmedAt() + "'" +
-            "}";
+                "id=" + getId() +
+                ", orderTime='" + getOrderTime() + "'" +
+                ", totalAmount=" + getTotalAmount() +
+                ", status='" + getStatus() + "'" +
+                ", paymentMethod='" + getPaymentMethod() + "'" +
+                ", confirmedAt='" + getConfirmedAt() + "'" +
+                "}";
     }
 }

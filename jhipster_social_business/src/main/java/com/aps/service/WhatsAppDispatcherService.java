@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import org.springframework.scheduling.annotation.Async;
 import java.util.Optional;
+import com.aps.domain.BotSession;
 
 @Service
 @Transactional
@@ -29,6 +29,8 @@ public class WhatsAppDispatcherService {
     private final AccountsFlowService accountsFlowService;
 
     private final CustomerFlowService customerFlowService;
+    private final UnknownCustomerFlowService unknownCustomerFlowService;
+    private final BotSessionManager sessionManager;
 
     public WhatsAppDispatcherService(TeamMemberRepository teamMemberRepository,
             CustomerRepository customerRepository,
@@ -36,7 +38,9 @@ public class WhatsAppDispatcherService {
             ExecutiveFlowService executiveFlowService,
             DeliveryFlowService deliveryFlowService,
             AccountsFlowService accountsFlowService,
-            CustomerFlowService customerFlowService) {
+            CustomerFlowService customerFlowService,
+            UnknownCustomerFlowService unknownCustomerFlowService,
+            BotSessionManager sessionManager) {
         this.teamMemberRepository = teamMemberRepository;
         this.customerRepository = customerRepository;
         this.adminFlowService = adminFlowService;
@@ -44,6 +48,8 @@ public class WhatsAppDispatcherService {
         this.deliveryFlowService = deliveryFlowService;
         this.accountsFlowService = accountsFlowService;
         this.customerFlowService = customerFlowService;
+        this.unknownCustomerFlowService = unknownCustomerFlowService;
+        this.sessionManager = sessionManager;
     }
 
     @Async
@@ -75,32 +81,27 @@ public class WhatsAppDispatcherService {
             log.info("No existing customer found for: {}", from);
         }
 
-        // 3. New Customer?
-        // Create a new generic customer or handle as guest.
-        log.info("New customer detected: {}", from);
-        Customer newCustomer = new Customer();
-        newCustomer.setWaPhoneNumber(from);
-        newCustomer.setPhoneNumber(from); // Default phone number to WA number until updated
-        newCustomer.setRole(UserRole.CUSTOMER);
-        newCustomer.setJoinedAt(Instant.now());
-        newCustomer.setIsPincodeValid(false); // Default to false until location verified
+        // 3. New Customer (or in-progress onboarding)
+        BotSession session = sessionManager.getSession(from);
+        String currentState = session.getCurrentState();
 
-        // Try to get name from contacts
-        String profileName = "Guest";
-        if (payloadValue != null && payloadValue.getContacts() != null) {
-            Optional<WhatsAppWebhookDto.Contact> contactOpt = payloadValue.getContacts().stream()
-                    .filter(c -> c.getWaId().equals(from))
-                    .findFirst();
-            if (contactOpt.isPresent() && contactOpt.get().getProfile() != null) {
-                profileName = contactOpt.get().getProfile().getName();
-                log.info("Found profile name for {}: {}", from, profileName);
+        if (currentState != null && currentState.startsWith("UNKNOWN_")) {
+            // Already in unknown flow
+            unknownCustomerFlowService.handleMessage(from, message);
+        } else {
+            // Start new onboarding
+            log.info("New unknown customer detected: {}", from);
+            String profileName = "Guest";
+            if (payloadValue != null && payloadValue.getContacts() != null) {
+                Optional<WhatsAppWebhookDto.Contact> contactOpt = payloadValue.getContacts().stream()
+                        .filter(c -> c.getWaId().equals(from))
+                        .findFirst();
+                if (contactOpt.isPresent() && contactOpt.get().getProfile() != null) {
+                    profileName = contactOpt.get().getProfile().getName();
+                }
             }
+            unknownCustomerFlowService.startOnboarding(from, profileName);
         }
-        newCustomer.setName(profileName);
-
-        customerRepository.save(newCustomer);
-
-        customerFlowService.handleCustomerMessage(newCustomer, message);
     }
 
     private void dispatchToTeamMemberFlow(TeamMember teamMember, WhatsAppWebhookDto.Message message) {

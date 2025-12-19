@@ -110,16 +110,28 @@ public class CustomerFlowService {
         }
 
         // Handle different message types for customers
+        log.info("Processing message type: {}", message.getType());
+
         if (message.getType().equals("text") && message.getText() != null) {
             handleTextMessage(customer, session, message.getText().getBody());
         } else if (message.getType().equals("location") && message.getLocation() != null) {
             handleLocationMessage(customer, session, message.getLocation());
         } else if (message.getType().equals("interactive")) {
+            log.info("Interactive Type: {}", message.getInteractive().getType());
             if (message.getInteractive().getType().equals("button_reply")) {
                 handleButtonReply(customer, session, message.getInteractive().getButtonReply());
             } else if (message.getInteractive().getType().equals("list_reply")) {
                 handleListReply(customer, session, message.getInteractive().getListReply());
             }
+        } else if (message.getType().equals("button") && message.getButton() != null) {
+            log.info("Button Type: {}", message.getButton().getText());
+            // Map simple button payload to button reply structure for consistency
+            WhatsAppWebhookDto.ButtonReply buttonReply = new WhatsAppWebhookDto.ButtonReply();
+            buttonReply.setId(message.getButton().getPayload());
+            buttonReply.setTitle(message.getButton().getText());
+            handleButtonReply(customer, session, buttonReply);
+        } else {
+            log.warn("Unhandled message type: {}", message.getType());
         }
     }
 
@@ -380,6 +392,7 @@ public class CustomerFlowService {
 
     private void handleButtonReply(Customer customer, BotSession session, WhatsAppWebhookDto.ButtonReply buttonReply) {
         String buttonId = buttonReply.getId();
+        log.info("Received Button Reply ID: {}", buttonId);
 
         if ("CONTINUE_SHOPPING".equals(buttonId)) {
             showProductCatalog(customer, session);
