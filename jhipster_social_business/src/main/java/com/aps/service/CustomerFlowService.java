@@ -533,7 +533,7 @@ public class CustomerFlowService {
 
     private void placeOrder(Customer customer, BotSession session) {
         try {
-            CustomerOrder order = orderService.createOrder(customer, "COD");
+            CustomerOrder order = orderService.createOrder(customer, "NOT_SELECTED");
 
             // JHipster CustomerOrder total is BigDecimal, convert to double for message
             // service

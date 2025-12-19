@@ -154,6 +154,10 @@ public class DeliveryFlowService {
                 // Strategy Pattern Execution
                 PaymentStrategy strategy = paymentStrategyFactory.getStrategy(mode);
                 if (strategy != null) {
+                        // Update Payment Mode in DB
+                        order.setPaymentMethod(mode);
+                        customerOrderRepository.save(order);
+
                         strategy.initiatePayment(order, deliveryPerson);
                 } else {
                         log.error("No payment strategy found for mode: {}", mode);
