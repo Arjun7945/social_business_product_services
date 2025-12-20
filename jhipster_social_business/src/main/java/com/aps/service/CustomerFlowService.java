@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.HashMap;
 import java.util.List;
@@ -90,21 +92,7 @@ public class CustomerFlowService {
         // Allow customer to restart flow from any stage by sending "start" or "hi"
         if (message.getType().equals("text") && message.getText() != null) {
             String text = message.getText().getBody().trim();
-            if (text.equalsIgnoreCase("start")) {
-                updateStage(session, CustomerFlowStage.REGISTERED);
-                showProductCatalog(customer, session);
-                return;
-            } else if (text.equalsIgnoreCase("hi") || text.equalsIgnoreCase("hello")) {
-
-            } else if (text.equalsIgnoreCase("hi") || text.equalsIgnoreCase("hello")) {
-                // If NOT registered, treat "Hi" as "Start Over" for onboarding if in
-                // NEW or AWAITING_NAME.
-
-                // New Logic: If not registered, treat "Hi" as "Start Over" for onboarding if in
-                // NEW or AWAITING_NAME.
-                whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
-                        messageService.getWelcomeMessageNewCustomer());
-                updateStage(session, CustomerFlowStage.AWAITING_NAME);
+            if (handleGlobalCommands(customer, session, text)) {
                 return;
             }
         }
@@ -133,6 +121,64 @@ public class CustomerFlowService {
         } else {
             log.warn("Unhandled message type: {}", message.getType());
         }
+    }
+
+    private boolean handleGlobalCommands(Customer customer, BotSession session, String text) {
+        if (text.equalsIgnoreCase("start")) {
+            // Check if there is an ACTIVE session before just restarting
+            if (isActiveSession(getStage(session))) {
+                sendSessionResumptionPrompt(customer);
+                return true;
+            }
+            updateStage(session, CustomerFlowStage.REGISTERED);
+            showProductCatalog(customer, session);
+            return true;
+        }
+
+        if (text.equalsIgnoreCase("hi") || text.equalsIgnoreCase("hello")) {
+            // Check for active session first
+            if (isActiveSession(getStage(session))) {
+                sendSessionResumptionPrompt(customer);
+                return true;
+            }
+
+            // Treat "Hi" as "Start Over" for onboarding.
+            // Reset to AWAITING_NAME and show welcome.
+            whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                    messageService.getWelcomeMessageNewCustomer());
+            updateStage(session, CustomerFlowStage.AWAITING_NAME);
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isActiveSession(CustomerFlowStage stage) {
+        // Define what counts as "Active" where we shouldn't just restart
+        return stage == CustomerFlowStage.BROWSING ||
+                stage == CustomerFlowStage.ADDING_TO_CART ||
+                stage == CustomerFlowStage.AWAITING_QUANTITY ||
+                stage == CustomerFlowStage.CHECKOUT ||
+                stage == CustomerFlowStage.CONFIRMING_ORDER ||
+                stage == CustomerFlowStage.EDITING_ORDER ||
+                stage == CustomerFlowStage.EDITING_PRODUCT ||
+                stage == CustomerFlowStage.EDITING_QUANTITY;
+    }
+
+    private void sendSessionResumptionPrompt(Customer customer) {
+        List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
+                WhatsAppMessageDto.ButtonDto.builder()
+                        .type("reply")
+                        .reply(WhatsAppMessageDto.ReplyDto.builder().id("RESUME_SESSION")
+                                .title(messageService.getButtonResume()).build())
+                        .build(),
+                WhatsAppMessageDto.ButtonDto.builder()
+                        .type("reply")
+                        .reply(WhatsAppMessageDto.ReplyDto.builder().id("RESTART_SESSION")
+                                .title(messageService.getButtonStartNew()).build())
+                        .build());
+        whatsAppService.sendCartActionButtons(customer.getWaPhoneNumber(),
+                messageService.getSessionResumptionPrompt(customer.getName()), buttons);
     }
 
     private CustomerFlowStage getStage(BotSession session) {
@@ -171,6 +217,11 @@ public class CustomerFlowService {
             case REGISTERED:
             case BROWSING:
             case ADDING_TO_CART:
+            case CHECKOUT: // Should respond to text in checkout? Maybe.
+            case CONFIRMING_ORDER:
+            case EDITING_ORDER:
+            case EDITING_PRODUCT:
+            case EDITING_QUANTITY:
                 handleRegisteredCustomer(customer, session, text);
                 break;
             default:
@@ -416,6 +467,24 @@ public class CustomerFlowService {
             handleRemoveItem(customer, session, buttonId);
         } else if (buttonId.startsWith("EDIT_QTY_")) {
             handleEditQuantitySelection(customer, session, Long.parseLong(buttonId.replace("EDIT_QTY_", "")));
+        } else if ("RESUME_SESSION".equals(buttonId)) {
+            // Do nothing, just acknowledge? Or re-show current state?
+            // Since we don't know exactly what the *last* message was, easiest is to Just
+            // say "Resumed"
+            // Or, smarter: look at stage and show relevant menu.
+            CustomerFlowStage stage = getStage(session);
+            if (stage == CustomerFlowStage.CHECKOUT)
+                showCartSummary(customer, session);
+            else if (stage == CustomerFlowStage.BROWSING)
+                showProductCatalog(customer, session);
+            else
+                whatsAppService.sendSimpleText(customer.getWaPhoneNumber(), "✅ *Resuming...* Please continue.");
+        } else if ("RESTART_SESSION".equals(buttonId)) {
+            cartService.clearCart(customer.getId()); // Optional: Clear cart on hard restart? No, maybe just show
+                                                     // catalog.
+            // Actually user said "Start New", implying they want to browse.
+            updateStage(session, CustomerFlowStage.REGISTERED);
+            showProductCatalog(customer, session);
         } else if (buttonId.startsWith("SELECT_")) {
             handleProductSelection(customer, session, Long.parseLong(buttonId.replace("SELECT_", "")));
         }
@@ -539,7 +608,13 @@ public class CustomerFlowService {
             // service
             Double total = order.getTotalAmount() != null ? order.getTotalAmount().doubleValue() : 0.0;
 
-            whatsAppService.sendOrderConfirmation(customer.getWaPhoneNumber(), order.getId(), total);
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    whatsAppService.sendOrderConfirmation(customer.getWaPhoneNumber(), order.getId(), total);
+                }
+            });
+
             updateStage(session, CustomerFlowStage.REGISTERED);
 
         } catch (IllegalStateException e) {

@@ -18,6 +18,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import com.aps.service.util.InputValidator;
 
 import java.util.List;
 
@@ -31,17 +34,20 @@ public class ProductManagementService {
     private final WhatsAppService whatsAppService;
     private final WhatsAppMediaService whatsAppMediaService;
     private final BotSessionManager sessionManager;
+    private final InputValidator inputValidator;
 
     public ProductManagementService(FishProductRepository fishProductRepository,
             ProductImageRepository productImageRepository,
             WhatsAppService whatsAppService,
             WhatsAppMediaService whatsAppMediaService,
-            BotSessionManager sessionManager) {
+            BotSessionManager sessionManager,
+            InputValidator inputValidator) {
         this.fishProductRepository = fishProductRepository;
         this.productImageRepository = productImageRepository;
         this.whatsAppService = whatsAppService;
         this.whatsAppMediaService = whatsAppMediaService;
         this.sessionManager = sessionManager;
+        this.inputValidator = inputValidator;
     }
 
     public void showProductMenu(TeamMember admin) {
@@ -83,6 +89,11 @@ public class ProductManagementService {
     }
 
     public void handleProductNameInput(TeamMember admin, BotSession session, String name) {
+        if (!inputValidator.isValidName(name)) {
+            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                    "❌ Invalid name. Use letters, spaces, numbers, or hyphens only. Try again:");
+            return;
+        }
         sessionManager.setSessionData(session, "tempProductName", name.trim());
         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                 "✅ Name: " + name.trim() + "\n\n💰 Please provide the price per kg (in ₹):");
@@ -92,6 +103,11 @@ public class ProductManagementService {
     public void handleProductPriceInput(TeamMember admin, BotSession session, String price) {
         try {
             Double priceValue = Double.parseDouble(price.trim());
+            if (priceValue <= 0) {
+                whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                        "❌ Price must be greater than zero. Try again:");
+                return;
+            }
             sessionManager.setSessionData(session, "tempProductPrice", priceValue);
             whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                     "✅ Price: ₹" + priceValue + "/kg\n\n📄 Please provide a description:");
@@ -172,18 +188,40 @@ public class ProductManagementService {
 
             fishProductRepository.save(newProduct);
 
+            int successCount = 0;
+            int failCount = 0;
+
             String mediaIds = sessionManager.getSessionDataString(session, "tempMediaIds");
             if (mediaIds != null && !mediaIds.isEmpty()) {
                 String[] mediaIdArray = mediaIds.split(",");
                 for (int i = 0; i < mediaIdArray.length; i++) {
-                    downloadAndSaveImage(mediaIdArray[i], newProduct, i);
+                    boolean success = downloadAndSaveImage(mediaIdArray[i], newProduct, i);
+                    if (success) {
+                        successCount++;
+                    } else {
+                        failCount++;
+                    }
                 }
             }
 
-            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                    "✅ *Product Added Successfully!*\n\n" +
-                            "🐟 " + newProduct.getName() + " has been added with " +
-                            (mediaIds != null && !mediaIds.isEmpty() ? mediaIds.split(",").length : 0) + " images.");
+            String msgBase = "✅ *Product Added Successfully!*\n\n" +
+                    "🐟 " + newProduct.getName() + " has been added.";
+
+            if (successCount > 0) {
+                msgBase += "\n📸 " + successCount + " images saved.";
+            }
+            if (failCount > 0) {
+                msgBase += "\n⚠️ " + failCount + " images failed to download.";
+            }
+
+            final String finalMsg = msgBase;
+
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), finalMsg);
+                }
+            });
 
             showProductMenu(admin);
         } catch (Exception e) {
@@ -193,7 +231,7 @@ public class ProductManagementService {
         }
     }
 
-    private void downloadAndSaveImage(String mediaId, FishProduct product, int index) {
+    private boolean downloadAndSaveImage(String mediaId, FishProduct product, int index) {
         try {
             WhatsAppMediaService.MediaContent content = whatsAppMediaService.downloadImage(mediaId);
             if (content != null && content.getData() != null) {
@@ -209,10 +247,12 @@ public class ProductManagementService {
                 // Update URL to point to controller
                 image.setImageUrl("/api/public/images/" + image.getId());
                 productImageRepository.save(image);
+                return true;
             }
         } catch (Exception e) {
             log.error("Failed to download image {}", mediaId, e);
         }
+        return false;
     }
 
     public void showAllProducts(TeamMember admin) {

@@ -19,10 +19,16 @@ public class InputValidator {
                 return false;
             }
         }
-        return true;
+        // Allow Unicode letters (for Malayalam/English), spaces, and dots.
+        // Reject numbers and other special characters.
+        return trimmed.matches("^[\\p{L} .]+$");
     }
 
     public boolean isValidPhoneNumber(String phone) {
-        return phone != null && phone.matches("^[0-9+ ]{7,16}$");
+        // Regex matches:
+        // Optional '+' at start
+        // Followed by 10 to 12 digits (e.g. 9876543210 or 919876543210)
+        // No spaces allowed to ensure clean data
+        return phone != null && phone.matches("^\\+?[0-9]{10,12}$");
     }
 }

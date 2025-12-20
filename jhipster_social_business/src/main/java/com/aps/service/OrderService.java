@@ -133,17 +133,29 @@ public class OrderService {
             // Ideally store paymentId in order or payment entity
             customerOrderRepository.save(order);
 
-            // Notify Customer
-            String custMsg = customerMessageService.getPaymentCapturedMessage(
-                    paymentId, amount, orderId);
-            whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(), custMsg);
+            // Notify Customer & Delivery Person AFTER transaction commit
+            org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
+                    new org.springframework.transaction.support.TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                            try {
+                                // Notify Customer
+                                String custMsg = customerMessageService.getPaymentCapturedMessage(
+                                        paymentId, amount, orderId);
+                                whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(), custMsg);
 
-            // Notify Delivery Person (if assigned)
-            if (order.getDeliveryPerson() != null) {
-                String dpMsg = deliveryPersonMessageService.getPaymentReceivedMessage(
-                        paymentId, amount, orderId);
-                whatsAppService.sendSimpleText(order.getDeliveryPerson().getWaPhoneNumber(), dpMsg);
-            }
+                                // Notify Delivery Person (if assigned)
+                                if (order.getDeliveryPerson() != null) {
+                                    String dpMsg = deliveryPersonMessageService.getPaymentReceivedMessage(
+                                            paymentId, amount, orderId);
+                                    whatsAppService.sendSimpleText(order.getDeliveryPerson().getWaPhoneNumber(), dpMsg);
+                                }
+                            } catch (Exception e) {
+                                log.error("Failed to send WhatsApp notifications after payment success for order {}",
+                                        orderId, e);
+                            }
+                        }
+                    });
         });
     }
 
@@ -159,15 +171,28 @@ public class OrderService {
             order.setStatus(OrderStatus.ORDER_FAILED);
             customerOrderRepository.save(order);
 
-            // Notify Customer
-            String custMsg = customerMessageService.getPaymentFailedMessage(paymentId, orderId);
-            whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(), custMsg);
+            // Notify Customer & Delivery Person AFTER transaction commit
+            org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
+                    new org.springframework.transaction.support.TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                            try {
+                                // Notify Customer
+                                String custMsg = customerMessageService.getPaymentFailedMessage(paymentId, orderId);
+                                whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(), custMsg);
 
-            // Notify Delivery Person (if assigned)
-            if (order.getDeliveryPerson() != null) {
-                String dpMsg = deliveryPersonMessageService.getPaymentFailedMessage(paymentId, orderId);
-                whatsAppService.sendSimpleText(order.getDeliveryPerson().getWaPhoneNumber(), dpMsg);
-            }
+                                // Notify Delivery Person (if assigned)
+                                if (order.getDeliveryPerson() != null) {
+                                    String dpMsg = deliveryPersonMessageService.getPaymentFailedMessage(paymentId,
+                                            orderId);
+                                    whatsAppService.sendSimpleText(order.getDeliveryPerson().getWaPhoneNumber(), dpMsg);
+                                }
+                            } catch (Exception e) {
+                                log.error("Failed to send WhatsApp notifications after payment failure for order {}",
+                                        orderId, e);
+                            }
+                        }
+                    });
         });
     }
 }

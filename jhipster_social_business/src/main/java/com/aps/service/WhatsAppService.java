@@ -38,7 +38,7 @@ public class WhatsAppService {
                 this.deliveryMessageService = deliveryMessageService;
         }
 
-        public void sendSimpleText(String toWaId, String text) {
+        public boolean sendSimpleText(String toWaId, String text) {
                 WhatsAppMessageDto message = WhatsAppMessageDto.builder()
                                 .to(toWaId)
                                 .type("text")
@@ -48,10 +48,10 @@ public class WhatsAppService {
                                                 .build())
                                 .build();
 
-                sendToMeta(message);
+                return sendToMeta(message);
         }
 
-        public void sendDocument(String toWaId, String mediaId, String filename, String caption) {
+        public boolean sendDocument(String toWaId, String mediaId, String filename, String caption) {
                 WhatsAppMessageDto message = WhatsAppMessageDto.builder()
                                 .to(toWaId)
                                 .type("document")
@@ -62,10 +62,10 @@ public class WhatsAppService {
                                                 .build())
                                 .build();
 
-                sendToMeta(message);
+                return sendToMeta(message);
         }
 
-        public void sendImageMessage(String toWaId, String imageUrl, String caption) {
+        public boolean sendImageMessage(String toWaId, String imageUrl, String caption) {
                 WhatsAppMessageDto message = WhatsAppMessageDto.builder()
                                 .to(toWaId)
                                 .type("image")
@@ -75,10 +75,10 @@ public class WhatsAppService {
                                                 .build())
                                 .build();
 
-                sendToMeta(message);
+                return sendToMeta(message);
         }
 
-        public void sendInteractiveOrderAlert(String toWaId, String bodyText, Long orderId) {
+        public boolean sendInteractiveOrderAlert(String toWaId, String bodyText, Long orderId) {
                 WhatsAppMessageDto message = WhatsAppMessageDto.builder()
                                 .to(toWaId)
                                 .type("interactive")
@@ -103,10 +103,10 @@ public class WhatsAppService {
                                                 .build())
                                 .build();
 
-                sendToMeta(message);
+                return sendToMeta(message);
         }
 
-        public void sendInteractiveList(String toWaId, String bodyText, List<WhatsAppMessageDto.RowDto> rows) {
+        public boolean sendInteractiveList(String toWaId, String bodyText, List<WhatsAppMessageDto.RowDto> rows) {
                 WhatsAppMessageDto message = WhatsAppMessageDto.builder()
                                 .to(toWaId)
                                 .type("interactive")
@@ -127,10 +127,11 @@ public class WhatsAppService {
                                                 .build())
                                 .build();
 
-                sendToMeta(message);
+                return sendToMeta(message);
         }
 
-        public void sendCartActionButtons(String toWaId, String bodyText, List<WhatsAppMessageDto.ButtonDto> buttons) {
+        public boolean sendCartActionButtons(String toWaId, String bodyText,
+                        List<WhatsAppMessageDto.ButtonDto> buttons) {
                 WhatsAppMessageDto message = WhatsAppMessageDto.builder()
                                 .to(toWaId)
                                 .type("interactive")
@@ -145,10 +146,10 @@ public class WhatsAppService {
                                                 .build())
                                 .build();
 
-                sendToMeta(message);
+                return sendToMeta(message);
         }
 
-        public void sendCarouselMessage(String to, String bodyText, List<WhatsAppMessageDto.CarouselCardDto> cards) {
+        public boolean sendCarouselMessage(String to, String bodyText, List<WhatsAppMessageDto.CarouselCardDto> cards) {
                 WhatsAppMessageDto message = WhatsAppMessageDto.builder()
                                 .to(to)
                                 .type("interactive")
@@ -163,59 +164,60 @@ public class WhatsAppService {
                                                 .build())
                                 .build();
 
-                sendToMeta(message);
+                return sendToMeta(message);
         }
 
-        public void sendOrderConfirmation(String toWaId, Long orderId, BigDecimal total) {
+        public boolean sendOrderConfirmation(String toWaId, Long orderId, BigDecimal total) {
                 // Updated to accept BigDecimal
                 String message = messageService.getOrderConfirmation(String.valueOf(orderId), total.doubleValue());
-                sendSimpleText(toWaId, message);
+                return sendSimpleText(toWaId, message);
         }
 
         // Overload for Double if needed, but BigDecimal is preferred in JHipster
-        public void sendOrderConfirmation(String toWaId, Long orderId, Double total) {
+        public boolean sendOrderConfirmation(String toWaId, Long orderId, Double total) {
                 String message = messageService.getOrderConfirmation(String.valueOf(orderId), total);
-                sendSimpleText(toWaId, message);
+                return sendSimpleText(toWaId, message);
         }
 
-        public void sendDeliveryAssignmentNotification(String customerWaId, String deliveryPersonName,
+        public boolean sendDeliveryAssignmentNotification(String customerWaId, String deliveryPersonName,
                         String deliveryPersonWaPhone) {
                 String message = messageService.getDeliveryAssignmentNotification(deliveryPersonName,
                                 deliveryPersonWaPhone);
-                sendSimpleText(customerWaId, message);
+                return sendSimpleText(customerWaId, message);
         }
 
-        public void sendCustomerWelcomeMessage(String customerWaId, String customerName, String customerPhone,
+        public boolean sendCustomerWelcomeMessage(String customerWaId, String customerName, String customerPhone,
                         String executiveName, String executiveWaPhone) {
                 String message = messageService.getCustomerWelcomeByExecutive(customerName, customerPhone,
                                 executiveName, executiveWaPhone);
-                sendSimpleText(customerWaId, message);
+                return sendSimpleText(customerWaId, message);
         }
 
-        public void sendTeamMemberWelcomeMessage(String teamMemberWaId, String teamMemberName, String teamMemberPhone,
+        public boolean sendTeamMemberWelcomeMessage(String teamMemberWaId, String teamMemberName,
+                        String teamMemberPhone,
                         String roleName, String addedByName, String addedByWaPhone) {
                 String message = deliveryMessageService.getTeamMemberWelcomeMessage(
                                 teamMemberName, teamMemberPhone, roleName, addedByName, addedByWaPhone);
 
-                sendSimpleText(teamMemberWaId, message);
+                return sendSimpleText(teamMemberWaId, message);
         }
 
-        public void sendUnauthorizedDeliveryMessage(String toWaId) {
+        public boolean sendUnauthorizedDeliveryMessage(String toWaId) {
                 String message = deliveryMessageService.getUnauthorizedDeliveryMessage();
-                sendSimpleText(toWaId, message);
+                return sendSimpleText(toWaId, message);
         }
 
-        public void sendDeliveryConfirmationToGroup(String groupId, Long orderId,
+        public boolean sendDeliveryConfirmationToGroup(String groupId, Long orderId,
                         String deliveryPersonName, String deliveryPersonPhone, LocalDateTime confirmedAt) {
 
                 String formattedTime = confirmedAt.format(DateTimeFormatter.ofPattern("hh:mm a"));
                 String message = deliveryMessageService.getDeliveryConfirmationToGroup(
                                 orderId, deliveryPersonName, deliveryPersonPhone, formattedTime);
 
-                sendSimpleText(groupId, message);
+                return sendSimpleText(groupId, message);
         }
 
-        private void sendToMeta(WhatsAppMessageDto message) {
+        private boolean sendToMeta(WhatsAppMessageDto message) {
                 try {
                         // Using ObjectMapper only for logging/debug if needed, RestClient handles
                         // serialization
@@ -232,8 +234,10 @@ public class WhatsAppService {
                                         .toBodilessEntity();
 
                         log.info("Message sent to {}", message.getTo());
+                        return true;
                 } catch (Exception e) {
                         log.error("Failed to send message to {}: {}", message.getTo(), e.getMessage());
+                        return false;
                 }
         }
 }

@@ -54,53 +54,54 @@ public class WhatsAppDispatcherService {
 
     @Async
     public void handleIncomingMessage(WhatsAppWebhookDto.Value payloadValue, WhatsAppWebhookDto.Message message) {
-        String from = message.getFrom();
-        log.info("Received message from: {}", from);
+        try {
+            String from = message.getFrom();
+            log.info("Received message from: {}", from);
 
-        // 1. Check if it's a Team Member
-        Optional<TeamMember> teamMemberOpt = teamMemberRepository.findByWaPhoneNumber(from);
-        if (teamMemberOpt.isPresent()) {
-            TeamMember teamMember = teamMemberOpt.get();
-            dispatchToTeamMemberFlow(teamMember, message);
-            return;
-        }
-
-        // 2. Check if it's an existing Customer
-        Optional<Customer> customerOpt = customerRepository.findByWaPhoneNumber(from);
-        if (customerOpt.isPresent()) {
-            log.info("Found existing customer for: {}", from);
-            Customer customer = customerOpt.get();
-
-            // [REMOVED] Self-healing logic for "Hi"/"Abort" names/phones.
-            // Data integrity should be enforced at the entry point (handleAwaitingName),
-            // not patched here.
-
-            customerFlowService.handleCustomerMessage(customer, message);
-            return;
-        } else {
-            log.info("No existing customer found for: {}", from);
-        }
-
-        // 3. New Customer (or in-progress onboarding)
-        BotSession session = sessionManager.getSession(from);
-        String currentState = session.getCurrentState();
-
-        if (currentState != null && currentState.startsWith("UNKNOWN_")) {
-            // Already in unknown flow
-            unknownCustomerFlowService.handleMessage(from, message);
-        } else {
-            // Start new onboarding
-            log.info("New unknown customer detected: {}", from);
-            String profileName = "Guest";
-            if (payloadValue != null && payloadValue.getContacts() != null) {
-                Optional<WhatsAppWebhookDto.Contact> contactOpt = payloadValue.getContacts().stream()
-                        .filter(c -> c.getWaId().equals(from))
-                        .findFirst();
-                if (contactOpt.isPresent() && contactOpt.get().getProfile() != null) {
-                    profileName = contactOpt.get().getProfile().getName();
-                }
+            // 1. Check if it's a Team Member
+            Optional<TeamMember> teamMemberOpt = teamMemberRepository.findByWaPhoneNumber(from);
+            if (teamMemberOpt.isPresent()) {
+                TeamMember teamMember = teamMemberOpt.get();
+                dispatchToTeamMemberFlow(teamMember, message);
+                return;
             }
-            unknownCustomerFlowService.startOnboarding(from, profileName);
+
+            // 2. Check if it's an existing Customer
+            Optional<Customer> customerOpt = customerRepository.findByWaPhoneNumber(from);
+            if (customerOpt.isPresent()) {
+                log.info("Found existing customer for: {}", from);
+                Customer customer = customerOpt.get();
+
+                customerFlowService.handleCustomerMessage(customer, message);
+                return;
+            } else {
+                log.info("No existing customer found for: {}", from);
+            }
+
+            // 3. New Customer (or in-progress onboarding)
+            BotSession session = sessionManager.getSession(from);
+            String currentState = session.getCurrentState();
+
+            if (currentState != null && currentState.startsWith("UNKNOWN_")) {
+                // Already in unknown flow
+                unknownCustomerFlowService.handleMessage(from, message);
+            } else {
+                // Start new onboarding
+                log.info("New unknown customer detected: {}", from);
+                String profileName = "Guest";
+                if (payloadValue != null && payloadValue.getContacts() != null) {
+                    Optional<WhatsAppWebhookDto.Contact> contactOpt = payloadValue.getContacts().stream()
+                            .filter(c -> c.getWaId().equals(from))
+                            .findFirst();
+                    if (contactOpt.isPresent() && contactOpt.get().getProfile() != null) {
+                        profileName = contactOpt.get().getProfile().getName();
+                    }
+                }
+                unknownCustomerFlowService.startOnboarding(from, profileName);
+            }
+        } catch (Exception e) {
+            log.error("CRITICAL: Unexpected error in WhatsAppDispatcherService for message: {}", message, e);
+            // Optional: Send error message to system admin or metrics
         }
     }
 

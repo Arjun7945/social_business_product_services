@@ -16,6 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import com.aps.service.util.InputValidator;
 
 import java.time.Instant;
 import java.util.List;
@@ -34,14 +37,18 @@ public class CustomerManagementService {
         // I'll stick to hardcoded strings for now to match legacy, or reuse existing if
         // applicable.
 
+        private final InputValidator inputValidator;
+
         public CustomerManagementService(CustomerRepository customerRepository,
                         WhatsAppService whatsAppService,
                         LocationValidationService locationValidationService,
-                        BotSessionManager sessionManager) {
+                        BotSessionManager sessionManager,
+                        InputValidator inputValidator) {
                 this.customerRepository = customerRepository;
                 this.whatsAppService = whatsAppService;
                 this.locationValidationService = locationValidationService;
                 this.sessionManager = sessionManager;
+                this.inputValidator = inputValidator;
         }
 
         public void showCustomerMenu(TeamMember admin) {
@@ -83,6 +90,11 @@ public class CustomerManagementService {
         }
 
         public void handleCustomerNameInput(TeamMember admin, BotSession session, String name) {
+                if (!inputValidator.isValidName(name)) {
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                        "❌ Invalid name. Use letters/spaces/dots only (min 2 chars). Try again:");
+                        return;
+                }
                 sessionManager.setSessionData(session, "tempCustomerName", name.trim());
                 whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                                 "✅ Name: " + name.trim() + "\n\n📞 Please provide the customer's phone number:");
@@ -90,6 +102,11 @@ public class CustomerManagementService {
         }
 
         public void handleCustomerPhoneInput(TeamMember admin, BotSession session, String phone) {
+                if (!inputValidator.isValidPhoneNumber(phone)) {
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                        "❌ Invalid phone number format. Try again:");
+                        return;
+                }
                 sessionManager.setSessionData(session, "tempCustomerPhone", phone.trim());
                 whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                                 "✅ Phone: " + phone.trim()
@@ -98,6 +115,11 @@ public class CustomerManagementService {
         }
 
         public void handleCustomerWaPhoneInput(TeamMember admin, BotSession session, String waPhone) {
+                if (!inputValidator.isValidPhoneNumber(waPhone)) {
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                        "❌ Invalid WhatsApp number format. Try again:");
+                        return;
+                }
                 sessionManager.setSessionData(session, "tempCustomerWaPhone", waPhone.trim());
                 whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                                 "✅ WhatsApp: " + waPhone.trim() + "\n\n📍 Please share the customer's location.\n\n" +
@@ -111,6 +133,9 @@ public class CustomerManagementService {
         public void handleLocationMessage(TeamMember admin, BotSession session, WhatsAppWebhookDto.Location location) {
                 String currentStage = session.getCurrentState();
                 if (!AdminFlowStage.AWAITING_CUST_LOCATION.name().equals(currentStage)) {
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                        "⚠️ *Unexpected Location Received*\n\n" +
+                                                        "I'm not expecting a location right now. Please select an option from the menu or start a new command.");
                         return;
                 }
 
@@ -201,31 +226,38 @@ public class CustomerManagementService {
                         log.info("DEBUG: Customer Saved: ID={}, waPhone={}, Name={}", newCustomer.getId(),
                                         newCustomer.getWaPhoneNumber(), newCustomer.getName());
 
-                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                        "✅ *Customer Added Successfully!*\n\n" +
-                                                        "👤 " + newCustomer.getName()
-                                                        + " has been added to the system.\n\n" +
-                                                        "The customer can now start ordering by sending 'Hi' to the business number.");
+                        Customer finalNewCustomer = newCustomer;
+                        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                                @Override
+                                public void afterCommit() {
+                                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                                        "✅ *Customer Added Successfully!*\n\n" +
+                                                                        "👤 " + finalNewCustomer.getName()
+                                                                        + " has been added to the system.\n\n" +
+                                                                        "The customer can now start ordering by sending 'Hi' to the business number.");
 
-                        // Send welcome message to the new Customer
-                        String customerWaPhone = newCustomer.getWaPhoneNumber();
-                        log.info("DEBUG: Attempting to send welcome message to: {}", customerWaPhone);
+                                        // Send welcome message to the new Customer
+                                        String customerWaPhone = finalNewCustomer.getWaPhoneNumber();
+                                        log.info("DEBUG: Attempting to send welcome message to: {}", customerWaPhone);
 
-                        if (customerWaPhone != null && !customerWaPhone.isEmpty()) {
-                                log.info("DEBUG: Sending welcome message to customer...");
-                                whatsAppService.sendSimpleText(customerWaPhone,
-                                                "🎉 *Welcome to the Family!*\n\n" +
-                                                                "👋 Hi " + newCustomer.getName() + ",\n" +
-                                                                "You have been successfully registered as a customer.\n\n"
-                                                                +
-                                                                "🛍️ *Start Ordering:*\n" +
-                                                                "Simply reply with *'Hi'* to browse our products and place orders.\n\n"
-                                                                +
-                                                                "Thank you for choosing us!");
-                                log.info("DEBUG: Welcome message sent (async check needed)");
-                        } else {
-                                log.warn("DEBUG: Skipping welcome message - waPhoneNumber is null or empty");
-                        }
+                                        if (customerWaPhone != null && !customerWaPhone.isEmpty()) {
+                                                log.info("DEBUG: Sending welcome message to customer...");
+                                                whatsAppService.sendSimpleText(customerWaPhone,
+                                                                "🎉 *Welcome to the Family!*\n\n" +
+                                                                                "👋 Hi " + finalNewCustomer.getName()
+                                                                                + ",\n" +
+                                                                                "You have been successfully registered as a customer.\n\n"
+                                                                                +
+                                                                                "🛍️ *Start Ordering:*\n" +
+                                                                                "Simply reply with *'Hi'* to browse our products and place orders.\n\n"
+                                                                                +
+                                                                                "Thank you for choosing us!");
+                                                log.info("DEBUG: Welcome message sent (async check needed)");
+                                        } else {
+                                                log.warn("DEBUG: Skipping welcome message - waPhoneNumber is null or empty");
+                                        }
+                                }
+                        });
 
                 } catch (Exception e) {
                         e.printStackTrace();

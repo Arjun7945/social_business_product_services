@@ -308,6 +308,20 @@ public class CustomerMessageService {
                 "ഒരു ഓപ്ഷൻ തിരഞ്ഞെടുക്കുക:";
     }
 
+    public String getSessionResumptionPrompt(String customerName) {
+        return String.format("👋 *ഹലോ %s!* 😊\n\n" +
+                "താങ്കൾക്ക് ഒരു സജീവ സെഷൻ ഉണ്ട്. 🛒\n\n" +
+                "മുമ്പത്തെ കാര്യങ്ങൾ തുടരണോ അതോ പുതിയതായി തുടങ്ങണോ?", customerName);
+    }
+
+    public String getButtonResume() {
+        return "▶️ തുടരുക";
+    }
+
+    public String getButtonStartNew() {
+        return "🆕 പുതിയത് തുടങ്ങുക";
+    }
+
     // ========================================
     // CATEGORY 7: EXECUTIVE WELCOME MESSAGE
     // ========================================

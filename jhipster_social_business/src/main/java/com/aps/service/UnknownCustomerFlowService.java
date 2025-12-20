@@ -11,6 +11,8 @@ import com.aps.service.util.InputValidator;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.Instant;
 import java.util.List;
@@ -105,8 +107,9 @@ public class UnknownCustomerFlowService {
     private void handleTextMessage(String waPhoneNumber, BotSession session, CustomerFlowStage stage, String text) {
         if (stage == CustomerFlowStage.UNKNOWN_NAME_INPUT) {
             String name = text.trim();
-            if (name.length() < 2) {
-                whatsAppService.sendSimpleText(waPhoneNumber, "ദയവായി ശരിയായ പേര് നൽകുക.");
+            if (!inputValidator.isValidName(name)) {
+                whatsAppService.sendSimpleText(waPhoneNumber,
+                        "ദയവായി ശരിയായ പേര് നൽകുക. (അക്ഷരങ്ങൾ മാത്രം ഉപയോഗിക്കുക)");
                 return;
             }
             sessionManager.setSessionData(session, "tempName", name);
@@ -153,15 +156,22 @@ public class UnknownCustomerFlowService {
             // Clear temp session data? Optional.
 
             // Send Success Message
-            whatsAppService.sendSimpleText(waPhoneNumber,
-                    String.format("നന്ദി! നിങ്ങളുടെ രജിസ്‌ട്രേഷൻ പൂർത്തിയായി. 🎉\n" +
-                            "ഇനി നിങ്ങൾക്ക് സാധനങ്ങൾ ഓർഡർ ചെയ്യാാം! 🐟🦐\n\n", name));
+            // Send Success Message
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    whatsAppService.sendSimpleText(waPhoneNumber,
+                            String.format("നന്ദി! നിങ്ങളുടെ രജിസ്‌ട്രേഷൻ പൂർത്തിയായി. 🎉\n" +
+                                    "ഇനി നിങ്ങൾക്ക് സാധനങ്ങൾ ഓർഡർ ചെയ്യാാം! 🐟🦐\n\n", name));
+
+                    // Optional: Automatically show catalog? - Moved inside afterCommit to ensure
+                    // data is ready
+                    customerFlowService.handleCustomerMessage(newCustomer, createDummyTextMessage("start"));
+                }
+            });
 
             // Transition to Registered Flow
             updateStage(session, CustomerFlowStage.REGISTERED);
-
-            // Optional: Automatically show catalog?
-            customerFlowService.handleCustomerMessage(newCustomer, createDummyTextMessage("start"));
         }
     }
 

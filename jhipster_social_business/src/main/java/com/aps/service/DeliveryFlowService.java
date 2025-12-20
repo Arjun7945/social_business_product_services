@@ -21,6 +21,8 @@ import com.aps.config.FlowConstants;
 import com.aps.service.dto.WhatsAppMessageDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.Instant;
 import java.util.List;
@@ -182,14 +184,19 @@ public class DeliveryFlowService {
                 customerOrderRepository.save(order);
 
                 if (newStatus == OrderStatus.ORDER_DELIVERED_SUCESSFULLY) {
-                        whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
-                                        deliveryPersonMessageService.getOrderDeliveredSuccess());
-                        // Notify Customer
-                        whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(),
-                                        customerMessageService.getOrderDeliveredMessage());
+                        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                                @Override
+                                public void afterCommit() {
+                                        whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
+                                                        deliveryPersonMessageService.getOrderDeliveredSuccess());
+                                        // Notify Customer
+                                        whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(),
+                                                        customerMessageService.getOrderDeliveredMessage());
 
-                        // Trigger Re-order Flow
-                        customerFlowService.sendReOrderFlow(order.getCustomer());
+                                        // Trigger Re-order Flow
+                                        customerFlowService.sendReOrderFlow(order.getCustomer());
+                                }
+                        });
                 }
         }
 
@@ -284,12 +291,17 @@ public class DeliveryFlowService {
                         return;
                 }
 
-                // 3. Check if order already confirmed
-                if (order.getStatus() == OrderStatus.DELIVERY_ONWAY && order.getDeliveryPerson() != null
-                                && order.getDeliveryPerson().equals(teamMember)) {
+                // 3. Strict Status Check (Race Condition Fix)
+                // If the order is NOT available (i.e. not in ORDER_NOT_TAKEN state), reject it.
+                if (order.getStatus() != OrderStatus.ORDER_NOT_TAKEN) {
                         String status = order.getStatus().toString();
+
+                        // Use existing message: "Order #123 is already DELIVERY_ONWAY..."
                         whatsAppService.sendSimpleText(deliveryPersonWaId,
                                         deliveryPersonMessageService.getOrderAlreadyTaken(orderId, status));
+
+                        log.warn("Blocked attempt to take order {} by {} because status is {}",
+                                        orderId, deliveryPersonWaId, status);
                         return;
                 }
 
@@ -299,25 +311,32 @@ public class DeliveryFlowService {
                 order.setConfirmedAt(Instant.now());
                 customerOrderRepository.save(order);
 
-                // 5. Notify customer with delivery person details
-                Customer customer = customerRepository.findById(order.getCustomer().getId())
-                                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                                // 5. Notify customer with delivery person details
+                                Customer customer = customerRepository.findById(order.getCustomer().getId())
+                                                .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-                whatsAppService.sendDeliveryAssignmentNotification(
-                                customer.getWaPhoneNumber(),
-                                teamMember.getName(),
-                                teamMember.getWaPhoneNumber());
+                                whatsAppService.sendDeliveryAssignmentNotification(
+                                                customer.getWaPhoneNumber(),
+                                                teamMember.getName(),
+                                                teamMember.getWaPhoneNumber());
 
-                // 6. Notify delivery person of successful confirmation
-                whatsAppService.sendSimpleText(deliveryPersonWaId,
-                                deliveryPersonMessageService.getOrderConfirmationSuccess(orderId, customer.getName(),
-                                                customer.getPhoneNumber()));
+                                // 6. Notify delivery person of successful confirmation
+                                whatsAppService.sendSimpleText(deliveryPersonWaId,
+                                                deliveryPersonMessageService.getOrderConfirmationSuccess(orderId,
+                                                                customer.getName(),
+                                                                customer.getPhoneNumber()));
 
-                log.info("Order {} assigned to delivery person {} ({})",
-                                orderId, teamMember.getName(), teamMember.getPhoneNumber());
+                                log.info("Order {} assigned to delivery person {} ({})",
+                                                orderId, teamMember.getName(), teamMember.getPhoneNumber());
 
-                // 7. Send Payment Mode Selection Buttons (Replaces Dashboard for now)
-                sendPaymentModeSelection(deliveryPersonWaId, orderId, order.getTotalAmount().doubleValue());
+                                // 7. Send Payment Mode Selection Buttons (Replaces Dashboard for now)
+                                sendPaymentModeSelection(deliveryPersonWaId, orderId,
+                                                order.getTotalAmount().doubleValue());
+                        }
+                });
         }
 
         private void sendPaymentModeSelection(String waId, Long orderId, double amount) {
