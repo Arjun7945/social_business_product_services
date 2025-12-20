@@ -171,6 +171,11 @@ public class CustomerMessageService {
                 "അളവ് വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു! ✨";
     }
 
+    public String getQuantityUpdatedMessage(double quantity) {
+        return String.format("✅ *മികച്ചത്!* 🎉\n\n" +
+                "അളവ് വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു: *%.2f kg* ✨", quantity);
+    }
+
     public String getItemAddedToCart(String customerName) {
         return String.format("✅ *കാർട്ടിലേക്ക് വിജയകരമായി ചേർത്തു!* 🎉\n\n" +
                 "👍 മികച്ച തിരഞ്ഞെടുപ്പ്, %s!\n\n" +

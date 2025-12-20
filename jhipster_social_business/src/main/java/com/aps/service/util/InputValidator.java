@@ -31,4 +31,29 @@ public class InputValidator {
         // No spaces allowed to ensure clean data
         return phone != null && phone.matches("^\\+?[0-9]{10,12}$");
     }
+
+    public boolean isValidQuantity(Double quantity) {
+        // Enforce reasonable limits: 0.1kg to 100kg per item/action
+        return quantity != null && quantity >= 0.1 && quantity <= 100.0;
+    }
+
+    public Double cleanQuantityInput(String input) {
+        if (input == null) {
+            return null;
+        }
+        // Remove "kg", "grams", spaces, etc.
+        // Replace comma with dot for international formats if needed (keeping simple
+        // for now)
+        String cleaned = input.toLowerCase()
+                .replace("kg", "")
+                .replace("kgs", "")
+                .replace("kilograms", "")
+                .replace("kilo", "")
+                .trim();
+        try {
+            return Double.parseDouble(cleaned);
+        } catch (NumberFormatException e) {
+            return null; // Return null to indicate invalid format
+        }
+    }
 }

@@ -9,6 +9,7 @@ import com.aps.repository.CustomerOrderRepository;
 import com.aps.repository.FishProductRepository;
 import com.aps.repository.OrderItemRepository;
 import com.aps.service.dto.CartItemDetailsDTO;
+import com.aps.service.errors.ProductUnavailableException;
 import com.aps.service.event.OrderPlacedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,6 +100,10 @@ public class OrderService {
             FishProduct product = productMap.get(item.getFishProductId());
             if (product == null) {
                 throw new RuntimeException("Product not found: " + item.getFishProductId());
+            }
+
+            if (!Boolean.TRUE.equals(product.getIsAvailable())) {
+                throw new ProductUnavailableException("Product " + product.getName() + " is no longer available.");
             }
 
             OrderItem orderItem = new OrderItem();

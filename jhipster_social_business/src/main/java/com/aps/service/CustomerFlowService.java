@@ -14,6 +14,7 @@ import com.aps.service.dto.CartItemDetailsDTO;
 import com.aps.domain.CustomerOrder;
 import com.aps.service.dto.WhatsAppMessageDto;
 import com.aps.service.dto.WhatsAppWebhookDto;
+import com.aps.service.errors.ProductUnavailableException;
 import com.aps.service.util.InputValidator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -499,6 +500,8 @@ public class CustomerFlowService {
         FishProduct fish = fishOpt.get();
 
         setSessionData(session, "tempProductId", fishProductId);
+        // Default mode is ADD (Increment)
+        setSessionData(session, "quantityMode", "ADD");
         updateStage(session, CustomerFlowStage.AWAITING_QUANTITY);
 
         whatsAppService.sendSimpleText(customer.getWaPhoneNumber(), messageService
@@ -507,51 +510,56 @@ public class CustomerFlowService {
     }
 
     private void handleAwaitingQuantity(Customer customer, BotSession session, String text) {
+        Double quantity = inputValidator.cleanQuantityInput(text.trim());
+
+        if (!inputValidator.isValidQuantity(quantity)) {
+            whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                    messageService.getInvalidQuantityFormat() + "\n(Please enter a value between 0.1 and 100)");
+            return;
+        }
+
+        Long fishProductId = getSessionDataLong(session, "tempProductId");
+        if (fishProductId == null) {
+            whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                    "Session expired. Please browse products again.");
+            showProductCatalog(customer, session);
+            return;
+        }
+
+        // 1. Strict Stock Check
+        FishProduct product = fishProductRepository.findById(fishProductId).orElse(null);
+        if (product == null || !Boolean.TRUE.equals(product.getIsAvailable())) {
+            whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                    "⚠️ Sorry, this product is no longer available.");
+            showProductCatalog(customer, session);
+            return;
+        }
+
+        // 2. Mode Check (ADD vs EDIT)
+        String mode = getSessionDataString(session, "quantityMode");
+        if (mode == null)
+            mode = "ADD"; // Default
+
         try {
-            Double quantity = Double.parseDouble(text.trim());
-            if (quantity <= 0) {
+            if ("EDIT".equals(mode)) {
+                // EDIT Mode: Replace/Set quantity
+                cartService.updateQuantity(customer.getId(), fishProductId, quantity);
                 whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
-                        messageService.getInvalidQuantityZeroOrNegative());
-                return;
+                        messageService.getQuantityUpdatedMessage(quantity));
+
+                // Return to appropriate menu
+                showCartSummary(customer, session);
+            } else {
+                // ADD Mode: Increment quantity
+                cartService.addToCart(customer.getId(), fishProductId, quantity);
+
+                setSessionData(session, "quantityMode", null); // Clear mode
+                sendCartOptions(customer);
+                updateStage(session, CustomerFlowStage.ADDING_TO_CART);
             }
-
-            Long fishProductId = getSessionDataLong(session, "tempProductId");
-            // Check if edit or new is handled by cartService?
-            // CartService logic: if exists, update... Wait, CartService.addToCart adds to
-            // existing.
-            // But if we are in "EDIT_QUANTITY" mode, we want to SET quantity.
-            // If in "ADDING_TO_CART" mode, maybe we add?
-            // Legacy logic: checked if item exists.
-
-            // For simplicity: addToCart in CartService increments.
-            // We should use updateQuantity here if we want to SET.
-            // But if it's a new add, we init with quantity.
-            // Let's check CartService.addToCart -> it increments.
-
-            // Determine intent?
-            // The stage is AWAITING_QUANTITY.
-            // If we came from "SELECT_" -> New Add (or increment).
-            // If we came from "EDIT_QTY_" -> Set.
-
-            // I should store "mode" in session data too.
-            // Defaulting to "ADD" if not specified.
-
-            // Let's simply use updateQuantity if it's an edit, but handling "new" is tricky
-            // if we use update.
-            // I'll stick to CartService.addToCart for new adds, and updateQuantity for
-            // edits.
-            // Check session data for "editMode"?
-
-            cartService.addToCart(customer.getId(), fishProductId, quantity); // This increments.
-
-            sendCartOptions(customer);
-            updateStage(session, CustomerFlowStage.ADDING_TO_CART); // Transitional stage or just Registered?
-
-        } catch (NumberFormatException e) {
-            whatsAppService.sendSimpleText(customer.getWaPhoneNumber(), messageService.getInvalidQuantityFormat());
         } catch (Exception e) {
-            log.error("Error processing quantity", e);
-            whatsAppService.sendSimpleText(customer.getWaPhoneNumber(), "Error processing quantity.");
+            log.error("Error updating cart", e);
+            whatsAppService.sendSimpleText(customer.getWaPhoneNumber(), "Error updating cart. Please try again.");
         }
     }
 
@@ -617,6 +625,10 @@ public class CustomerFlowService {
 
             updateStage(session, CustomerFlowStage.REGISTERED);
 
+        } catch (ProductUnavailableException e) {
+            whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                    "🚫 " + e.getMessage() + "\nPlease remove the unavailable item from your cart.");
+            showCartSummary(customer, session);
         } catch (IllegalStateException e) {
             whatsAppService.sendSimpleText(customer.getWaPhoneNumber(), messageService.getEmptyCartDuringOrder());
         } catch (Exception e) {
@@ -716,6 +728,7 @@ public class CustomerFlowService {
             // Single item - go directly to quantity input
             CartItemDetailsDTO item = items.get(0);
             setSessionData(session, "tempProductId", item.getFishProductId());
+            setSessionData(session, "quantityMode", "EDIT");
 
             whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
                     messageService.getEditQuantityHeader(item.getFishName(), item.getQuantityKg()));
@@ -748,6 +761,7 @@ public class CustomerFlowService {
 
     private void handleEditQuantitySelection(Customer customer, BotSession session, Long fishProductId) {
         setSessionData(session, "tempProductId", fishProductId);
+        setSessionData(session, "quantityMode", "EDIT");
 
         List<CartItemDetailsDTO> items = cartService.getCartItems(customer.getId());
         CartItemDetailsDTO item = items.stream().filter(i -> i.getFishProductId().equals(fishProductId)).findFirst()
@@ -922,6 +936,15 @@ public class CustomerFlowService {
             return ((Number) val).longValue();
         }
         return null; // or throw
+    }
+
+    private String getSessionDataString(BotSession session, String key) {
+        Map<String, Object> data = getSessionDataMap(session);
+        Object val = data.get(key);
+        if (val instanceof String) {
+            return (String) val;
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
