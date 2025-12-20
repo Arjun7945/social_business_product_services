@@ -46,4 +46,9 @@ export const EntityNavbarItems: NavbarItem[] = [
     route: '/bot-session',
     translationKey: 'global.menu.entities.botSession',
   },
+  {
+    name: 'ButtonAction',
+    route: '/button-action',
+    translationKey: 'global.menu.entities.buttonAction',
+  },
 ];

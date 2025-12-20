@@ -167,6 +167,7 @@ public class WhatsAppWebhookDto {
         private String id;
         private String timestamp;
         private String type;
+        private Context context;
         private Text text;
         private Interactive interactive;
         private Button button;
@@ -203,6 +204,14 @@ public class WhatsAppWebhookDto {
 
         public void setType(String type) {
             this.type = type;
+        }
+
+        public Context getContext() {
+            return context;
+        }
+
+        public void setContext(Context context) {
+            this.context = context;
         }
 
         public Text getText() {
@@ -429,6 +438,27 @@ public class WhatsAppWebhookDto {
 
         public void setSha256(String sha256) {
             this.sha256 = sha256;
+        }
+    }
+
+    public static class Context {
+        private String from;
+        private String id;
+
+        public String getFrom() {
+            return from;
+        }
+
+        public void setFrom(String from) {
+            this.from = from;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
         }
     }
 }

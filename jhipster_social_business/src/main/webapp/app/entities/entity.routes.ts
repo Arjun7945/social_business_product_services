@@ -51,6 +51,11 @@ const routes: Routes = [
     data: { pageTitle: 'whatsappProductServiceApp.botSession.home.title' },
     loadChildren: () => import('./bot-session/bot-session.routes'),
   },
+  {
+    path: 'button-action',
+    data: { pageTitle: 'whatsappProductServiceApp.buttonAction.home.title' },
+    loadChildren: () => import('./button-action/button-action.routes'),
+  },
   /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
 ];
 

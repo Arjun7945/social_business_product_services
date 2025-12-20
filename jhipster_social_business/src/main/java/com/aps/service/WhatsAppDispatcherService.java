@@ -31,6 +31,8 @@ public class WhatsAppDispatcherService {
     private final CustomerFlowService customerFlowService;
     private final UnknownCustomerFlowService unknownCustomerFlowService;
     private final BotSessionManager sessionManager;
+    private final ButtonActionService buttonActionService;
+    private final WhatsAppService whatsAppService;
 
     public WhatsAppDispatcherService(TeamMemberRepository teamMemberRepository,
             CustomerRepository customerRepository,
@@ -40,7 +42,9 @@ public class WhatsAppDispatcherService {
             AccountsFlowService accountsFlowService,
             CustomerFlowService customerFlowService,
             UnknownCustomerFlowService unknownCustomerFlowService,
-            BotSessionManager sessionManager) {
+            BotSessionManager sessionManager,
+            ButtonActionService buttonActionService,
+            WhatsAppService whatsAppService) {
         this.teamMemberRepository = teamMemberRepository;
         this.customerRepository = customerRepository;
         this.adminFlowService = adminFlowService;
@@ -50,6 +54,8 @@ public class WhatsAppDispatcherService {
         this.customerFlowService = customerFlowService;
         this.unknownCustomerFlowService = unknownCustomerFlowService;
         this.sessionManager = sessionManager;
+        this.buttonActionService = buttonActionService;
+        this.whatsAppService = whatsAppService;
     }
 
     @Async
@@ -57,6 +63,14 @@ public class WhatsAppDispatcherService {
         try {
             String from = message.getFrom();
             log.info("Received message from: {}", from);
+
+            // 0. Global Unique Token / Stale Button Check
+            if (isStaleButton(message)) {
+                handleStaleButton(from, message);
+                return;
+            }
+            // Record button action if valid (non-stale) interactive response
+            recordButtonActionIfInteractive(message);
 
             // 1. Check if it's a Team Member
             Optional<TeamMember> teamMemberOpt = teamMemberRepository.findByWaPhoneNumber(from);
@@ -131,6 +145,40 @@ public class WhatsAppDispatcherService {
                 // Fallback to customer flow? Or Error?
                 // For safety, maybe just ignore or send "Access Denied"
                 break;
+        }
+    }
+
+    private boolean isStaleButton(WhatsAppWebhookDto.Message message) {
+        if ("interactive".equals(message.getType()) && message.getContext() != null) {
+            String waMessageId = message.getContext().getId();
+            return buttonActionService.isButtonAlreadyClicked(waMessageId);
+        }
+        return false;
+    }
+
+    private void handleStaleButton(String from, WhatsAppWebhookDto.Message message) {
+        log.warn("Ignored stale button click from {} (Msg ID: {})", from, message.getContext().getId());
+        whatsAppService.sendSimpleText(from, "⚠️ This option has expired. Please use the latest menu.");
+
+        // Attempt recovery for Customers
+        Optional<Customer> customerOpt = customerRepository.findByWaPhoneNumber(from);
+        if (customerOpt.isPresent()) {
+            customerFlowService.recoverLastState(from);
+        }
+    }
+
+    private void recordButtonActionIfInteractive(WhatsAppWebhookDto.Message message) {
+        if ("interactive".equals(message.getType()) && message.getContext() != null) {
+            String waMessageId = message.getContext().getId();
+            String buttonId = "UNKNOWN";
+            if (message.getInteractive() != null) {
+                if (message.getInteractive().getButtonReply() != null) {
+                    buttonId = message.getInteractive().getButtonReply().getId();
+                } else if (message.getInteractive().getListReply() != null) {
+                    buttonId = message.getInteractive().getListReply().getId();
+                }
+            }
+            buttonActionService.recordButtonAction(waMessageId, buttonId, message.getFrom());
         }
     }
 }

@@ -834,6 +834,87 @@ public class CustomerFlowService {
         }
     }
 
+    /**
+     * Resends the last state/menu to the customer.
+     * Used when a customer clicks an expired/stale button.
+     */
+    public void recoverLastState(String phoneNumber) {
+        BotSession session = sessionManager.getSession(phoneNumber);
+        Customer customer = customerRepository.findByWaPhoneNumber(phoneNumber).orElse(null);
+
+        if (customer == null || session == null) {
+            log.warn("Cannot recover state for unknown customer: {}", phoneNumber);
+            return;
+        }
+
+        CustomerFlowStage stage = getStage(session);
+        log.info("Recovering state for customer {}: {}", phoneNumber, stage);
+
+        switch (stage) {
+            case AWAITING_NAME:
+                whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                        messageService.getWelcomeMessageNewCustomer());
+                break;
+            case AWAITING_PHONE:
+                whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                        messageService.getNameConfirmation(customer.getName()));
+                break;
+            case AWAITING_LOCATION:
+                whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                        messageService.getPhoneConfirmationAndLocationRequest());
+                break;
+            case REGISTERED:
+                whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                        messageService.getPromptToBrowse(customer.getName()));
+                break;
+            case BROWSING:
+                showProductCatalog(customer, session);
+                break;
+            case ADDING_TO_CART:
+                sendCartOptions(customer);
+                break;
+            case AWAITING_QUANTITY:
+                // Need to know WHICH product they were adding/editing to show prompt.
+                // Session data might have it.
+                Long fishProductId = getSessionDataLong(session, "tempProductId");
+                if (fishProductId != null) {
+                    fishProductRepository.findById(fishProductId)
+                            .ifPresent(fish -> whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                                    messageService
+                                            .getProductSelectedQuantityRequest(customer.getName(), fish.getName(),
+                                                    fish.getPricePerKg().doubleValue())));
+                } else {
+                    // Fallback if data lost
+                    showProductCatalog(customer, session);
+                }
+                break;
+            case CHECKOUT:
+                showCartSummary(customer, session);
+                break;
+            case CONFIRMING_ORDER:
+                showCartSummary(customer, session); // Go back to summary summary
+                break;
+            case EDITING_ORDER:
+                showEditOrderOptions(customer, session);
+                break;
+            case EDITING_PRODUCT:
+                showProductEditOptions(customer, session);
+                break;
+            case EDITING_QUANTITY:
+                showQuantityEditOptions(customer, session);
+                break;
+            default:
+                // For NEW or undefined, just show welcome or catalog
+                if (stage == CustomerFlowStage.NEW) {
+                    whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                            messageService.getWelcomeMessageNewCustomer());
+                } else {
+                    showProductCatalog(customer, session);
+                }
+                break;
+        }
+    }
+
     private Long getSessionDataLong(BotSession session, String key) {
         Map<String, Object> data = getSessionDataMap(session);
         Object val = data.get(key);

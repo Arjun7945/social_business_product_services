@@ -17,7 +17,9 @@
         "shoppingCart": "Shopping Cart",
         "cartItem": "Cart Item",
         "teamMember": "Team Member",
-        "botSession": "Bot Session"
+        "botSession": "Bot Session",
+        "buttonAction": "Button Actions",
+        "refreshListLabel": "Refresh list"
       },
       "account": {
         "main": "Account",
