@@ -36,4 +36,6 @@ public interface ProductImageRepository extends JpaRepository<ProductImage, Long
     Optional<ProductImage> findOneWithToOneRelationships(@Param("id") Long id);
 
     long countByProductId(Long productId);
+
+    Optional<ProductImage> findByImageUrl(String imageUrl);
 }

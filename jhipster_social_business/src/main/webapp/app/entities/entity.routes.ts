@@ -56,6 +56,16 @@ const routes: Routes = [
     data: { pageTitle: 'whatsappProductServiceApp.buttonAction.home.title' },
     loadChildren: () => import('./button-action/button-action.routes'),
   },
+  {
+    path: 'removed-user',
+    data: { pageTitle: 'whatsappProductServiceApp.removedUser.home.title' },
+    loadChildren: () => import('./removed-user/removed-user.routes'),
+  },
+  {
+    path: 'removed-order-summary',
+    data: { pageTitle: 'whatsappProductServiceApp.removedOrderSummary.home.title' },
+    loadChildren: () => import('./removed-order-summary/removed-order-summary.routes'),
+  },
   /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
 ];
 

@@ -38,6 +38,10 @@ public class CustomerOrderDTO implements Serializable {
     @NotNull
     private CustomerDTO customer;
 
+    private Long removedCustomerId;
+
+    private Long removedDeliveryPersonId;
+
     public Long getId() {
         return id;
     }
@@ -102,6 +106,22 @@ public class CustomerOrderDTO implements Serializable {
         this.customer = customer;
     }
 
+    public Long getRemovedCustomerId() {
+        return removedCustomerId;
+    }
+
+    public void setRemovedCustomerId(Long removedCustomerId) {
+        this.removedCustomerId = removedCustomerId;
+    }
+
+    public Long getRemovedDeliveryPersonId() {
+        return removedDeliveryPersonId;
+    }
+
+    public void setRemovedDeliveryPersonId(Long removedDeliveryPersonId) {
+        this.removedDeliveryPersonId = removedDeliveryPersonId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -127,14 +147,16 @@ public class CustomerOrderDTO implements Serializable {
     @Override
     public String toString() {
         return "CustomerOrderDTO{" +
-            "id=" + getId() +
-            ", orderTime='" + getOrderTime() + "'" +
-            ", totalAmount=" + getTotalAmount() +
-            ", status='" + getStatus() + "'" +
-            ", paymentMethod='" + getPaymentMethod() + "'" +
-            ", confirmedAt='" + getConfirmedAt() + "'" +
-            ", deliveryPerson=" + getDeliveryPerson() +
-            ", customer=" + getCustomer() +
-            "}";
+                "id=" + getId() +
+                ", orderTime='" + getOrderTime() + "'" +
+                ", totalAmount=" + getTotalAmount() +
+                ", status='" + getStatus() + "'" +
+                ", paymentMethod='" + getPaymentMethod() + "'" +
+                ", confirmedAt='" + getConfirmedAt() + "'" +
+                ", deliveryPerson=" + getDeliveryPerson() +
+                ", customer=" + getCustomer() +
+                ", removedCustomerId=" + getRemovedCustomerId() +
+                ", removedDeliveryPersonId=" + getRemovedDeliveryPersonId() +
+                "}";
     }
 }

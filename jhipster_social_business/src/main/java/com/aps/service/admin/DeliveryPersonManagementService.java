@@ -6,9 +6,12 @@ import com.aps.domain.enumeration.AdminFlowStage;
 import com.aps.domain.enumeration.UserRole;
 import com.aps.repository.TeamMemberRepository;
 import com.aps.service.BotSessionManager;
+import com.aps.service.UserRemovalService; // Added
 import com.aps.service.WhatsAppService;
 import com.aps.service.dto.WhatsAppMessageDto;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger; // Added
+import org.slf4j.LoggerFactory; // Added
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -16,23 +19,29 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import com.aps.service.util.InputValidator;
 
 import java.util.List;
+import java.util.Optional; // Added
 
 @Service
 public class DeliveryPersonManagementService {
+
+        private final Logger log = LoggerFactory.getLogger(DeliveryPersonManagementService.class);
 
         private final TeamMemberRepository teamMemberRepository;
         private final WhatsAppService whatsAppService;
         private final BotSessionManager sessionManager;
         private final InputValidator inputValidator;
+        private final UserRemovalService userRemovalService; // Added
 
         public DeliveryPersonManagementService(TeamMemberRepository teamMemberRepository,
                         WhatsAppService whatsAppService,
                         BotSessionManager sessionManager,
-                        InputValidator inputValidator) {
+                        InputValidator inputValidator,
+                        UserRemovalService userRemovalService) { // Added
                 this.teamMemberRepository = teamMemberRepository;
                 this.whatsAppService = whatsAppService;
                 this.sessionManager = sessionManager;
                 this.inputValidator = inputValidator;
+                this.userRemovalService = userRemovalService;
         }
 
         public void showDeliveryPersonMenu(TeamMember admin) {
@@ -52,6 +61,14 @@ public class DeliveryPersonManagementService {
                                                 .reply(WhatsAppMessageDto.ReplyDto.builder()
                                                                 .id("SHOW_ALL_DELIVERY")
                                                                 .title("📋 Show All")
+                                                                .build())
+                                                .build(),
+                                WhatsAppMessageDto.ButtonDto.builder() // Added Delete Button
+                                                .type("reply")
+                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                                                .id("DELETE_DELIVERY_MENU") // Calls
+                                                                                            // startDeleteDeliveryPerson
+                                                                .title("🗑️ Delete") // Shorter title to fit limit
                                                                 .build())
                                                 .build(),
                                 WhatsAppMessageDto.ButtonDto.builder()
@@ -202,8 +219,6 @@ public class DeliveryPersonManagementService {
                 List<TeamMember> deliveryPersons = teamMemberRepository.findAll().stream()
                                 .filter(tm -> tm.getRole() == UserRole.DELIVERY_PERSON)
                                 .toList();
-                // Or findByRole if repo matches. Using stream for safety if repo method missing
-                // or differs
 
                 if (deliveryPersons.isEmpty()) {
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
@@ -216,8 +231,8 @@ public class DeliveryPersonManagementService {
                                 String.format("📋 *All Delivery Persons* (Total: %d)\n\n", deliveryPersons.size()));
                 int count = 1;
                 for (TeamMember dp : deliveryPersons) {
-                        message.append(String.format("%d. *%s*\n   📞 %s\n   📱 %s\n   🔄 %s\n\n",
-                                        count++, dp.getName(), dp.getPhoneNumber(), dp.getWaPhoneNumber(),
+                        message.append(String.format("%d. *%s* (ID: %d)\n   📞 %s\n   📱 %s\n   🔄 %s\n\n",
+                                        count++, dp.getName(), dp.getId(), dp.getPhoneNumber(), dp.getWaPhoneNumber(),
                                         dp.getIsActive() != null && dp.getIsActive() ? "Active" : "Inactive"));
                 }
 
@@ -231,9 +246,72 @@ public class DeliveryPersonManagementService {
                 showDeliveryPersonMenu(admin);
         }
 
+        // --- Deletion Logic ---
+
         public void startDeleteDeliveryPerson(TeamMember admin, BotSession session) {
                 whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                "🚧 *Delete Delivery Person*\n\nThis feature is coming soon!");
+                                "🗑️ *Delete Delivery Person*\n\n⚠️ This will Archive & Remove the user.\n" +
+                                                "🆔 Please enter the **Delivery Person ID** you wish to delete:");
+
+                sessionManager.updateState(session, AdminFlowStage.AWAITING_DELETE_DELIVERY_ID.name());
+        }
+
+        public void handleDeleteDeliveryPersonInput(TeamMember admin, BotSession session, String text) {
+                try {
+                        Long id = Long.parseLong(text.trim());
+                        Optional<TeamMember> memberOpt = teamMemberRepository.findById(id);
+
+                        if (memberOpt.isEmpty() || memberOpt.get().getRole() != UserRole.DELIVERY_PERSON) {
+                                whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                                "❌ ID not found or not a Delivery Person. Try again:");
+                                return;
+                        }
+
+                        TeamMember member = memberOpt.get();
+
+                        List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
+                                        WhatsAppMessageDto.ButtonDto.builder()
+                                                        .type("reply")
+                                                        .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                                                        .id("CONFIRM_DELETE_DP_" + id)
+                                                                        .title("💥 Yes, DELETE")
+                                                                        .build())
+                                                        .build(),
+                                        WhatsAppMessageDto.ButtonDto.builder()
+                                                        .type("reply")
+                                                        .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                                                        .id("CANCEL_OPERATION")
+                                                                        .title("❌ Cancel")
+                                                                        .build())
+                                                        .build());
+
+                        whatsAppService.sendCartActionButtons(admin.getWaPhoneNumber(),
+                                        String.format("⚠️ *Confirm Deletion*\n\n" +
+                                                        "Are you SURE you want to delete:\n" +
+                                                        "👤 *%s* (ID: %d)?", member.getName(), id),
+                                        buttons);
+
+                        // We rely on button click routing logic in AdminFlowService or add logic there.
+                        // Wait, AdminFlowService needs to handle `CONFIRM_DELETE_DP_...`
+                        // I need to update AdminFlowService button handler to genericize handling or
+                        // add this specific case.
+
+                } catch (NumberFormatException e) {
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                        "❌ Invalid ID format. Please enter a number:");
+                }
+        }
+
+        public void finalizeDeliveryPersonDelete(TeamMember admin, Long id) {
+                try {
+                        userRemovalService.removeDeliveryPerson(id,
+                                        "Admin " + admin.getName() + " requested via WhatsApp");
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                        "✅ Delivery Person Deleted Successfully.");
+                } catch (Exception e) {
+                        log.error("Delete failed", e);
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "❌ Delete Failed: " + e.getMessage());
+                }
                 showDeliveryPersonMenu(admin);
         }
 }

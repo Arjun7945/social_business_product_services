@@ -14,12 +14,16 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Main Order entity.
- * Renamed to CustomerOrder to avoid SQL keyword conflicts.
+ * <p>
+ * Represents a definitive purchase order in the system.
+ * Updated to support "Global Archive" strategy with dedicated fields
+ * for linking to removed customers and delivery personnel
+ * (`removed_customer_id`, `removed_delivery_person_id`).
+ * </p>
  */
 @Entity
 @Table(name = "customer_order")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class CustomerOrder implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -65,20 +69,28 @@ public class CustomerOrder implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private TeamMember deliveryPerson;
 
-    @ManyToOne(optional = false)
-    @NotNull
+    /**
+     * Link to Archive if Customer is deleted.
+     * Preserves history even after physical deletion of the Customer row.
+     */
+    @Column(name = "removed_customer_id")
+    private Long removedCustomerId;
+
+    /**
+     * Link to Archive if Delivery Person is deleted.
+     * Preserves history even after physical deletion of the TeamMember row.
+     */
+    @Column(name = "removed_delivery_person_id")
+    private Long removedDeliveryPersonId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "orders", "carts", "addedBy" }, allowSetters = true)
     private Customer customer;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
+    // Direct Getters and Setters
 
     public Long getId() {
         return this.id;
-    }
-
-    public CustomerOrder id(Long id) {
-        this.setId(id);
-        return this;
     }
 
     public void setId(Long id) {
@@ -89,22 +101,12 @@ public class CustomerOrder implements Serializable {
         return this.orderTime;
     }
 
-    public CustomerOrder orderTime(Instant orderTime) {
-        this.setOrderTime(orderTime);
-        return this;
-    }
-
     public void setOrderTime(Instant orderTime) {
         this.orderTime = orderTime;
     }
 
     public BigDecimal getTotalAmount() {
         return this.totalAmount;
-    }
-
-    public CustomerOrder totalAmount(BigDecimal totalAmount) {
-        this.setTotalAmount(totalAmount);
-        return this;
     }
 
     public void setTotalAmount(BigDecimal totalAmount) {
@@ -115,11 +117,6 @@ public class CustomerOrder implements Serializable {
         return this.status;
     }
 
-    public CustomerOrder status(OrderStatus status) {
-        this.setStatus(status);
-        return this;
-    }
-
     public void setStatus(OrderStatus status) {
         this.status = status;
     }
@@ -128,22 +125,12 @@ public class CustomerOrder implements Serializable {
         return this.paymentMethod;
     }
 
-    public CustomerOrder paymentMethod(String paymentMethod) {
-        this.setPaymentMethod(paymentMethod);
-        return this;
-    }
-
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
     public Instant getConfirmedAt() {
         return this.confirmedAt;
-    }
-
-    public CustomerOrder confirmedAt(Instant confirmedAt) {
-        this.setConfirmedAt(confirmedAt);
-        return this;
     }
 
     public void setConfirmedAt(Instant confirmedAt) {
@@ -164,6 +151,70 @@ public class CustomerOrder implements Serializable {
         this.items = orderItems;
     }
 
+    public TeamMember getDeliveryPerson() {
+        return this.deliveryPerson;
+    }
+
+    public void setDeliveryPerson(TeamMember teamMember) {
+        this.deliveryPerson = teamMember;
+    }
+
+    public Long getRemovedCustomerId() {
+        return this.removedCustomerId;
+    }
+
+    public void setRemovedCustomerId(Long removedCustomerId) {
+        this.removedCustomerId = removedCustomerId;
+    }
+
+    public Long getRemovedDeliveryPersonId() {
+        return this.removedDeliveryPersonId;
+    }
+
+    public void setRemovedDeliveryPersonId(Long removedDeliveryPersonId) {
+        this.removedDeliveryPersonId = removedDeliveryPersonId;
+    }
+
+    public Customer getCustomer() {
+        return this.customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    // Fluent Setters
+
+    public CustomerOrder id(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public CustomerOrder orderTime(Instant orderTime) {
+        this.orderTime = orderTime;
+        return this;
+    }
+
+    public CustomerOrder totalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+        return this;
+    }
+
+    public CustomerOrder status(OrderStatus status) {
+        this.status = status;
+        return this;
+    }
+
+    public CustomerOrder paymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+        return this;
+    }
+
+    public CustomerOrder confirmedAt(Instant confirmedAt) {
+        this.confirmedAt = confirmedAt;
+        return this;
+    }
+
     public CustomerOrder items(Set<OrderItem> orderItems) {
         this.setItems(orderItems);
         return this;
@@ -181,34 +232,25 @@ public class CustomerOrder implements Serializable {
         return this;
     }
 
-    public TeamMember getDeliveryPerson() {
-        return this.deliveryPerson;
-    }
-
-    public void setDeliveryPerson(TeamMember teamMember) {
-        this.deliveryPerson = teamMember;
-    }
-
     public CustomerOrder deliveryPerson(TeamMember teamMember) {
         this.setDeliveryPerson(teamMember);
         return this;
     }
 
-    public Customer getCustomer() {
-        return this.customer;
+    public CustomerOrder removedCustomerId(Long removedCustomerId) {
+        this.setRemovedCustomerId(removedCustomerId);
+        return this;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public CustomerOrder removedDeliveryPersonId(Long removedDeliveryPersonId) {
+        this.setRemovedDeliveryPersonId(removedDeliveryPersonId);
+        return this;
     }
 
     public CustomerOrder customer(Customer customer) {
         this.setCustomer(customer);
         return this;
     }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
-    // setters here
 
     @Override
     public boolean equals(Object o) {
@@ -218,17 +260,14 @@ public class CustomerOrder implements Serializable {
         if (!(o instanceof CustomerOrder)) {
             return false;
         }
-        return getId() != null && getId().equals(((CustomerOrder) o).getId());
+        return id != null && id.equals(((CustomerOrder) o).id);
     }
 
     @Override
     public int hashCode() {
-        // see
-        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "CustomerOrder{" +
@@ -237,7 +276,6 @@ public class CustomerOrder implements Serializable {
                 ", totalAmount=" + getTotalAmount() +
                 ", status='" + getStatus() + "'" +
                 ", paymentMethod='" + getPaymentMethod() + "'" +
-                ", confirmedAt='" + getConfirmedAt() + "'" +
                 "}";
     }
 }

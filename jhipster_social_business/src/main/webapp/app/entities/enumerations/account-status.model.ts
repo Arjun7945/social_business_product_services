@@ -1,0 +1,5 @@
+export enum AccountStatus {
+  ACTIVE = 'ACTIVE',
+  ACCOUNT_REMOVED = 'ACCOUNT_REMOVED',
+  RESTORE_ACCOUNT = 'RESTORE_ACCOUNT',
+}

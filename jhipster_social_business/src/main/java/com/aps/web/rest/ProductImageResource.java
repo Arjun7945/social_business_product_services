@@ -230,4 +230,41 @@ public class ProductImageResource {
                 .header(HttpHeaders.CONTENT_TYPE, mimeType)
                 .body(imageData);
     }
+
+    /**
+     * {@code GET  /product-images/public/uuid/:uuid/content} : get the productImage
+     * content by UUID.
+     */
+    @GetMapping("/public/uuid/{uuid}/content")
+    public ResponseEntity<byte[]> getPublicImageContentByUuid(@PathVariable("uuid") String uuid) {
+        LOG.debug("REST request to get ProductImage content by UUID : {}", uuid);
+
+        // Reconstruct the partial URL or search by the UUID part if we stored just the
+        // UUID?
+        // The service stores the FULL URL. So we should search by the full URL pattern.
+        // URL format: "/api/product-images/public/uuid/" + uuid + "/content"
+        String lookupUrl = "/api/product-images/public/uuid/" + uuid + "/content";
+
+        Optional<com.aps.domain.ProductImage> productImageOpt = productImageRepository.findByImageUrl(lookupUrl);
+
+        if (productImageOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        com.aps.domain.ProductImage image = productImageOpt.get();
+        byte[] imageData = image.getImageData();
+        String mimeType = image.getMimeType();
+
+        if (imageData == null || imageData.length == 0) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (mimeType == null || mimeType.isEmpty()) {
+            mimeType = "image/jpeg";
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, mimeType)
+                .body(imageData);
+    }
 }

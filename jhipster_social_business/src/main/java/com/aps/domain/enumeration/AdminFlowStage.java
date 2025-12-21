@@ -12,6 +12,7 @@ public enum AdminFlowStage {
     AWAITING_CUST_WAPHONE,
     AWAITING_CUST_LOCATION,
     CONFIRMING_CUST_ADD,
+    AWAITING_DELETE_CUST_ID, // Added for Phase B
 
     // Product Flow
     PRODUCT_MENU,
@@ -28,6 +29,7 @@ public enum AdminFlowStage {
     AWAITING_DELIVERY_WAPHONE,
     AWAITING_DELIVERY_STATUS,
     CONFIRMING_DELIVERY_ADD,
+    AWAITING_DELETE_DELIVERY_ID, // Added for Phase B
 
     // Executive Flow
     EXECUTIVE_MENU,

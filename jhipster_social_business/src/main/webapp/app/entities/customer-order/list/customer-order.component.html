@@ -115,6 +115,12 @@
               <a [routerLink]="['/team-member', customerOrder.deliveryPerson.id, 'view']">{{
                 customerOrder.deliveryPerson.name }}</a>
             </div>
+            } @else if (customerOrder.removedDeliveryPersonId) {
+            <div>
+              <span class="badge bg-secondary">Removed</span>
+              <a [routerLink]="['/removed-user', customerOrder.removedDeliveryPersonId, 'view']">ID: {{
+                customerOrder.removedDeliveryPersonId }}</a>
+            </div>
             }
           </td>
           <td>
@@ -122,7 +128,14 @@
             <div>
               <a [routerLink]="['/customer', customerOrder.customer.id, 'view']">{{ customerOrder.customer.name }}</a>
             </div>
+            } @else if (customerOrder.removedCustomerId) {
+            <div>
+              <span class="badge bg-secondary">Removed</span>
+              <a [routerLink]="['/removed-user', customerOrder.removedCustomerId, 'view']">ID: {{
+                customerOrder.removedCustomerId }}</a>
+            </div>
             }
+
           </td>
           <td class="text-end">
             <div class="btn-group">

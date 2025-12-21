@@ -53,6 +53,13 @@
               customerOrderRef.deliveryPerson?.name
               }}</a>
           </div>
+          } @else if (customerOrder()!.removedDeliveryPersonId) {
+          <div>
+            <span class="badge bg-danger">Removed</span>
+            <a [routerLink]="['/removed-user', customerOrder()!.removedDeliveryPersonId, 'view']">
+              View Archived User (ID: {{ customerOrder()!.removedDeliveryPersonId }})
+            </a>
+          </div>
           }
         </dd>
         <dt><span jhiTranslate="whatsappProductServiceApp.customerOrder.customer">Customer</span></dt>
@@ -62,7 +69,15 @@
             <a [routerLink]="['/customer', customerOrder()!.customer?.id, 'view']">{{ customerOrderRef.customer?.name
               }}</a>
           </div>
+          } @else if (customerOrder()!.removedCustomerId) {
+          <div>
+            <span class="badge bg-danger">Removed</span>
+            <a [routerLink]="['/removed-user', customerOrder()!.removedCustomerId, 'view']">
+              View Archived User (ID: {{ customerOrder()!.removedCustomerId }})
+            </a>
+          </div>
           }
+
         </dd>
       </dl>
 

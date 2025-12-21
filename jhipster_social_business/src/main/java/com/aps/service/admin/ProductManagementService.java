@@ -241,11 +241,12 @@ public class ProductManagementService {
                 image.setMimeType(content.getMimeType() != null ? content.getMimeType() : "image/jpeg");
                 image.setDisplayOrder(index);
 
-                // Save first to get ID
-                image = productImageRepository.save(image);
+                // Generate UUID and set URL immediately
+                String uuid = java.util.UUID.randomUUID().toString();
+                String finalUrl = "/api/product-images/public/uuid/" + uuid + "/content";
+                image.setImageUrl(finalUrl);
 
-                // Update URL to point to controller
-                image.setImageUrl("/api/public/images/" + image.getId());
+                // Save once - no null violation, no circular dependency
                 productImageRepository.save(image);
                 return true;
             }

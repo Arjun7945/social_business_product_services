@@ -1,0 +1,60 @@
+<div class="d-flex justify-content-center">
+    <div class="col-8">
+        @if (removedOrderSummary()) {
+        <div>
+            <h2 data-cy="removedOrderSummaryDetailsHeading"><span>Removed Order Summary</span> {{
+                removedOrderSummary()!.id }}</h2>
+
+            <hr />
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <jhi-alert></jhi-alert>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span>ID</span></dt>
+                <dd>
+                    <span>{{ removedOrderSummary()!.id }}</span>
+                </dd>
+                <dt><span>User Name</span></dt>
+                <dd>
+                    <span>{{ removedOrderSummary()!.userName }}</span>
+                </dd>
+                <dt><span>User Role</span></dt>
+                <dd>
+                    <span>{{ removedOrderSummary()!.userRole }}</span>
+                </dd>
+                <dt><span>Total Orders</span></dt>
+                <dd>
+                    <span>{{ removedOrderSummary()!.totalOrders }}</span>
+                </dd>
+                <dt><span>Total Amount</span></dt>
+                <dd>
+                    <span>{{ removedOrderSummary()!.totalAmount }}</span>
+                </dd>
+                <dt><span>First Interaction At</span></dt>
+                <dd>
+                    <span>{{ removedOrderSummary()!.firstInteractionAt | formatMediumDatetime }}</span>
+                </dd>
+                <dt><span>Last Interaction At</span></dt>
+                <dd>
+                    <span>{{ removedOrderSummary()!.lastInteractionAt | formatMediumDatetime }}</span>
+                </dd>
+                <dt><span>Removed At</span></dt>
+                <dd>
+                    <span>{{ removedOrderSummary()!.removedAt | formatMediumDatetime }}</span>
+                </dd>
+                <dt><span>Original User ID</span></dt>
+                <dd>
+                    <span>{{ removedOrderSummary()!.userOriginalId }}</span>
+                </dd>
+            </dl>
+
+            <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+                <fa-icon icon="arrow-left"></fa-icon>
+                <span jhiTranslate="entity.action.back">Back</span>
+            </button>
+        </div>
+        }
+    </div>
+</div>

@@ -121,6 +121,9 @@ public class AdminFlowService {
             case AWAITING_CUST_WAPHONE:
                 customerManagementService.handleCustomerWaPhoneInput(admin, session, text);
                 break;
+            case AWAITING_DELETE_CUST_ID:
+                customerManagementService.handleDeleteCustomerInput(admin, session, text);
+                break;
 
             // Product Management
             case AWAITING_PRODUCT_NAME:
@@ -155,6 +158,9 @@ public class AdminFlowService {
                 break;
             case AWAITING_DELIVERY_STATUS:
                 deliveryPersonManagementService.handleDeliveryPersonStatusInput(admin, session, text);
+                break;
+            case AWAITING_DELETE_DELIVERY_ID:
+                deliveryPersonManagementService.handleDeleteDeliveryPersonInput(admin, session, text);
                 break;
 
             // Executive Management
@@ -355,7 +361,6 @@ public class AdminFlowService {
             whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "⏳ Processing customer addition... please wait.");
             sessionManager.updateState(session, AdminFlowStage.PROCESSING.name());
             customerManagementService.finalizeCustomerAdd(admin, session);
-            customerManagementService.showCustomerMenu(admin);
         } else if (AdminFlowStage.CONFIRMING_DELIVERY_ADD.name().equals(currentState)) {
             whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                     "⏳ Processing delivery person addition... please wait.");

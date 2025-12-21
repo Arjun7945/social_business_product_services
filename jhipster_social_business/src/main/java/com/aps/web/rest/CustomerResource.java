@@ -46,50 +46,59 @@ public class CustomerResource {
 
     private final CustomerQueryService customerQueryService;
 
+    private final com.aps.service.UserRemovalService userRemovalService;
+
     public CustomerResource(
-        CustomerService customerService,
-        CustomerRepository customerRepository,
-        CustomerQueryService customerQueryService
-    ) {
+            CustomerService customerService,
+            CustomerRepository customerRepository,
+            CustomerQueryService customerQueryService,
+            com.aps.service.UserRemovalService userRemovalService) {
         this.customerService = customerService;
         this.customerRepository = customerRepository;
         this.customerQueryService = customerQueryService;
+        this.userRemovalService = userRemovalService;
     }
 
     /**
      * {@code POST  /customers} : Create a new customer.
      *
      * @param customerDTO the customerDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new customerDTO, or with status {@code 400 (Bad Request)} if the customer has already an ID.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with
+     *         body the new customerDTO, or with status {@code 400 (Bad Request)} if
+     *         the customer has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerDTO customerDTO) throws URISyntaxException {
+    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerDTO customerDTO)
+            throws URISyntaxException {
         LOG.debug("REST request to save Customer : {}", customerDTO);
         if (customerDTO.getId() != null) {
             throw new BadRequestAlertException("A new customer cannot already have an ID", ENTITY_NAME, "idexists");
         }
         customerDTO = customerService.save(customerDTO);
         return ResponseEntity.created(new URI("/api/customers/" + customerDTO.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, customerDTO.getId().toString()))
-            .body(customerDTO);
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME,
+                        customerDTO.getId().toString()))
+                .body(customerDTO);
     }
 
     /**
      * {@code PUT  /customers/:id} : Updates an existing customer.
      *
-     * @param id the id of the customerDTO to save.
+     * @param id          the id of the customerDTO to save.
      * @param customerDTO the customerDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated customerDTO,
-     * or with status {@code 400 (Bad Request)} if the customerDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the customerDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the updated customerDTO,
+     *         or with status {@code 400 (Bad Request)} if the customerDTO is not
+     *         valid,
+     *         or with status {@code 500 (Internal Server Error)} if the customerDTO
+     *         couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
     public ResponseEntity<CustomerDTO> updateCustomer(
-        @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody CustomerDTO customerDTO
-    ) throws URISyntaxException {
+            @PathVariable(value = "id", required = false) final Long id,
+            @Valid @RequestBody CustomerDTO customerDTO) throws URISyntaxException {
         LOG.debug("REST request to update Customer : {}, {}", id, customerDTO);
         if (customerDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -104,26 +113,31 @@ public class CustomerResource {
 
         customerDTO = customerService.update(customerDTO);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, customerDTO.getId().toString()))
-            .body(customerDTO);
+                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME,
+                        customerDTO.getId().toString()))
+                .body(customerDTO);
     }
 
     /**
-     * {@code PATCH  /customers/:id} : Partial updates given fields of an existing customer, field will ignore if it is null
+     * {@code PATCH  /customers/:id} : Partial updates given fields of an existing
+     * customer, field will ignore if it is null
      *
-     * @param id the id of the customerDTO to save.
+     * @param id          the id of the customerDTO to save.
      * @param customerDTO the customerDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated customerDTO,
-     * or with status {@code 400 (Bad Request)} if the customerDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the customerDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the customerDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the updated customerDTO,
+     *         or with status {@code 400 (Bad Request)} if the customerDTO is not
+     *         valid,
+     *         or with status {@code 404 (Not Found)} if the customerDTO is not
+     *         found,
+     *         or with status {@code 500 (Internal Server Error)} if the customerDTO
+     *         couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<CustomerDTO> partialUpdateCustomer(
-        @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody CustomerDTO customerDTO
-    ) throws URISyntaxException {
+            @PathVariable(value = "id", required = false) final Long id,
+            @NotNull @RequestBody CustomerDTO customerDTO) throws URISyntaxException {
         LOG.debug("REST request to partial update Customer partially : {}, {}", id, customerDTO);
         if (customerDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -139,9 +153,8 @@ public class CustomerResource {
         Optional<CustomerDTO> result = customerService.partialUpdate(customerDTO);
 
         return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, customerDTO.getId().toString())
-        );
+                result,
+                HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, customerDTO.getId().toString()));
     }
 
     /**
@@ -149,17 +162,18 @@ public class CustomerResource {
      *
      * @param pageable the pagination information.
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of customers in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list
+     *         of customers in body.
      */
     @GetMapping("")
     public ResponseEntity<List<CustomerDTO>> getAllCustomers(
-        CustomerCriteria criteria,
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable
-    ) {
+            CustomerCriteria criteria,
+            @org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         LOG.debug("REST request to get Customers by criteria: {}", criteria);
 
         Page<CustomerDTO> page = customerQueryService.findByCriteria(criteria, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        HttpHeaders headers = PaginationUtil
+                .generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
@@ -167,7 +181,8 @@ public class CustomerResource {
      * {@code GET  /customers/count} : count all the customers.
      *
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count
+     *         in body.
      */
     @GetMapping("/count")
     public ResponseEntity<Long> countCustomers(CustomerCriteria criteria) {
@@ -179,7 +194,8 @@ public class CustomerResource {
      * {@code GET  /customers/:id} : get the "id" customer.
      *
      * @param id the id of the customerDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the customerDTO, or with status {@code 404 (Not Found)}.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the customerDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("id") Long id) {
@@ -197,9 +213,9 @@ public class CustomerResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Customer : {}", id);
-        customerService.delete(id);
+        userRemovalService.removeCustomer(id, "Removed by Admin");
         return ResponseEntity.noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-            .build();
+                .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+                .build();
     }
 }

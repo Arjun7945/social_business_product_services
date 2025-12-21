@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20251221003000-1" author="antigravity">
+        <createTable tableName="removed_user">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="original_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="role" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="whatsapp_number" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="phone_number" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="address" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="location_lat" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="location_lon" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="joined_at" type="datetime">
+                <constraints nullable="true" />
+            </column>
+            <column name="removed_at" type="datetime">
+                <constraints nullable="true" />
+            </column>
+            <column name="reason_for_removal" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="last_session_data" type="clob">
+                <constraints nullable="true" />
+            </column>
+             <column name="status" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+            <column name="order_history_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

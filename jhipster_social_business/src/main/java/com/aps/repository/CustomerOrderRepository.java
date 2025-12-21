@@ -42,4 +42,30 @@ public interface CustomerOrderRepository
 
     @Query("select o from CustomerOrder o left join fetch o.customer where o.status = :status")
     List<CustomerOrder> findAllByStatus(@Param("status") com.aps.domain.enumeration.OrderStatus status);
+
+    @Query("select o from CustomerOrder o where o.deliveryPerson.id = :id")
+    List<CustomerOrder> findOrdersByDeliveryPersonId(@Param("id") Long id);
+
+    @Query("select o from CustomerOrder o where o.customer.id = :id")
+    List<CustomerOrder> findOrdersByCustomerId(@Param("id") Long id);
+
+    List<CustomerOrder> findAllByRemovedCustomerId(Long removedCustomerId);
+
+    List<CustomerOrder> findAllByRemovedDeliveryPersonId(Long removedDeliveryPersonId);
+
+    @Modifying
+    @Query("update CustomerOrder o set o.customer = null, o.removedCustomerId = :removedId where o.customer.id = :customerId")
+    int unlinkCustomer(@Param("customerId") Long customerId, @Param("removedId") Long removedId);
+
+    @Modifying
+    @Query("update CustomerOrder o set o.deliveryPerson = null, o.removedDeliveryPersonId = :removedId where o.deliveryPerson.id = :deliveryPersonId")
+    int unlinkDeliveryPerson(@Param("deliveryPersonId") Long deliveryPersonId, @Param("removedId") Long removedId);
+
+    @Query("select count(o), sum(o.totalAmount), min(o.orderTime), max(o.orderTime) from CustomerOrder o where o.deliveryPerson.id = :id and o.status in (:statuses)")
+    List<Object[]> findStatsByDeliveryPersonIdAndStatus(@Param("id") Long id,
+            @Param("statuses") List<com.aps.domain.enumeration.OrderStatus> statuses);
+
+    @Query("select count(o), sum(o.totalAmount) from CustomerOrder o where o.customer.id = :id and o.status = :status")
+    List<Object[]> getCustomerStats(@Param("id") Long id,
+            @Param("status") com.aps.domain.enumeration.OrderStatus status);
 }

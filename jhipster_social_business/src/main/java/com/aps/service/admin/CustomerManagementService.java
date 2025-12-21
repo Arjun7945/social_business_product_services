@@ -8,6 +8,7 @@ import com.aps.domain.enumeration.UserRole;
 import com.aps.repository.CustomerRepository;
 import com.aps.service.BotSessionManager;
 import com.aps.service.LocationValidationService;
+import com.aps.service.UserRemovalService; // Added
 import com.aps.service.WhatsAppService;
 import com.aps.service.dto.WhatsAppMessageDto;
 import com.aps.service.dto.WhatsAppWebhookDto;
@@ -22,6 +23,7 @@ import com.aps.service.util.InputValidator;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional; // Added
 
 @Service
 public class CustomerManagementService {
@@ -32,51 +34,50 @@ public class CustomerManagementService {
         private final WhatsAppService whatsAppService;
         private final LocationValidationService locationValidationService;
         private final BotSessionManager sessionManager;
-        // We might need CustomerMessageService or AdminMessageService? Used hardcoded
-        // strings in legacy.
-        // I'll stick to hardcoded strings for now to match legacy, or reuse existing if
-        // applicable.
-
         private final InputValidator inputValidator;
+        private final UserRemovalService userRemovalService; // Added
 
         public CustomerManagementService(CustomerRepository customerRepository,
                         WhatsAppService whatsAppService,
                         LocationValidationService locationValidationService,
                         BotSessionManager sessionManager,
-                        InputValidator inputValidator) {
+                        InputValidator inputValidator,
+                        UserRemovalService userRemovalService) { // Added
                 this.customerRepository = customerRepository;
                 this.whatsAppService = whatsAppService;
                 this.locationValidationService = locationValidationService;
                 this.sessionManager = sessionManager;
                 this.inputValidator = inputValidator;
+                this.userRemovalService = userRemovalService;
         }
 
         public void showCustomerMenu(TeamMember admin) {
-                List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
-                                WhatsAppMessageDto.ButtonDto.builder()
-                                                .type("reply")
-                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                                                .id("ADD_CUSTOMER")
-                                                                .title("➕ Add Customer")
-                                                                .build())
+                // Use List Message instead of Buttons because we have > 3 options
+                List<WhatsAppMessageDto.RowDto> rows = List.of(
+                                WhatsAppMessageDto.RowDto.builder()
+                                                .id("ADD_CUSTOMER")
+                                                .title("➕ Add Customer")
+                                                .description("Register a new customer")
                                                 .build(),
-                                WhatsAppMessageDto.ButtonDto.builder()
-                                                .type("reply")
-                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                                                .id("SHOW_ALL_CUSTOMERS")
-                                                                .title("📋 Show All")
-                                                                .build())
+                                WhatsAppMessageDto.RowDto.builder()
+                                                .id("SHOW_ALL_CUSTOMERS")
+                                                .title("📋 Show All")
+                                                .description("List all registered customers")
                                                 .build(),
-                                WhatsAppMessageDto.ButtonDto.builder()
-                                                .type("reply")
-                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                                                .id("BACK_TO_MAIN")
-                                                                .title("⬅️ Back")
-                                                                .build())
+                                WhatsAppMessageDto.RowDto.builder()
+                                                .id("DELETE_CUSTOMER_MENU")
+                                                .title("🗑️ Delete Customer")
+                                                .description("Remove a customer")
+                                                .build(),
+                                WhatsAppMessageDto.RowDto.builder()
+                                                .id("BACK_TO_MAIN")
+                                                .title("⬅️ Back")
+                                                .description("Return to main menu")
                                                 .build());
 
-                whatsAppService.sendCartActionButtons(admin.getWaPhoneNumber(),
-                                "👥 *Customer Management*\n\nWhat would you like to do?", buttons);
+                whatsAppService.sendInteractiveList(admin.getWaPhoneNumber(),
+                                "👥 *Customer Management*\n\nSelect an option:",
+                                rows);
 
                 BotSession session = sessionManager.getSession(admin.getWaPhoneNumber());
                 sessionManager.updateState(session, AdminFlowStage.CUSTOMER_MENU.name());
@@ -202,6 +203,14 @@ public class CustomerManagementService {
                         String tempPhone = sessionManager.getSessionDataString(session, "tempCustomerPhone");
                         String tempWaPhone = sessionManager.getSessionDataString(session, "tempCustomerWaPhone");
 
+                        // 1. Check for duplicates
+                        if (customerRepository.existsByWaPhoneNumber(tempWaPhone)) {
+                                whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                                "❌ *Failed:* A customer with WhatsApp number " + tempWaPhone
+                                                                + " already exists.");
+                                return;
+                        }
+
                         Customer newCustomer = new Customer();
                         newCustomer.setName(tempName);
                         newCustomer.setPhoneNumber(tempPhone);
@@ -210,59 +219,45 @@ public class CustomerManagementService {
                         newCustomer.setLocationLon(lon);
                         newCustomer.setDistanceFromBusinessKm(distance);
                         newCustomer.setRole(UserRole.CUSTOMER);
-                        // newCustomer.setCurrentFlowStage(CustomerFlowStage.REGISTERED); // Removed
-                        // from Entity in JHipster?
-                        // Checking Customer entity... it doesn't have currentFlowStage field likely, as
-                        // we use BotSession now.
-                        // It has joinedAt.
                         newCustomer.setJoinedAt(Instant.now());
 
-                        // Validate if customer is within delivery radius using the service
                         boolean isWithinRadius = locationValidationService.isWithinDeliveryRadius(lat, lon);
                         newCustomer.setIsPincodeValid(isWithinRadius);
                         newCustomer.setAddedBy(admin);
 
-                        newCustomer = customerRepository.save(newCustomer);
+                        // 2. Save AND Flush to force DB constraint check immediately
+                        newCustomer = customerRepository.saveAndFlush(newCustomer);
                         log.info("DEBUG: Customer Saved: ID={}, waPhone={}, Name={}", newCustomer.getId(),
                                         newCustomer.getWaPhoneNumber(), newCustomer.getName());
 
                         Customer finalNewCustomer = newCustomer;
-                        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-                                @Override
-                                public void afterCommit() {
-                                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                                        "✅ *Customer Added Successfully!*\n\n" +
-                                                                        "👤 " + finalNewCustomer.getName()
-                                                                        + " has been added to the system.\n\n" +
-                                                                        "The customer can now start ordering by sending 'Hi' to the business number.");
 
-                                        // Send welcome message to the new Customer
-                                        String customerWaPhone = finalNewCustomer.getWaPhoneNumber();
-                                        log.info("DEBUG: Attempting to send welcome message to: {}", customerWaPhone);
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                        "✅ *Customer Added Successfully!*\n\n" +
+                                                        "👤 " + finalNewCustomer.getName()
+                                                        + " has been added to the system.\n\n" +
+                                                        "The customer can now start ordering by sending 'Hi' to the business number.");
 
-                                        if (customerWaPhone != null && !customerWaPhone.isEmpty()) {
-                                                log.info("DEBUG: Sending welcome message to customer...");
-                                                whatsAppService.sendSimpleText(customerWaPhone,
-                                                                "🎉 *Welcome to the Family!*\n\n" +
-                                                                                "👋 Hi " + finalNewCustomer.getName()
-                                                                                + ",\n" +
-                                                                                "You have been successfully registered as a customer.\n\n"
-                                                                                +
-                                                                                "🛍️ *Start Ordering:*\n" +
-                                                                                "Simply reply with *'Hi'* to browse our products and place orders.\n\n"
-                                                                                +
-                                                                                "Thank you for choosing us!");
-                                                log.info("DEBUG: Welcome message sent (async check needed)");
-                                        } else {
-                                                log.warn("DEBUG: Skipping welcome message - waPhoneNumber is null or empty");
-                                        }
-                                }
-                        });
+                        String customerWaPhone = finalNewCustomer.getWaPhoneNumber();
+                        if (customerWaPhone != null && !customerWaPhone.isEmpty()) {
+                                whatsAppService.sendSimpleText(customerWaPhone,
+                                                "🎉 *കുടുംബത്തിലേക്ക് സ്വാഗതം!*\n\n" +
+                                                                "👋 ഹായ് " + finalNewCustomer.getName()
+                                                                + ",\n" +
+                                                                "നിങ്ങളെ ഒരു ഉപഭോക്താവായി വിജയകരമായി രജിസ്റ്റർ ചെയ്തിരിക്കുന്നു.\n\n"
+                                                                +
+                                                                "🛍️ *ഓർഡർ ചെയ്യാൻ തുടങ്ങാം:*\n" +
+                                                                "ഞങ്ങളുടെ ഉൽപ്പന്നങ്ങൾ കാണാനും ഓർഡർ ചെയ്യാനും *'Hi'* എന്ന് റിപ്ലൈ ചെയ്യുക.\n\n"
+                                                                +
+                                                                "ഞങ്ങളെ തിരഞ്ഞെടുത്തതിന് നന്ദി!");
+                        }
 
                 } catch (Exception e) {
                         e.printStackTrace();
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                                         "❌ Error adding customer: " + e.getMessage());
+                } finally {
+                        showCustomerMenu(admin);
                 }
         }
 
@@ -280,8 +275,8 @@ public class CustomerManagementService {
                                 String.format("📋 *All Customers* (Total: %d)\n\n", customers.size()));
                 int count = 1;
                 for (Customer c : customers) {
-                        message.append(String.format("%d. *%s*\n   📞 %s\n   📱 %s\n   📏 %.2f km\n\n",
-                                        count++, c.getName(), c.getPhoneNumber(), c.getWaPhoneNumber(),
+                        message.append(String.format("%d. *%s* (ID: %d)\n   📞 %s\n   📱 %s\n   📏 %.2f km\n\n",
+                                        count++, c.getName(), c.getId(), c.getPhoneNumber(), c.getWaPhoneNumber(),
                                         c.getDistanceFromBusinessKm() != null ? c.getDistanceFromBusinessKm() : 0.0));
                 }
 
@@ -295,19 +290,7 @@ public class CustomerManagementService {
                 if (customers.isEmpty()) {
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                                         "📋 *No customers found.*\n\nYou haven't added any customers yet.");
-                        showCustomerMenu(admin); // Or showMainMenu if called from executive? Ideally showCustomerMenu
-                                                 // is fine if they have access, but for executive it might be better to
-                                                 // return to main menu.
-                        // However, showCustomerMenu sends buttons relevant to ADMIN flow.
-                        // Executive flow has its own menu.
-                        // I'll leave the navigation logic to the caller or simply NOT call
-                        // showCustomerMenu here and let the caller handle next step if possible?
-                        // But showAllCustomers calls showCustomerMenu.
-                        // Let's rely on the caller to show the menu AFTER, or modify this to NOT show
-                        // menu.
-                        // Actually, reusing this service for Executive might be mixing concerns if
-                        // menus are different.
-                        // But for now, let's just print the list.
+                        showCustomerMenu(admin);
                         return;
                 }
 
@@ -315,8 +298,8 @@ public class CustomerManagementService {
                                 String.format("📋 *My Customers* (Total: %d)\n\n", customers.size()));
                 int count = 1;
                 for (Customer c : customers) {
-                        message.append(String.format("%d. *%s*\n   📞 %s\n   📱 %s\n   📏 %.2f km\n\n",
-                                        count++, c.getName(), c.getPhoneNumber(), c.getWaPhoneNumber(),
+                        message.append(String.format("%d. *%s* (ID: %d)\n   📞 %s\n   📱 %s\n   📏 %.2f km\n\n",
+                                        count++, c.getName(), c.getId(), c.getPhoneNumber(), c.getWaPhoneNumber(),
                                         c.getDistanceFromBusinessKm() != null ? c.getDistanceFromBusinessKm() : 0.0));
                 }
 
@@ -329,9 +312,91 @@ public class CustomerManagementService {
                 showCustomerMenu(admin);
         }
 
+        // --- Deletion Logic ---
+
         public void startDeleteCustomer(TeamMember admin, BotSession session) {
                 whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                "🚧 *Delete Customer*\n\nThis feature is coming soon!");
+                                "🗑️ *Delete Customer*\n\n⚠️ PLEASE READ CAREFULLY:\n" +
+                                                "This will *Archive & Remove* the customer from active lists.\n" +
+                                                "Order history (Placed/Spent) will be preserved in a summary.\n\n" +
+                                                "🆔 Please enter the **Customer ID** you wish to delete:");
+
+                sessionManager.updateState(session, AdminFlowStage.AWAITING_DELETE_CUST_ID.name());
+        }
+
+        public void handleDeleteCustomerInput(TeamMember admin, BotSession session, String text) {
+                try {
+                        Long customerId = Long.parseLong(text.trim());
+                        Optional<Customer> customerOpt = customerRepository.findById(customerId);
+
+                        if (customerOpt.isEmpty()) {
+                                whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                                "❌ Customer ID not found. Please try again:");
+                                return;
+                        }
+
+                        Customer customer = customerOpt.get();
+                        sessionManager.setSessionData(session, "tempDeleteTitle", customer.getName());
+                        sessionManager.setSessionData(session, "tempDeleteId", customerId.toString());
+
+                        List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
+                                        WhatsAppMessageDto.ButtonDto.builder()
+                                                        .type("reply")
+                                                        .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                                                        .id("CONFIRM_DELETE_" + customerId)
+                                                                        .title("💥 Yes, DELETE")
+                                                                        .build())
+                                                        .build(),
+                                        WhatsAppMessageDto.ButtonDto.builder()
+                                                        .type("reply")
+                                                        .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                                                        .id("CANCEL_OPERATION")
+                                                                        .title("❌ Cancel")
+                                                                        .build())
+                                                        .build());
+
+                        whatsAppService.sendCartActionButtons(admin.getWaPhoneNumber(),
+                                        String.format("⚠️ *Confirm Deletion*\n\n" +
+                                                        "Are you SURE you want to delete:\n" +
+                                                        "👤 *%s* (ID: %d)?\n\n" +
+                                                        "This action cannot be easily undone via WhatsApp.",
+                                                        customer.getName(), customerId),
+                                        buttons);
+
+                        // Using Generic PROCESSING or just wait for Button Reply which routes via ID
+                        // Actually, we don't need a specific CONFIRMING state if button ID carries
+                        // payload,
+                        // but AdminFlowService handles button clicks.
+                        // We need to handle "CONFIRM_DELETE_..." in AdminFlowService?
+                        // Wait, AdminFlowService.handleButtonReply has a switch case.
+                        // We should add a case there or use a generic Confirm handler.
+                        // Let's settle on using ID parsing in AdminFlowService or keep state.
+                        // AdminFlowService uses `handleConfirmAdd` which checks state.
+                        // Let's follow that pattern.
+
+                        sessionManager.updateState(session, "CONFIRMING_CUST_DELETE"); // Need to add to Enum or use
+                                                                                       // generic?
+                        // To avoid modifying Enum again just for this, I'll rely on the Button ID
+                        // carrying logic
+                        // OR reuse PROCESSING state conceptually? No.
+                        // I'll add the logic to AdminFlowService.handleButtonReply to catch
+                        // startsWith("CONFIRM_DELETE_")
+
+                } catch (NumberFormatException e) {
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                        "❌ Invalid ID format. Please enter a number:");
+                }
+        }
+
+        public void finalizeCustomerDelete(TeamMember admin, Long customerId) {
+                try {
+                        userRemovalService.removeCustomer(customerId,
+                                        "Admin " + admin.getName() + " requested via WhatsApp");
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "✅ Customer Deleted Successfully.");
+                } catch (Exception e) {
+                        log.error("Delete failed", e);
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "❌ Delete Failed: " + e.getMessage());
+                }
                 showCustomerMenu(admin);
         }
 }

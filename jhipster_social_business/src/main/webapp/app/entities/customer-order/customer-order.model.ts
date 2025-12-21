@@ -12,6 +12,8 @@ export interface ICustomerOrder {
   confirmedAt?: dayjs.Dayjs | null;
   deliveryPerson?: Pick<ITeamMember, 'id' | 'name'> | null;
   customer?: Pick<ICustomer, 'id' | 'name'> | null;
+  removedCustomerId?: number | null;
+  removedDeliveryPersonId?: number | null;
 }
 
 export type NewCustomerOrder = Omit<ICustomerOrder, 'id'> & { id: null };

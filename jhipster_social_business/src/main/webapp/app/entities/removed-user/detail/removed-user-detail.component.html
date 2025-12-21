@@ -1,0 +1,79 @@
+<div class="d-flex justify-content-center">
+    <div class="col-8">
+        @if (removedUser()) {
+        <div>
+            <h2 data-cy="removedUserDetailsHeading"><span>Removed User</span> {{ removedUser()!.id }}</h2>
+
+            <hr />
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <jhi-alert></jhi-alert>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span>ID</span></dt>
+                <dd>
+                    <span>{{ removedUser()!.id }}</span>
+                </dd>
+                <dt><span>Name</span></dt>
+                <dd>
+                    <span>{{ removedUser()!.name }}</span>
+                </dd>
+                <dt><span>Original ID</span></dt>
+                <dd>
+                    <span>{{ removedUser()!.originalId }}</span>
+                </dd>
+                <dt><span>Role</span></dt>
+                <dd>
+                    <span>{{ removedUser()!.role }}</span>
+                </dd>
+                <dt><span>Whatsapp Number</span></dt>
+                <dd>
+                    <span>{{ removedUser()!.whatsappNumber }}</span>
+                </dd>
+                <dt><span>Phone Number</span></dt>
+                <dd>
+                    <span>{{ removedUser()!.phoneNumber }}</span>
+                </dd>
+                <dt><span>Address</span></dt>
+                <dd>
+                    <span>{{ removedUser()!.address }}</span>
+                </dd>
+                <dt><span>Joined At</span></dt>
+                <dd>
+                    <span>{{ removedUser()!.joinedAt | formatMediumDatetime }}</span>
+                </dd>
+                <dt><span>Removed At</span></dt>
+                <dd>
+                    <span>{{ removedUser()!.removedAt | formatMediumDatetime }}</span>
+                </dd>
+                <dt><span>Reason For Removal</span></dt>
+                <dd>
+                    <span>{{ removedUser()!.reasonForRemoval }}</span>
+                </dd>
+                <dt><span>Status</span></dt>
+                <dd>
+                    <span>{{ removedUser()!.status }}</span>
+                </dd>
+                <dt><span>Order History ID</span></dt>
+                <dd>
+                    @if (removedUser()!.orderHistoryId) {
+                    <!-- Assuming we will uncomment this once Remaining UI is built, or just show ID -->
+                    <a [routerLink]="['/removed-order-summary', removedUser()!.orderHistoryId, 'view']">{{
+                        removedUser()!.orderHistoryId }}</a>
+                    }
+                </dd>
+            </dl>
+
+            <button type="submit" (click)="restore()" class="btn btn-primary" data-cy="entityDetailsRestoreButton">
+                <fa-icon icon="undo"></fa-icon>
+                <span class="d-none d-md-inline">Restore</span>
+            </button>
+            <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+                <fa-icon icon="arrow-left"></fa-icon>
+                <span jhiTranslate="entity.action.back">Back</span>
+            </button>
+        </div>
+        }
+    </div>
+</div>

@@ -959,4 +959,28 @@ public class CustomerFlowService {
             return new HashMap<>();
         }
     }
+
+    /**
+     * Retrieves the current session data as a JSON string for archival purposes.
+     */
+    public String getSessionDataForArchival(String waPhoneNumber) {
+        BotSession session = sessionManager.getSession(waPhoneNumber);
+        if (session == null) {
+            return null;
+        }
+        return session.getSessionData();
+    }
+
+    /**
+     * Restores session data from a JSON string.
+     */
+    public void restoreSessionData(String waPhoneNumber, String jsonData) {
+        if (jsonData == null) {
+            return;
+        }
+        BotSession session = sessionManager.getSession(waPhoneNumber);
+        session.setSessionData(jsonData);
+        sessionManager.updateState(session, session.getCurrentState()); // Ensure saved
+    }
+
 }
