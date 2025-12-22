@@ -24,6 +24,7 @@
       "description": "Description",
       "isAvailable": "Is Available",
       "createdAt": "Created At",
+      "version": "Version",
       "images": "Images",
       "help": {
         "description": "Increased length for SEO descriptions"

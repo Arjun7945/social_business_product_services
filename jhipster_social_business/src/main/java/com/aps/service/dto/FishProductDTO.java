@@ -23,6 +23,8 @@ public class FishProductDTO implements Serializable {
     @DecimalMin(value = "0")
     private BigDecimal pricePerKg;
 
+    private Long version;
+
     private String imageUrl;
 
     @Size(max = 2000)
@@ -56,6 +58,14 @@ public class FishProductDTO implements Serializable {
 
     public void setPricePerKg(BigDecimal pricePerKg) {
         this.pricePerKg = pricePerKg;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public String getImageUrl() {
@@ -115,13 +125,13 @@ public class FishProductDTO implements Serializable {
     @Override
     public String toString() {
         return "FishProductDTO{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", pricePerKg=" + getPricePerKg() +
-            ", imageUrl='" + getImageUrl() + "'" +
-            ", description='" + getDescription() + "'" +
-            ", isAvailable='" + getIsAvailable() + "'" +
-            ", createdAt='" + getCreatedAt() + "'" +
-            "}";
+                "id=" + getId() +
+                ", name='" + getName() + "'" +
+                ", pricePerKg=" + getPricePerKg() +
+                ", imageUrl='" + getImageUrl() + "'" +
+                ", description='" + getDescription() + "'" +
+                ", isAvailable='" + getIsAvailable() + "'" +
+                ", createdAt='" + getCreatedAt() + "'" +
+                "}";
     }
 }

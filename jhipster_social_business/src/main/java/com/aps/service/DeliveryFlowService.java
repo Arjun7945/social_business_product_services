@@ -246,8 +246,13 @@ public class DeliveryFlowService {
                 }
 
                 // Use BigDecimal for total
+                java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+                                .ofPattern("dd-MM-yyyy, hh:mm a")
+                                .withZone(java.time.ZoneId.systemDefault());
+                String formattedTime = formatter.format(order.getOrderTime());
+
                 orderDetails.append(deliveryPersonMessageService.getOrderFooter(order.getTotalAmount().doubleValue(),
-                                order.getOrderTime().toString()));
+                                formattedTime));
 
                 // Send to each delivery person individually
                 for (TeamMember deliveryPerson : deliveryPersons) {

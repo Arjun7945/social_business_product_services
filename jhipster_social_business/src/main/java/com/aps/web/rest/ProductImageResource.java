@@ -19,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -57,18 +59,26 @@ public class ProductImageResource {
      *         {@code 400 (Bad Request)} if the productImage has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("")
-    public ResponseEntity<ProductImageDTO> createProductImage(@Valid @RequestBody ProductImageDTO productImageDTO)
-            throws URISyntaxException {
-        LOG.debug("REST request to save ProductImage : {}", productImageDTO);
-        if (productImageDTO.getId() != null) {
-            throw new BadRequestAlertException("A new productImage cannot already have an ID", ENTITY_NAME, "idexists");
+    @PostMapping(consumes = { "multipart/form-data" })
+    public ResponseEntity<ProductImageDTO> createProductImage(
+            @RequestParam(value = "productId", required = false) Long productId,
+            @RequestParam("file") MultipartFile file) throws URISyntaxException, IOException {
+        LOG.debug("REST request to save ProductImage : {}", file.getOriginalFilename());
+
+        ProductImageDTO productImageDTO = new ProductImageDTO();
+        productImageDTO.setMimeType(file.getContentType());
+        productImageDTO.setImageData(file.getBytes());
+        if (productId != null) {
+            com.aps.service.dto.FishProductDTO fishProductDTO = new com.aps.service.dto.FishProductDTO();
+            fishProductDTO.setId(productId);
+            productImageDTO.setProduct(fishProductDTO);
         }
-        productImageDTO = productImageService.save(productImageDTO);
-        return ResponseEntity.created(new URI("/api/product-images/" + productImageDTO.getId()))
+
+        ProductImageDTO result = productImageService.save(productImageDTO);
+        return ResponseEntity.created(new URI("/api/product-images/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME,
-                        productImageDTO.getId().toString()))
-                .body(productImageDTO);
+                        result.getId().toString()))
+                .body(result);
     }
 
     /**

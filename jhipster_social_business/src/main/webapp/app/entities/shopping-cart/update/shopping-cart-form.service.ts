@@ -28,13 +28,14 @@ type ShoppingCartFormRawValue = FormValueOf<IShoppingCart>;
 
 type NewShoppingCartFormRawValue = FormValueOf<NewShoppingCart>;
 
-type ShoppingCartFormDefaults = Pick<NewShoppingCart, 'id' | 'createdAt' | 'updatedAt'>;
+type ShoppingCartFormDefaults = Pick<NewShoppingCart, 'id' | 'createdAt' | 'updatedAt' | 'version'>;
 
 type ShoppingCartFormGroupContent = {
   id: FormControl<ShoppingCartFormRawValue['id'] | NewShoppingCart['id']>;
   createdAt: FormControl<ShoppingCartFormRawValue['createdAt']>;
   updatedAt: FormControl<ShoppingCartFormRawValue['updatedAt']>;
   customer: FormControl<ShoppingCartFormRawValue['customer']>;
+  version: FormControl<ShoppingCartFormRawValue['version']>;
 };
 
 export type ShoppingCartFormGroup = FormGroup<ShoppingCartFormGroupContent>;
@@ -61,6 +62,7 @@ export class ShoppingCartFormService {
       customer: new FormControl(shoppingCartRawValue.customer, {
         validators: [Validators.required],
       }),
+      version: new FormControl(shoppingCartRawValue.version),
     });
   }
 
@@ -85,6 +87,7 @@ export class ShoppingCartFormService {
       id: null,
       createdAt: currentTime,
       updatedAt: currentTime,
+      version: null,
     };
   }
 

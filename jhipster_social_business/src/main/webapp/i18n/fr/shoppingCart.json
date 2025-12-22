@@ -21,7 +21,8 @@
       "createdAt": "Created At",
       "updatedAt": "Updated At",
       "items": "Items",
-      "customer": "Customer"
+      "customer": "Customer",
+      "version": "Version"
     }
   }
 }

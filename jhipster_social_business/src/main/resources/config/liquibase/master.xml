@@ -26,6 +26,9 @@
     <include file="config/liquibase/changelog/20251221003001_added_entity_RemovedOrderSummary.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251221003002_updated_entity_CustomerOrder.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251221004500_relax_customer_order_constraints.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251222114500_added_version_to_customer_order.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251222121000_add_version_to_product_and_cart.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251222213000_initialize_version_columns.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20251215140323_added_entity_constraints_Customer.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251215140325_added_entity_constraints_ProductImage.xml" relativeToChangelogFile="false"/>

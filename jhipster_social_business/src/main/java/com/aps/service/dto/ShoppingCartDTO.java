@@ -20,6 +20,8 @@ public class ShoppingCartDTO implements Serializable {
 
     private Instant updatedAt;
 
+    private Long version;
+
     @NotNull
     private CustomerDTO customer;
 
@@ -45,6 +47,14 @@ public class ShoppingCartDTO implements Serializable {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public CustomerDTO getCustomer() {
@@ -80,10 +90,10 @@ public class ShoppingCartDTO implements Serializable {
     @Override
     public String toString() {
         return "ShoppingCartDTO{" +
-            "id=" + getId() +
-            ", createdAt='" + getCreatedAt() + "'" +
-            ", updatedAt='" + getUpdatedAt() + "'" +
-            ", customer=" + getCustomer() +
-            "}";
+                "id=" + getId() +
+                ", createdAt='" + getCreatedAt() + "'" +
+                ", updatedAt='" + getUpdatedAt() + "'" +
+                ", customer=" + getCustomer() +
+                "}";
     }
 }

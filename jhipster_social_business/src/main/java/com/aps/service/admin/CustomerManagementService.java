@@ -232,31 +232,36 @@ public class CustomerManagementService {
 
                         Customer finalNewCustomer = newCustomer;
 
-                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                        "✅ *Customer Added Successfully!*\n\n" +
-                                                        "👤 " + finalNewCustomer.getName()
-                                                        + " has been added to the system.\n\n" +
-                                                        "The customer can now start ordering by sending 'Hi' to the business number.");
+                        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                                @Override
+                                public void afterCommit() {
+                                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                                        "✅ *Customer Added Successfully!*\n\n" +
+                                                                        "👤 " + finalNewCustomer.getName()
+                                                                        + " has been added to the system.\n\n" +
+                                                                        "The customer can now start ordering by sending 'Hi' to the business number.");
 
-                        String customerWaPhone = finalNewCustomer.getWaPhoneNumber();
-                        if (customerWaPhone != null && !customerWaPhone.isEmpty()) {
-                                whatsAppService.sendSimpleText(customerWaPhone,
-                                                "🎉 *കുടുംബത്തിലേക്ക് സ്വാഗതം!*\n\n" +
-                                                                "👋 ഹായ് " + finalNewCustomer.getName()
-                                                                + ",\n" +
-                                                                "നിങ്ങളെ ഒരു ഉപഭോക്താവായി വിജയകരമായി രജിസ്റ്റർ ചെയ്തിരിക്കുന്നു.\n\n"
-                                                                +
-                                                                "🛍️ *ഓർഡർ ചെയ്യാൻ തുടങ്ങാം:*\n" +
-                                                                "ഞങ്ങളുടെ ഉൽപ്പന്നങ്ങൾ കാണാനും ഓർഡർ ചെയ്യാനും *'Hi'* എന്ന് റിപ്ലൈ ചെയ്യുക.\n\n"
-                                                                +
-                                                                "ഞങ്ങളെ തിരഞ്ഞെടുത്തതിന് നന്ദി!");
-                        }
+                                        String customerWaPhone = finalNewCustomer.getWaPhoneNumber();
+                                        if (customerWaPhone != null && !customerWaPhone.isEmpty()) {
+                                                whatsAppService.sendSimpleText(customerWaPhone,
+                                                                "🎉 *കുടുംബത്തിലേക്ക് സ്വാഗതം!*\n\n" +
+                                                                                "👋 ഹായ് " + finalNewCustomer.getName()
+                                                                                + ",\n" +
+                                                                                "നിങ്ങളെ ഒരു ഉപഭോക്താവായി വിജയകരമായി രജിസ്റ്റർ ചെയ്തിരിക്കുന്നു.\n\n"
+                                                                                +
+                                                                                "🛍️ *ഓർഡർ ചെയ്യാൻ തുടങ്ങാം:*\n" +
+                                                                                "ഞങ്ങളുടെ ഉൽപ്പന്നങ്ങൾ കാണാനും ഓർഡർ ചെയ്യാനും *'Hi'* എന്ന് റിപ്ലൈ ചെയ്യുക.\n\n"
+                                                                                +
+                                                                                "ഞങ്ങളെ തിരഞ്ഞെടുത്തതിന് നന്ദി!");
+                                        }
+                                        showCustomerMenu(admin);
+                                }
+                        });
 
                 } catch (Exception e) {
                         e.printStackTrace();
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                                         "❌ Error adding customer: " + e.getMessage());
-                } finally {
                         showCustomerMenu(admin);
                 }
         }

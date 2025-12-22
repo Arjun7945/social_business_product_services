@@ -166,9 +166,7 @@ public class AssistantAdminManagementService {
                         newAssistantAdmin.setRole(UserRole.ASSISTANT_ADMIN);
                         newAssistantAdmin.setIsActive(tempIsActive);
 
-                        teamMemberRepository.save(newAssistantAdmin);
-
-                        teamMemberRepository.save(newAssistantAdmin);
+                        teamMemberRepository.saveAndFlush(newAssistantAdmin);
 
                         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                                 @Override
@@ -186,10 +184,9 @@ public class AssistantAdminManagementService {
                                                                         "👤 " + newAssistantAdmin.getName()
                                                                         + " has been added to the system.\n\n" +
                                                                         "A welcome message has been sent to the new assistant admin. 📲");
+                                        showAssistantAdminMenu(admin);
                                 }
                         });
-
-                        showAssistantAdminMenu(admin);
                 } catch (Exception e) {
                         e.printStackTrace();
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),

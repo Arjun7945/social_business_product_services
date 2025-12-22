@@ -67,8 +67,8 @@ public class ReportService {
         try {
             // Assuming DELIVERY_ONWAY + ORDER_NOT_TAKEN acts as proxy for unpaid/active
             // orders for now
-            List<CustomerOrder> orders = orderRepository.findAllByStatus(OrderStatus.DELIVERY_ONWAY);
-            return generateReport(orders, "Unpaid Orders (Confirmed)", issueToName);
+            List<CustomerOrder> orders = orderRepository.findAllByStatus(OrderStatus.ORDER_FAILED);
+            return generateReport(orders, "Unpaid Orders (Failed)", issueToName);
         } catch (Exception e) {
             log.error("Failed to generate Unpaid Orders report", e);
             throw new RuntimeException("Report generation failed", e);
@@ -86,10 +86,9 @@ public class ReportService {
         BigDecimal totalUnpaid = BigDecimal.ZERO;
 
         for (CustomerOrder order : orders) {
-            if (order.getStatus() == OrderStatus.ORDER_DELIVERED_SUCESSFULLY && order.getConfirmedAt() != null) {
+            if (order.getStatus() == OrderStatus.ORDER_DELIVERED_SUCESSFULLY) {
                 totalPaid = totalPaid.add(order.getTotalAmount());
-            } else if (order.getStatus() == OrderStatus.ORDER_DELIVERED_SUCESSFULLY
-                    || order.getStatus() == OrderStatus.DELIVERY_ONWAY) {
+            } else {
                 totalUnpaid = totalUnpaid.add(order.getTotalAmount());
             }
         }

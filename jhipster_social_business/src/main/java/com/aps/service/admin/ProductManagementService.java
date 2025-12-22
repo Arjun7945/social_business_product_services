@@ -186,7 +186,7 @@ public class ProductManagementService {
             newProduct.setDescription(desc);
             newProduct.setIsAvailable(isAvailable);
 
-            fishProductRepository.save(newProduct);
+            fishProductRepository.saveAndFlush(newProduct);
 
             int successCount = 0;
             int failCount = 0;
@@ -220,10 +220,9 @@ public class ProductManagementService {
                 @Override
                 public void afterCommit() {
                     whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), finalMsg);
+                    showProductMenu(admin);
                 }
             });
-
-            showProductMenu(admin);
         } catch (Exception e) {
             log.error("Error finalizing product add", e);
             whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "❌ Error adding product: " + e.getMessage());

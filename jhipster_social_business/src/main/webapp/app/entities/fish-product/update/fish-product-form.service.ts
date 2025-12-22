@@ -27,7 +27,7 @@ type FishProductFormRawValue = FormValueOf<IFishProduct>;
 
 type NewFishProductFormRawValue = FormValueOf<NewFishProduct>;
 
-type FishProductFormDefaults = Pick<NewFishProduct, 'id' | 'isAvailable' | 'createdAt'>;
+type FishProductFormDefaults = Pick<NewFishProduct, 'id' | 'isAvailable' | 'createdAt' | 'version'>;
 
 type FishProductFormGroupContent = {
   id: FormControl<FishProductFormRawValue['id'] | NewFishProduct['id']>;
@@ -37,6 +37,7 @@ type FishProductFormGroupContent = {
   description: FormControl<FishProductFormRawValue['description']>;
   isAvailable: FormControl<FishProductFormRawValue['isAvailable']>;
   createdAt: FormControl<FishProductFormRawValue['createdAt']>;
+  version: FormControl<FishProductFormRawValue['version']>;
 };
 
 export type FishProductFormGroup = FormGroup<FishProductFormGroupContent>;
@@ -70,6 +71,7 @@ export class FishProductFormService {
         validators: [Validators.required],
       }),
       createdAt: new FormControl(fishProductRawValue.createdAt),
+      version: new FormControl(fishProductRawValue.version),
     });
   }
 
@@ -94,6 +96,7 @@ export class FishProductFormService {
       id: null,
       isAvailable: false,
       createdAt: currentTime,
+      version: null,
     };
   }
 

@@ -166,7 +166,7 @@ public class ExecutiveManagementService {
                         newExecutive.setRole(UserRole.EXECUTIVE);
                         newExecutive.setIsActive(tempIsActive);
 
-                        teamMemberRepository.save(newExecutive);
+                        teamMemberRepository.saveAndFlush(newExecutive);
 
                         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                                 @Override
@@ -184,10 +184,9 @@ public class ExecutiveManagementService {
                                                                         "👤 " + newExecutive.getName()
                                                                         + " has been added to the system.\n\n" +
                                                                         "A welcome message has been sent to the new executive. 📲");
+                                        showExecutiveMenu(admin);
                                 }
                         });
-
-                        showExecutiveMenu(admin);
                 } catch (Exception e) {
                         e.printStackTrace();
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),

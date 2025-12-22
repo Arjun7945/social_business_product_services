@@ -1,48 +1,53 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
     @if (shoppingCart(); as shoppingCartRef) {
-      <div>
-        <h2 data-cy="shoppingCartDetailsHeading">
-          <span jhiTranslate="whatsappProductServiceApp.shoppingCart.detail.title">Shopping Cart</span>
-        </h2>
+    <div>
+      <h2 data-cy="shoppingCartDetailsHeading">
+        <span jhiTranslate="whatsappProductServiceApp.shoppingCart.detail.title">Shopping Cart</span>
+      </h2>
 
-        <hr />
+      <hr />
 
-        <jhi-alert-error></jhi-alert-error>
+      <jhi-alert-error></jhi-alert-error>
 
-        <jhi-alert></jhi-alert>
+      <jhi-alert></jhi-alert>
 
-        <dl class="row-md jh-entity-details">
-          <dt><span jhiTranslate="global.field.id">ID</span></dt>
-          <dd>
-            <span>{{ shoppingCartRef.id }}</span>
-          </dd>
-          <dt><span jhiTranslate="whatsappProductServiceApp.shoppingCart.createdAt">Created At</span></dt>
-          <dd>
-            <span>{{ shoppingCartRef.createdAt | formatMediumDatetime }}</span>
-          </dd>
-          <dt><span jhiTranslate="whatsappProductServiceApp.shoppingCart.updatedAt">Updated At</span></dt>
-          <dd>
-            <span>{{ shoppingCartRef.updatedAt | formatMediumDatetime }}</span>
-          </dd>
-          <dt><span jhiTranslate="whatsappProductServiceApp.shoppingCart.customer">Customer</span></dt>
-          <dd>
-            @if (shoppingCart()!.customer) {
-              <div>
-                <a [routerLink]="['/customer', shoppingCart()!.customer?.id, 'view']">{{ shoppingCartRef.customer?.name }}</a>
-              </div>
-            }
-          </dd>
-        </dl>
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ shoppingCartRef.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="whatsappProductServiceApp.shoppingCart.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ shoppingCartRef.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="whatsappProductServiceApp.shoppingCart.updatedAt">Updated At</span></dt>
+        <dd>
+          <span>{{ shoppingCartRef.updatedAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="whatsappProductServiceApp.shoppingCart.customer">Customer</span></dt>
+        <dd>
+          @if (shoppingCart()!.customer) {
+          <div>
+            <a [routerLink]="['/customer', shoppingCart()!.customer?.id, 'view']">{{ shoppingCartRef.customer?.name
+              }}</a>
+          </div>
+          }
+        </dd>
+        <dt><span jhiTranslate="whatsappProductServiceApp.shoppingCart.version">Version</span></dt>
+        <dd>
+          <span>{{ shoppingCartRef.version }}</span>
+        </dd>
+      </dl>
 
-        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
-        </button>
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
 
-        <button type="button" [routerLink]="['/shopping-cart', shoppingCartRef.id, 'edit']" class="btn btn-primary">
-          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
-        </button>
-      </div>
+      <button type="button" [routerLink]="['/shopping-cart', shoppingCartRef.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
     }
   </div>
 </div>

@@ -24,6 +24,8 @@ public class CustomerOrderDTO implements Serializable {
     @DecimalMin(value = "0")
     private BigDecimal totalAmount;
 
+    private Long version;
+
     @NotNull
     private OrderStatus status;
 
@@ -64,6 +66,14 @@ public class CustomerOrderDTO implements Serializable {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public OrderStatus getStatus() {

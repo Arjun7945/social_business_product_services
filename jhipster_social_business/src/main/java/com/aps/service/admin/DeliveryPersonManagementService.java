@@ -184,7 +184,7 @@ public class DeliveryPersonManagementService {
                         newDeliveryPerson.setRole(UserRole.DELIVERY_PERSON);
                         newDeliveryPerson.setIsActive(tempIsActive);
 
-                        teamMemberRepository.save(newDeliveryPerson);
+                        teamMemberRepository.saveAndFlush(newDeliveryPerson);
 
                         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                                 @Override
@@ -203,10 +203,9 @@ public class DeliveryPersonManagementService {
                                                                         "👤 " + newDeliveryPerson.getName()
                                                                         + " has been added to the system.\n\n" +
                                                                         "A welcome message has been sent to the new delivery person. 📲");
+                                        showDeliveryPersonMenu(admin);
                                 }
                         });
-
-                        showDeliveryPersonMenu(admin);
                 } catch (Exception e) {
                         e.printStackTrace();
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),

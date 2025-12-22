@@ -43,6 +43,10 @@ public class CustomerOrder implements Serializable {
     @Column(name = "total_amount", precision = 21, scale = 2, nullable = false)
     private BigDecimal totalAmount;
 
+    @Version
+    @Column(name = "version")
+    private Long version;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -111,6 +115,14 @@ public class CustomerOrder implements Serializable {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public OrderStatus getStatus() {

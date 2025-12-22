@@ -38,6 +38,10 @@ public class FishProduct implements Serializable {
     @Column(name = "price_per_kg", precision = 21, scale = 2, nullable = false)
     private BigDecimal pricePerKg;
 
+    @Version
+    @Column(name = "version")
+    private Long version;
+
     @Column(name = "image_url")
     private String imageUrl;
 
@@ -102,6 +106,14 @@ public class FishProduct implements Serializable {
 
     public void setPricePerKg(BigDecimal pricePerKg) {
         this.pricePerKg = pricePerKg;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public String getImageUrl() {
@@ -187,7 +199,8 @@ public class FishProduct implements Serializable {
         return this;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 
     @Override
     public boolean equals(Object o) {
@@ -202,7 +215,8 @@ public class FishProduct implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -210,13 +224,13 @@ public class FishProduct implements Serializable {
     @Override
     public String toString() {
         return "FishProduct{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", pricePerKg=" + getPricePerKg() +
-            ", imageUrl='" + getImageUrl() + "'" +
-            ", description='" + getDescription() + "'" +
-            ", isAvailable='" + getIsAvailable() + "'" +
-            ", createdAt='" + getCreatedAt() + "'" +
-            "}";
+                "id=" + getId() +
+                ", name='" + getName() + "'" +
+                ", pricePerKg=" + getPricePerKg() +
+                ", imageUrl='" + getImageUrl() + "'" +
+                ", description='" + getDescription() + "'" +
+                ", isAvailable='" + getIsAvailable() + "'" +
+                ", createdAt='" + getCreatedAt() + "'" +
+                "}";
     }
 }

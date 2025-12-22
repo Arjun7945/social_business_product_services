@@ -85,6 +85,12 @@
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
+          <th scope="col" jhiSortBy="version">
+            <div class="d-flex">
+              <span jhiTranslate="whatsappProductServiceApp.customerOrder.version">Version</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
           <th scope="col"></th>
         </tr>
       </thead>
@@ -137,6 +143,7 @@
             }
 
           </td>
+          <td>{{ customerOrder.version }}</td>
           <td class="text-end">
             <div class="btn-group">
               <button type="submit" [routerLink]="['/order-item']"

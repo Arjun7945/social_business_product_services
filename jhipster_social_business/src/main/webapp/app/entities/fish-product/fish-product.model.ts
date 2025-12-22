@@ -8,6 +8,7 @@ export interface IFishProduct {
   description?: string | null;
   isAvailable?: boolean | null;
   createdAt?: dayjs.Dayjs | null;
+  version?: number | null;
 }
 
 export type NewFishProduct = Omit<IFishProduct, 'id'> & { id: null };

@@ -30,7 +30,7 @@ public class DeliveryPersonMessageService {
     }
 
     public String getOrderFooter(double total, String orderTime) {
-        return String.format("\n💰 *ആകെ:* ₹%.2f\n💵 *പേയ്മെന്റ്:* COD\n⏰ *സമയം:* %s\n\n" +
+        return String.format("\n💰 *ആകെ:* ₹%.2f\n⏰ *സമയം:* %s\n\n" +
                 "ഈ ഓർഡർ എടുക്കാൻ ആരാണ് തയ്യാറുള്ളത്? 🚀", total, orderTime);
     }
 

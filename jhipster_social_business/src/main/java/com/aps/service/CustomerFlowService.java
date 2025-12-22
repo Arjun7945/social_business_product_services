@@ -125,7 +125,7 @@ public class CustomerFlowService {
     }
 
     private boolean handleGlobalCommands(Customer customer, BotSession session, String text) {
-        if (text.equalsIgnoreCase("start")) {
+        if (text.equalsIgnoreCase("start") || text.equalsIgnoreCase("hi") || text.equalsIgnoreCase("hello")) {
             // Check if there is an ACTIVE session before just restarting
             if (isActiveSession(getStage(session))) {
                 sendSessionResumptionPrompt(customer);
@@ -133,21 +133,6 @@ public class CustomerFlowService {
             }
             updateStage(session, CustomerFlowStage.REGISTERED);
             showProductCatalog(customer, session);
-            return true;
-        }
-
-        if (text.equalsIgnoreCase("hi") || text.equalsIgnoreCase("hello")) {
-            // Check for active session first
-            if (isActiveSession(getStage(session))) {
-                sendSessionResumptionPrompt(customer);
-                return true;
-            }
-
-            // Treat "Hi" as "Start Over" for onboarding.
-            // Reset to AWAITING_NAME and show welcome.
-            whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
-                    messageService.getWelcomeMessageNewCustomer());
-            updateStage(session, CustomerFlowStage.AWAITING_NAME);
             return true;
         }
 

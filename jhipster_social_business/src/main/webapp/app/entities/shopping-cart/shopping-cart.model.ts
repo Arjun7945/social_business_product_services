@@ -6,6 +6,7 @@ export interface IShoppingCart {
   createdAt?: dayjs.Dayjs | null;
   updatedAt?: dayjs.Dayjs | null;
   customer?: Pick<ICustomer, 'id' | 'name'> | null;
+  version?: number | null;
 }
 
 export type NewShoppingCart = Omit<IShoppingCart, 'id'> & { id: null };

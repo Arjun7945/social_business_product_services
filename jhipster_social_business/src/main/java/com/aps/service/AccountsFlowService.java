@@ -109,23 +109,24 @@ public class AccountsFlowService {
         log.info("Accounts button reply: {}", buttonId);
 
         if (buttonId.equals(FlowConstants.BTN_ACCOUNTS_TODAYS_ORDERS)) {
-            generateAndSendReport(teamMember, "Todays_Orders_" + LocalDate.now(),
+            generateAndSendReport(teamMember, session, "Todays_Orders_" + LocalDate.now(),
                     "📅 Today's Orders Report",
                     "ℹ️ No orders found for today.",
                     reportService::generateTodaysOrdersReport);
         } else if (buttonId.equals(FlowConstants.BTN_ACCOUNTS_COMPLETED_ORDERS)) {
-            generateAndSendReport(teamMember, "Completed_Orders",
+            generateAndSendReport(teamMember, session, "Completed_Orders",
                     "✅ Completed Orders Report",
                     "ℹ️ No completed orders found.",
                     reportService::generateCompletedOrdersReport);
         } else if (buttonId.equals(FlowConstants.BTN_ACCOUNTS_UNPAID_ORDERS)) {
-            generateAndSendReport(teamMember, "Unpaid_Orders",
+            generateAndSendReport(teamMember, session, "Unpaid_Orders",
                     "💰 Unpaid Orders Report",
                     "ℹ️ No unpaid orders found.",
                     reportService::generateUnpaidOrdersReport);
         } else if (buttonId.equals(FlowConstants.BTN_ACCOUNTS_CREDIT_REPORT)) {
             whatsAppService.sendSimpleText(teamMember.getWaPhoneNumber(),
                     messageService.getFeatureComingSoon());
+            showMainMenu(teamMember, session);
         } else {
             showMainMenu(teamMember, session);
         }
@@ -135,7 +136,8 @@ public class AccountsFlowService {
         byte[] generate(String issueToName);
     }
 
-    private void generateAndSendReport(TeamMember member, String baseFilename, String caption, String noDataMessage,
+    private void generateAndSendReport(TeamMember member, BotSession session, String baseFilename, String caption,
+            String noDataMessage,
             ReportGenerator generator) {
         whatsAppService.sendSimpleText(member.getWaPhoneNumber(), "⏳ Generating report... please wait.");
 
@@ -155,6 +157,8 @@ public class AccountsFlowService {
         } catch (Exception e) {
             log.error("Report generation error", e);
             whatsAppService.sendSimpleText(member.getWaPhoneNumber(), "❌ Error generating report: " + e.getMessage());
+        } finally {
+            showMainMenu(member, session);
         }
     }
 }

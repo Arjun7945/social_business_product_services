@@ -28,7 +28,7 @@ type CustomerOrderFormRawValue = FormValueOf<ICustomerOrder>;
 
 type NewCustomerOrderFormRawValue = FormValueOf<NewCustomerOrder>;
 
-type CustomerOrderFormDefaults = Pick<NewCustomerOrder, 'id' | 'orderTime' | 'confirmedAt'>;
+type CustomerOrderFormDefaults = Pick<NewCustomerOrder, 'id' | 'orderTime' | 'confirmedAt' | 'version'>;
 
 type CustomerOrderFormGroupContent = {
   id: FormControl<CustomerOrderFormRawValue['id'] | NewCustomerOrder['id']>;
@@ -39,6 +39,7 @@ type CustomerOrderFormGroupContent = {
   confirmedAt: FormControl<CustomerOrderFormRawValue['confirmedAt']>;
   deliveryPerson: FormControl<CustomerOrderFormRawValue['deliveryPerson']>;
   customer: FormControl<CustomerOrderFormRawValue['customer']>;
+  version: FormControl<CustomerOrderFormRawValue['version']>;
 };
 
 export type CustomerOrderFormGroup = FormGroup<CustomerOrderFormGroupContent>;
@@ -75,6 +76,7 @@ export class CustomerOrderFormService {
       customer: new FormControl(customerOrderRawValue.customer, {
         validators: [Validators.required],
       }),
+      version: new FormControl(customerOrderRawValue.version),
     });
   }
 
@@ -99,6 +101,7 @@ export class CustomerOrderFormService {
       id: null,
       orderTime: currentTime,
       confirmedAt: currentTime,
+      version: null,
     };
   }
 

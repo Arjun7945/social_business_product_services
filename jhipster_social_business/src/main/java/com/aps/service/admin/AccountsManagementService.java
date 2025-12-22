@@ -166,9 +166,7 @@ public class AccountsManagementService {
                         newMember.setRole(UserRole.ACCOUNTS_TEAM);
                         newMember.setIsActive(tempIsActive);
 
-                        teamMemberRepository.save(newMember);
-
-                        teamMemberRepository.save(newMember);
+                        teamMemberRepository.saveAndFlush(newMember);
 
                         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                                 @Override
@@ -186,10 +184,9 @@ public class AccountsManagementService {
                                                                         "👤 " + newMember.getName()
                                                                         + " has been added to the system.\n\n" +
                                                                         "A welcome message has been sent to them. 📲");
+                                        showAccountsMenu(admin);
                                 }
                         });
-
-                        showAccountsMenu(admin);
                 } catch (Exception e) {
                         e.printStackTrace();
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),

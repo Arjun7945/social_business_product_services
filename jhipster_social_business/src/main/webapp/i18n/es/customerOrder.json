@@ -25,7 +25,9 @@
       "confirmedAt": "Confirmed At",
       "items": "Items",
       "deliveryPerson": "Delivery Person",
-      "customer": "Customer"
+      "customer": "Customer",
+      "version": "Version",
+      "version": "Versión"
     }
   }
 }
