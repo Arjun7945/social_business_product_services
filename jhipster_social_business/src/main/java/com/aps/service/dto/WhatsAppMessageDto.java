@@ -18,6 +18,7 @@ public class WhatsAppMessageDto {
     private InteractiveDto interactive;
     private DocumentDto document;
     private ImageDto image;
+    private LocationDto location;
 
     // Default constructor
     public WhatsAppMessageDto() {
@@ -134,6 +135,19 @@ public class WhatsAppMessageDto {
 
     public WhatsAppMessageDto image(ImageDto image) {
         this.image = image;
+        return this;
+    }
+
+    public LocationDto getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationDto location) {
+        this.location = location;
+    }
+
+    public WhatsAppMessageDto location(LocationDto location) {
+        this.location = location;
         return this;
     }
 
@@ -797,6 +811,74 @@ public class WhatsAppMessageDto {
 
         public VideoDto id(String id) {
             this.id = id;
+            return this;
+        }
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public static class LocationDto {
+        private Double longitude;
+        private Double latitude;
+        private String name;
+        private String address;
+
+        public static LocationDto builder() {
+            return new LocationDto();
+        }
+
+        public LocationDto build() {
+            return this;
+        }
+
+        public Double getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(Double longitude) {
+            this.longitude = longitude;
+        }
+
+        public Double getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(Double latitude) {
+            this.latitude = latitude;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+
+        public LocationDto longitude(Double longitude) {
+            this.longitude = longitude;
+            return this;
+        }
+
+        public LocationDto latitude(Double latitude) {
+            this.latitude = latitude;
+            return this;
+        }
+
+        public LocationDto name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public LocationDto address(String address) {
+            this.address = address;
             return this;
         }
     }

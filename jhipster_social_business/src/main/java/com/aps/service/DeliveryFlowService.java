@@ -227,16 +227,23 @@ public class DeliveryFlowService {
                                 .append(deliveryPersonMessageService.getCustomerDetails(customer.getName(),
                                                 customer.getPhoneNumber()));
 
-                // Always add location details, send "null" as string if data is not available
-                String lat = customer.getLocationLat() != null ? String.format("%.5f", customer.getLocationLat())
-                                : "null";
-                String lon = customer.getLocationLon() != null ? String.format("%.5f", customer.getLocationLon())
-                                : "null";
-                String distance = customer.getDistanceFromBusinessKm() != null
-                                ? String.format("%.2f", customer.getDistanceFromBusinessKm())
-                                : "null";
-
-                orderDetails.append(deliveryPersonMessageService.getLocationDetails(lat, lon, distance));
+                /*
+                 * // REMOVED: Location details (Lat/Lon/Km) for cleaner UI
+                 * // Always add location details, send "null" as string if data is not
+                 * available
+                 * String lat = customer.getLocationLat() != null ? String.format("%.5f",
+                 * customer.getLocationLat())
+                 * : "null";
+                 * String lon = customer.getLocationLon() != null ? String.format("%.5f",
+                 * customer.getLocationLon())
+                 * : "null";
+                 * String distance = customer.getDistanceFromBusinessKm() != null
+                 * ? String.format("%.2f", customer.getDistanceFromBusinessKm())
+                 * : "null";
+                 * 
+                 * orderDetails.append(deliveryPersonMessageService.getLocationDetails(lat, lon,
+                 * distance));
+                 */
 
                 orderDetails.append(deliveryPersonMessageService.getItemsHeader());
                 for (CartItemDetailsDTO item : items) {
@@ -333,6 +340,15 @@ public class DeliveryFlowService {
                                                 deliveryPersonMessageService.getOrderConfirmationSuccess(orderId,
                                                                 customer.getName(),
                                                                 customer.getPhoneNumber()));
+
+                                // Send Location Map
+                                if (customer.getLocationLat() != null && customer.getLocationLon() != null) {
+                                        whatsAppService.sendLocation(deliveryPersonWaId,
+                                                        customer.getLocationLat(),
+                                                        customer.getLocationLon(),
+                                                        customer.getName(),
+                                                        customer.getAddress());
+                                }
 
                                 log.info("Order {} assigned to delivery person {} ({})",
                                                 orderId, teamMember.getName(), teamMember.getPhoneNumber());

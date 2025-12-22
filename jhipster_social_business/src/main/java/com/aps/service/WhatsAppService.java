@@ -65,6 +65,21 @@ public class WhatsAppService {
                 return sendToMeta(message);
         }
 
+        public boolean sendLocation(String toWaId, double lat, double lon, String name, String address) {
+                WhatsAppMessageDto message = WhatsAppMessageDto.builder()
+                                .to(toWaId)
+                                .type("location")
+                                .location(WhatsAppMessageDto.LocationDto.builder()
+                                                .latitude(lat)
+                                                .longitude(lon)
+                                                .name(name)
+                                                .address(address)
+                                                .build())
+                                .build();
+
+                return sendToMeta(message);
+        }
+
         public boolean sendImageMessage(String toWaId, String imageUrl, String caption) {
                 WhatsAppMessageDto message = WhatsAppMessageDto.builder()
                                 .to(toWaId)
