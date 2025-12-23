@@ -346,6 +346,45 @@ public class AdminFlowService {
                 productManagementService.showAllProducts(admin);
                 break;
 
+            case "AVAIL_YES":
+                productManagementService.handleProductAvailabilityInput(admin, session, "yes");
+                break;
+            case "AVAIL_NO":
+                productManagementService.handleProductAvailabilityInput(admin, session, "no");
+                break;
+
+            // Executive Status Buttons
+            case "EXEC_ACTIVE_YES":
+                executiveManagementService.handleExecutiveStatusInput(admin, session, "yes");
+                break;
+            case "EXEC_ACTIVE_NO":
+                executiveManagementService.handleExecutiveStatusInput(admin, session, "no");
+                break;
+
+            // Delivery Status Buttons
+            case "DELIVERY_ACTIVE_YES":
+                deliveryPersonManagementService.handleDeliveryPersonStatusInput(admin, session, "yes");
+                break;
+            case "DELIVERY_ACTIVE_NO":
+                deliveryPersonManagementService.handleDeliveryPersonStatusInput(admin, session, "no");
+                break;
+
+            // Assistant Status Buttons
+            case "ASSISTANT_ACTIVE_YES":
+                assistantAdminManagementService.handleAssistantAdminStatusInput(admin, session, "yes");
+                break;
+            case "ASSISTANT_ACTIVE_NO":
+                assistantAdminManagementService.handleAssistantAdminStatusInput(admin, session, "no");
+                break;
+
+            // Accounts Status Buttons
+            case "ACC_ACTIVE_YES":
+                accountsManagementService.handleAccountsStatusInput(admin, session, "yes");
+                break;
+            case "ACC_ACTIVE_NO":
+                accountsManagementService.handleAccountsStatusInput(admin, session, "no");
+                break;
+
             case "BACK_TO_MAIN":
                 showMainMenu(admin, session);
                 break;

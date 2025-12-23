@@ -106,8 +106,24 @@ public class ExecutiveManagementService {
                         return;
                 }
                 sessionManager.setSessionData(session, "tempTeamMemberWaPhone", waPhone.trim());
-                whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                "✅ WhatsApp: " + waPhone.trim() + "\n\n🔄 Is this executive active? (yes/no):");
+                List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
+                                WhatsAppMessageDto.ButtonDto.builder()
+                                                .type("reply")
+                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                                                .id("EXEC_ACTIVE_YES")
+                                                                .title("Yes")
+                                                                .build())
+                                                .build(),
+                                WhatsAppMessageDto.ButtonDto.builder()
+                                                .type("reply")
+                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                                                .id("EXEC_ACTIVE_NO")
+                                                                .title("No")
+                                                                .build())
+                                                .build());
+
+                whatsAppService.sendCartActionButtons(admin.getWaPhoneNumber(),
+                                "✅ WhatsApp: " + waPhone.trim() + "\n\n🔄 Is this executive active?", buttons);
                 sessionManager.updateState(session, AdminFlowStage.AWAITING_EXEC_STATUS.name());
         }
 

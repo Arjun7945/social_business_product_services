@@ -123,8 +123,24 @@ public class ProductManagementService {
 
     public void handleProductDescriptionInput(TeamMember admin, BotSession session, String description) {
         sessionManager.setSessionData(session, "tempProductDesc", description.trim());
-        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                "✅ Description saved\n\n🔄 Is this product available? (yes/no):");
+        List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
+                WhatsAppMessageDto.ButtonDto.builder()
+                        .type("reply")
+                        .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                .id("AVAIL_YES")
+                                .title("Yes")
+                                .build())
+                        .build(),
+                WhatsAppMessageDto.ButtonDto.builder()
+                        .type("reply")
+                        .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                .id("AVAIL_NO")
+                                .title("No")
+                                .build())
+                        .build());
+
+        whatsAppService.sendCartActionButtons(admin.getWaPhoneNumber(),
+                "✅ Description saved\n\n🔄 Is this product available?", buttons);
         sessionManager.updateState(session, AdminFlowStage.AWAITING_PRODUCT_AVAILABILITY.name());
     }
 

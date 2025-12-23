@@ -106,8 +106,24 @@ public class AssistantAdminManagementService {
                         return;
                 }
                 sessionManager.setSessionData(session, "tempTeamMemberWaPhone", waPhone.trim());
-                whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                "✅ WhatsApp: " + waPhone.trim() + "\n\n🔄 Is this assistant admin active? (yes/no):");
+                List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
+                                WhatsAppMessageDto.ButtonDto.builder()
+                                                .type("reply")
+                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                                                .id("ASSISTANT_ACTIVE_YES")
+                                                                .title("Yes")
+                                                                .build())
+                                                .build(),
+                                WhatsAppMessageDto.ButtonDto.builder()
+                                                .type("reply")
+                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                                                .id("ASSISTANT_ACTIVE_NO")
+                                                                .title("No")
+                                                                .build())
+                                                .build());
+
+                whatsAppService.sendCartActionButtons(admin.getWaPhoneNumber(),
+                                "✅ WhatsApp: " + waPhone.trim() + "\n\n🔄 Is this assistant admin active?", buttons);
                 sessionManager.updateState(session, AdminFlowStage.AWAITING_ASSISTANT_STATUS.name());
         }
 
