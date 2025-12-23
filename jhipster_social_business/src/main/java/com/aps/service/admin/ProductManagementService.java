@@ -36,6 +36,9 @@ public class ProductManagementService {
     private final BotSessionManager sessionManager;
     private final InputValidator inputValidator;
 
+    // In-memory lock to prevent race conditions on double image sends
+    private final java.util.Set<String> processingImages = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
     public ProductManagementService(FishProductRepository fishProductRepository,
             ProductImageRepository productImageRepository,
             WhatsAppService whatsAppService,
@@ -132,35 +135,52 @@ public class ProductManagementService {
 
         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                 "✅ Availability: " + (isAvailable ? "Available" : "Not Available") +
-                        "\n\n📸 *Send product images* (1-10 images)\n\n" +
-                        "\n\n📸 *Send product images* (1-10 images)\n\n" +
-                        "• Send images one by one\n" +
-                        "• When done, type '" + FlowConstants.CMD_DONE + "'\n" +
-                        "• To skip images, type '" + FlowConstants.CMD_SKIP + "'");
+                        "\n\n📸 *Send product image* (Add only 1 image)\n\n" +
+                        "• Send the image\n" +
+                        "• Processing will start immediately after receipt");
         sessionManager.updateState(session, AdminFlowStage.AWAITING_PRODUCT_IMAGES.name());
-        // Initialize image list in session? Or just string of IDs.
+        // Initialize image list in session
         sessionManager.setSessionData(session, "tempMediaIds", "");
     }
 
     public void handleProductImageMessage(TeamMember admin, BotSession session, WhatsAppWebhookDto.Message message) {
         if (message.getType().equals("image") && message.getImage() != null) {
-            String mediaId = message.getImage().getId();
+            String waPhone = admin.getWaPhoneNumber();
 
-            String currentMediaIds = sessionManager.getSessionDataString(session, "tempMediaIds");
-            if (currentMediaIds == null)
-                currentMediaIds = "";
-            String updatedMediaIds = currentMediaIds.isEmpty() ? mediaId : currentMediaIds + "," + mediaId;
-            sessionManager.setSessionData(session, "tempMediaIds", updatedMediaIds);
+            // Acquire lock for this user
+            if (!processingImages.add(waPhone)) {
+                // If we couldn't add, it means we are already processing an image for this
+                // user.
+                // This handles the concurrent 2nd image.
+                whatsAppService.sendSimpleText(waPhone,
+                        "⚠️ *Only 1 image allowed per product.*\n\nFirst image is being processed. This one is ignored.");
+                return;
+            }
 
-            int imageCount = updatedMediaIds.split(",").length;
+            try {
+                String mediaId = message.getImage().getId();
 
-            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                    "✅ Image " + imageCount + " received!\n\n" +
-                            (imageCount < 10 ? "Send more images or type 'DONE' to finish."
-                                    : "Maximum 10 images reached. Type 'DONE' to finish."));
+                String currentMediaIds = sessionManager.getSessionDataString(session, "tempMediaIds");
+                if (currentMediaIds == null)
+                    currentMediaIds = "";
 
-            if (imageCount >= 10) {
-                finalizeProductAdd(admin, session);
+                if (!currentMediaIds.isEmpty()) {
+                    // Image already exists (legacy check + safety)
+                    whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                            "⚠️ *Product creation in progress.*\n\nNew image ignored as processing a previous image is underway.");
+                } else {
+                    // First image, save it and FINALIZE IMMEDIATELY
+                    sessionManager.setSessionData(session, "tempMediaIds", mediaId);
+                    whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                            "✅ Image received! Finalizing product... please wait.");
+
+                    // Trigger finalization
+                    sessionManager.updateState(session, AdminFlowStage.PROCESSING.name());
+                    finalizeProductAdd(admin, session);
+                }
+            } finally {
+                // Release lock
+                processingImages.remove(waPhone);
             }
         }
     }
@@ -208,10 +228,10 @@ public class ProductManagementService {
                     "🐟 " + newProduct.getName() + " has been added.";
 
             if (successCount > 0) {
-                msgBase += "\n📸 " + successCount + " images saved.";
+                msgBase += "\n📸 Image saved.";
             }
             if (failCount > 0) {
-                msgBase += "\n⚠️ " + failCount + " images failed to download.";
+                msgBase += "\n⚠️ Image download failed.";
             }
 
             final String finalMsg = msgBase;

@@ -325,12 +325,50 @@ public class CustomerFlowService {
             }
         }
 
-        if (!carouselProducts.isEmpty()) {
-            List<FishProduct> carouselSubset = carouselProducts.stream().limit(10).collect(Collectors.toList());
-            List<FishProduct> remaining = carouselProducts.stream().skip(10).collect(Collectors.toList());
-            listProducts.addAll(remaining);
+        // --- Logic Update: Carousel Chunking & Rebalancing ---
 
-            sendProductCarousel(customer, carouselSubset, dummyMediaId);
+        // Rule: Carousel must have at least 3 cards (Customer Requirement).
+        // If total items < 3, we cannot use carousel. Move them to list.
+        if (carouselProducts.size() < 3) {
+            listProducts.addAll(0, carouselProducts);
+            carouselProducts.clear();
+        } else {
+            // 1. Create Chunks of Max 10
+            List<List<FishProduct>> chunks = new java.util.ArrayList<>();
+            int chunkSize = 10;
+            for (int i = 0; i < carouselProducts.size(); i += chunkSize) {
+                int end = Math.min(carouselProducts.size(), i + chunkSize);
+                chunks.add(new java.util.ArrayList<>(carouselProducts.subList(i, end)));
+            }
+
+            // 2. Rebalance Logic
+            // If the last chunk has fewer than 3 items, borrow from the previous chunk.
+            if (chunks.size() > 1) {
+                List<FishProduct> lastChunk = chunks.get(chunks.size() - 1);
+
+                if (lastChunk.size() < 3) {
+                    List<FishProduct> prevChunk = chunks.get(chunks.size() - 2);
+                    int needed = 3 - lastChunk.size(); // e.g., if sizes are 10, 1 -> needed=2.
+
+                    // Safety check: ensure prevChunk has enough items to give while staying >= 3?
+                    // Previous chunk must be 10 (since it wasn't the last). 10 - 2 = 8. Safe.
+
+                    for (int k = 0; k < needed; k++) {
+                        // Remove from end of previous
+                        FishProduct movedItem = prevChunk.remove(prevChunk.size() - 1);
+                        // Add to start of last
+                        lastChunk.add(0, movedItem);
+                    }
+                }
+            }
+
+            // 3. Send Carousels
+            // Note: Sending multiple messages in quick succession might need a tiny
+            // delay/sync,
+            // but usually Meta handles this order okay if sent sequentially.
+            for (List<FishProduct> chunk : chunks) {
+                sendProductCarousel(customer, chunk, dummyMediaId);
+            }
         }
 
         if (!listProducts.isEmpty()) {
@@ -340,7 +378,8 @@ public class CustomerFlowService {
         updateStage(session, CustomerFlowStage.BROWSING);
     }
 
-    private void sendProductCarousel(Customer customer, List<FishProduct> products, String dummyMediaId) {
+    private void sendProductCarousel(Customer customer, List<FishProduct> products, String dummyMediaId,
+            String bodyText) {
         List<WhatsAppMessageDto.CarouselCardDto> cards = java.util.stream.IntStream.range(0, products.size())
                 .mapToObj(i -> {
                     FishProduct product = products.get(i);
@@ -394,7 +433,7 @@ public class CustomerFlowService {
                 .collect(Collectors.toList());
 
         whatsAppService.sendCarouselMessage(customer.getWaPhoneNumber(),
-                messageService.getProductCatalogHeader(customer.getName()), cards);
+                bodyText != null ? bodyText : "Available Products", cards);
     }
 
     private void sendProductList(Customer customer, List<FishProduct> products) {

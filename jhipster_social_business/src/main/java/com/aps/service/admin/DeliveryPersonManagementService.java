@@ -48,39 +48,30 @@ public class DeliveryPersonManagementService {
                 // Fetch session if not passed (following CustomManagementService pattern)
                 BotSession session = sessionManager.getSession(admin.getWaPhoneNumber());
 
-                List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
-                                WhatsAppMessageDto.ButtonDto.builder()
-                                                .type("reply")
-                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                                                .id("ADD_DELIVERY")
-                                                                .title("➕ Add")
-                                                                .build())
+                List<WhatsAppMessageDto.RowDto> rows = List.of(
+                                WhatsAppMessageDto.RowDto.builder()
+                                                .id("ADD_DELIVERY")
+                                                .title("➕ Add Delivery Person")
+                                                .description("Add a new staff member")
                                                 .build(),
-                                WhatsAppMessageDto.ButtonDto.builder()
-                                                .type("reply")
-                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                                                .id("SHOW_ALL_DELIVERY")
-                                                                .title("📋 Show All")
-                                                                .build())
+                                WhatsAppMessageDto.RowDto.builder()
+                                                .id("SHOW_ALL_DELIVERY")
+                                                .title("📋 Show All")
+                                                .description("List all delivery staff")
                                                 .build(),
-                                WhatsAppMessageDto.ButtonDto.builder() // Added Delete Button
-                                                .type("reply")
-                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                                                .id("DELETE_DELIVERY_MENU") // Calls
-                                                                                            // startDeleteDeliveryPerson
-                                                                .title("🗑️ Delete") // Shorter title to fit limit
-                                                                .build())
+                                WhatsAppMessageDto.RowDto.builder()
+                                                .id("DELETE_DELIVERY_MENU")
+                                                .title("🗑️ Delete")
+                                                .description("Remove a delivery person")
                                                 .build(),
-                                WhatsAppMessageDto.ButtonDto.builder()
-                                                .type("reply")
-                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                                                .id("BACK_TO_MAIN")
-                                                                .title("⬅️ Back")
-                                                                .build())
+                                WhatsAppMessageDto.RowDto.builder()
+                                                .id("BACK_TO_MAIN")
+                                                .title("⬅️ Back")
+                                                .description("Return to main menu")
                                                 .build());
 
-                whatsAppService.sendCartActionButtons(admin.getWaPhoneNumber(),
-                                "🚚 *Delivery Person Management*\n\nWhat would you like to do?", buttons);
+                whatsAppService.sendInteractiveList(admin.getWaPhoneNumber(),
+                                "🚚 *Delivery Person Management*\n\nSelect an option:", rows);
 
                 sessionManager.updateState(session, AdminFlowStage.DELIVERY_MENU.name());
         }
