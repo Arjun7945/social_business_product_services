@@ -83,21 +83,6 @@ public class DeliveryPersonMessageService {
         return "✅ പേയ്മെന്റ് രീതി: COD തിരഞ്ഞെടുത്തു";
     }
 
-    public String getDeliveryDashboardHeader(Long orderId, String customerName) {
-        return String.format("🚀 *ഡെലിവറി നടപടികൾ*\n\n" +
-                "ഓർഡർ #%d\n" +
-                "കസ്റ്റമർ: %s\n\n" +
-                "സ്റ്റാറ്റസ് അപ്ഡേറ്റ് ചെയ്യുക: 👇", orderId, customerName);
-    }
-
-    public String getButtonMarkShipped() {
-        return "ഷിപ്പ് ചെയ്തു";
-    }
-
-    public String getButtonMarkDelivered() {
-        return "ഡെലിവർ ചെയ്തു";
-    }
-
     public String getOrderDeliveredSuccess() {
         return "✅ ഓർഡർ ഡെലിവർ ചെയ്തതായി അടയാളപ്പെടുത്തി! മികച്ച ജോലി! 👏";
     }

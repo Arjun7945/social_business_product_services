@@ -27,15 +27,18 @@ public class WhatsAppService {
         private final RestClient restClient;
         private final CustomerMessageService messageService;
         private final DeliveryPersonMessageService deliveryMessageService;
+        private final CommonMessageService commonMessageService;
 
         public WhatsAppService(WhatsAppConfig whatsAppConfig,
                         RestClient whatsAppRestClient,
                         CustomerMessageService messageService,
-                        DeliveryPersonMessageService deliveryMessageService) {
+                        DeliveryPersonMessageService deliveryMessageService,
+                        CommonMessageService commonMessageService) {
                 this.whatsAppConfig = whatsAppConfig;
                 this.restClient = whatsAppRestClient;
                 this.messageService = messageService;
                 this.deliveryMessageService = deliveryMessageService;
+                this.commonMessageService = commonMessageService;
         }
 
         public boolean sendSimpleText(String toWaId, String text) {
@@ -131,7 +134,7 @@ public class WhatsAppService {
                                                                 .text(bodyText)
                                                                 .build())
                                                 .action(WhatsAppMessageDto.ActionDto.builder()
-                                                                .button(messageService.getButtonViewFish())
+                                                                .button(commonMessageService.getButtonViewOptions())
                                                                 .sections(List.of(
                                                                                 WhatsAppMessageDto.SectionDto.builder()
                                                                                                 .title(messageService

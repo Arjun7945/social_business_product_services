@@ -362,8 +362,16 @@ public class CustomerMessageService {
     // CATEGORY 8: BUTTON LABELS
     // ========================================
 
-    public String getButtonAddMoreFish() {
-        return "കൂടുതൽ മീൻ ചേർക്കുക";
+    public String getButtonAddMoreFishShort() {
+        return "കൂടുതൽ"; // Short: More
+    }
+
+    public String getButtonAddMoreFishLong() {
+        return "കൂടുതൽ മീൻ ചേർക്കുക"; // Long: Add more fish
+    }
+
+    public String getButtonAddMoreFishDesc() {
+        return "കൂടുതൽ മീൻ ചേർക്കുക"; // Desc: Add more fish
     }
 
     public String getButtonCheckout() {
@@ -382,16 +390,44 @@ public class CustomerMessageService {
         return "ഓർഡർ റദ്ദാക്കുക";
     }
 
-    public String getButtonEditProduct() {
-        return "ഉൽപ്പന്നം എഡിറ്റ് ചെയ്യുക";
+    public String getButtonEditProductShort() {
+        return "ഉൽപ്പന്നം"; // Short: Product
     }
 
-    public String getButtonEditQuantity() {
-        return "അളവ് എഡിറ്റ് ചെയ്യുക";
+    public String getButtonEditProductDesc() {
+        return "ഉൽപ്പന്നം മാറ്റുക"; // Desc: Change Product
+    }
+
+    public String getButtonEditQuantityShort() {
+        return "അളവ്"; // Short: Quantity
+    }
+
+    public String getButtonEditQuantityDesc() {
+        return "അളവ് മാറ്റുക"; // Desc: Change Quantity
+    }
+
+    public String getEditQuantitiesListHeader() {
+        return "✏️ *അളവ് എഡിറ്റ് ചെയ്യുക*"; // Edit Quantities
+    }
+
+    public String getCurrentCartHeader() {
+        return "*നിലവിലെ കാർട്ട്:*"; // Current cart
+    }
+
+    public String getSelectProductToEditPrompt() {
+        return "അളവ് മാറ്റേണ്ട ഉൽപ്പന്നം തിരഞ്ഞെടുക്കുക:"; // Select a product to edit quantity
     }
 
     public String getButtonBackToCheckout() {
         return "ചെക്ക്ഔട്ടിലേക്ക് മടങ്ങുക";
+    }
+
+    public String getButtonBackToCheckoutShort() {
+        return "തിരികെ"; // Short: Back
+    }
+
+    public String getButtonBackToCheckoutDesc() {
+        return "ചെക്ക്ഔട്ടിലേക്ക് പോകാം"; // Desc: Go to checkout
     }
 
     public String getButtonRemoveAll() {
@@ -403,7 +439,7 @@ public class CustomerMessageService {
     }
 
     public String getButtonViewFish() {
-        return "മീൻ കാണുക";
+        return ""; //change to view the menu in malayalam
     }
 
     public String getSectionTitleAvailableFish() {
@@ -412,5 +448,9 @@ public class CustomerMessageService {
 
     public String getButtonAcceptOrder() {
         return "✅ ഓർഡർ സ്വീകരിക്കുക";
+    }
+
+    public String getButtonAddToCart() {
+        return "വാങ്ങൂ";
     }
 }

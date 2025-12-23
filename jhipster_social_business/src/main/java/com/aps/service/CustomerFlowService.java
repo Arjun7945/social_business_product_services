@@ -432,7 +432,7 @@ public class CustomerFlowService {
                                                     .type("quick_reply")
                                                     .quickReply(WhatsAppMessageDto.ReplyDto.builder()
                                                             .id("SELECT_" + product.getId())
-                                                            .title("Add to Cart")
+                                                            .title(messageService.getButtonAddToCart())
                                                             .build())
                                                     .build()))
                                     .build())
@@ -471,6 +471,14 @@ public class CustomerFlowService {
             showProductCatalog(customer, session);
         } else if (selectedId.startsWith("EDIT_QTY_")) {
             handleEditQuantitySelection(customer, session, Long.parseLong(selectedId.replace("EDIT_QTY_", "")));
+        } else if (selectedId.equals("EDIT_PRODUCT")) {
+            showProductEditOptions(customer, session);
+        } else if (selectedId.equals("EDIT_QUANTITY")) {
+            showQuantityEditOptions(customer, session);
+        } else if (selectedId.equals("CONTINUE_SHOPPING")) {
+            showProductCatalog(customer, session);
+        } else if (selectedId.equals("BACK_TO_CHECKOUT")) {
+            showCartSummary(customer, session);
         }
     }
 
@@ -599,7 +607,7 @@ public class CustomerFlowService {
         List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
                 WhatsAppMessageDto.ButtonDto.builder().type("reply")
                         .reply(WhatsAppMessageDto.ReplyDto.builder().id("CONTINUE_SHOPPING")
-                                .title(messageService.getButtonAddMoreFish()).build())
+                                .title(messageService.getButtonAddMoreFishLong()).build())
                         .build(),
                 WhatsAppMessageDto.ButtonDto.builder().type("reply").reply(WhatsAppMessageDto.ReplyDto.builder()
                         .id("CHECKOUT").title(messageService.getButtonCheckout()).build()).build());
@@ -677,31 +685,31 @@ public class CustomerFlowService {
     }
 
     private void showEditOrderOptions(Customer customer, BotSession session) {
-        List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
-                WhatsAppMessageDto.ButtonDto.builder()
-                        .type("reply")
-                        .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                .id("EDIT_PRODUCT")
-                                .title(messageService.getButtonEditProduct())
-                                .build())
+        List<WhatsAppMessageDto.RowDto> rows = List.of(
+                WhatsAppMessageDto.RowDto.builder()
+                        .id("EDIT_PRODUCT")
+                        .title(messageService.getButtonEditProductShort())
+                        .description(messageService.getButtonEditProductDesc())
                         .build(),
-                WhatsAppMessageDto.ButtonDto.builder()
-                        .type("reply")
-                        .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                .id("EDIT_QUANTITY")
-                                .title(messageService.getButtonEditQuantity())
-                                .build())
+                WhatsAppMessageDto.RowDto.builder()
+                        .id("EDIT_QUANTITY")
+                        .title(messageService.getButtonEditQuantityShort())
+                        .description(messageService.getButtonEditQuantityDesc())
                         .build(),
-                WhatsAppMessageDto.ButtonDto.builder()
-                        .type("reply")
-                        .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                .id("BACK_TO_CHECKOUT")
-                                .title(messageService.getButtonBackToCheckout())
-                                .build())
+                WhatsAppMessageDto.RowDto.builder()
+                        .id("CONTINUE_SHOPPING")
+                        .title(messageService.getButtonAddMoreFishShort())
+                        .description(messageService.getButtonAddMoreFishDesc())
+                        .build(),
+                WhatsAppMessageDto.RowDto.builder()
+                        .id("BACK_TO_CHECKOUT")
+                        .title(messageService.getButtonBackToCheckoutShort())
+                        .description(messageService.getButtonBackToCheckoutDesc())
                         .build());
 
-        whatsAppService.sendCartActionButtons(customer.getWaPhoneNumber(),
-                messageService.getEditOrderMenu(customer.getName()), buttons);
+        whatsAppService.sendInteractiveList(customer.getWaPhoneNumber(),
+                messageService.getEditOrderMenu(customer.getName()),
+                rows);
 
         updateStage(session, CustomerFlowStage.EDITING_ORDER);
     }
@@ -768,11 +776,12 @@ public class CustomerFlowService {
             updateStage(session, CustomerFlowStage.AWAITING_QUANTITY);
         } else {
             // Multiple items - use interactive list to show ALL cart items
-            StringBuilder message = new StringBuilder("✏️ *Edit Quantities*\n\n*Current cart:*\n");
+            StringBuilder message = new StringBuilder(messageService.getEditQuantitiesListHeader() + "\n\n"
+                    + messageService.getCurrentCartHeader() + "\n");
             for (CartItemDetailsDTO item : items) {
                 message.append(String.format("• %s - %.2f kg\n", item.getFishName(), item.getQuantityKg()));
             }
-            message.append("\nSelect a product to edit quantity:");
+            message.append("\n" + messageService.getSelectProductToEditPrompt());
 
             // Create rows for ALL cart items
             List<WhatsAppMessageDto.RowDto> rows = new java.util.ArrayList<>();

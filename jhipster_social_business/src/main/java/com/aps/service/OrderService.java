@@ -39,6 +39,7 @@ public class OrderService {
     private final WhatsAppService whatsAppService;
     private final CustomerMessageService customerMessageService;
     private final DeliveryPersonMessageService deliveryPersonMessageService;
+    private final CustomerFlowService customerFlowService;
 
     public OrderService(CustomerOrderRepository customerOrderRepository,
             OrderItemRepository orderItemRepository,
@@ -47,7 +48,8 @@ public class OrderService {
             ApplicationEventPublisher eventPublisher,
             WhatsAppService whatsAppService,
             CustomerMessageService customerMessageService,
-            DeliveryPersonMessageService deliveryPersonMessageService) {
+            DeliveryPersonMessageService deliveryPersonMessageService,
+            @org.springframework.context.annotation.Lazy CustomerFlowService customerFlowService) {
         this.customerOrderRepository = customerOrderRepository;
         this.orderItemRepository = orderItemRepository;
         this.fishProductRepository = fishProductRepository;
@@ -56,6 +58,7 @@ public class OrderService {
         this.whatsAppService = whatsAppService;
         this.customerMessageService = customerMessageService;
         this.deliveryPersonMessageService = deliveryPersonMessageService;
+        this.customerFlowService = customerFlowService;
     }
 
     /**
@@ -148,6 +151,9 @@ public class OrderService {
                                 String custMsg = customerMessageService.getPaymentCapturedMessage(
                                         paymentId, amount, orderId);
                                 whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(), custMsg);
+
+                                // Trigger Re-order Flow (Standardized for all payment success)
+                                customerFlowService.sendReOrderFlow(order.getCustomer());
 
                                 // Notify Delivery Person (if assigned)
                                 if (order.getDeliveryPerson() != null) {

@@ -161,6 +161,11 @@ public class DeliveryFlowService {
                         customerOrderRepository.save(order);
 
                         strategy.initiatePayment(order, deliveryPerson);
+
+                        // Special handling for COD: Auto-complete delivery
+                        if ("COD".equals(mode)) {
+                                updateOrderStatus(deliveryPerson, orderId, OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
+                        }
                 } else {
                         log.error("No payment strategy found for mode: {}", mode);
                         whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
