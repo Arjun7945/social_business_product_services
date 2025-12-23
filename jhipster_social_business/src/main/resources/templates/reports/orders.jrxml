@@ -4,6 +4,17 @@
               xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" 
               name="OrdersReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e30822c3-7cc9-46c6-841f-27db5d042f27">
     
+    <style name="StatusStyle" forecolor="#0000FF"> <!-- Default Blue -->
+        <conditionalStyle>
+            <conditionExpression><![CDATA[$F{status}.toString().equals("ORDER_DELIVERED_SUCESSFULLY")]]></conditionExpression>
+            <style forecolor="#008000"/> <!-- Green -->
+        </conditionalStyle>
+        <conditionalStyle>
+            <conditionExpression><![CDATA[$F{status}.toString().equals("ORDER_FAILED")]]></conditionExpression>
+            <style forecolor="#FF0000"/> <!-- Red -->
+        </conditionalStyle>
+    </style>
+
     <parameter name="ReportTitle" class="java.lang.String"/>
     <parameter name="IssueTo" class="java.lang.String"/>
     <parameter name="InvoiceNo" class="java.lang.String"/>
@@ -18,7 +29,10 @@
     <field name="status" class="java.lang.Object"/>
     <field name="customer.name" class="java.lang.String"/>
     <field name="customer.phoneNumber" class="java.lang.String"/>
+    <field name="paymentMethod" class="java.lang.String"/>
     
+
+
     <background>
         <band splitType="Stretch"/>
     </background>
@@ -84,22 +98,27 @@
             </rectangle>
             
             <staticText>
-                <reportElement x="10" y="5" width="200" height="20" forecolor="#FFFFFF" uuid="9c0d1e2f-3a4b-4c5d-6e7f-8a9b0c1d2e3f"/>
+                <reportElement x="5" y="5" width="160" height="20" forecolor="#FFFFFF" uuid="9c0d1e2f-3a4b-4c5d-6e7f-8a9b0c1d2e3f"/>
                 <textElement verticalAlignment="Middle"><font isBold="true"/></textElement>
-                <text><![CDATA[ITEM DESCRIPTION (Customer/Status)]]></text>
+                <text><![CDATA[ITEM DESCRIPTION (Customer)]]></text>
             </staticText>
             <staticText>
-                <reportElement x="250" y="5" width="100" height="20" forecolor="#FFFFFF" uuid="0d1e2f3a-4b5c-4d6e-7f8a-9b0c1d2e3f4a"/>
+                <reportElement x="170" y="5" width="60" height="20" forecolor="#FFFFFF" uuid="0d1e2f3a-4b5c-4d6e-7f8a-9b0c1d2e3f4a"/>
                  <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true"/></textElement>
                 <text><![CDATA[ORDER ID]]></text>
             </staticText>
             <staticText>
-                <reportElement x="350" y="5" width="100" height="20" forecolor="#FFFFFF" uuid="1e2f3a4b-5c6d-4e7f-8a9b-0c1d2e3f4a5b"/>
+                <reportElement x="235" y="5" width="100" height="20" forecolor="#FFFFFF" uuid="3f8a9b0c-1d2e-4f5a-6b7c-8d9e0f1a2b3c"/>
+                 <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true"/></textElement>
+                <text><![CDATA[PAYMENT MODE]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="340" y="5" width="100" height="20" forecolor="#FFFFFF" uuid="1e2f3a4b-5c6d-4e7f-8a9b-0c1d2e3f4a5b"/>
                  <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true"/></textElement>
                 <text><![CDATA[STATUS]]></text>
             </staticText>
             <staticText>
-                <reportElement x="450" y="5" width="95" height="20" forecolor="#FFFFFF" uuid="2f3a4b5c-6d7e-4f8a-9b0c-1d2e3f4a5b6c"/>
+                <reportElement x="450" y="5" width="100" height="20" forecolor="#FFFFFF" uuid="2f3a4b5c-6d7e-4f8a-9b0c-1d2e3f4a5b6c"/>
                  <textElement textAlignment="Right" verticalAlignment="Middle"><font isBold="true"/></textElement>
                 <text><![CDATA[TOTAL]]></text>
             </staticText>
@@ -110,21 +129,28 @@
         <band height="40">
             <!-- Alternating rows could be done with conditional style, keeping simple white for now -->
             <textField>
-                <reportElement x="10" y="10" width="230" height="20" uuid="3a4b5c6d-7e8f-4a9b-0c1d-2e3f4a5b6c7d"/>
+                <reportElement x="5" y="10" width="160" height="20" uuid="3a4b5c6d-7e8f-4a9b-0c1d-2e3f4a5b6c7d"/>
                 <textFieldExpression><![CDATA[$F{customer.name} + " (" + $F{customer.phoneNumber} + ")"]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="250" y="10" width="100" height="20" uuid="4b5c6d7e-8f9a-4b0c-1d2e-3f4a5b6c7d8e"/>
+                <reportElement x="170" y="10" width="60" height="20" uuid="4b5c6d7e-8f9a-4b0c-1d2e-3f4a5b6c7d8e"/>
                 <textElement textAlignment="Center"/>
                 <textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="350" y="10" width="100" height="20" uuid="5c6d7e8f-9a0b-4c1d-2e3f-4a5b6c7d8e9f"/>
+                <reportElement x="235" y="10" width="100" height="20" uuid="9e8d7c6b-5a4f-3e2d-1c0b-a9f8e7d6c5b4"/>
+                 <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[($F{paymentMethod} == null || $F{paymentMethod}.equals("NOT_SELECTED")) ? "NOT SELECTED" : 
+($F{paymentMethod}.equals("PAYMENT_QR") ? "QR" : 
+($F{paymentMethod}.equals("PAYMENT_LINK") ? "LINK" : $F{paymentMethod}))]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="340" y="10" width="100" height="20" uuid="5c6d7e8f-9a0b-4c1d-2e3f-4a5b6c7d8e9f" style="StatusStyle"/>
                  <textElement textAlignment="Center"/>
                 <textFieldExpression><![CDATA["" + $F{status}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="450" y="10" width="95" height="20" uuid="6d7e8f9a-0b1c-4d2e-3f4a-5b6c7d8e9f0a"/>
+                <reportElement x="450" y="10" width="100" height="20" uuid="6d7e8f9a-0b1c-4d2e-3f4a-5b6c7d8e9f0a"/>
                 <textElement textAlignment="Right"/>
                 <textFieldExpression><![CDATA[$F{totalAmount}]]></textFieldExpression>
             </textField>
