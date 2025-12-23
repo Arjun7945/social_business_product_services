@@ -325,6 +325,10 @@ public class CustomerFlowService {
             }
         }
 
+        // Send the Main Header as a separate Text Message FIRST
+        whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                messageService.getProductCatalogHeader(customer.getName()));
+
         // --- Logic Update: Carousel Chunking & Rebalancing ---
 
         // Rule: Carousel must have at least 3 cards (Customer Requirement).
@@ -363,16 +367,20 @@ public class CustomerFlowService {
             }
 
             // 3. Send Carousels
-            // Note: Sending multiple messages in quick succession might need a tiny
-            // delay/sync,
-            // but usually Meta handles this order okay if sent sequentially.
+            int part = 1;
+            int totalParts = chunks.size();
             for (List<FishProduct> chunk : chunks) {
-                sendProductCarousel(customer, chunk, dummyMediaId);
+                String bodyText = totalParts > 1 ? messageService.getCarouselTitle(part, totalParts)
+                        : messageService.getCarouselTitleSingle();
+                sendProductCarousel(customer, chunk, dummyMediaId, bodyText);
+                part++;
             }
         }
 
         if (!listProducts.isEmpty()) {
-            sendProductList(customer, listProducts);
+            String title = !carouselProducts.isEmpty() ? messageService.getProductsWithoutImagesTitle()
+                    : messageService.getAvailableFishTitle();
+            sendProductList(customer, listProducts, title);
         }
 
         updateStage(session, CustomerFlowStage.BROWSING);
@@ -433,10 +441,10 @@ public class CustomerFlowService {
                 .collect(Collectors.toList());
 
         whatsAppService.sendCarouselMessage(customer.getWaPhoneNumber(),
-                bodyText != null ? bodyText : "Available Products", cards);
+                bodyText != null ? bodyText : messageService.getCarouselBodyDefault(), cards);
     }
 
-    private void sendProductList(Customer customer, List<FishProduct> products) {
+    private void sendProductList(Customer customer, List<FishProduct> products, String title) {
         List<WhatsAppMessageDto.RowDto> rows = products.stream()
                 .map(p -> WhatsAppMessageDto.RowDto.builder()
                         .id("FISH_" + p.getId())
@@ -445,7 +453,7 @@ public class CustomerFlowService {
                         .build())
                 .collect(Collectors.toList());
 
-        whatsAppService.sendInteractiveList(customer.getWaPhoneNumber(), "Products without images:", rows);
+        whatsAppService.sendInteractiveList(customer.getWaPhoneNumber(), title, rows);
     }
 
     private void handleListReply(Customer customer, BotSession session, WhatsAppWebhookDto.ListReply listReply) {

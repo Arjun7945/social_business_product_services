@@ -144,9 +144,25 @@ public class CustomerMessageService {
                 customerName);
     }
 
-    // ========================================
-    // CATEGORY 3: CART MANAGEMENT MESSAGES
-    // ========================================
+    public String getCarouselTitle(int part, int totalParts) {
+        return String.format("🐟 *ലഭ്യമായ മീൻ* (ഭാഗം %d/%d)", part, totalParts);
+    }
+
+    public String getCarouselTitleSingle() {
+        return "🐟 *ലഭ്യമായ മീൻ*";
+    }
+
+    public String getCarouselBodyDefault() {
+        return "ലഭ്യമായ ഉൽപ്പന്നങ്ങൾ";
+    }
+
+    public String getProductsWithoutImagesTitle() {
+        return "ചിത്രങ്ങൾ ഇല്ലാത്ത ഉൽപ്പന്നങ്ങൾ:";
+    }
+
+    public String getAvailableFishTitle() {
+        return "🐟 ലഭ്യമായ മീൻ:";
+    }
 
     public String getInvalidQuantityZeroOrNegative() {
         return "⚠️ *തെറ്റായ അളവ്!*\n\n" +
