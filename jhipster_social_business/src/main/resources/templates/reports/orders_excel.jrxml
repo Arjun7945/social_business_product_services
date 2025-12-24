@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" 
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" 
+              name="OrdersReportExcel" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e30822c3-7cc9-46c6-841f-27db5d042f27" isIgnorePagination="true">
+
+    <property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+    <property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+    <property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
+    <property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+    <property name="net.sf.jasperreports.export.xls.auto.fit.column" value="true"/>
+    <property name="net.sf.jasperreports.export.xls.freeze.row.edge" value="Bottom"/>
+    
+    <style name="StatusStyle" forecolor="#0000FF"> <!-- Default Blue -->
+        <conditionalStyle>
+            <conditionExpression><![CDATA[$F{status}.toString().equals("ORDER_DELIVERED_SUCESSFULLY")]]></conditionExpression>
+            <style forecolor="#008000"/> <!-- Green -->
+        </conditionalStyle>
+        <conditionalStyle>
+            <conditionExpression><![CDATA[$F{status}.toString().equals("ORDER_FAILED")]]></conditionExpression>
+            <style forecolor="#FF0000"/> <!-- Red -->
+        </conditionalStyle>
+    </style>
+
+    <parameter name="ReportTitle" class="java.lang.String"/>
+    <parameter name="IssueTo" class="java.lang.String"/>
+    <parameter name="InvoiceNo" class="java.lang.String"/>
+    <parameter name="DateIssued" class="java.lang.String"/>
+    <parameter name="TotalPaid" class="java.math.BigDecimal"/>
+    <parameter name="TotalUnpaid" class="java.math.BigDecimal"/>
+    
+    <field name="id" class="java.lang.Long"/>
+    <field name="totalAmount" class="java.math.BigDecimal"/>
+    <field name="status" class="java.lang.Object"/>
+    <field name="customer.name" class="java.lang.String"/>
+    <field name="customer.phoneNumber" class="java.lang.String"/>
+    <field name="paymentMethod" class="java.lang.String"/>
+    <field name="transactionId" class="java.lang.String"/>
+    <field name="customer.role" class="java.lang.Object"/>
+    <field name="orderTime" class="java.time.Instant"/>
+    
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    
+    <title>
+        <band height="140">
+            <!-- Company Name -->
+            <staticText>
+                <reportElement x="0" y="0" width="802" height="30" uuid="a1b2c3d4-0001-4444-8888-abcdef123456"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="20" isBold="true"/>
+                </textElement>
+                <text><![CDATA[DR. KITCHEN]]></text>
+            </staticText>
+            
+            <!-- Address -->
+            <staticText>
+                <reportElement x="0" y="30" width="802" height="20" uuid="b2c3d4e5-0002-4444-8888-abcdef123456"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10"/>
+                </textElement>
+                <text><![CDATA[P.O.PERUR, PATHIRIPALA, OTTAPPALAM, PALAKKAD DIST, KERALA]]></text>
+            </staticText>
+            
+            <!-- Phone -->
+            <staticText>
+                <reportElement x="0" y="50" width="802" height="20" uuid="c3d4e5f6-0003-4444-8888-abcdef123456"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10"/>
+                </textElement>
+                <text><![CDATA[Ph: 9447839358, 8848334439]]></text>
+            </staticText>
+
+            <!-- Spacer Row (y=70, h=20) -->
+            <staticText>
+                <reportElement x="0" y="70" width="802" height="20" uuid="d4e5f678-0004-4444-8888-abcdef123456"/>
+                <textElement/>
+                <text><![CDATA[]]></text>
+            </staticText>
+
+            <!-- Report Title (Moved to y=90) -->
+            <textField>
+                <reportElement x="0" y="90" width="802" height="30" uuid="1a2b3c4d-5e6f-4a8b-9c0d-1e2f3a4b5c6d"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{ReportTitle}.toUpperCase()]]></textFieldExpression>
+            </textField>
+
+            <!-- Info Row (Moved to y=120) -->
+            <textField>
+                 <reportElement x="0" y="120" width="260" height="20" uuid="7a1e2b3c-4d5f-6a7b-8c9d-0e1f2a3b4c5d"/>
+                 <textFieldExpression><![CDATA["Issue To: " + $P{IssueTo}]]></textFieldExpression>
+            </textField>
+             <textField>
+                 <reportElement x="260" y="120" width="270" height="20" uuid="8b2f3a4c-5d6e-7f8a-9b0c-1d2e3f4a5b6c"/>
+                 <textFieldExpression><![CDATA["Invoice: " + $P{InvoiceNo}]]></textFieldExpression>
+            </textField>
+            <textField>
+                 <reportElement x="530" y="120" width="272" height="20" uuid="9c3a4b5d-6e7f-8a9b-0c1d-2e3f4a5b6c7d"/>
+                 <textFieldExpression><![CDATA["Date: " + $P{DateIssued}]]></textFieldExpression>
+            </textField>
+
+        </band>
+    </title>
+    
+    <columnHeader>
+        <band height="30">
+            <staticText>
+                <reportElement mode="Opaque" x="0" y="0" width="40" height="30" backcolor="#D9EAD3" uuid="12345678-1234-1234-1234-1234567890ab">
+                    <property name="net.sf.jasperreports.export.xls.freeze.row.edge" value="Bottom"/>
+                </reportElement>
+                <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement>
+                <text><![CDATA[S.No]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="40" y="0" width="70" height="30" backcolor="#D9EAD3" uuid="23456789-2345-2345-2345-2345678901bc"/>
+                <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement>
+                <text><![CDATA[Date]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="110" y="0" width="180" height="30" backcolor="#D9EAD3" uuid="34567890-3456-3456-3456-3456789012cd"/>
+                <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                <textElement textAlignment="Left" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement>
+                <text><![CDATA[Customer Details]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="290" y="0" width="50" height="30" backcolor="#D9EAD3" uuid="45678901-4567-4567-4567-4567890123de"/>
+                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                 <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement>
+                <text><![CDATA[Order ID]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="340" y="0" width="90" height="30" backcolor="#D9EAD3" uuid="56789012-5678-5678-5678-5678901234ef"/>
+                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                 <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement>
+                <text><![CDATA[Payment]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="430" y="0" width="110" height="30" backcolor="#D9EAD3" uuid="67890123-6789-6789-6789-6789012345fa"/>
+                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                 <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement>
+                <text><![CDATA[Transaction ID]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="540" y="0" width="140" height="30" backcolor="#D9EAD3" uuid="78901234-7890-7890-7890-7890123456ab"/>
+                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                 <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement>
+                <text><![CDATA[Status]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="680" y="0" width="122" height="30" backcolor="#D9EAD3" uuid="89012345-8901-8901-8901-8901234567bc"/>
+                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                 <textElement textAlignment="Right" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement>
+                <text><![CDATA[Total]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    
+    <detail>
+        <band height="20">
+             <!-- S.No -->
+            <textField>
+                <reportElement x="0" y="0" width="40" height="20" uuid="90123456-9012-9012-9012-9012345678cd"/>
+                <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
+                <textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+            </textField>
+            <!-- Order Date -->
+            <textField>
+                <reportElement x="40" y="0" width="70" height="20" uuid="01234567-0123-0123-0123-0123456789de"/>
+                <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
+                <textFieldExpression><![CDATA[java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy").withZone(java.time.ZoneId.systemDefault()).format($F{orderTime})]]></textFieldExpression>
+            </textField>
+            <!-- Customer -->
+            <textField textAdjust="StretchHeight">
+                <reportElement x="110" y="0" width="180" height="20" uuid="12345678-1234-4321-1234-1234567890ef"/>
+                <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                <textElement verticalAlignment="Middle"><font size="10"/></textElement>
+                <textFieldExpression><![CDATA[$F{customer.name} + " (" + $F{customer.phoneNumber} + ")"]]></textFieldExpression>
+            </textField>
+            <!-- ID -->
+            <textField>
+                <reportElement x="290" y="0" width="50" height="20" uuid="23456789-2345-5432-2345-2345678901ab"/>
+                <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
+                <textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+            </textField>
+            
+            <!-- Payment Mode -->
+            <textField textAdjust="StretchHeight" isBlankWhenNull="true">
+                <reportElement x="340" y="0" width="90" height="20" uuid="34567890-3456-6543-3456-3456789012bc"/>
+                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                 <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
+                <textFieldExpression><![CDATA[($F{paymentMethod} == null || $F{paymentMethod}.equals("NOT_SELECTED")) ? "NOT SELECTED" : 
+($F{paymentMethod}.equals("PAYMENT_QR") ? "QR" : 
+($F{paymentMethod}.equals("PAYMENT_LINK") ? "LINK" : $F{paymentMethod}))]]></textFieldExpression>
+            </textField>
+            
+            <!-- Transaction ID -->
+            <textField textAdjust="StretchHeight" isBlankWhenNull="true">
+                <reportElement x="430" y="0" width="110" height="20" uuid="45678901-4567-7654-4567-4567890123cd"/>
+                <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
+                <textFieldExpression><![CDATA[(
+    ($F{customer.role}.toString().equals("CREDIT_CUSTOMER")) && 
+    ($F{paymentMethod} == null || $F{paymentMethod}.equals("NOT_SELECTED"))
+) ? "CREDIT" :
+(
+    ($F{paymentMethod} == null || $F{paymentMethod}.equals("NOT_SELECTED")) ? "PENDING" :
+    ($F{paymentMethod}.equals("COD") ? "COD" : 
+        ($F{transactionId} == null || $F{transactionId}.trim().isEmpty() ? "---" : $F{transactionId})
+    )
+)]]></textFieldExpression>
+            </textField>
+
+            <!-- Status -->
+            <textField textAdjust="StretchHeight">
+                <reportElement x="540" y="0" width="140" height="20" uuid="56789012-5678-8765-5678-5678901234de" style="StatusStyle"/>
+                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                 <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
+                <textFieldExpression><![CDATA[$F{status}.toString().equals("ORDER_DELIVERED_SUCESSFULLY") ? "DELIVERED" : 
+($F{status}.toString().equals("ORDER_FAILED") ? "FAILED" : 
+($F{status}.toString().equals("ORDER_NOT_TAKEN") ? "NOT TAKEN" : 
+($F{status}.toString().equals("DELIVERY_ONWAY") ? "ON WAY" : 
+$F{status})))]]></textFieldExpression>
+            </textField>
+            
+            <!-- Total -->
+            <textField>
+                <reportElement x="680" y="0" width="122" height="20" uuid="67890123-6789-9876-6789-6789012345ef"/>
+                <box><pen lineWidth="0.5" lineColor="#000000"/></box>
+                <textElement textAlignment="Right" verticalAlignment="Middle"><font size="10"/></textElement>
+                <textFieldExpression><![CDATA[$F{totalAmount}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <summary>
+        <band height="90">
+            <!-- Spacer rows to prevent Excel from collapsing empty space -->
+            <staticText>
+                <reportElement x="0" y="0" width="100" height="20" uuid="a1b2c3d4-e5f6-7890-1234-567890abcdef"/>
+                <textElement/>
+                <text><![CDATA[]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="20" width="100" height="20" uuid="b2c3d4e5-f678-9012-3456-7890abcdef12"/>
+                <textElement/>
+                <text><![CDATA[]]></text>
+            </staticText>
+
+            <!-- Total Amount Paid -->
+            <textField>
+                <reportElement x="540" y="40" width="140" height="20" uuid="d4e5f678-9012-3456-7890-abcdef123456"/>
+                <textElement textAlignment="Right"><font isBold="true"/></textElement>
+                <textFieldExpression><![CDATA["TOTAL PAID:"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="680" y="40" width="122" height="20" uuid="e5f67890-1234-5678-90ab-cdef12345678"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{TotalPaid}]]></textFieldExpression>
+            </textField>
+            
+            <!-- Total Unpaid Amount -->
+            <textField>
+                <reportElement x="540" y="60" width="140" height="20" forecolor="#FF0000" uuid="f6789012-3456-7890-abcd-ef1234567890"/>
+                <textElement textAlignment="Right"><font isBold="true"/></textElement>
+                <textFieldExpression><![CDATA["TOTAL UNPAID:"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="680" y="60" width="122" height="20" forecolor="#FF0000" uuid="78901234-5678-90ab-cdef-123456789012"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$P{TotalUnpaid}]]></textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+</jasperReport>

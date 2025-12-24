@@ -13,6 +13,10 @@ public class AccountsMessageService {
                 "Select a report to generate:";
     }
 
+    public String getReportFormatSelectionMessage() {
+        return "📄 Select output format for the report:";
+    }
+
     public String getAccountsMenuTitle() {
         return "Accounts Dashboard";
     }

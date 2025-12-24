@@ -118,7 +118,7 @@
             <staticText>
                 <reportElement x="290" y="5" width="50" height="20" forecolor="#FFFFFF" uuid="45678901-4567-4567-4567-4567890123de"/>
                  <textElement textAlignment="Center" verticalAlignment="Middle"><font size="9" isBold="true"/></textElement>
-                <text><![CDATA[ID]]></text>
+                <text><![CDATA[Order ID]]></text>
             </staticText>
             <staticText>
                 <reportElement x="340" y="5" width="90" height="20" forecolor="#FFFFFF" uuid="56789012-5678-5678-5678-5678901234ef"/>
@@ -128,7 +128,7 @@
             <staticText>
                 <reportElement x="430" y="5" width="110" height="20" forecolor="#FFFFFF" uuid="67890123-6789-6789-6789-6789012345fa"/>
                  <textElement textAlignment="Center" verticalAlignment="Middle"><font size="9" isBold="true"/></textElement>
-                <text><![CDATA[TXN ID]]></text>
+                <text><![CDATA[Transaction ID]]></text>
             </staticText>
             <staticText>
                 <reportElement x="540" y="5" width="140" height="20" forecolor="#FFFFFF" uuid="78901234-7890-7890-7890-7890123456ab"/>

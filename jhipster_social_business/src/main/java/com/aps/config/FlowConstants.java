@@ -25,6 +25,10 @@ public final class FlowConstants {
     public static final String BTN_ACCOUNTS_UNPAID_ORDERS = "ACC_UNPAID_ORDERS";
     public static final String BTN_ACCOUNTS_CREDIT_REPORT = "ACC_CREDIT_REPORT";
 
+    // Accounts Report Format
+    public static final String BTN_FMT_PDF = "FMT_PDF";
+    public static final String BTN_FMT_EXCEL = "FMT_EXCEL";
+
     // Prefix for dynamic IDs
     public static final String PREFIX_REMOVE_ITEM = "REMOVE_ITEM_";
     public static final String PREFIX_EDIT_QTY = "EDIT_QTY_";

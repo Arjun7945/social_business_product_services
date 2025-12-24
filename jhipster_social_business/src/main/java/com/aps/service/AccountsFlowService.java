@@ -77,7 +77,7 @@ public class AccountsFlowService {
                 WhatsAppMessageDto.RowDto.builder()
                         .id(FlowConstants.BTN_ACCOUNTS_TODAYS_ORDERS)
                         .title(messageService.getButtonTodaysOrders())
-                        .description("Generate PDF for today")
+                        .description("Generate daily report")
                         .build(),
                 WhatsAppMessageDto.RowDto.builder()
                         .id(FlowConstants.BTN_ACCOUNTS_COMPLETED_ORDERS)
@@ -109,26 +109,81 @@ public class AccountsFlowService {
         log.info("Accounts button reply: {}", buttonId);
 
         if (buttonId.equals(FlowConstants.BTN_ACCOUNTS_TODAYS_ORDERS)) {
-            generateAndSendReport(teamMember, session, "Todays_Orders_" + LocalDate.now(),
-                    "📅 Today's Orders Report",
-                    "ℹ️ No orders found for today.",
-                    reportService::generateTodaysOrdersReport);
+            askForReportFormat(teamMember, session, "TODAYS");
         } else if (buttonId.equals(FlowConstants.BTN_ACCOUNTS_COMPLETED_ORDERS)) {
-            generateAndSendReport(teamMember, session, "Completed_Orders",
-                    "✅ Completed Orders Report",
-                    "ℹ️ No completed orders found.",
-                    reportService::generateCompletedOrdersReport);
+            askForReportFormat(teamMember, session, "COMPLETED");
         } else if (buttonId.equals(FlowConstants.BTN_ACCOUNTS_UNPAID_ORDERS)) {
-            generateAndSendReport(teamMember, session, "Unpaid_Orders",
-                    "💰 Unpaid Orders Report",
-                    "ℹ️ No unpaid orders found.",
-                    reportService::generateUnpaidOrdersReport);
+            askForReportFormat(teamMember, session, "UNPAID");
         } else if (buttonId.equals(FlowConstants.BTN_ACCOUNTS_CREDIT_REPORT)) {
             whatsAppService.sendSimpleText(teamMember.getWaPhoneNumber(),
                     messageService.getFeatureComingSoon());
             showMainMenu(teamMember, session);
+        } else if (buttonId.equals(FlowConstants.BTN_FMT_PDF) || buttonId.equals(FlowConstants.BTN_FMT_EXCEL)) {
+            handleFormatSelection(teamMember, session, buttonId);
         } else {
             showMainMenu(teamMember, session);
+        }
+    }
+
+    private void askForReportFormat(TeamMember teamMember, BotSession session, String reportType) {
+        sessionManager.setSessionData(session, "PENDING_REPORT", reportType);
+
+        List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
+                WhatsAppMessageDto.ButtonDto.builder()
+                        .type("reply")
+                        .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                .id(FlowConstants.BTN_FMT_PDF)
+                                .title("📄 PDF Document")
+                                .build())
+                        .build(),
+                WhatsAppMessageDto.ButtonDto.builder()
+                        .type("reply")
+                        .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                .id(FlowConstants.BTN_FMT_EXCEL)
+                                .title("📊 Excel Sheet")
+                                .build())
+                        .build());
+
+        whatsAppService.sendCartActionButtons(
+                teamMember.getWaPhoneNumber(),
+                messageService.getReportFormatSelectionMessage(),
+                buttons);
+    }
+
+    private void handleFormatSelection(TeamMember teamMember, BotSession session, String formatButtonId) {
+        String reportType = sessionManager.getSessionDataString(session, "PENDING_REPORT");
+        if (reportType == null) {
+            whatsAppService.sendSimpleText(teamMember.getWaPhoneNumber(),
+                    "❌ Session expired or invalid. Please select report again.");
+            showMainMenu(teamMember, session);
+            return;
+        }
+
+        String format = formatButtonId.equals(FlowConstants.BTN_FMT_EXCEL) ? "EXCEL" : "PDF";
+        String extension = format.equals("EXCEL") ? ".xlsx" : ".pdf";
+        String mimeType = format.equals("EXCEL") ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                : "application/pdf";
+
+        sessionManager.setSessionData(session, "PENDING_REPORT", null); // Clear state
+
+        switch (reportType) {
+            case "TODAYS":
+                generateAndSendReport(teamMember, session, "Todays_Orders",
+                        "📅 Today's Orders Report", "ℹ️ No orders found for today.",
+                        (name) -> reportService.generateTodaysOrdersReport(name, format), extension, mimeType);
+                break;
+            case "COMPLETED":
+                generateAndSendReport(teamMember, session, "Completed_Orders",
+                        "✅ Completed Orders Report", "ℹ️ No completed orders found.",
+                        (name) -> reportService.generateCompletedOrdersReport(name, format), extension, mimeType);
+                break;
+            case "UNPAID":
+                generateAndSendReport(teamMember, session, "Unpaid_Orders",
+                        "💰 Unpaid Orders Report", "ℹ️ No unpaid orders found.",
+                        (name) -> reportService.generateUnpaidOrdersReport(name, format), extension, mimeType);
+                break;
+            default:
+                showMainMenu(teamMember, session);
         }
     }
 
@@ -138,15 +193,15 @@ public class AccountsFlowService {
 
     private void generateAndSendReport(TeamMember member, BotSession session, String baseFilename, String caption,
             String noDataMessage,
-            ReportGenerator generator) {
+            ReportGenerator generator, String extension, String mimeType) {
         whatsAppService.sendSimpleText(member.getWaPhoneNumber(), "⏳ Generating report... please wait.");
 
         try {
-            byte[] pdfBytes = generator.generate(member.getName());
-            if (pdfBytes != null && pdfBytes.length > 0) {
-                String mediaId = mediaService.uploadImage(pdfBytes, "application/pdf");
+            byte[] fileBytes = generator.generate(member.getName());
+            if (fileBytes != null && fileBytes.length > 0) {
+                String mediaId = mediaService.uploadImage(fileBytes, mimeType);
                 if (mediaId != null) {
-                    String filename = baseFilename + ".pdf";
+                    String filename = baseFilename + "_" + LocalDate.now() + extension;
                     whatsAppService.sendDocument(member.getWaPhoneNumber(), mediaId, filename, caption);
                 } else {
                     whatsAppService.sendSimpleText(member.getWaPhoneNumber(), "❌ Failed to upload report.");
