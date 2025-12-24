@@ -43,6 +43,7 @@ public class DeliveryFlowService {
         private final TeamMemberRepository teamMemberRepository;
         private final CustomerOrderRepository customerOrderRepository;
         private final CustomerRepository customerRepository;
+        private final OrderStatusHistoryService orderStatusHistoryService;
 
         public DeliveryFlowService(@Lazy WhatsAppService whatsAppService,
                         BotSessionManager sessionManager,
@@ -52,7 +53,8 @@ public class DeliveryFlowService {
                         PaymentStrategyFactory paymentStrategyFactory,
                         TeamMemberRepository teamMemberRepository,
                         CustomerOrderRepository customerOrderRepository,
-                        CustomerRepository customerRepository) {
+                        CustomerRepository customerRepository,
+                        OrderStatusHistoryService orderStatusHistoryService) {
                 this.whatsAppService = whatsAppService;
                 this.sessionManager = sessionManager;
                 this.deliveryPersonMessageService = deliveryPersonMessageService;
@@ -62,6 +64,7 @@ public class DeliveryFlowService {
                 this.teamMemberRepository = teamMemberRepository;
                 this.customerOrderRepository = customerOrderRepository;
                 this.customerRepository = customerRepository;
+                this.orderStatusHistoryService = orderStatusHistoryService;
         }
 
         public void handleDeliveryMessage(TeamMember deliveryPerson, WhatsAppWebhookDto.Message message) {
@@ -187,6 +190,7 @@ public class DeliveryFlowService {
 
                 order.setStatus(newStatus);
                 customerOrderRepository.save(order);
+                orderStatusHistoryService.addEvent(order);
 
                 if (newStatus == OrderStatus.ORDER_DELIVERED_SUCESSFULLY) {
                         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -327,6 +331,7 @@ public class DeliveryFlowService {
                 order.setDeliveryPerson(teamMember);
                 order.setConfirmedAt(Instant.now());
                 customerOrderRepository.save(order);
+                orderStatusHistoryService.addEvent(order);
 
                 TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                         @Override

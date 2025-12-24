@@ -1,0 +1,37 @@
+<div class="modal-header border-0 pb-0">
+  <h4 class="modal-title" id="modal-title">Tracking Details</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+  <div class="text-center mb-4">
+    <h5>Order #{{ customerOrder?.id }}</h5>
+    <h6 class="text-muted" *ngIf="customerOrder?.orderTime">Placed on {{ customerOrder?.orderTime | formatMediumDatetime }}</h6>
+    <div class="alert alert-soft-primary mt-3" *ngIf="totalDuration"><span class="fw-bold">Total Time: </span> {{ totalDuration }}</div>
+  </div>
+
+  <div class="tracking-timeline">
+    @for (step of steps; track step.time) {
+      <div class="tracking-item">
+        <div class="tracking-marker start-0"></div>
+        <div class="tracking-content ms-4 ps-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <h6 class="fw-bold mb-0 text-primary">{{ step.status }}</h6>
+            <small class="text-muted">{{ step.time | formatMediumDatetime }}</small>
+          </div>
+
+          <p class="text-muted mb-0 small">
+            <span *ngIf="step.duration !== 'Current Stage'">Took: {{ step.duration }}</span>
+            <span *ngIf="step.duration === 'Current Stage'" class="badge bg-success">Current Stage</span>
+          </p>
+        </div>
+      </div>
+    } @empty {
+      <div class="text-center">No history available.</div>
+    }
+  </div>
+</div>
+
+<div class="modal-footer border-0 justify-content-center">
+  <button type="button" class="btn btn-primary w-100 rounded-pill" (click)="activeModal.close()">Close</button>
+</div>

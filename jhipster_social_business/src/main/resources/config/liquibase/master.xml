@@ -30,6 +30,7 @@
     <include file="config/liquibase/changelog/20251222121000_add_version_to_product_and_cart.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251222213000_initialize_version_columns.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251224095800_added_transaction_id.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251224170000_added_entity_OrderStatusHistory.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20251215140323_added_entity_constraints_Customer.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251215140325_added_entity_constraints_ProductImage.xml" relativeToChangelogFile="false"/>

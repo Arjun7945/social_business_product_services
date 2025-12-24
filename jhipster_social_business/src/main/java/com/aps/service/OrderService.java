@@ -40,6 +40,7 @@ public class OrderService {
     private final CustomerMessageService customerMessageService;
     private final DeliveryPersonMessageService deliveryPersonMessageService;
     private final CustomerFlowService customerFlowService;
+    private final OrderStatusHistoryService orderStatusHistoryService;
 
     public OrderService(CustomerOrderRepository customerOrderRepository,
             OrderItemRepository orderItemRepository,
@@ -49,7 +50,8 @@ public class OrderService {
             WhatsAppService whatsAppService,
             CustomerMessageService customerMessageService,
             DeliveryPersonMessageService deliveryPersonMessageService,
-            @org.springframework.context.annotation.Lazy CustomerFlowService customerFlowService) {
+            @org.springframework.context.annotation.Lazy CustomerFlowService customerFlowService,
+            OrderStatusHistoryService orderStatusHistoryService) {
         this.customerOrderRepository = customerOrderRepository;
         this.orderItemRepository = orderItemRepository;
         this.fishProductRepository = fishProductRepository;
@@ -59,6 +61,7 @@ public class OrderService {
         this.customerMessageService = customerMessageService;
         this.deliveryPersonMessageService = deliveryPersonMessageService;
         this.customerFlowService = customerFlowService;
+        this.orderStatusHistoryService = orderStatusHistoryService;
     }
 
     /**
@@ -87,6 +90,7 @@ public class OrderService {
 
         // 5. Save Order
         order = customerOrderRepository.save(order);
+        orderStatusHistoryService.addEvent(order);
         log.info("Order {} created for customer {}", order.getId(), customer.getId());
 
         // 6. Save Order Items
@@ -141,6 +145,7 @@ public class OrderService {
             // Ideally store paymentId in order or payment entity
             order.setTransactionId(paymentId);
             customerOrderRepository.save(order);
+            orderStatusHistoryService.addEvent(order);
 
             // Notify Customer & Delivery Person AFTER transaction commit
             org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
@@ -183,6 +188,7 @@ public class OrderService {
             order.setStatus(OrderStatus.ORDER_FAILED);
             order.setTransactionId(paymentId);
             customerOrderRepository.save(order);
+            orderStatusHistoryService.addEvent(order);
 
             // Notify Customer & Delivery Person AFTER transaction commit
             org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(

@@ -108,7 +108,9 @@
           </td>
           <td>{{ customerOrder.orderTime | formatMediumDatetime }}</td>
           <td>{{ customerOrder.totalAmount }}</td>
-          <td [jhiTranslate]="'whatsappProductServiceApp.OrderStatus.' + (customerOrder.status ?? 'null')">
+          <td [jhiTranslate]="'whatsappProductServiceApp.OrderStatus.' + (customerOrder.status ?? 'null')"
+            (click)="openTrackingDialog(customerOrder)" class="text-primary fw-bold"
+            style="cursor: pointer; text-decoration: underline;">
             {{
             {
             null: '',

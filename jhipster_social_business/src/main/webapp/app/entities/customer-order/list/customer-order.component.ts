@@ -16,6 +16,7 @@ import { ICustomerOrder } from '../customer-order.model';
 
 import { CustomerOrderService, EntityArrayResponseType } from '../service/customer-order.service';
 import { CustomerOrderDeleteDialogComponent } from '../delete/customer-order-delete-dialog.component';
+import { OrderTrackingDialogComponent } from '../tracking/order-tracking-dialog.component';
 
 @Component({
   selector: 'jhi-customer-order',
@@ -73,6 +74,11 @@ export class CustomerOrderComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+  }
+
+  openTrackingDialog(customerOrder: ICustomerOrder): void {
+    const modalRef = this.modalService.open(OrderTrackingDialogComponent, { size: 'md', centered: true });
+    modalRef.componentInstance.customerOrder = customerOrder;
   }
 
   load(): void {
