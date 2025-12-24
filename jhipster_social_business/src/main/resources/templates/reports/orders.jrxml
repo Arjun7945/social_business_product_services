@@ -15,6 +15,17 @@
         </conditionalStyle>
     </style>
 
+    <style name="TransactionIdStyle" forecolor="#0000FF"> <!-- Default Blue -->
+        <conditionalStyle>
+            <conditionExpression><![CDATA[$F{status}.toString().equals("ORDER_DELIVERED_SUCESSFULLY") || "COD".equals($F{paymentMethod})]]></conditionExpression>
+            <style forecolor="#008000"/> <!-- Green -->
+        </conditionalStyle>
+        <conditionalStyle>
+            <conditionExpression><![CDATA[$F{status}.toString().equals("ORDER_FAILED")]]></conditionExpression>
+            <style forecolor="#FF0000"/> <!-- Red -->
+        </conditionalStyle>
+    </style>
+
     <parameter name="ReportTitle" class="java.lang.String"/>
     <parameter name="IssueTo" class="java.lang.String"/>
     <parameter name="InvoiceNo" class="java.lang.String"/>
@@ -190,7 +201,7 @@
             
             <!-- Transaction ID -->
             <textField textAdjust="StretchHeight" isBlankWhenNull="true">
-                <reportElement x="430" y="10" width="110" height="20" uuid="45678901-4567-7654-4567-4567890123cd"/>
+                <reportElement x="430" y="10" width="110" height="20" uuid="45678901-4567-7654-4567-4567890123cd" style="TransactionIdStyle"/>
                 <textElement textAlignment="Center">
                      <font size="9"/>
                 </textElement>

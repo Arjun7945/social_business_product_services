@@ -139,6 +139,7 @@ public class OrderService {
             // Update Status to DELIVERED as payment on delivery confirms handover
             order.setStatus(OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
             // Ideally store paymentId in order or payment entity
+            order.setTransactionId(paymentId);
             customerOrderRepository.save(order);
 
             // Notify Customer & Delivery Person AFTER transaction commit
@@ -180,6 +181,7 @@ public class OrderService {
 
             // Update status to FAILED
             order.setStatus(OrderStatus.ORDER_FAILED);
+            order.setTransactionId(paymentId);
             customerOrderRepository.save(order);
 
             // Notify Customer & Delivery Person AFTER transaction commit

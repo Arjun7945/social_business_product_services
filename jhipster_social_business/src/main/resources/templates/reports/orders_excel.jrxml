@@ -9,7 +9,7 @@
     <property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
     <property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
     <property name="net.sf.jasperreports.export.xls.auto.fit.column" value="true"/>
-    <property name="net.sf.jasperreports.export.xls.freeze.row.edge" value="Bottom"/>
+    <property name="net.sf.jasperreports.export.xls.collapse.row.span" value="true"/>
     
     <style name="StatusStyle" forecolor="#0000FF"> <!-- Default Blue -->
         <conditionalStyle>
@@ -109,7 +109,6 @@
         <band height="30">
             <staticText>
                 <reportElement mode="Opaque" x="0" y="0" width="40" height="30" backcolor="#D9EAD3" uuid="12345678-1234-1234-1234-1234567890ab">
-                    <property name="net.sf.jasperreports.export.xls.freeze.row.edge" value="Bottom"/>
                 </reportElement>
                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
                 <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement>
@@ -164,28 +163,28 @@
         <band height="20">
              <!-- S.No -->
             <textField>
-                <reportElement x="0" y="0" width="40" height="20" uuid="90123456-9012-9012-9012-9012345678cd"/>
+                <reportElement x="0" y="0" width="40" height="20" stretchType="RelativeToTallestObject" uuid="90123456-9012-9012-9012-9012345678cd"/>
                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
                 <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
                 <textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
             </textField>
             <!-- Order Date -->
             <textField>
-                <reportElement x="40" y="0" width="70" height="20" uuid="01234567-0123-0123-0123-0123456789de"/>
+                <reportElement x="40" y="0" width="70" height="20" stretchType="RelativeToTallestObject" uuid="01234567-0123-0123-0123-0123456789de"/>
                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
                 <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
                 <textFieldExpression><![CDATA[java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy").withZone(java.time.ZoneId.systemDefault()).format($F{orderTime})]]></textFieldExpression>
             </textField>
             <!-- Customer -->
             <textField textAdjust="StretchHeight">
-                <reportElement x="110" y="0" width="180" height="20" uuid="12345678-1234-4321-1234-1234567890ef"/>
+                <reportElement x="110" y="0" width="180" height="20" stretchType="RelativeToTallestObject" uuid="12345678-1234-4321-1234-1234567890ef"/>
                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
                 <textElement verticalAlignment="Middle"><font size="10"/></textElement>
                 <textFieldExpression><![CDATA[$F{customer.name} + " (" + $F{customer.phoneNumber} + ")"]]></textFieldExpression>
             </textField>
             <!-- ID -->
             <textField>
-                <reportElement x="290" y="0" width="50" height="20" uuid="23456789-2345-5432-2345-2345678901ab"/>
+                <reportElement x="290" y="0" width="50" height="20" stretchType="RelativeToTallestObject" uuid="23456789-2345-5432-2345-2345678901ab"/>
                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
                 <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
                 <textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
@@ -193,7 +192,7 @@
             
             <!-- Payment Mode -->
             <textField textAdjust="StretchHeight" isBlankWhenNull="true">
-                <reportElement x="340" y="0" width="90" height="20" uuid="34567890-3456-6543-3456-3456789012bc"/>
+                <reportElement x="340" y="0" width="90" height="20" stretchType="RelativeToTallestObject" uuid="34567890-3456-6543-3456-3456789012bc"/>
                  <box><pen lineWidth="0.5" lineColor="#000000"/></box>
                  <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
                 <textFieldExpression><![CDATA[($F{paymentMethod} == null || $F{paymentMethod}.equals("NOT_SELECTED")) ? "NOT SELECTED" : 
@@ -203,7 +202,7 @@
             
             <!-- Transaction ID -->
             <textField textAdjust="StretchHeight" isBlankWhenNull="true">
-                <reportElement x="430" y="0" width="110" height="20" uuid="45678901-4567-7654-4567-4567890123cd"/>
+                <reportElement x="430" y="0" width="110" height="20" stretchType="RelativeToTallestObject" uuid="45678901-4567-7654-4567-4567890123cd"/>
                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
                 <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
                 <textFieldExpression><![CDATA[(
@@ -220,7 +219,7 @@
 
             <!-- Status -->
             <textField textAdjust="StretchHeight">
-                <reportElement x="540" y="0" width="140" height="20" uuid="56789012-5678-8765-5678-5678901234de" style="StatusStyle"/>
+                <reportElement x="540" y="0" width="140" height="20" stretchType="RelativeToTallestObject" uuid="56789012-5678-8765-5678-5678901234de" style="StatusStyle"/>
                  <box><pen lineWidth="0.5" lineColor="#000000"/></box>
                  <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
                 <textFieldExpression><![CDATA[$F{status}.toString().equals("ORDER_DELIVERED_SUCESSFULLY") ? "DELIVERED" : 
@@ -232,7 +231,7 @@ $F{status})))]]></textFieldExpression>
             
             <!-- Total -->
             <textField>
-                <reportElement x="680" y="0" width="122" height="20" uuid="67890123-6789-9876-6789-6789012345ef"/>
+                <reportElement x="680" y="0" width="122" height="20" stretchType="RelativeToTallestObject" uuid="67890123-6789-9876-6789-6789012345ef"/>
                 <box><pen lineWidth="0.5" lineColor="#000000"/></box>
                 <textElement textAlignment="Right" verticalAlignment="Middle"><font size="10"/></textElement>
                 <textFieldExpression><![CDATA[$F{totalAmount}]]></textFieldExpression>
