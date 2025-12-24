@@ -59,6 +59,9 @@ public class CustomerOrder implements Serializable {
     @Column(name = "confirmed_at")
     private Instant confirmedAt;
 
+    @Column(name = "transaction_id")
+    private String transactionId;
+
     /**
      * One Order has many OrderItems
      */
@@ -149,6 +152,14 @@ public class CustomerOrder implements Serializable {
         this.confirmedAt = confirmedAt;
     }
 
+    public String getTransactionId() {
+        return this.transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
     public Set<OrderItem> getItems() {
         return this.items;
     }
@@ -227,6 +238,11 @@ public class CustomerOrder implements Serializable {
         return this;
     }
 
+    public CustomerOrder transactionId(String transactionId) {
+        this.transactionId = transactionId;
+        return this;
+    }
+
     public CustomerOrder items(Set<OrderItem> orderItems) {
         this.setItems(orderItems);
         return this;
@@ -288,6 +304,7 @@ public class CustomerOrder implements Serializable {
                 ", totalAmount=" + getTotalAmount() +
                 ", status='" + getStatus() + "'" +
                 ", paymentMethod='" + getPaymentMethod() + "'" +
+                ", transactionId='" + getTransactionId() + "'" +
                 "}";
     }
 }

@@ -44,8 +44,19 @@ public class CustomerOrderDTO implements Serializable {
 
     private Long removedDeliveryPersonId;
 
+    @Size(max = 255)
+    private String transactionId;
+
     public Long getId() {
         return id;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
     public void setId(Long id) {
@@ -167,6 +178,7 @@ public class CustomerOrderDTO implements Serializable {
                 ", customer=" + getCustomer() +
                 ", removedCustomerId=" + getRemovedCustomerId() +
                 ", removedDeliveryPersonId=" + getRemovedDeliveryPersonId() +
+                ", transactionId='" + getTransactionId() + "'" +
                 "}";
     }
 }

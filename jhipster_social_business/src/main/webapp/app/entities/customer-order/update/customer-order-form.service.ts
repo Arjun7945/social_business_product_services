@@ -40,6 +40,7 @@ type CustomerOrderFormGroupContent = {
   deliveryPerson: FormControl<CustomerOrderFormRawValue['deliveryPerson']>;
   customer: FormControl<CustomerOrderFormRawValue['customer']>;
   version: FormControl<CustomerOrderFormRawValue['version']>;
+  transactionId: FormControl<CustomerOrderFormRawValue['transactionId']>;
 };
 
 export type CustomerOrderFormGroup = FormGroup<CustomerOrderFormGroupContent>;
@@ -77,6 +78,7 @@ export class CustomerOrderFormService {
         validators: [Validators.required],
       }),
       version: new FormControl(customerOrderRawValue.version),
+      transactionId: new FormControl(customerOrderRawValue.transactionId),
     });
   }
 

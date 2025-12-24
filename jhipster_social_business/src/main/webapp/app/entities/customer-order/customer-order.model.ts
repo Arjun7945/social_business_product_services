@@ -14,6 +14,7 @@ export interface ICustomerOrder {
   customer?: Pick<ICustomer, 'id' | 'name'> | null;
   removedCustomerId?: number | null;
   removedDeliveryPersonId?: number | null;
+  transactionId?: string | null;
   version?: number | null;
 }
 
