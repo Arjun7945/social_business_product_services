@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Check, X } from 'lucide-react';
+import Lottie from 'lottie-react';
+import successAnimation from '../assets/animations/success_Verification.json';
+import failedAnimation from '../assets/animations/failed_Verification.json';
 
 const SuccessFailPage = () => {
     const [searchParams] = useSearchParams();
@@ -19,29 +22,19 @@ const SuccessFailPage = () => {
             >
                 <button
                     onClick={() => navigate(isSuccess ? '/track' : '/otp')}
-                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100"
+                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 z-10"
                 >
                     <X className="w-5 h-5 text-gray-400" />
                 </button>
 
                 <div className="flex justify-center mb-6">
-                    <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: "spring", stiffness: 200, damping: 10, delay: 0.2 }}
-                        className={`w-24 h-24 rounded-full flex items-center justify-center ${isSuccess ? 'bg-green-100' : 'bg-red-100'}`}
-                    >
+                    <div className="w-32 h-32">
                         {isSuccess ? (
-                            <div className="bg-primary rounded-full p-2 relative">
-                                {/* Shield Icon Mockup */}
-                                <Check className="w-10 h-10 text-white" />
-                            </div>
+                            <Lottie animationData={successAnimation} loop={false} />
                         ) : (
-                            <div className="bg-red-500 rounded-full p-2">
-                                <X className="w-10 h-10 text-white" />
-                            </div>
+                            <Lottie animationData={failedAnimation} loop={true} />
                         )}
-                    </motion.div>
+                    </div>
                 </div>
 
                 <h3 className="text-xl font-bold text-gray-800 mb-2">

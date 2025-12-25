@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Smartphone, X } from 'lucide-react';
-import api from '../api';
+import { X } from 'lucide-react';
+import Lottie from 'lottie-react';
+import loginAnimation from '../assets/animations/Login.json';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -17,16 +17,11 @@ const LoginPage = () => {
 
         setIsLoading(true);
         try {
-            // In a real scenario, this calls the backend
-            // await api.post('/otp/send', { mobile: `+91${mobile}` });
-
             // For Phase 1 Demo (Simulated delay):
             await new Promise(resolve => setTimeout(resolve, 1000));
-
             navigate('/otp', { state: { mobile: `+91${mobile}` } });
         } catch (error) {
             console.error("Failed to send OTP", error);
-            // Optional: Show error toast
         } finally {
             setIsLoading(false);
         }
@@ -40,22 +35,19 @@ const LoginPage = () => {
                 className="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden relative"
             >
                 {/* Close Button Mockup */}
-                <button className="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-100">
+                <button className="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-100 z-10">
                     <X className="w-6 h-6 text-gray-500" />
                 </button>
 
-                {/* Header Section with Illustration */}
-                <div className="pt-16 pb-8 px-8 text-center bg-gradient-to-b from-primary-light/10 to-transparent">
-                    <div className="bg-primary-light/20 w-32 h-32 rounded-full mx-auto flex items-center justify-center mb-6">
-                        <Smartphone className="w-16 h-16 text-primary" />
+                {/* Header Section with Lottie Animation */}
+                <div className="pt-8 pb-4 px-8 text-center bg-gradient-to-b from-primary-light/10 to-transparent flex flex-col items-center">
+                    <div className="w-48 h-48 mb-2">
+                        <Lottie animationData={loginAnimation} loop={true} />
                     </div>
-                    <h2 className="text-gray-500 text-sm font-medium">
-                        You'll receive a 4 digit code<br />to verify next.
-                    </h2>
                 </div>
 
                 {/* Input Section */}
-                <div className="p-8">
+                <div className="p-8 pt-4">
                     <form onSubmit={handleSendOtp}>
                         <label className="block text-gray-700 text-sm font-bold mb-2 ml-1">
                             Enter your mobile number
@@ -84,15 +76,6 @@ const LoginPage = () => {
                             {isLoading ? 'Sending...' : 'CONTINUE'}
                         </button>
                     </form>
-
-                    {/* NumPad Mockup (Visual Only as per design, functionally user uses keyboard) 
-              In a real PWA or Native-like web app, we might handle custom numpad, 
-              but for standard web, native keyboard is better. 
-              I will omit the visual numpad for now to keep it clean web-standard, 
-              unless strictly required. The image showed a numpad, which implies a mobile app. 
-              Implementing a custom JS numpad is possible but affects accessibility. 
-              I'll stick to input field for Phase 1. 
-          */}
                 </div>
             </motion.div>
         </div>

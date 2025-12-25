@@ -3,6 +3,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { X } from 'lucide-react';
+import Lottie from 'lottie-react';
+import otpAnimation from '../assets/animations/OTP Verification.json';
 import api from '../api';
 
 const OtpPage = () => {
@@ -66,11 +68,14 @@ const OtpPage = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden relative min-h-[500px] flex flex-col"
             >
-                <button onClick={() => navigate('/login')} className="absolute top-4 left-4 p-2">
+                <button onClick={() => navigate('/login')} className="absolute top-4 left-4 p-2 z-10">
                     <X className="w-6 h-6 text-gray-500" />
                 </button>
 
-                <div className="pt-20 px-8 text-center flex-1">
+                <div className="pt-8 px-8 text-center flex-1 flex flex-col items-center">
+                    <div className="w-32 h-32 mb-4">
+                        <Lottie animationData={otpAnimation} loop={true} />
+                    </div>
                     <h2 className="text-2xl font-bold text-primary mb-2">Welcome to<br />Team Together.</h2>
                     <p className="text-gray-400 text-sm mb-8">Join our community.</p>
 
