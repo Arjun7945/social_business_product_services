@@ -72,6 +72,7 @@ public class SecurityConfiguration {
                                                                 mvc.pattern("/*.svg"),
                                                                 mvc.pattern("/*.webapp"))
                                                 .permitAll()
+                                                .requestMatchers(mvc.pattern("/assets/**")).permitAll()
                                                 .requestMatchers(mvc.pattern("/app/**")).permitAll()
                                                 .requestMatchers(mvc.pattern("/i18n/**")).permitAll()
                                                 .requestMatchers(mvc.pattern("/content/**")).permitAll()
