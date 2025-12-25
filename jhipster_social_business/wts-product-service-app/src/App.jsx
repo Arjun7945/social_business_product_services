@@ -1,40 +1,20 @@
 
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import OtpPage from './pages/OtpPage';
 import SuccessFailPage from './pages/SuccessFailPage';
-
-import Lottie from 'lottie-react';
-import backgroundLake from './assets/animations/background_lake.json';
+import GlobalBackground from './components/GlobalBackground';
 
 import TrackOrderPage from './pages/TrackOrderPage';
 import DevicePreviewPage from './pages/DevicePreviewPage';
-
-const ReturnOrderPage = () => <div className="p-10 text-center"><h1>Return Order (Phase 2)</h1></div>;
+import ReturnOrderPage from './pages/ReturnOrderPage';
 
 function App() {
-  const lottieRef = useRef(null);
-
-  useEffect(() => {
-    if (lottieRef.current) {
-      lottieRef.current.play();
-    }
-  }, []);
-
   return (
     <Router>
-      {/* Global Background Animation */}
-      <div className="fixed inset-0 -z-10 w-full h-full overflow-hidden">
-        <Lottie
-          lottieRef={lottieRef}
-          animationData={backgroundLake}
-          loop={true}
-          autoplay={true}
-          className="w-full h-full object-cover"
-        />
-      </div>
+      <GlobalBackground />
 
       <Routes>
         <Route path="/" element={<LandingPage />} />

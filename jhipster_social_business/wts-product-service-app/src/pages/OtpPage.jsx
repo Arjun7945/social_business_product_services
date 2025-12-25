@@ -1,11 +1,11 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { X } from 'lucide-react';
 import Lottie from 'lottie-react';
 import otpAnimation from '../assets/animations/OTP Verification.json';
-import api from '../api';
+// import api from '../api'; // Uncomment for real API
 
 const OtpPage = () => {
     const navigate = useNavigate();

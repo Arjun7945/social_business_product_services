@@ -1,8 +1,8 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Check, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import Lottie from 'lottie-react';
 import successAnimation from '../assets/animations/success_Verification.json';
 import failedAnimation from '../assets/animations/failed_Verification.json';

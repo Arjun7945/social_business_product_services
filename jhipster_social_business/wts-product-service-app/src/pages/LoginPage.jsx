@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Phone, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { checkUserExistence } from '../api';
 import Lottie from 'lottie-react';
 import UserNotFoundModal from '../components/UserNotFoundModal';
