@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { X } from 'lucide-react';
+import { ArrowRight, Phone, X } from 'lucide-react';
 import { checkUserExistence } from '../api';
 import Lottie from 'lottie-react';
+import UserNotFoundModal from '../components/UserNotFoundModal';
 import loginAnimation from '../assets/animations/Login.json';
 
 const LoginPage = () => {
     const navigate = useNavigate();
     const [mobile, setMobile] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showNotFoundModal, setShowNotFoundModal] = useState(false);
 
     // Function to simulate sending OTP (Phase 1 Mock or Real API)
     const handleSendOtp = async (e) => {
@@ -24,13 +26,14 @@ const LoginPage = () => {
             // 1. Secure Login Check: Does user exist?
             // Note: DB seems to store format as 919497144795 (without +).
             // So we prepend 91 only.
-            const fullMobile = `91${mobile}`;
+            const fullMobile = `91${mobile.trim()}`;
             const checkRes = await checkUserExistence(fullMobile);
 
             const customers = checkRes.data;
 
             if (!customers || customers.length === 0) {
-                alert("User not found. Please contact Admin.");
+                // Open Custom Modal instead of Alert
+                setShowNotFoundModal(true);
                 setIsLoading(false);
                 return;
             }
@@ -58,7 +61,7 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-transparent flex items-center justify-center p-4">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -80,7 +83,7 @@ const LoginPage = () => {
                 <div className="p-8 pt-4">
                     <form onSubmit={handleSendOtp}>
                         <label className="block text-gray-700 text-sm font-bold mb-2 ml-1">
-                            Enter your mobile number
+                            Enter your registered whatsapp mobile number
                         </label>
                         <div className="flex items-center gap-3 mb-8">
                             <span className="text-lg font-semibold text-gray-500">+91</span>
@@ -98,7 +101,7 @@ const LoginPage = () => {
                             type="submit"
                             disabled={isLoading || mobile.length < 10}
                             className={`w-full py-4 rounded-xl text-white font-bold text-lg shadow-lg flex items-center justify-center gap-2 transition-all
-                ${isLoading || mobile.length < 10
+                                ${isLoading || mobile.length < 10
                                     ? 'bg-gray-300 cursor-not-allowed'
                                     : 'bg-primary hover:bg-primary-dark hover:shadow-xl active:scale-95'
                                 }`}
@@ -108,6 +111,12 @@ const LoginPage = () => {
                     </form>
                 </div>
             </motion.div>
+            {/* User Not Found Modal */}
+            <UserNotFoundModal
+                isOpen={showNotFoundModal}
+                onClose={() => setShowNotFoundModal(false)}
+                mobileNumber={mobile}
+            />
         </div>
     );
 };

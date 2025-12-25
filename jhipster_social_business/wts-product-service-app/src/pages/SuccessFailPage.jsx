@@ -30,7 +30,7 @@ const SuccessFailPage = () => {
                 <div className="flex justify-center mb-6">
                     <div className="w-32 h-32">
                         {isSuccess ? (
-                            <Lottie animationData={successAnimation} loop={false} />
+                            <Lottie animationData={successAnimation} loop={true} />
                         ) : (
                             <Lottie animationData={failedAnimation} loop={true} />
                         )}
