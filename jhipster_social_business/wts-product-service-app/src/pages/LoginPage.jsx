@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
+import { checkUserExistence } from '../api';
 import Lottie from 'lottie-react';
 import loginAnimation from '../assets/animations/Login.json';
 
@@ -13,15 +14,44 @@ const LoginPage = () => {
     // Function to simulate sending OTP (Phase 1 Mock or Real API)
     const handleSendOtp = async (e) => {
         e.preventDefault();
-        if (!mobile || mobile.length < 10) return;
+        if (!mobile || mobile.length < 10) {
+            alert("Please enter a valid mobile number");
+            return;
+        }
 
         setIsLoading(true);
         try {
-            // For Phase 1 Demo (Simulated delay):
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            navigate('/otp', { state: { mobile: `+91${mobile}` } });
+            // 1. Secure Login Check: Does user exist?
+            // Note: DB seems to store format as 919497144795 (without +).
+            // So we prepend 91 only.
+            const fullMobile = `91${mobile}`;
+            const checkRes = await checkUserExistence(fullMobile);
+
+            const customers = checkRes.data;
+
+            if (!customers || customers.length === 0) {
+                alert("User not found. Please contact Admin.");
+                setIsLoading(false);
+                return;
+            }
+
+            // 2. User Found!
+            const customerName = customers[0].name;
+
+            // 3. Send OTP (Mock or Real)
+            // await sendOtp(mobile); // Uncomment when SMS gateway is active
+
+            // 4. Navigate to OTP with state
+            navigate('/otp', {
+                state: {
+                    mobile: mobile,
+                    customerName: customerName
+                }
+            });
+
         } catch (error) {
-            console.error("Failed to send OTP", error);
+            console.error("Login Error", error);
+            alert("Login Failed. Please try again.");
         } finally {
             setIsLoading(false);
         }

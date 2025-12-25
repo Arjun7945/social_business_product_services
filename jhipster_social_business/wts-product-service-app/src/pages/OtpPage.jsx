@@ -11,6 +11,7 @@ const OtpPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const mobile = location.state?.mobile || "+91 88888 88888";
+    const customerName = location.state?.customerName || "Customer";
 
     const [otp, setOtp] = useState(['', '', '', '']);
     const [isLoading, setIsLoading] = useState(false);
@@ -72,12 +73,16 @@ const OtpPage = () => {
                     <X className="w-6 h-6 text-gray-500" />
                 </button>
 
-                <div className="pt-8 px-8 text-center flex-1 flex flex-col items-center">
-                    <div className="w-32 h-32 mb-4">
+                <div className="pt-8 pb-0 px-8 text-center flex flex-col items-center">
+                    <div className="w-48 h-48 mb-2">
                         <Lottie animationData={otpAnimation} loop={true} />
                     </div>
-                    <h2 className="text-2xl font-bold text-primary mb-2">Welcome to<br />Team Together.</h2>
-                    <p className="text-gray-400 text-sm mb-8">Join our community.</p>
+                    <h2 className="text-gray-800 text-lg font-bold mt-4">
+                        Welcome {customerName}!
+                    </h2>
+                    <p className="text-gray-500 font-medium text-sm mt-1 mb-6 tracking-wide">
+                        It's good to see you here! ✨
+                    </p>
 
                     <p className="text-gray-600 mb-8">
                         Code is sent to <span className="font-semibold text-gray-900">{mobile}</span>
