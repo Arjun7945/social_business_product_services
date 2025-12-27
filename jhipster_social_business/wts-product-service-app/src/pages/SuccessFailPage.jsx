@@ -21,7 +21,7 @@ const SuccessFailPage = () => {
                 className="bg-white rounded-3xl p-8 w-full max-w-sm text-center shadow-2xl relative"
             >
                 <button
-                    onClick={() => navigate(isSuccess ? '/track' : '/otp')}
+                    onClick={() => navigate(isSuccess ? '/ourCustomer/track' : '/ourCustomer/otp')}
                     className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 z-10"
                 >
                     <X className="w-5 h-5 text-gray-400" />
@@ -50,7 +50,7 @@ const SuccessFailPage = () => {
                 )}
 
                 <button
-                    onClick={() => navigate(isSuccess ? '/track' : '/otp')}
+                    onClick={() => navigate(isSuccess ? '/ourCustomer/track' : '/ourCustomer/otp')}
                     className={`w-full py-4 rounded-xl text-white font-bold text-lg shadow-lg transition-all
             ${isSuccess
                             ? 'bg-primary hover:bg-primary-dark hover:shadow-xl'

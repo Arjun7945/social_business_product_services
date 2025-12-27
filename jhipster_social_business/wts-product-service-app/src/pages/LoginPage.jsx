@@ -45,7 +45,7 @@ const LoginPage = () => {
             // await sendOtp(mobile); // Uncomment when SMS gateway is active
 
             // 4. Navigate to OTP with state
-            navigate('/otp', {
+            navigate('/ourCustomer/otp', {
                 state: {
                     mobile: mobile,
                     customerName: customerName

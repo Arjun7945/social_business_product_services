@@ -38,7 +38,7 @@ const LandingPage = () => {
                 transition={{ delay: 0.8, duration: 0.5 }}
             >
                 <button
-                    onClick={() => navigate('/login')}
+                    onClick={() => navigate('/ourCustomer/login')}
                     className="bg-primary hover:bg-primary-dark text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 active:scale-95"
                 >
                     Get Started

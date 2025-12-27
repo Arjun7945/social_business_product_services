@@ -57,7 +57,7 @@ const TrackOrderPage = () => {
         <div className="min-h-screen bg-gray-50 flex flex-col">
             {/* Header */}
             <div className="bg-white p-4 shadow-sm flex items-center sticky top-0 z-10">
-                <button onClick={() => navigate('/')} className="p-2 -ml-2 rounded-full hover:bg-gray-100">
+                <button onClick={() => navigate('/ourCustomer')} className="p-2 -ml-2 rounded-full hover:bg-gray-100">
                     <ArrowLeft className="w-6 h-6 text-gray-700" />
                 </button>
                 <div className="ml-4">

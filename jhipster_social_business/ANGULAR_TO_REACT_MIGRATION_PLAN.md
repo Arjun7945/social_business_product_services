@@ -32,6 +32,24 @@
 
 ---
 
+---
+
+## 🚧 Phase 0: Base Routing Setup (Week 0)
+
+> **Goal**: Establish the routing foundation separating the Customer Portal from the Internal App.
+
+### 0.1 Routing Architecture
+- **Root (`/`)**: Main entry point for the migrated Internal Admin Application.
+- **Customer Portal (`/ourCustomer`)**: Dedicated entry point for all customer-facing features.
+
+### 0.2 Initial Setup
+- [ ] Refactor `App.jsx` to use nested routes
+- [ ] Create `MainLayout` for internal app placeholder
+- [ ] Create `CustomerLayout` for customer pages (Landing, Login, etc.)
+- [ ] Verify all existing React pages work under `/ourCustomer/*`
+
+---
+
 ## 🎯 Phase 1: Core Customer Experience (Weeks 1-3)
 
 > **Goal**: Migrate customer-facing features for order placement and tracking
@@ -101,11 +119,11 @@ src/pages/products/
 ### 1.3 Shopping Cart & Checkout (Week 2-3)
 
 #### Components to Migrate
-| Angular Component | React Component | API Endpoint |
-|-------------------|-----------------|--------------|
-| `shopping-cart.component.ts` | `CartPage.jsx` | `GET /api/shopping-carts` |
-| `cart-item.component.ts` | `CartItem.jsx` | `GET /api/cart-items` |
-| `customer-order-update.component.ts` | `CheckoutPage.jsx` | `POST /api/customer-orders` |
+| Angular Component | React Component | API Endpoint | New Route |
+|-------------------|-----------------|--------------|-----------|
+| `shopping-cart.component.ts` | `CartPage.jsx` | `GET /api/shopping-carts` | `/ourCustomer/cart` |
+| `cart-item.component.ts` | `CartItem.jsx` | `GET /api/cart-items` | - |
+| `customer-order-update.component.ts` | `CheckoutPage.jsx` | `POST /api/customer-orders` | `/ourCustomer/checkout` |
 
 #### Features
 - Add/remove items from cart
@@ -466,11 +484,17 @@ wts-product-service-app/
 
 ## 🔄 Migration Strategy
 
-### Parallel Development Approach
-1. **Keep Angular running** at `/admin` route
-2. **React takes over** customer routes (`/`, `/login`, `/products`, `/cart`, `/orders`)
-3. **Gradual migration** of admin features
-4. **Final cutover** when all features migrated
+### Parallel Development & Routing Strategy
+1. **Routing Separation**:
+   - **`/` (Root)**: The main internal application (Admin, Management, Staff tools) - replacing the legacy Angular app.
+   - **`/ourCustomer`**: The dedicated customer-facing portal (Landing, Login, Tracking, Cart).
+   
+2. **Phase 1 Execution**:
+   - Move existing customer pages (`LandingPage`, `LoginPage`, etc.) to `/ourCustomer` routes.
+   - Establish `/` as the entry point for the migrated internal application.
+
+3. **Keep Angular running** at `/admin` (legacy) until fully migrated to React root.
+4. **Gradual migration** of admin features to React root.
 
 ### API Compatibility
 - All existing REST endpoints remain unchanged

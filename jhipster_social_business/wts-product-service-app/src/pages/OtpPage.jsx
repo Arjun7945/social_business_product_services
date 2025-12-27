@@ -50,13 +50,13 @@ const OtpPage = () => {
 
             // Mock Success (Any code 1234 succeeds, others fail for demo)
             if (code === '1234') {
-                navigate('/status?result=success');
+                navigate('/ourCustomer/status?result=success');
             } else {
-                navigate('/status?result=fail');
+                navigate('/ourCustomer/status?result=fail');
                 // Or show error toast
             }
         } catch (error) {
-            navigate('/status?result=fail');
+            navigate('/ourCustomer/status?result=fail');
         } finally {
             setIsLoading(false);
         }
@@ -69,7 +69,7 @@ const OtpPage = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden relative min-h-[500px] flex flex-col"
             >
-                <button onClick={() => navigate('/login')} className="absolute top-4 left-4 p-2 z-10">
+                <button onClick={() => navigate('/ourCustomer/login')} className="absolute top-4 left-4 p-2 z-10">
                     <X className="w-6 h-6 text-gray-500" />
                 </button>
 
@@ -111,7 +111,7 @@ const OtpPage = () => {
 
                     <button
                         className="text-gray-400 text-xs mt-2 hover:text-primary transition-colors"
-                        onClick={() => navigate('/login')}
+                        onClick={() => navigate('/ourCustomer/login')}
                     >
                         Don't have an account? <span className="text-primary font-bold">Sign Up</span>
                     </button>
