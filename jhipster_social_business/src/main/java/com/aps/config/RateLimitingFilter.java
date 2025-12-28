@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Simple in-memory Rate Limiting Filter using Bucket4j.
@@ -29,7 +29,7 @@ public class RateLimitingFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-            throws IOException, ServletException {
+        throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
 

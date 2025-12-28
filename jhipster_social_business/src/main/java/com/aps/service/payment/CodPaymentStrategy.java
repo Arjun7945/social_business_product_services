@@ -14,24 +14,22 @@ import org.springframework.stereotype.Component;
 @Component("codPaymentStrategy")
 public class CodPaymentStrategy implements PaymentStrategy {
 
-        private final WhatsAppService whatsAppService;
-        private final DeliveryPersonMessageService deliveryPersonMessageService;
+    private final WhatsAppService whatsAppService;
+    private final DeliveryPersonMessageService deliveryPersonMessageService;
 
-        public CodPaymentStrategy(@Lazy WhatsAppService whatsAppService,
-                        DeliveryPersonMessageService deliveryPersonMessageService) {
-                this.whatsAppService = whatsAppService;
-                this.deliveryPersonMessageService = deliveryPersonMessageService;
-        }
+    public CodPaymentStrategy(@Lazy WhatsAppService whatsAppService, DeliveryPersonMessageService deliveryPersonMessageService) {
+        this.whatsAppService = whatsAppService;
+        this.deliveryPersonMessageService = deliveryPersonMessageService;
+    }
 
-        @Override
-        public void initiatePayment(CustomerOrder order, TeamMember deliveryPerson) {
-                // Send COD Confirmation
-                whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
-                                deliveryPersonMessageService.getPaymentModeCodSelected());
-        }
+    @Override
+    public void initiatePayment(CustomerOrder order, TeamMember deliveryPerson) {
+        // Send COD Confirmation
+        whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), deliveryPersonMessageService.getPaymentModeCodSelected());
+    }
 
-        @Override
-        public String getPaymentMethodName() {
-                return "COD";
-        }
+    @Override
+    public String getPaymentMethodName() {
+        return "COD";
+    }
 }

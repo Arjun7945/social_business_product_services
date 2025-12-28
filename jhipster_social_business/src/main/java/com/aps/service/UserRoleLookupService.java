@@ -5,12 +5,11 @@ import com.aps.domain.TeamMember;
 import com.aps.repository.CustomerRepository;
 import com.aps.repository.TeamMemberRepository;
 import com.aps.service.dto.UserLookupResult;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * Service to perform unified user role lookup across all user types.
@@ -40,10 +39,7 @@ public class UserRoleLookupService {
         if (teamMemberOpt.isPresent()) {
             TeamMember teamMember = teamMemberOpt.get();
             log.info("Found team member: {} with role: {}", teamMember.getName(), teamMember.getRole());
-            return UserLookupResult.builder()
-                    .role(teamMember.getRole())
-                    .userEntity(teamMember)
-                    .build();
+            return UserLookupResult.builder().role(teamMember.getRole()).userEntity(teamMember).build();
         }
 
         // 2. Check Customer table
@@ -51,10 +47,7 @@ public class UserRoleLookupService {
         if (customerOpt.isPresent()) {
             Customer customer = customerOpt.get();
             log.info("Found existing customer: {}", customer.getName());
-            return UserLookupResult.builder()
-                    .role(customer.getRole())
-                    .userEntity(customer)
-                    .build();
+            return UserLookupResult.builder().role(customer.getRole()).userEntity(customer).build();
         }
 
         // 3. Not found

@@ -26,7 +26,10 @@ public interface ProductImageRepository extends JpaRepository<ProductImage, Long
         return this.findAllWithToOneRelationships(pageable);
     }
 
-    @Query(value = "select productImage from ProductImage productImage left join fetch productImage.product", countQuery = "select count(productImage) from ProductImage productImage")
+    @Query(
+        value = "select productImage from ProductImage productImage left join fetch productImage.product",
+        countQuery = "select count(productImage) from ProductImage productImage"
+    )
     Page<ProductImage> findAllWithToOneRelationships(Pageable pageable);
 
     @Query("select productImage from ProductImage productImage left join fetch productImage.product")

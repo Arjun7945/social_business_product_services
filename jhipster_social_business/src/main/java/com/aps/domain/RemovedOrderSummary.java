@@ -172,12 +172,21 @@ public class RemovedOrderSummary implements Serializable {
 
     @Override
     public String toString() {
-        return "RemovedOrderSummary{" +
-                "id=" + getId() +
-                ", userName='" + getUserName() + "'" +
-                ", userRole='" + getUserRole() + "'" +
-                ", totalOrders=" + getTotalOrders() +
-                ", totalAmount=" + getTotalAmount() +
-                "}";
+        return (
+            "RemovedOrderSummary{" +
+            "id=" +
+            getId() +
+            ", userName='" +
+            getUserName() +
+            "'" +
+            ", userRole='" +
+            getUserRole() +
+            "'" +
+            ", totalOrders=" +
+            getTotalOrders() +
+            ", totalAmount=" +
+            getTotalAmount() +
+            "}"
+        );
     }
 }

@@ -49,10 +49,11 @@ public class TeamMemberResource {
     private final com.aps.service.UserRemovalService userRemovalService;
 
     public TeamMemberResource(
-            TeamMemberService teamMemberService,
-            TeamMemberRepository teamMemberRepository,
-            TeamMemberQueryService teamMemberQueryService,
-            com.aps.service.UserRemovalService userRemovalService) {
+        TeamMemberService teamMemberService,
+        TeamMemberRepository teamMemberRepository,
+        TeamMemberQueryService teamMemberQueryService,
+        com.aps.service.UserRemovalService userRemovalService
+    ) {
         this.teamMemberService = teamMemberService;
         this.teamMemberRepository = teamMemberRepository;
         this.teamMemberQueryService = teamMemberQueryService;
@@ -69,17 +70,15 @@ public class TeamMemberResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public ResponseEntity<TeamMemberDTO> createTeamMember(@Valid @RequestBody TeamMemberDTO teamMemberDTO)
-            throws URISyntaxException {
+    public ResponseEntity<TeamMemberDTO> createTeamMember(@Valid @RequestBody TeamMemberDTO teamMemberDTO) throws URISyntaxException {
         LOG.debug("REST request to save TeamMember : {}", teamMemberDTO);
         if (teamMemberDTO.getId() != null) {
             throw new BadRequestAlertException("A new teamMember cannot already have an ID", ENTITY_NAME, "idexists");
         }
         teamMemberDTO = teamMemberService.save(teamMemberDTO);
         return ResponseEntity.created(new URI("/api/team-members/" + teamMemberDTO.getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME,
-                        teamMemberDTO.getId().toString()))
-                .body(teamMemberDTO);
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, teamMemberDTO.getId().toString()))
+            .body(teamMemberDTO);
     }
 
     /**
@@ -97,8 +96,9 @@ public class TeamMemberResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<TeamMemberDTO> updateTeamMember(
-            @PathVariable(value = "id", required = false) final Long id,
-            @Valid @RequestBody TeamMemberDTO teamMemberDTO) throws URISyntaxException {
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody TeamMemberDTO teamMemberDTO
+    ) throws URISyntaxException {
         LOG.debug("REST request to update TeamMember : {}, {}", id, teamMemberDTO);
         if (teamMemberDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -113,9 +113,8 @@ public class TeamMemberResource {
 
         teamMemberDTO = teamMemberService.update(teamMemberDTO);
         return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME,
-                        teamMemberDTO.getId().toString()))
-                .body(teamMemberDTO);
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, teamMemberDTO.getId().toString()))
+            .body(teamMemberDTO);
     }
 
     /**
@@ -136,8 +135,9 @@ public class TeamMemberResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<TeamMemberDTO> partialUpdateTeamMember(
-            @PathVariable(value = "id", required = false) final Long id,
-            @NotNull @RequestBody TeamMemberDTO teamMemberDTO) throws URISyntaxException {
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody TeamMemberDTO teamMemberDTO
+    ) throws URISyntaxException {
         LOG.debug("REST request to partial update TeamMember partially : {}, {}", id, teamMemberDTO);
         if (teamMemberDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -153,9 +153,9 @@ public class TeamMemberResource {
         Optional<TeamMemberDTO> result = teamMemberService.partialUpdate(teamMemberDTO);
 
         return ResponseUtil.wrapOrNotFound(
-                result,
-                HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME,
-                        teamMemberDTO.getId().toString()));
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, teamMemberDTO.getId().toString())
+        );
     }
 
     /**
@@ -168,13 +168,13 @@ public class TeamMemberResource {
      */
     @GetMapping("")
     public ResponseEntity<List<TeamMemberDTO>> getAllTeamMembers(
-            TeamMemberCriteria criteria,
-            @org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+        TeamMemberCriteria criteria,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
         LOG.debug("REST request to get TeamMembers by criteria: {}", criteria);
 
         Page<TeamMemberDTO> page = teamMemberQueryService.findByCriteria(criteria, pageable);
-        HttpHeaders headers = PaginationUtil
-                .generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
@@ -217,7 +217,7 @@ public class TeamMemberResource {
         // Use UserRemovalService for safe deletion (handles archiving and unlinking)
         userRemovalService.removeDeliveryPerson(id, "Admin Deletion via API");
         return ResponseEntity.noContent()
-                .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-                .build();
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

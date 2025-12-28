@@ -5,9 +5,9 @@ import com.aps.domain.enumeration.UserRole;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Objects;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import java.util.Objects;
 
 /**
  * A RemovedUser.
@@ -257,12 +257,22 @@ public class RemovedUser implements Serializable {
 
     @Override
     public String toString() {
-        return "RemovedUser{" +
-                "id=" + getId() +
-                ", originalId=" + getOriginalId() +
-                ", name='" + getName() + "'" +
-                ", role='" + getRole() + "'" +
-                ", status='" + getStatus() + "'" +
-                "}";
+        return (
+            "RemovedUser{" +
+            "id=" +
+            getId() +
+            ", originalId=" +
+            getOriginalId() +
+            ", name='" +
+            getName() +
+            "'" +
+            ", role='" +
+            getRole() +
+            "'" +
+            ", status='" +
+            getStatus() +
+            "'" +
+            "}"
+        );
     }
 }

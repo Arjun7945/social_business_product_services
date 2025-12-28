@@ -3,9 +3,8 @@ package com.aps.service.event;
 import com.aps.domain.Customer;
 import com.aps.domain.CustomerOrder;
 import com.aps.service.dto.CartItemDetailsDTO;
-import org.springframework.context.ApplicationEvent;
-
 import java.util.List;
+import org.springframework.context.ApplicationEvent;
 
 /**
  * Event published when an order is successfully placed.

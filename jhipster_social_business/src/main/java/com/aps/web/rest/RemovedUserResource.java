@@ -2,7 +2,8 @@ package com.aps.web.rest;
 
 import com.aps.domain.RemovedUser;
 import com.aps.repository.RemovedUserRepository;
-
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,12 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -34,8 +31,7 @@ public class RemovedUserResource {
 
     private final com.aps.service.UserRemovalService userRemovalService;
 
-    public RemovedUserResource(RemovedUserRepository removedUserRepository,
-            com.aps.service.UserRemovalService userRemovalService) {
+    public RemovedUserResource(RemovedUserRepository removedUserRepository, com.aps.service.UserRemovalService userRemovalService) {
         this.removedUserRepository = removedUserRepository;
         this.userRemovalService = userRemovalService;
     }
@@ -55,24 +51,23 @@ public class RemovedUserResource {
             return ResponseEntity.ok().body(newId);
         } catch (IllegalStateException | IllegalArgumentException e) {
             log.error("Restore failed for user {}: {}", id, e.getMessage());
-            return ResponseEntity.badRequest()
-                    .header("X-App-Error", "restore.failed.conflict")
-                    .body(new ErrorResponse(e.getMessage())); // Using a simple Map or custom error object might be
-                                                              // better, but strict types... let's return a Map for
-                                                              // flexibility or just a string if simpler.
+            return ResponseEntity.badRequest().header("X-App-Error", "restore.failed.conflict").body(new ErrorResponse(e.getMessage())); // Using a simple Map or custom error object might be
+            // better, but strict types... let's return a Map for
+            // flexibility or just a string if simpler.
             // Actually, for JHipster/Spring Boot, we better return a standardized error
             // structure or just a badRequest with a header/body.
             // Let's stick to a simple body map.
         } catch (Exception e) {
             log.error("Unexpected error restoring user {}", id, e);
             return ResponseEntity.internalServerError()
-                    .header("X-App-Error", "restore.failed.internal")
-                    .body(new ErrorResponse("An unexpected error occurred: " + e.getMessage()));
+                .header("X-App-Error", "restore.failed.internal")
+                .body(new ErrorResponse("An unexpected error occurred: " + e.getMessage()));
         }
     }
 
     // Simple DTO for error response
     public static class ErrorResponse {
+
         private String message;
 
         public ErrorResponse(String message) {
@@ -96,12 +91,10 @@ public class RemovedUserResource {
      *         of removedUsers in body.
      */
     @GetMapping("/removed-users")
-    public ResponseEntity<List<RemovedUser>> getAllRemovedUsers(
-            @org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<RemovedUser>> getAllRemovedUsers(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of RemovedUsers");
         Page<RemovedUser> page = removedUserRepository.findAll(pageable);
-        HttpHeaders headers = PaginationUtil
-                .generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 

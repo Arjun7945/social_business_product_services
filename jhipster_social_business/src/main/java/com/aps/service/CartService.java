@@ -9,16 +9,15 @@ import com.aps.repository.CustomerRepository;
 import com.aps.repository.FishProductRepository;
 import com.aps.repository.ShoppingCartRepository;
 import com.aps.service.dto.CartItemDetailsDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for business logic related to Shopping Carts.
@@ -35,10 +34,12 @@ public class CartService {
     private final FishProductRepository fishProductRepository;
     private final CustomerRepository customerRepository;
 
-    public CartService(ShoppingCartRepository shoppingCartRepository,
-            CartItemRepository cartItemRepository,
-            FishProductRepository fishProductRepository,
-            CustomerRepository customerRepository) {
+    public CartService(
+        ShoppingCartRepository shoppingCartRepository,
+        CartItemRepository cartItemRepository,
+        FishProductRepository fishProductRepository,
+        CustomerRepository customerRepository
+    ) {
         this.shoppingCartRepository = shoppingCartRepository;
         this.cartItemRepository = cartItemRepository;
         this.fishProductRepository = fishProductRepository;
@@ -49,20 +50,20 @@ public class CartService {
      * Get or create cart for customer
      */
     public ShoppingCart getOrCreateCart(Long customerId) {
-        return shoppingCartRepository.findByCustomerId(customerId)
-                .orElseGet(() -> {
-                    Customer customer = customerRepository.findById(customerId)
-                            .orElseThrow(() -> new RuntimeException("Customer not found"));
+        return shoppingCartRepository
+            .findByCustomerId(customerId)
+            .orElseGet(() -> {
+                Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
 
-                    ShoppingCart cart = new ShoppingCart();
-                    cart.setCustomer(customer);
-                    cart.setCreatedAt(Instant.now());
-                    cart.setUpdatedAt(Instant.now());
+                ShoppingCart cart = new ShoppingCart();
+                cart.setCustomer(customer);
+                cart.setCreatedAt(Instant.now());
+                cart.setUpdatedAt(Instant.now());
 
-                    ShoppingCart savedCart = shoppingCartRepository.save(cart);
-                    log.info("Created new shopping cart for customer {}", customerId);
-                    return savedCart;
-                });
+                ShoppingCart savedCart = shoppingCartRepository.save(cart);
+                log.info("Created new shopping cart for customer {}", customerId);
+                return savedCart;
+            });
     }
 
     /**
@@ -71,18 +72,16 @@ public class CartService {
     public void addToCart(Long customerId, Long fishProductId, Double quantityKg) {
         ShoppingCart cart = getOrCreateCart(customerId);
 
-        CartItem existingItem = cartItemRepository
-                .findByCartIdAndProductId(cart.getId(), fishProductId)
-                .orElse(null);
+        CartItem existingItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), fishProductId).orElse(null);
 
         if (existingItem != null) {
             existingItem.setQuantityKg(existingItem.getQuantityKg() + quantityKg);
             cartItemRepository.save(existingItem);
-            log.info("Updated quantity for product {} in cart. New quantity: {}",
-                    fishProductId, existingItem.getQuantityKg());
+            log.info("Updated quantity for product {} in cart. New quantity: {}", fishProductId, existingItem.getQuantityKg());
         } else {
-            FishProduct product = fishProductRepository.findById(fishProductId)
-                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            FishProduct product = fishProductRepository
+                .findById(fishProductId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
             CartItem newItem = new CartItem();
             newItem.setCart(cart);
@@ -103,11 +102,12 @@ public class CartService {
     public void removeFromCart(Long customerId, Long fishProductId) {
         ShoppingCart cart = getOrCreateCart(customerId);
 
-        cartItemRepository.findByCartIdAndProductId(cart.getId(), fishProductId)
-                .ifPresent(item -> {
-                    cartItemRepository.delete(item);
-                    log.info("Removed product {} from cart for customer {}", fishProductId, customerId);
-                });
+        cartItemRepository
+            .findByCartIdAndProductId(cart.getId(), fishProductId)
+            .ifPresent(item -> {
+                cartItemRepository.delete(item);
+                log.info("Removed product {} from cart for customer {}", fishProductId, customerId);
+            });
 
         cart.setUpdatedAt(Instant.now());
         shoppingCartRepository.save(cart);
@@ -119,8 +119,9 @@ public class CartService {
     public void updateQuantity(Long customerId, Long fishProductId, Double newQuantity) {
         ShoppingCart cart = getOrCreateCart(customerId);
 
-        CartItem item = cartItemRepository.findByCartIdAndProductId(cart.getId(), fishProductId)
-                .orElseThrow(() -> new RuntimeException("Item not found in cart"));
+        CartItem item = cartItemRepository
+            .findByCartIdAndProductId(cart.getId(), fishProductId)
+            .orElseThrow(() -> new RuntimeException("Item not found in cart"));
 
         item.setQuantityKg(newQuantity);
         cartItemRepository.save(item);
@@ -146,24 +147,25 @@ public class CartService {
             return new ArrayList<>();
         }
 
-        return items.stream()
-                .map(item -> {
-                    FishProduct product = item.getProduct();
-                    Double qty = item.getQuantityKg();
-                    BigDecimal price = product.getPricePerKg();
+        return items
+            .stream()
+            .map(item -> {
+                FishProduct product = item.getProduct();
+                Double qty = item.getQuantityKg();
+                BigDecimal price = product.getPricePerKg();
 
-                    double subtotal = qty * price.doubleValue();
+                double subtotal = qty * price.doubleValue();
 
-                    return CartItemDetailsDTO.builder()
-                            .fishProductId(product.getId())
-                            .fishName(product.getName())
-                            .quantityKg(qty)
-                            .pricePerKg(price.doubleValue())
-                            .subtotal(subtotal)
-                            .imageUrl(product.getImageUrl())
-                            .build();
-                })
-                .collect(Collectors.toList());
+                return CartItemDetailsDTO.builder()
+                    .fishProductId(product.getId())
+                    .fishName(product.getName())
+                    .quantityKg(qty)
+                    .pricePerKg(price.doubleValue())
+                    .subtotal(subtotal)
+                    .imageUrl(product.getImageUrl())
+                    .build();
+            })
+            .collect(Collectors.toList());
     }
 
     /**
@@ -172,23 +174,22 @@ public class CartService {
     @Transactional(readOnly = true)
     public Double calculateCartTotal(Long customerId) {
         List<CartItemDetailsDTO> items = getCartItems(customerId);
-        return items.stream()
-                .mapToDouble(CartItemDetailsDTO::getSubtotal)
-                .sum();
+        return items.stream().mapToDouble(CartItemDetailsDTO::getSubtotal).sum();
     }
 
     /**
      * Clear cart after order placement
      */
     public void clearCart(Long customerId) {
-        shoppingCartRepository.findByCustomerId(customerId)
-                .ifPresent(cart -> {
-                    cartItemRepository.deleteByCartId(cart.getId());
-                    // Clear the collection in memory to avoid stale state in current transaction
-                    if (cart.getItems() != null) {
-                        cart.getItems().clear();
-                    }
-                });
+        shoppingCartRepository
+            .findByCustomerId(customerId)
+            .ifPresent(cart -> {
+                cartItemRepository.deleteByCartId(cart.getId());
+                // Clear the collection in memory to avoid stale state in current transaction
+                if (cart.getItems() != null) {
+                    cart.getItems().clear();
+                }
+            });
     }
 
     /**

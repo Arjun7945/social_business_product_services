@@ -26,34 +26,36 @@ import tech.jhipster.config.JHipsterProperties;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
 
-        private final JHipsterProperties jHipsterProperties;
+    private final JHipsterProperties jHipsterProperties;
 
-        public SecurityConfiguration(JHipsterProperties jHipsterProperties) {
-                this.jHipsterProperties = jHipsterProperties;
-        }
+    public SecurityConfiguration(JHipsterProperties jHipsterProperties) {
+        this.jHipsterProperties = jHipsterProperties;
+    }
 
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
-        }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-        @Bean
-        public SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
-                http
-                                .cors(withDefaults())
-                                .csrf(csrf -> csrf.disable())
-                                .addFilterAfter(new SpaWebFilter(), BasicAuthenticationFilter.class)
-                                .headers(headers -> headers
-                                                .contentSecurityPolicy(csp -> csp
-                                                                .policyDirectives(jHipsterProperties.getSecurity()
-                                                                                .getContentSecurityPolicy()))
-                                                .frameOptions(FrameOptionsConfig::sameOrigin)
-                                                .referrerPolicy(referrer -> referrer
-                                                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
-                                                .permissionsPolicyHeader(permissions -> permissions.policy(
-                                                                "camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()")))
-                                .authorizeHttpRequests(authz ->
-                                // prettier-ignore
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
+        http
+            .cors(withDefaults())
+            .csrf(csrf -> csrf.disable())
+            .addFilterAfter(new SpaWebFilter(), BasicAuthenticationFilter.class)
+            .headers(headers ->
+                headers
+                    .contentSecurityPolicy(csp -> csp.policyDirectives(jHipsterProperties.getSecurity().getContentSecurityPolicy()))
+                    .frameOptions(FrameOptionsConfig::sameOrigin)
+                    .referrerPolicy(referrer -> referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                    .permissionsPolicyHeader(permissions ->
+                        permissions.policy(
+                            "camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()"
+                        )
+                    )
+            )
+            .authorizeHttpRequests(authz ->
+                // prettier-ignore
                                 authz
                                                 .requestMatchers(mvc.pattern("/index.html"), mvc.pattern("/*.js"),
                                                                 mvc.pattern("/*.txt"),
@@ -96,18 +98,20 @@ public class SecurityConfiguration {
                                                 .requestMatchers(mvc.pattern("/management/info")).permitAll()
                                                 .requestMatchers(mvc.pattern("/management/prometheus")).permitAll()
                                                 .requestMatchers(mvc.pattern("/management/**"))
-                                                .hasAuthority(AuthoritiesConstants.ADMIN))
-                                .sessionManagement(session -> session
-                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                                .exceptionHandling(exceptions -> exceptions
-                                                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                                                .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
-                                .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()));
-                return http.build();
-        }
+                                                .hasAuthority(AuthoritiesConstants.ADMIN)
+            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(exceptions ->
+                exceptions
+                    .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                    .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+            )
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()));
+        return http.build();
+    }
 
-        @Bean
-        MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
-                return new MvcRequestMatcher.Builder(introspector);
-        }
+    @Bean
+    MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
+        return new MvcRequestMatcher.Builder(introspector);
+    }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class WhatsAppMessageDto {
+
     @JsonProperty("messaging_product")
     private String messagingProduct = "whatsapp";
 
@@ -21,8 +22,7 @@ public class WhatsAppMessageDto {
     private LocationDto location;
 
     // Default constructor
-    public WhatsAppMessageDto() {
-    }
+    public WhatsAppMessageDto() {}
 
     public static WhatsAppMessageDto builder() {
         return new WhatsAppMessageDto();
@@ -154,8 +154,10 @@ public class WhatsAppMessageDto {
     // Nested Classes
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class TextDto {
+
         @JsonProperty("preview_url")
         private boolean previewUrl;
+
         private String body;
 
         public static TextDto builder() {
@@ -195,6 +197,7 @@ public class WhatsAppMessageDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class InteractiveDto {
+
         private String type;
         private ActionDto action;
         private BodyDto body;
@@ -249,6 +252,7 @@ public class WhatsAppMessageDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class BodyDto {
+
         private String text;
 
         public static BodyDto builder() {
@@ -275,6 +279,7 @@ public class WhatsAppMessageDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class ActionDto {
+
         private String button;
         private List<ButtonDto> buttons;
         private List<SectionDto> sections;
@@ -343,8 +348,10 @@ public class WhatsAppMessageDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class ButtonDto {
+
         private String type;
         private ReplyDto reply;
+
         @JsonProperty("quick_reply")
         private ReplyDto quickReply;
 
@@ -398,6 +405,7 @@ public class WhatsAppMessageDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class ReplyDto {
+
         private String id;
         private String title;
 
@@ -438,6 +446,7 @@ public class WhatsAppMessageDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class SectionDto {
+
         private String title;
         private List<RowDto> rows;
 
@@ -478,6 +487,7 @@ public class WhatsAppMessageDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class RowDto {
+
         private String id;
         private String title;
         private String description;
@@ -532,8 +542,10 @@ public class WhatsAppMessageDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class CarouselCardDto {
+
         @JsonProperty("card_index")
         private Integer cardIndex;
+
         private String type;
         private HeaderDto header;
         private BodyDto body;
@@ -615,6 +627,7 @@ public class WhatsAppMessageDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class HeaderDto {
+
         private String type;
         private ImageDto image;
         private VideoDto video;
@@ -669,6 +682,7 @@ public class WhatsAppMessageDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class ImageDto {
+
         private String id;
         private String link;
         private String caption;
@@ -723,6 +737,7 @@ public class WhatsAppMessageDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class DocumentDto {
+
         private String id;
         private String link;
         private String caption;
@@ -791,6 +806,7 @@ public class WhatsAppMessageDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class VideoDto {
+
         private String id;
 
         public static VideoDto builder() {
@@ -817,6 +833,7 @@ public class WhatsAppMessageDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class LocationDto {
+
         private Double longitude;
         private Double latitude;
         private String name;

@@ -1,0 +1,388 @@
+application {
+  config {
+    baseName whatsappProductServicePro
+    enableHibernateCache true
+    serverPort 8081
+    clientFramework react
+  }
+  entities *
+}
+
+/**
+ * Customer entity representing the end-user.
+ * Stores WhatsApp details, location, and flow state.
+ * NOW LINKED TO: DeliveryZone (Category A, B, C...)
+ */
+entity Customer {
+    waPhoneNumber String required unique
+    name String
+    phoneNumber String
+    locationLat Double
+    locationLon Double
+    address String
+    distanceFromBusinessKm Double
+    isPincodeValid Boolean required
+    role UserRole required
+    joinedAt Instant
+    lastInteractionAt Instant
+}
+
+/**
+ * DeliveryZone
+ * Represents the "Category" (A, B, C, etc.) based on pincodes.
+ * Used to group Customers and DeliveryPersons.
+ */
+entity DeliveryZone {
+    zoneName String required unique /** e.g., "A", "B", "North-1" */
+    pincode String /** specific pincode or pattern linked to this zone */
+}
+
+/**
+ * DeliveryPerson
+ * Separated from TeamMember to handle specific delivery logic and categorization.
+ * SPLIT BY: DeliveryZone (A delivery person in Zone A only delivers to Customers in Zone A).
+ * NEW: Added by Team Member relationship.
+ */
+entity DeliveryPerson {
+    name String required
+    waPhoneNumber String unique
+    phoneNumber String required unique
+    status DeliveryStatus required /** FREE, BUSY, OFF_DUTY */
+    joinedAt Instant
+    isActive Boolean required
+}
+
+/**
+ * Product catalog entity.
+ * Indexed in Elasticsearch for fast search.
+ * UPDATED: 'imageUrl' removed in favor of ProductImage entity relation.
+ */
+entity FishProduct {
+    name String required
+    pricePerKg BigDecimal required min(0)
+    availableQuantity Double /** To track available stock */
+    description String maxlength(2000)
+    isAvailable Boolean required
+    createdAt Instant
+}
+
+/**
+ * Images associated with a product.
+ * NOW: The primary source of images for FishProduct.
+ */
+entity ProductImage {
+    imageUrl String required
+    displayOrder Integer required
+}
+
+/**
+ * Main Order entity.
+ */
+entity CustomerOrder {
+    orderTime Instant required
+    totalAmount BigDecimal required min(0)
+    status OrderStatus required /** Updated Enum: NOT_TAKEN, ON_WAY, etc. */
+    paymentMethod String required
+    confirmedAt Instant
+}
+
+/**
+ * Individual items within an order.
+ * Linked to CustomerOrder (1:N)
+ */
+entity OrderItem {
+    quantityKg Double required min(0.1)
+    priceAtOrder BigDecimal required min(0)
+}
+
+/**
+ * Persistent Shopping Cart for a customer.
+ */
+entity ShoppingCart {
+    createdAt Instant required
+    updatedAt Instant
+}
+
+/**
+ * Items currently in the shopping cart.
+ */
+entity CartItem {
+    quantityKg Double required
+    addedAt Instant
+}
+
+/**
+ * Internal Team Members (Admins, Executives, Assistant Admins).
+ * NOTE: Delivery Persons use the separate DeliveryPerson entity now.
+ */
+entity TeamMember {
+    name String required
+    waPhoneNumber String unique
+    phoneNumber String required unique
+    role UserRole required
+    isActive Boolean required
+}
+
+/**
+ * BotSession for conversation state.
+ */
+entity BotSession {
+    waPhoneNumber String required unique
+    currentState String required
+    sessionData TextBlob
+    lastActiveAt Instant
+}
+
+/**
+ * Context ID tracking for buttons.
+ */
+entity ButtonAction {
+    waMessageId String required unique
+    buttonId String
+    clickedAt Instant
+    clickedBy String
+}
+
+/**
+ * Tracks the history of Order Status changes.
+ * Essential for the Angular frontend status tracker.
+ */
+entity OrderStatusHistory {
+    status OrderStatus required
+    changeTime Instant required
+}
+
+/**
+ * NEW ENTITY: ReturnedOrder
+ * Stores information about returned orders.
+ * Linked to Order, and Customer for full context.
+ * NOTE: Products are now Master-Detail via ReturnedOrderItem.
+ */
+entity ReturnedOrder {
+    returnDate Instant required
+    paymentReceivedMode String
+    paymentReturnedMode String
+    productClaimStatus ReturnProductStatus required
+    refundAmount BigDecimal min(0)
+}
+
+/**
+ * NEW ENTITY: ReturnedOrderItem
+ * Handles multiple products in a single return request.
+ */
+entity ReturnedOrderItem {
+    quantity Double required
+    productComment String
+}
+
+/**
+ * Track the lifecycle of a return (Requested -> Picked Up -> Refunded).
+ * Enables frontend tracking for customers.
+ */
+entity ReturnStatusHistory {
+    status ReturnStatus required
+    changeTime Instant required
+}
+
+/**
+ * RemovedOrderSummary.
+ */
+entity RemovedOrderSummary {
+    userOriginalId Long
+    userName String
+    userRole UserRole
+    totalOrders Integer
+    totalAmount Double
+    firstInteractionAt Instant
+    lastInteractionAt Instant
+    removedAt Instant
+}
+
+/**
+ * RemovedUser.
+ * Updated to include distance and pincode status for audit.
+ */
+entity RemovedUser {
+    originalId Long
+    name String
+    role UserRole
+    whatsappNumber String
+    phoneNumber String
+    address String
+    locationLat Double
+    locationLon Double
+    joinedAt Instant
+    removedAt Instant
+    reasonForRemoval String
+    lastSessionData TextBlob
+    status AccountStatus
+    orderHistoryId Long
+    distanceFromBusinessKm Double /** NEW: Stored for Customer audit */
+    isPincodeValid Boolean /** NEW: Stored for Customer audit */
+}
+
+// Enums
+
+enum UserRole {
+    CUSTOMER,
+    EXECUTIVE,
+    ASSISTANT_ADMIN,
+    ADMIN,
+    DEVELOPER
+}
+
+/**
+ * UPDATED OrderStatus as per requirements.
+ */
+enum OrderStatus {
+    NOT_TAKEN,
+    ON_WAY,
+    DELIVERED_SUCCESSFULLY,
+    FAILED_ORDER
+}
+
+/**
+ * Status for Delivery Person availability.
+ */
+enum DeliveryStatus {
+    FREE,
+    BUSY,
+    OFF_DUTY
+}
+
+enum AccountStatus {
+    ACCOUNT_REMOVED,
+    RESTORE_ACCOUNT
+}
+
+/**
+ * Status for the Return Request Lifecycle
+ */
+enum ReturnStatus {
+    RETURN_REQUESTED,
+    RETURN_APPROVED,
+    PICKUP_SCHEDULED,
+    PICKUP_COMPLETED,
+    RECEIVED_AT_FACILITY,
+    REFUND_INITIATED,
+    REFUND_COMPLETED,
+    RETURN_REJECTED
+}
+
+/**
+ * Status of the Physical Product upon return
+ */
+enum ReturnProductStatus {
+    PENDING_RECEIPT,
+    RECEIVED_DAMAGED,
+    RECEIVED_OK,
+    NOT_RECEIVED
+}
+
+enum CustomerFlowStage {
+    NEW,
+    AWAITING_NAME,
+    AWAITING_PHONE,
+    AWAITING_LOCATION,
+    REGISTERED,
+    BROWSING,
+    ADDING_TO_CART,
+    AWAITING_QUANTITY,
+    CHECKOUT,
+    CONFIRMING_ORDER,
+    EDITING_ORDER,
+    EDITING_PRODUCT,
+    EDITING_QUANTITY
+}
+
+enum ExecutiveFlowStage {
+    IDLE,
+    AWAITING_CUST_NAME,
+    AWAITING_CUST_PHONE,
+    AWAITING_CUST_WAPHONE,
+    AWAITING_CUST_LOCATION
+}
+
+enum AdminFlowStage {
+    IDLE,
+    CUSTOMER_MENU,
+    AWAITING_CUST_NAME,
+    AWAITING_CUST_PHONE,
+    AWAITING_CUST_LOCATION,
+    DELIVERY_MENU,
+    PRODUCT_MENU,
+    AWAITING_PRODUCT_PRICE
+}
+
+// Relationships
+
+relationship OneToOne {
+    /** One Product has exactly One Image */
+    FishProduct{image} to ProductImage{product(name) required}
+
+    /** One Order has exactly One Status History (Current Status Detail) */
+    CustomerOrder{history} to OrderStatusHistory{customerOrder(id)}
+}
+
+relationship OneToMany {
+    /** One Costumer has many Orders */
+    Customer{orders} to CustomerOrder{customer(name) required}
+
+    // REMOVED FishProduct{images} (Moved to OneToOne)
+
+    /** One Order has many OrderItems */
+    CustomerOrder{items} to OrderItem{order(id) required}
+    
+    /** One ShoppingCart has many CartItems */
+    ShoppingCart{items} to CartItem{cart(id) required}
+
+    /** One Customer has one Shopping Cart */
+    Customer{cart} to ShoppingCart{customer(name) required}
+    
+    // REMOVED CustomerOrder{history} (Moved to OneToOne)
+
+    /** Return Status History tracking */
+    ReturnedOrder{history} to ReturnStatusHistory{returnedOrder(id)}
+    
+    /** One Zone has many Customers */
+    DeliveryZone{customers} to Customer{zone(zoneName)}
+
+    /** One Zone has many Delivery Persons */
+    DeliveryZone{deliveryPersons} to DeliveryPerson{zone(zoneName) required}
+    
+    /** One Delivery Person controls many Orders (History/Active) */
+    DeliveryPerson{orders} to CustomerOrder{deliveryPerson(name)}
+
+    /** One Customer has many Returned Orders */
+    Customer{returns} to ReturnedOrder{customer(name) required}
+    
+    /** Support multiple products in one return order */
+    ReturnedOrder{items} to ReturnedOrderItem{returnedOrder(id) required}
+}
+
+relationship ManyToOne {
+    /** OrderItem links to a Product */
+    OrderItem{product(name) required} to FishProduct
+
+    /** CartItem links to a Product */
+    CartItem{product(name) required} to FishProduct
+
+    /** Executive who added the Customer */
+    Customer{addedBy(name)} to TeamMember
+
+    /** Returned Order links to Original Order */
+    ReturnedOrder{order(id) required} to CustomerOrder
+
+    /** Returned Order Item links to Specific Product */
+    ReturnedOrderItem{product(name) required} to FishProduct
+
+    /** Delivery Person added by TeamMember (e.g. Admin) */
+    DeliveryPerson{addedBy(name)} to TeamMember
+}
+
+
+// Options
+paginate all with pagination
+service all with serviceClass
+dto all with mapstruct
+filter all

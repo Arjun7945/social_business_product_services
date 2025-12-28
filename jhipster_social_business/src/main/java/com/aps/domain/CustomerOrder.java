@@ -298,13 +298,25 @@ public class CustomerOrder implements Serializable {
 
     @Override
     public String toString() {
-        return "CustomerOrder{" +
-                "id=" + getId() +
-                ", orderTime='" + getOrderTime() + "'" +
-                ", totalAmount=" + getTotalAmount() +
-                ", status='" + getStatus() + "'" +
-                ", paymentMethod='" + getPaymentMethod() + "'" +
-                ", transactionId='" + getTransactionId() + "'" +
-                "}";
+        return (
+            "CustomerOrder{" +
+            "id=" +
+            getId() +
+            ", orderTime='" +
+            getOrderTime() +
+            "'" +
+            ", totalAmount=" +
+            getTotalAmount() +
+            ", status='" +
+            getStatus() +
+            "'" +
+            ", paymentMethod='" +
+            getPaymentMethod() +
+            "'" +
+            ", transactionId='" +
+            getTransactionId() +
+            "'" +
+            "}"
+        );
     }
 }

@@ -3,7 +3,6 @@ package com.aps.domain;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -95,12 +94,23 @@ public class ButtonAction implements Serializable {
 
     @Override
     public String toString() {
-        return "ButtonAction{" +
-                "id=" + getId() +
-                ", waMessageId='" + getWaMessageId() + "'" +
-                ", buttonId='" + getButtonId() + "'" +
-                ", clickedAt='" + getClickedAt() + "'" +
-                ", clickedBy='" + getClickedBy() + "'" +
-                "}";
+        return (
+            "ButtonAction{" +
+            "id=" +
+            getId() +
+            ", waMessageId='" +
+            getWaMessageId() +
+            "'" +
+            ", buttonId='" +
+            getButtonId() +
+            "'" +
+            ", clickedAt='" +
+            getClickedAt() +
+            "'" +
+            ", clickedBy='" +
+            getClickedBy() +
+            "'" +
+            "}"
+        );
     }
 }

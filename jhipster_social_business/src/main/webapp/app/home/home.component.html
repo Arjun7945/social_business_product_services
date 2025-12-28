@@ -4,32 +4,33 @@
   </div>
 
   <div class="col-md-9">
-    <h1 class="display-4"><span jhiTranslate="home.title">Welcome, Product Services!</span><span
-        jhiTranslate="home.titleSuffix"> (Whatsapp Product Service)</span></h1>
+    <h1 class="display-4">
+      <span jhiTranslate="home.title">Welcome, Product Services!</span
+      ><span jhiTranslate="home.titleSuffix"> (Whatsapp Product Service)</span>
+    </h1>
 
     <p class="lead" jhiTranslate="home.subtitle">This is your product homepage</p>
 
     <div>
       @if (account() !== null) {
-      <div class="alert alert-success">
-        @if (account(); as accountRef) {
-        <span id="home-logged-message" jhiTranslate="home.logged.message"
-          [translateValues]="{ username: accountRef.login }">You are logged in as user &quot;{{ accountRef.login
-          }}&quot;.</span>
-        }
-      </div>
+        <div class="alert alert-success">
+          @if (account(); as accountRef) {
+            <span id="home-logged-message" jhiTranslate="home.logged.message" [translateValues]="{ username: accountRef.login }"
+              >You are logged in as user &quot;{{ accountRef.login }}&quot;.</span
+            >
+          }
+        </div>
       } @else {
-      <div class="alert alert-warning">
-        <span jhiTranslate="home.signin.prefix">If you want to </span>
-        <a class="alert-link" (click)="login()" jhiTranslate="home.signin.link">sign in</a>
-        <span jhiTranslate="home.signin.suffix">, use your registered account.</span>
-      </div>
+        <div class="alert alert-warning">
+          <span jhiTranslate="home.signin.prefix">If you want to </span>
+          <a class="alert-link" (click)="login()" jhiTranslate="home.signin.link">sign in</a>
+          <span jhiTranslate="home.signin.suffix">, use your registered account.</span>
+        </div>
 
-      <div class="alert alert-warning">
-        <span jhiTranslate="global.messages.info.register.noaccount">You don&apos;t have an account yet?</span>&nbsp;
-        <a class="alert-link" routerLink="/account/register" jhiTranslate="global.messages.info.register.link">Register
-          a new account</a>
-      </div>
+        <div class="alert alert-warning">
+          <span jhiTranslate="global.messages.info.register.noaccount">You don&apos;t have an account yet?</span>&nbsp;
+          <a class="alert-link" routerLink="/account/register" jhiTranslate="global.messages.info.register.link">Register a new account</a>
+        </div>
       }
     </div>
 
@@ -40,8 +41,9 @@
         <a routerLink="/contact-dev" jhiTranslate="home.link.contact">Contact Dev</a>
       </li>
       <li>
-        <a href="https://www.linkedin.com/company/lxisoft" target="_blank" rel="noopener noreferrer"
-          jhiTranslate="home.link.devsite">Visit Developer Site</a>
+        <a href="https://www.linkedin.com/company/lxisoft" target="_blank" rel="noopener noreferrer" jhiTranslate="home.link.devsite"
+          >Visit Developer Site</a
+        >
       </li>
       <li>
         <a routerLink="/raise-ticket" jhiTranslate="home.link.ticket">Create a Issue Ticket</a>
@@ -50,8 +52,7 @@
 
     <p>
       <span jhiTranslate="home.like">If you like our Work, don't forget to give us a star on</span>
-      <a href="https://github.com/lxisoft" target="_blank" rel="noopener noreferrer"
-        jhiTranslate="home.github">GitHub</a>!
+      <a href="https://github.com/lxisoft" target="_blank" rel="noopener noreferrer" jhiTranslate="home.github">GitHub</a>!
     </p>
   </div>
 </div>

@@ -2,6 +2,9 @@ package com.aps.service;
 
 import com.aps.config.WhatsAppConfig;
 import com.aps.domain.ProductImage;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -12,10 +15,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
 
 /**
  * Service to handle media downloads and uploads for WhatsApp API.
@@ -42,18 +41,20 @@ public class WhatsAppMediaService {
             headers.setBearerAuth(whatsAppConfig.getApiToken());
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
-                    new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {
-                    });
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {}
+            );
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 String mediaUrl = (String) response.getBody().get("url");
                 String mimeTypeFromMeta = (String) response.getBody().get("mime_type"); // Try to get from metadata
-                                                                                        // first
+                // first
 
                 // 2. Download Media
-                ResponseEntity<byte[]> mediaResponse = restTemplate.exchange(mediaUrl, HttpMethod.GET, entity,
-                        byte[].class);
+                ResponseEntity<byte[]> mediaResponse = restTemplate.exchange(mediaUrl, HttpMethod.GET, entity, byte[].class);
                 if (mediaResponse.getStatusCode() == HttpStatus.OK) {
                     byte[] data = mediaResponse.getBody();
                     String finalMimeType = mimeTypeFromMeta;
@@ -73,6 +74,7 @@ public class WhatsAppMediaService {
     }
 
     public static class MediaContent {
+
         private final byte[] data;
         private final String mimeType;
 
@@ -108,8 +110,7 @@ public class WhatsAppMediaService {
             // Create a file part with headers
             HttpHeaders fileHeaders = new HttpHeaders();
             fileHeaders.setContentType(MediaType.parseMediaType(mimeType));
-            HttpEntity<FileSystemResource> fileEntity = new HttpEntity<>(
-                    new FileSystemResource(tempFile.toFile()), fileHeaders);
+            HttpEntity<FileSystemResource> fileEntity = new HttpEntity<>(new FileSystemResource(tempFile.toFile()), fileHeaders);
 
             body.add("file", fileEntity);
             body.add("messaging_product", "whatsapp");
@@ -117,9 +118,12 @@ public class WhatsAppMediaService {
 
             HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
 
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.POST, entity,
-                    new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {
-                    });
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                entity,
+                new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {}
+            );
 
             // Clean up temp file
             Files.deleteIfExists(tempFile);

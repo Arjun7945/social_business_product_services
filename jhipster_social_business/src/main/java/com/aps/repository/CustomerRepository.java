@@ -26,7 +26,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSp
         return this.findAllWithToOneRelationships(pageable);
     }
 
-    @Query(value = "select customer from Customer customer left join fetch customer.addedBy", countQuery = "select count(customer) from Customer customer")
+    @Query(
+        value = "select customer from Customer customer left join fetch customer.addedBy",
+        countQuery = "select count(customer) from Customer customer"
+    )
     Page<Customer> findAllWithToOneRelationships(Pageable pageable);
 
     @Query("select customer from Customer customer left join fetch customer.addedBy")

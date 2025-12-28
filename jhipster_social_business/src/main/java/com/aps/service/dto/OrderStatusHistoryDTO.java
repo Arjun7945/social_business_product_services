@@ -73,10 +73,8 @@ public class OrderStatusHistoryDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "OrderStatusHistoryDTO{" +
-                "id=" + getId() +
-                ", status='" + getStatus() + "'" +
-                ", changeTime='" + getChangeTime() + "'" +
-                "}";
+        return (
+            "OrderStatusHistoryDTO{" + "id=" + getId() + ", status='" + getStatus() + "'" + ", changeTime='" + getChangeTime() + "'" + "}"
+        );
     }
 }

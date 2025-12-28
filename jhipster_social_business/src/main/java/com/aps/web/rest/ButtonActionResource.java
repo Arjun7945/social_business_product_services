@@ -44,12 +44,10 @@ public class ButtonActionResource {
      *         of buttonActions in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<ButtonAction>> getAllButtonActions(
-            @org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<ButtonAction>> getAllButtonActions(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of ButtonActions");
         Page<ButtonAction> page = buttonActionRepository.findAll(pageable);
-        HttpHeaders headers = PaginationUtil
-                .generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 

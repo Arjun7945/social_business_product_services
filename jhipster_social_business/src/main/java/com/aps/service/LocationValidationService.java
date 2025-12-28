@@ -28,16 +28,15 @@ public class LocationValidationService {
         double latDistance = Math.toRadians(lat2 - lat1);
         double lonDistance = Math.toRadians(lon2 - lon1);
 
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                        * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double a =
+            Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
+            Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         double distance = EARTH_RADIUS_KM * c;
 
-        log.debug("Distance calculated: {} km between ({}, {}) and ({}, {})",
-                String.format("%.2f", distance), lat1, lon1, lat2, lon2);
+        log.debug("Distance calculated: {} km between ({}, {}) and ({}, {})", String.format("%.2f", distance), lat1, lon1, lat2, lon2);
 
         return distance;
     }
@@ -49,8 +48,13 @@ public class LocationValidationService {
         double distance = getDistanceFromBusiness(customerLat, customerLon);
         boolean isWithin = distance <= DELIVERY_RADIUS_KM;
 
-        log.info("Customer location ({}, {}) is {} km from business. Within delivery radius: {}",
-                customerLat, customerLon, String.format("%.2f", distance), isWithin);
+        log.info(
+            "Customer location ({}, {}) is {} km from business. Within delivery radius: {}",
+            customerLat,
+            customerLon,
+            String.format("%.2f", distance),
+            isWithin
+        );
 
         return isWithin;
     }

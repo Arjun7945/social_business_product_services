@@ -6,14 +6,13 @@ import com.aps.domain.enumeration.ExecutiveFlowStage;
 import com.aps.service.admin.CustomerManagementService;
 import com.aps.service.dto.WhatsAppMessageDto;
 import com.aps.service.dto.WhatsAppWebhookDto;
+import java.time.Instant;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
-import java.util.List;
 
 @Service
 @Transactional
@@ -25,9 +24,11 @@ public class ExecutiveFlowService {
     private final BotSessionManager sessionManager;
     private final CustomerManagementService customerManagementService;
 
-    public ExecutiveFlowService(@Lazy WhatsAppService whatsAppService,
-            BotSessionManager sessionManager,
-            CustomerManagementService customerManagementService) {
+    public ExecutiveFlowService(
+        @Lazy WhatsAppService whatsAppService,
+        BotSessionManager sessionManager,
+        CustomerManagementService customerManagementService
+    ) {
         this.whatsAppService = whatsAppService;
         this.sessionManager = sessionManager;
         this.customerManagementService = customerManagementService;
@@ -94,42 +95,35 @@ public class ExecutiveFlowService {
             customerManagementService.showMyCustomers(executive);
             showMainMenu(executive, session);
         } else {
-            whatsAppService.sendSimpleText(executive.getWaPhoneNumber(),
-                    "Send 'hi' to see the executive menu.");
+            whatsAppService.sendSimpleText(executive.getWaPhoneNumber(), "Send 'hi' to see the executive menu.");
         }
     }
 
     private void showMainMenu(TeamMember executive, BotSession session) {
         List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
-                WhatsAppMessageDto.ButtonDto.builder()
-                        .type("reply")
-                        .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                .id("ADD_CUSTOMER")
-                                .title("➕ Add Customer")
-                                .build())
-                        .build(),
-                WhatsAppMessageDto.ButtonDto.builder()
-                        .type("reply")
-                        .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                .id("SHOW_MY_CUSTOMERS")
-                                .title("📋 My Customers")
-                                .build())
-                        .build(),
-                WhatsAppMessageDto.ButtonDto.builder()
-                        .type("reply")
-                        .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                .id("MY_PROFILE")
-                                .title("👤 My Profile")
-                                .build())
-                        .build());
+            WhatsAppMessageDto.ButtonDto.builder()
+                .type("reply")
+                .reply(WhatsAppMessageDto.ReplyDto.builder().id("ADD_CUSTOMER").title("➕ Add Customer").build())
+                .build(),
+            WhatsAppMessageDto.ButtonDto.builder()
+                .type("reply")
+                .reply(WhatsAppMessageDto.ReplyDto.builder().id("SHOW_MY_CUSTOMERS").title("📋 My Customers").build())
+                .build(),
+            WhatsAppMessageDto.ButtonDto.builder()
+                .type("reply")
+                .reply(WhatsAppMessageDto.ReplyDto.builder().id("MY_PROFILE").title("👤 My Profile").build())
+                .build()
+        );
 
-        whatsAppService.sendCartActionButtons(executive.getWaPhoneNumber(),
-                "👋 *Welcome Executive " + executive.getName() + "*\n\nWhat would you like to do?", buttons);
+        whatsAppService.sendCartActionButtons(
+            executive.getWaPhoneNumber(),
+            "👋 *Welcome Executive " + executive.getName() + "*\n\nWhat would you like to do?",
+            buttons
+        );
         sessionManager.updateState(session, ExecutiveFlowStage.IDLE.name());
     }
 
-    private void handleButtonReply(TeamMember executive, BotSession session,
-            WhatsAppWebhookDto.ButtonReply buttonReply) {
+    private void handleButtonReply(TeamMember executive, BotSession session, WhatsAppWebhookDto.ButtonReply buttonReply) {
         String buttonId = buttonReply.getId();
         switch (buttonId) {
             case "ADD_CUSTOMER":
@@ -145,8 +139,10 @@ public class ExecutiveFlowService {
                 handleAbortCommand(executive, session);
                 break;
             case "MY_PROFILE":
-                whatsAppService.sendSimpleText(executive.getWaPhoneNumber(),
-                        "👤 *Profile*\nName: " + executive.getName() + "\nRole: " + executive.getRole());
+                whatsAppService.sendSimpleText(
+                    executive.getWaPhoneNumber(),
+                    "👤 *Profile*\nName: " + executive.getName() + "\nRole: " + executive.getRole()
+                );
                 showMainMenu(executive, session);
                 break;
             case "SHOW_MY_CUSTOMERS":

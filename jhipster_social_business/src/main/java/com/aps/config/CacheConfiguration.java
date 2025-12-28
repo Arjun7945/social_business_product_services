@@ -30,8 +30,11 @@ public class CacheConfiguration {
 
     private final Environment env;
 
-    public CacheConfiguration(Environment env, @Autowired(required = false) GitProperties gitProperties,
-            @Autowired(required = false) BuildProperties buildProperties) {
+    public CacheConfiguration(
+        Environment env,
+        @Autowired(required = false) GitProperties gitProperties,
+        @Autowired(required = false) BuildProperties buildProperties
+    ) {
         this.env = env;
         this.gitProperties = gitProperties;
         this.buildProperties = buildProperties;

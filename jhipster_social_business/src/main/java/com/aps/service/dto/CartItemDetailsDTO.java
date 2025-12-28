@@ -16,11 +16,9 @@ public class CartItemDetailsDTO implements Serializable {
     private Double subtotal;
     private String imageUrl;
 
-    public CartItemDetailsDTO() {
-    }
+    public CartItemDetailsDTO() {}
 
-    public CartItemDetailsDTO(Long fishProductId, String fishName, Double quantityKg, Double pricePerKg,
-            Double subtotal, String imageUrl) {
+    public CartItemDetailsDTO(Long fishProductId, String fishName, Double quantityKg, Double pricePerKg, Double subtotal, String imageUrl) {
         this.fishProductId = fishProductId;
         this.fishName = fishName;
         this.quantityKg = quantityKg;
@@ -82,6 +80,7 @@ public class CartItemDetailsDTO implements Serializable {
     }
 
     public static class Builder {
+
         private Long fishProductId;
         private String fishName;
         private Double quantityKg;
@@ -126,14 +125,14 @@ public class CartItemDetailsDTO implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         CartItemDetailsDTO that = (CartItemDetailsDTO) o;
-        return Objects.equals(fishProductId, that.fishProductId) &&
-                Objects.equals(fishName, that.fishName) &&
-                Objects.equals(quantityKg, that.quantityKg);
+        return (
+            Objects.equals(fishProductId, that.fishProductId) &&
+            Objects.equals(fishName, that.fishName) &&
+            Objects.equals(quantityKg, that.quantityKg)
+        );
     }
 
     @Override
@@ -143,12 +142,20 @@ public class CartItemDetailsDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "CartItemDetailsDTO{" +
-                "fishProductId=" + fishProductId +
-                ", fishName='" + fishName + '\'' +
-                ", quantityKg=" + quantityKg +
-                ", pricePerKg=" + pricePerKg +
-                ", subtotal=" + subtotal +
-                '}';
+        return (
+            "CartItemDetailsDTO{" +
+            "fishProductId=" +
+            fishProductId +
+            ", fishName='" +
+            fishName +
+            '\'' +
+            ", quantityKg=" +
+            quantityKg +
+            ", pricePerKg=" +
+            pricePerKg +
+            ", subtotal=" +
+            subtotal +
+            '}'
+        );
     }
 }

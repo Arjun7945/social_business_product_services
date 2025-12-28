@@ -11,15 +11,14 @@ import com.aps.repository.OrderItemRepository;
 import com.aps.service.dto.CartItemDetailsDTO;
 import com.aps.service.errors.ProductUnavailableException;
 import com.aps.service.event.OrderPlacedEvent;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.List;
 
 /**
  * Service for business logic related to Orders.
@@ -42,16 +41,18 @@ public class OrderService {
     private final CustomerFlowService customerFlowService;
     private final OrderStatusHistoryService orderStatusHistoryService;
 
-    public OrderService(CustomerOrderRepository customerOrderRepository,
-            OrderItemRepository orderItemRepository,
-            FishProductRepository fishProductRepository,
-            CartService cartService,
-            ApplicationEventPublisher eventPublisher,
-            WhatsAppService whatsAppService,
-            CustomerMessageService customerMessageService,
-            DeliveryPersonMessageService deliveryPersonMessageService,
-            @org.springframework.context.annotation.Lazy CustomerFlowService customerFlowService,
-            OrderStatusHistoryService orderStatusHistoryService) {
+    public OrderService(
+        CustomerOrderRepository customerOrderRepository,
+        OrderItemRepository orderItemRepository,
+        FishProductRepository fishProductRepository,
+        CartService cartService,
+        ApplicationEventPublisher eventPublisher,
+        WhatsAppService whatsAppService,
+        CustomerMessageService customerMessageService,
+        DeliveryPersonMessageService deliveryPersonMessageService,
+        @org.springframework.context.annotation.Lazy CustomerFlowService customerFlowService,
+        OrderStatusHistoryService orderStatusHistoryService
+    ) {
         this.customerOrderRepository = customerOrderRepository;
         this.orderItemRepository = orderItemRepository;
         this.fishProductRepository = fishProductRepository;
@@ -96,12 +97,15 @@ public class OrderService {
         // 6. Save Order Items
         // 6. Save Order Items
         // Optimization: Fetch all products in one query to avoid N+1
-        java.util.Set<Long> productIds = items.stream()
-                .map(CartItemDetailsDTO::getFishProductId)
-                .collect(java.util.stream.Collectors.toSet());
+        java.util.Set<Long> productIds = items
+            .stream()
+            .map(CartItemDetailsDTO::getFishProductId)
+            .collect(java.util.stream.Collectors.toSet());
 
-        java.util.Map<Long, FishProduct> productMap = fishProductRepository.findAllById(productIds).stream()
-                .collect(java.util.stream.Collectors.toMap(FishProduct::getId, java.util.function.Function.identity()));
+        java.util.Map<Long, FishProduct> productMap = fishProductRepository
+            .findAllById(productIds)
+            .stream()
+            .collect(java.util.stream.Collectors.toMap(FishProduct::getId, java.util.function.Function.identity()));
 
         for (CartItemDetailsDTO item : items) {
             FishProduct product = productMap.get(item.getFishProductId());
@@ -137,25 +141,26 @@ public class OrderService {
      */
     @Transactional
     public void processPaymentSuccess(Long orderId, String paymentId, Double amount) {
-        customerOrderRepository.findById(orderId).ifPresent(order -> {
-            log.info("Processing Payment Success for Order: {}", orderId);
+        customerOrderRepository
+            .findById(orderId)
+            .ifPresent(order -> {
+                log.info("Processing Payment Success for Order: {}", orderId);
 
-            // Update Status to DELIVERED as payment on delivery confirms handover
-            order.setStatus(OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
-            // Ideally store paymentId in order or payment entity
-            order.setTransactionId(paymentId);
-            customerOrderRepository.save(order);
-            orderStatusHistoryService.addEvent(order);
+                // Update Status to DELIVERED as payment on delivery confirms handover
+                order.setStatus(OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
+                // Ideally store paymentId in order or payment entity
+                order.setTransactionId(paymentId);
+                customerOrderRepository.save(order);
+                orderStatusHistoryService.addEvent(order);
 
-            // Notify Customer & Delivery Person AFTER transaction commit
-            org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
+                // Notify Customer & Delivery Person AFTER transaction commit
+                org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
                     new org.springframework.transaction.support.TransactionSynchronization() {
                         @Override
                         public void afterCommit() {
                             try {
                                 // Notify Customer
-                                String custMsg = customerMessageService.getPaymentCapturedMessage(
-                                        paymentId, amount, orderId);
+                                String custMsg = customerMessageService.getPaymentCapturedMessage(paymentId, amount, orderId);
                                 whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(), custMsg);
 
                                 // Trigger Re-order Flow (Standardized for all payment success)
@@ -163,17 +168,16 @@ public class OrderService {
 
                                 // Notify Delivery Person (if assigned)
                                 if (order.getDeliveryPerson() != null) {
-                                    String dpMsg = deliveryPersonMessageService.getPaymentReceivedMessage(
-                                            paymentId, amount, orderId);
+                                    String dpMsg = deliveryPersonMessageService.getPaymentReceivedMessage(paymentId, amount, orderId);
                                     whatsAppService.sendSimpleText(order.getDeliveryPerson().getWaPhoneNumber(), dpMsg);
                                 }
                             } catch (Exception e) {
-                                log.error("Failed to send WhatsApp notifications after payment success for order {}",
-                                        orderId, e);
+                                log.error("Failed to send WhatsApp notifications after payment success for order {}", orderId, e);
                             }
                         }
-                    });
-        });
+                    }
+                );
+            });
     }
 
     /**
@@ -181,17 +185,19 @@ public class OrderService {
      */
     @Transactional
     public void processPaymentFailure(Long orderId, String paymentId) {
-        customerOrderRepository.findById(orderId).ifPresent(order -> {
-            log.warn("Processing Payment Failure for Order: {}", orderId);
+        customerOrderRepository
+            .findById(orderId)
+            .ifPresent(order -> {
+                log.warn("Processing Payment Failure for Order: {}", orderId);
 
-            // Update status to FAILED
-            order.setStatus(OrderStatus.ORDER_FAILED);
-            order.setTransactionId(paymentId);
-            customerOrderRepository.save(order);
-            orderStatusHistoryService.addEvent(order);
+                // Update status to FAILED
+                order.setStatus(OrderStatus.ORDER_FAILED);
+                order.setTransactionId(paymentId);
+                customerOrderRepository.save(order);
+                orderStatusHistoryService.addEvent(order);
 
-            // Notify Customer & Delivery Person AFTER transaction commit
-            org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
+                // Notify Customer & Delivery Person AFTER transaction commit
+                org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
                     new org.springframework.transaction.support.TransactionSynchronization() {
                         @Override
                         public void afterCommit() {
@@ -202,16 +208,15 @@ public class OrderService {
 
                                 // Notify Delivery Person (if assigned)
                                 if (order.getDeliveryPerson() != null) {
-                                    String dpMsg = deliveryPersonMessageService.getPaymentFailedMessage(paymentId,
-                                            orderId);
+                                    String dpMsg = deliveryPersonMessageService.getPaymentFailedMessage(paymentId, orderId);
                                     whatsAppService.sendSimpleText(order.getDeliveryPerson().getWaPhoneNumber(), dpMsg);
                                 }
                             } catch (Exception e) {
-                                log.error("Failed to send WhatsApp notifications after payment failure for order {}",
-                                        orderId, e);
+                                log.error("Failed to send WhatsApp notifications after payment failure for order {}", orderId, e);
                             }
                         }
-                    });
-        });
+                    }
+                );
+            });
     }
 }

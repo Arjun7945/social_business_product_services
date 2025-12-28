@@ -105,11 +105,11 @@ class CustomerOrderResourceIT {
      */
     public static CustomerOrder createEntity(EntityManager em) {
         CustomerOrder customerOrder = new CustomerOrder()
-                .orderTime(DEFAULT_ORDER_TIME)
-                .totalAmount(DEFAULT_TOTAL_AMOUNT)
-                .status(DEFAULT_STATUS)
-                .paymentMethod(DEFAULT_PAYMENT_METHOD)
-                .confirmedAt(DEFAULT_CONFIRMED_AT);
+            .orderTime(DEFAULT_ORDER_TIME)
+            .totalAmount(DEFAULT_TOTAL_AMOUNT)
+            .status(DEFAULT_STATUS)
+            .paymentMethod(DEFAULT_PAYMENT_METHOD)
+            .confirmedAt(DEFAULT_CONFIRMED_AT);
         // Add required entity
         Customer customer;
         if (TestUtil.findAll(em, Customer.class).isEmpty()) {
@@ -131,11 +131,11 @@ class CustomerOrderResourceIT {
      */
     public static CustomerOrder createUpdatedEntity(EntityManager em) {
         CustomerOrder updatedCustomerOrder = new CustomerOrder()
-                .orderTime(UPDATED_ORDER_TIME)
-                .totalAmount(UPDATED_TOTAL_AMOUNT)
-                .status(UPDATED_STATUS)
-                .paymentMethod(UPDATED_PAYMENT_METHOD)
-                .confirmedAt(UPDATED_CONFIRMED_AT);
+            .orderTime(UPDATED_ORDER_TIME)
+            .totalAmount(UPDATED_TOTAL_AMOUNT)
+            .status(UPDATED_STATUS)
+            .paymentMethod(UPDATED_PAYMENT_METHOD)
+            .confirmedAt(UPDATED_CONFIRMED_AT);
         // Add required entity
         Customer customer;
         if (TestUtil.findAll(em, Customer.class).isEmpty()) {
@@ -169,20 +169,19 @@ class CustomerOrderResourceIT {
         // Create the CustomerOrder
         CustomerOrderDTO customerOrderDTO = customerOrderMapper.toDto(customerOrder);
         var returnedCustomerOrderDTO = om.readValue(
-                restCustomerOrderMockMvc
-                        .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
-                                .content(om.writeValueAsBytes(customerOrderDTO)))
-                        .andExpect(status().isCreated())
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString(),
-                CustomerOrderDTO.class);
+            restCustomerOrderMockMvc
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(),
+            CustomerOrderDTO.class
+        );
 
         // Validate the CustomerOrder in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         var returnedCustomerOrder = customerOrderMapper.toEntity(returnedCustomerOrderDTO);
-        assertCustomerOrderUpdatableFieldsEquals(returnedCustomerOrder,
-                getPersistedCustomerOrder(returnedCustomerOrder));
+        assertCustomerOrderUpdatableFieldsEquals(returnedCustomerOrder, getPersistedCustomerOrder(returnedCustomerOrder));
 
         insertedCustomerOrder = returnedCustomerOrder;
     }
@@ -198,9 +197,8 @@ class CustomerOrderResourceIT {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restCustomerOrderMockMvc
-                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
-                        .content(om.writeValueAsBytes(customerOrderDTO)))
-                .andExpect(status().isBadRequest());
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
+            .andExpect(status().isBadRequest());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeCreate);
@@ -217,9 +215,8 @@ class CustomerOrderResourceIT {
         CustomerOrderDTO customerOrderDTO = customerOrderMapper.toDto(customerOrder);
 
         restCustomerOrderMockMvc
-                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
-                        .content(om.writeValueAsBytes(customerOrderDTO)))
-                .andExpect(status().isBadRequest());
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
+            .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
     }
@@ -235,9 +232,8 @@ class CustomerOrderResourceIT {
         CustomerOrderDTO customerOrderDTO = customerOrderMapper.toDto(customerOrder);
 
         restCustomerOrderMockMvc
-                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
-                        .content(om.writeValueAsBytes(customerOrderDTO)))
-                .andExpect(status().isBadRequest());
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
+            .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
     }
@@ -253,9 +249,8 @@ class CustomerOrderResourceIT {
         CustomerOrderDTO customerOrderDTO = customerOrderMapper.toDto(customerOrder);
 
         restCustomerOrderMockMvc
-                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
-                        .content(om.writeValueAsBytes(customerOrderDTO)))
-                .andExpect(status().isBadRequest());
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
+            .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
     }
@@ -271,9 +266,8 @@ class CustomerOrderResourceIT {
         CustomerOrderDTO customerOrderDTO = customerOrderMapper.toDto(customerOrder);
 
         restCustomerOrderMockMvc
-                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
-                        .content(om.writeValueAsBytes(customerOrderDTO)))
-                .andExpect(status().isBadRequest());
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
+            .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
     }
@@ -286,15 +280,15 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList
         restCustomerOrderMockMvc
-                .perform(get(ENTITY_API_URL + "?sort=id,desc"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(customerOrder.getId().intValue())))
-                .andExpect(jsonPath("$.[*].orderTime").value(hasItem(DEFAULT_ORDER_TIME.toString())))
-                .andExpect(jsonPath("$.[*].totalAmount").value(hasItem(sameNumber(DEFAULT_TOTAL_AMOUNT))))
-                .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
-                .andExpect(jsonPath("$.[*].paymentMethod").value(hasItem(DEFAULT_PAYMENT_METHOD)))
-                .andExpect(jsonPath("$.[*].confirmedAt").value(hasItem(DEFAULT_CONFIRMED_AT.toString())));
+            .perform(get(ENTITY_API_URL + "?sort=id,desc"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(customerOrder.getId().intValue())))
+            .andExpect(jsonPath("$.[*].orderTime").value(hasItem(DEFAULT_ORDER_TIME.toString())))
+            .andExpect(jsonPath("$.[*].totalAmount").value(hasItem(sameNumber(DEFAULT_TOTAL_AMOUNT))))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
+            .andExpect(jsonPath("$.[*].paymentMethod").value(hasItem(DEFAULT_PAYMENT_METHOD)))
+            .andExpect(jsonPath("$.[*].confirmedAt").value(hasItem(DEFAULT_CONFIRMED_AT.toString())));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -322,15 +316,15 @@ class CustomerOrderResourceIT {
 
         // Get the customerOrder
         restCustomerOrderMockMvc
-                .perform(get(ENTITY_API_URL_ID, customerOrder.getId()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.id").value(customerOrder.getId().intValue()))
-                .andExpect(jsonPath("$.orderTime").value(DEFAULT_ORDER_TIME.toString()))
-                .andExpect(jsonPath("$.totalAmount").value(sameNumber(DEFAULT_TOTAL_AMOUNT)))
-                .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
-                .andExpect(jsonPath("$.paymentMethod").value(DEFAULT_PAYMENT_METHOD))
-                .andExpect(jsonPath("$.confirmedAt").value(DEFAULT_CONFIRMED_AT.toString()));
+            .perform(get(ENTITY_API_URL_ID, customerOrder.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.id").value(customerOrder.getId().intValue()))
+            .andExpect(jsonPath("$.orderTime").value(DEFAULT_ORDER_TIME.toString()))
+            .andExpect(jsonPath("$.totalAmount").value(sameNumber(DEFAULT_TOTAL_AMOUNT)))
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
+            .andExpect(jsonPath("$.paymentMethod").value(DEFAULT_PAYMENT_METHOD))
+            .andExpect(jsonPath("$.confirmedAt").value(DEFAULT_CONFIRMED_AT.toString()));
     }
 
     @Test
@@ -355,8 +349,7 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where orderTime equals to
-        defaultCustomerOrderFiltering("orderTime.equals=" + DEFAULT_ORDER_TIME,
-                "orderTime.equals=" + UPDATED_ORDER_TIME);
+        defaultCustomerOrderFiltering("orderTime.equals=" + DEFAULT_ORDER_TIME, "orderTime.equals=" + UPDATED_ORDER_TIME);
     }
 
     @Test
@@ -367,8 +360,9 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where orderTime in
         defaultCustomerOrderFiltering(
-                "orderTime.in=" + DEFAULT_ORDER_TIME + "," + UPDATED_ORDER_TIME,
-                "orderTime.in=" + UPDATED_ORDER_TIME);
+            "orderTime.in=" + DEFAULT_ORDER_TIME + "," + UPDATED_ORDER_TIME,
+            "orderTime.in=" + UPDATED_ORDER_TIME
+        );
     }
 
     @Test
@@ -388,8 +382,7 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where totalAmount equals to
-        defaultCustomerOrderFiltering("totalAmount.equals=" + DEFAULT_TOTAL_AMOUNT,
-                "totalAmount.equals=" + UPDATED_TOTAL_AMOUNT);
+        defaultCustomerOrderFiltering("totalAmount.equals=" + DEFAULT_TOTAL_AMOUNT, "totalAmount.equals=" + UPDATED_TOTAL_AMOUNT);
     }
 
     @Test
@@ -400,8 +393,9 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where totalAmount in
         defaultCustomerOrderFiltering(
-                "totalAmount.in=" + DEFAULT_TOTAL_AMOUNT + "," + UPDATED_TOTAL_AMOUNT,
-                "totalAmount.in=" + UPDATED_TOTAL_AMOUNT);
+            "totalAmount.in=" + DEFAULT_TOTAL_AMOUNT + "," + UPDATED_TOTAL_AMOUNT,
+            "totalAmount.in=" + UPDATED_TOTAL_AMOUNT
+        );
     }
 
     @Test
@@ -422,8 +416,9 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where totalAmount is greater than or equal to
         defaultCustomerOrderFiltering(
-                "totalAmount.greaterThanOrEqual=" + DEFAULT_TOTAL_AMOUNT,
-                "totalAmount.greaterThanOrEqual=" + UPDATED_TOTAL_AMOUNT);
+            "totalAmount.greaterThanOrEqual=" + DEFAULT_TOTAL_AMOUNT,
+            "totalAmount.greaterThanOrEqual=" + UPDATED_TOTAL_AMOUNT
+        );
     }
 
     @Test
@@ -434,8 +429,9 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where totalAmount is less than or equal to
         defaultCustomerOrderFiltering(
-                "totalAmount.lessThanOrEqual=" + DEFAULT_TOTAL_AMOUNT,
-                "totalAmount.lessThanOrEqual=" + SMALLER_TOTAL_AMOUNT);
+            "totalAmount.lessThanOrEqual=" + DEFAULT_TOTAL_AMOUNT,
+            "totalAmount.lessThanOrEqual=" + SMALLER_TOTAL_AMOUNT
+        );
     }
 
     @Test
@@ -445,8 +441,7 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where totalAmount is less than
-        defaultCustomerOrderFiltering("totalAmount.lessThan=" + UPDATED_TOTAL_AMOUNT,
-                "totalAmount.lessThan=" + DEFAULT_TOTAL_AMOUNT);
+        defaultCustomerOrderFiltering("totalAmount.lessThan=" + UPDATED_TOTAL_AMOUNT, "totalAmount.lessThan=" + DEFAULT_TOTAL_AMOUNT);
     }
 
     @Test
@@ -456,8 +451,7 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where totalAmount is greater than
-        defaultCustomerOrderFiltering("totalAmount.greaterThan=" + SMALLER_TOTAL_AMOUNT,
-                "totalAmount.greaterThan=" + DEFAULT_TOTAL_AMOUNT);
+        defaultCustomerOrderFiltering("totalAmount.greaterThan=" + SMALLER_TOTAL_AMOUNT, "totalAmount.greaterThan=" + DEFAULT_TOTAL_AMOUNT);
     }
 
     @Test
@@ -477,8 +471,7 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where status in
-        defaultCustomerOrderFiltering("status.in=" + DEFAULT_STATUS + "," + UPDATED_STATUS,
-                "status.in=" + UPDATED_STATUS);
+        defaultCustomerOrderFiltering("status.in=" + DEFAULT_STATUS + "," + UPDATED_STATUS, "status.in=" + UPDATED_STATUS);
     }
 
     @Test
@@ -498,8 +491,7 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where paymentMethod equals to
-        defaultCustomerOrderFiltering("paymentMethod.equals=" + DEFAULT_PAYMENT_METHOD,
-                "paymentMethod.equals=" + UPDATED_PAYMENT_METHOD);
+        defaultCustomerOrderFiltering("paymentMethod.equals=" + DEFAULT_PAYMENT_METHOD, "paymentMethod.equals=" + UPDATED_PAYMENT_METHOD);
     }
 
     @Test
@@ -510,8 +502,9 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where paymentMethod in
         defaultCustomerOrderFiltering(
-                "paymentMethod.in=" + DEFAULT_PAYMENT_METHOD + "," + UPDATED_PAYMENT_METHOD,
-                "paymentMethod.in=" + UPDATED_PAYMENT_METHOD);
+            "paymentMethod.in=" + DEFAULT_PAYMENT_METHOD + "," + UPDATED_PAYMENT_METHOD,
+            "paymentMethod.in=" + UPDATED_PAYMENT_METHOD
+        );
     }
 
     @Test
@@ -532,8 +525,9 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where paymentMethod contains
         defaultCustomerOrderFiltering(
-                "paymentMethod.contains=" + DEFAULT_PAYMENT_METHOD,
-                "paymentMethod.contains=" + UPDATED_PAYMENT_METHOD);
+            "paymentMethod.contains=" + DEFAULT_PAYMENT_METHOD,
+            "paymentMethod.contains=" + UPDATED_PAYMENT_METHOD
+        );
     }
 
     @Test
@@ -544,8 +538,9 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where paymentMethod does not contain
         defaultCustomerOrderFiltering(
-                "paymentMethod.doesNotContain=" + UPDATED_PAYMENT_METHOD,
-                "paymentMethod.doesNotContain=" + DEFAULT_PAYMENT_METHOD);
+            "paymentMethod.doesNotContain=" + UPDATED_PAYMENT_METHOD,
+            "paymentMethod.doesNotContain=" + DEFAULT_PAYMENT_METHOD
+        );
     }
 
     @Test
@@ -555,8 +550,7 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where confirmedAt equals to
-        defaultCustomerOrderFiltering("confirmedAt.equals=" + DEFAULT_CONFIRMED_AT,
-                "confirmedAt.equals=" + UPDATED_CONFIRMED_AT);
+        defaultCustomerOrderFiltering("confirmedAt.equals=" + DEFAULT_CONFIRMED_AT, "confirmedAt.equals=" + UPDATED_CONFIRMED_AT);
     }
 
     @Test
@@ -567,8 +561,9 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where confirmedAt in
         defaultCustomerOrderFiltering(
-                "confirmedAt.in=" + DEFAULT_CONFIRMED_AT + "," + UPDATED_CONFIRMED_AT,
-                "confirmedAt.in=" + UPDATED_CONFIRMED_AT);
+            "confirmedAt.in=" + DEFAULT_CONFIRMED_AT + "," + UPDATED_CONFIRMED_AT,
+            "confirmedAt.in=" + UPDATED_CONFIRMED_AT
+        );
     }
 
     @Test
@@ -636,22 +631,22 @@ class CustomerOrderResourceIT {
      */
     private void defaultCustomerOrderShouldBeFound(String filter) throws Exception {
         restCustomerOrderMockMvc
-                .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(customerOrder.getId().intValue())))
-                .andExpect(jsonPath("$.[*].orderTime").value(hasItem(DEFAULT_ORDER_TIME.toString())))
-                .andExpect(jsonPath("$.[*].totalAmount").value(hasItem(sameNumber(DEFAULT_TOTAL_AMOUNT))))
-                .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
-                .andExpect(jsonPath("$.[*].paymentMethod").value(hasItem(DEFAULT_PAYMENT_METHOD)))
-                .andExpect(jsonPath("$.[*].confirmedAt").value(hasItem(DEFAULT_CONFIRMED_AT.toString())));
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(customerOrder.getId().intValue())))
+            .andExpect(jsonPath("$.[*].orderTime").value(hasItem(DEFAULT_ORDER_TIME.toString())))
+            .andExpect(jsonPath("$.[*].totalAmount").value(hasItem(sameNumber(DEFAULT_TOTAL_AMOUNT))))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
+            .andExpect(jsonPath("$.[*].paymentMethod").value(hasItem(DEFAULT_PAYMENT_METHOD)))
+            .andExpect(jsonPath("$.[*].confirmedAt").value(hasItem(DEFAULT_CONFIRMED_AT.toString())));
 
         // Check, that the count call also returns 1
         restCustomerOrderMockMvc
-                .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string("1"));
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("1"));
     }
 
     /**
@@ -659,18 +654,18 @@ class CustomerOrderResourceIT {
      */
     private void defaultCustomerOrderShouldNotBeFound(String filter) throws Exception {
         restCustomerOrderMockMvc
-                .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$").isEmpty());
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
 
         // Check, that the count call also returns 0
         restCustomerOrderMockMvc
-                .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string("0"));
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("0"));
     }
 
     @Test
@@ -694,19 +689,20 @@ class CustomerOrderResourceIT {
         // directly saved in db
         em.detach(updatedCustomerOrder);
         updatedCustomerOrder
-                .orderTime(UPDATED_ORDER_TIME)
-                .totalAmount(UPDATED_TOTAL_AMOUNT)
-                .status(UPDATED_STATUS)
-                .paymentMethod(UPDATED_PAYMENT_METHOD)
-                .confirmedAt(UPDATED_CONFIRMED_AT);
+            .orderTime(UPDATED_ORDER_TIME)
+            .totalAmount(UPDATED_TOTAL_AMOUNT)
+            .status(UPDATED_STATUS)
+            .paymentMethod(UPDATED_PAYMENT_METHOD)
+            .confirmedAt(UPDATED_CONFIRMED_AT);
         CustomerOrderDTO customerOrderDTO = customerOrderMapper.toDto(updatedCustomerOrder);
 
         restCustomerOrderMockMvc
-                .perform(
-                        put(ENTITY_API_URL_ID, customerOrderDTO.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(om.writeValueAsBytes(customerOrderDTO)))
-                .andExpect(status().isOk());
+            .perform(
+                put(ENTITY_API_URL_ID, customerOrderDTO.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsBytes(customerOrderDTO))
+            )
+            .andExpect(status().isOk());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -724,11 +720,12 @@ class CustomerOrderResourceIT {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCustomerOrderMockMvc
-                .perform(
-                        put(ENTITY_API_URL_ID, customerOrderDTO.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(om.writeValueAsBytes(customerOrderDTO)))
-                .andExpect(status().isBadRequest());
+            .perform(
+                put(ENTITY_API_URL_ID, customerOrderDTO.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsBytes(customerOrderDTO))
+            )
+            .andExpect(status().isBadRequest());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -745,11 +742,12 @@ class CustomerOrderResourceIT {
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCustomerOrderMockMvc
-                .perform(
-                        put(ENTITY_API_URL_ID, longCount.incrementAndGet())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(om.writeValueAsBytes(customerOrderDTO)))
-                .andExpect(status().isBadRequest());
+            .perform(
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsBytes(customerOrderDTO))
+            )
+            .andExpect(status().isBadRequest());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -766,9 +764,8 @@ class CustomerOrderResourceIT {
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCustomerOrderMockMvc
-                .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
-                        .content(om.writeValueAsBytes(customerOrderDTO)))
-                .andExpect(status().isMethodNotAllowed());
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
+            .andExpect(status().isMethodNotAllowed());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -789,18 +786,20 @@ class CustomerOrderResourceIT {
         partialUpdatedCustomerOrder.orderTime(UPDATED_ORDER_TIME).confirmedAt(UPDATED_CONFIRMED_AT);
 
         restCustomerOrderMockMvc
-                .perform(
-                        patch(ENTITY_API_URL_ID, partialUpdatedCustomerOrder.getId())
-                                .contentType("application/merge-patch+json")
-                                .content(om.writeValueAsBytes(partialUpdatedCustomerOrder)))
-                .andExpect(status().isOk());
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedCustomerOrder.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(om.writeValueAsBytes(partialUpdatedCustomerOrder))
+            )
+            .andExpect(status().isOk());
 
         // Validate the CustomerOrder in the database
 
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
         assertCustomerOrderUpdatableFieldsEquals(
-                createUpdateProxyForBean(partialUpdatedCustomerOrder, customerOrder),
-                getPersistedCustomerOrder(customerOrder));
+            createUpdateProxyForBean(partialUpdatedCustomerOrder, customerOrder),
+            getPersistedCustomerOrder(customerOrder)
+        );
     }
 
     @Test
@@ -816,24 +815,24 @@ class CustomerOrderResourceIT {
         partialUpdatedCustomerOrder.setId(customerOrder.getId());
 
         partialUpdatedCustomerOrder
-                .orderTime(UPDATED_ORDER_TIME)
-                .totalAmount(UPDATED_TOTAL_AMOUNT)
-                .status(UPDATED_STATUS)
-                .paymentMethod(UPDATED_PAYMENT_METHOD)
-                .confirmedAt(UPDATED_CONFIRMED_AT);
+            .orderTime(UPDATED_ORDER_TIME)
+            .totalAmount(UPDATED_TOTAL_AMOUNT)
+            .status(UPDATED_STATUS)
+            .paymentMethod(UPDATED_PAYMENT_METHOD)
+            .confirmedAt(UPDATED_CONFIRMED_AT);
 
         restCustomerOrderMockMvc
-                .perform(
-                        patch(ENTITY_API_URL_ID, partialUpdatedCustomerOrder.getId())
-                                .contentType("application/merge-patch+json")
-                                .content(om.writeValueAsBytes(partialUpdatedCustomerOrder)))
-                .andExpect(status().isOk());
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedCustomerOrder.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(om.writeValueAsBytes(partialUpdatedCustomerOrder))
+            )
+            .andExpect(status().isOk());
 
         // Validate the CustomerOrder in the database
 
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        assertCustomerOrderUpdatableFieldsEquals(partialUpdatedCustomerOrder,
-                getPersistedCustomerOrder(partialUpdatedCustomerOrder));
+        assertCustomerOrderUpdatableFieldsEquals(partialUpdatedCustomerOrder, getPersistedCustomerOrder(partialUpdatedCustomerOrder));
     }
 
     @Test
@@ -847,11 +846,12 @@ class CustomerOrderResourceIT {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCustomerOrderMockMvc
-                .perform(
-                        patch(ENTITY_API_URL_ID, customerOrderDTO.getId())
-                                .contentType("application/merge-patch+json")
-                                .content(om.writeValueAsBytes(customerOrderDTO)))
-                .andExpect(status().isBadRequest());
+            .perform(
+                patch(ENTITY_API_URL_ID, customerOrderDTO.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(om.writeValueAsBytes(customerOrderDTO))
+            )
+            .andExpect(status().isBadRequest());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -868,11 +868,12 @@ class CustomerOrderResourceIT {
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCustomerOrderMockMvc
-                .perform(
-                        patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
-                                .contentType("application/merge-patch+json")
-                                .content(om.writeValueAsBytes(customerOrderDTO)))
-                .andExpect(status().isBadRequest());
+            .perform(
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
+                    .contentType("application/merge-patch+json")
+                    .content(om.writeValueAsBytes(customerOrderDTO))
+            )
+            .andExpect(status().isBadRequest());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -889,9 +890,8 @@ class CustomerOrderResourceIT {
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCustomerOrderMockMvc
-                .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json")
-                        .content(om.writeValueAsBytes(customerOrderDTO)))
-                .andExpect(status().isMethodNotAllowed());
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(customerOrderDTO)))
+            .andExpect(status().isMethodNotAllowed());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -907,8 +907,8 @@ class CustomerOrderResourceIT {
 
         // Delete the customerOrder
         restCustomerOrderMockMvc
-                .perform(delete(ENTITY_API_URL_ID, customerOrder.getId()).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+            .perform(delete(ENTITY_API_URL_ID, customerOrder.getId()).accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
         assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
@@ -939,7 +939,6 @@ class CustomerOrderResourceIT {
     }
 
     protected void assertPersistedCustomerOrderToMatchUpdatableProperties(CustomerOrder expectedCustomerOrder) {
-        assertCustomerOrderAllUpdatablePropertiesEquals(expectedCustomerOrder,
-                getPersistedCustomerOrder(expectedCustomerOrder));
+        assertCustomerOrderAllUpdatablePropertiesEquals(expectedCustomerOrder, getPersistedCustomerOrder(expectedCustomerOrder));
     }
 }

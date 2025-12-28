@@ -2,6 +2,8 @@ package com.aps.web.rest;
 
 import com.aps.domain.RemovedOrderSummary;
 import com.aps.repository.RemovedOrderSummaryRepository;
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,9 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -43,11 +42,11 @@ public class RemovedOrderSummaryResource {
      */
     @GetMapping("/removed-order-summaries")
     public ResponseEntity<List<RemovedOrderSummary>> getAllRemovedOrderSummaries(
-            @org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
         log.debug("REST request to get a page of RemovedOrderSummaries");
         Page<RemovedOrderSummary> page = removedOrderSummaryRepository.findAll(pageable);
-        HttpHeaders headers = PaginationUtil
-                .generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 

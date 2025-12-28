@@ -20,9 +20,9 @@ public class RazorpayWebhookController {
 
     @PostMapping("/razorpay")
     public ResponseEntity<String> handleRazorpayWebhook(
-            @RequestBody String payload,
-            @RequestHeader("X-Razorpay-Signature") String signature) {
-
+        @RequestBody String payload,
+        @RequestHeader("X-Razorpay-Signature") String signature
+    ) {
         log.info("Received Razorpay Webhook");
 
         // 1. Verify Signature

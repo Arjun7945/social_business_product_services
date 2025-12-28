@@ -108,10 +108,6 @@ public class OrderStatusHistory implements Serializable {
 
     @Override
     public String toString() {
-        return "OrderStatusHistory{" +
-                "id=" + getId() +
-                ", status='" + getStatus() + "'" +
-                ", changeTime='" + getChangeTime() + "'" +
-                "}";
+        return "OrderStatusHistory{" + "id=" + getId() + ", status='" + getStatus() + "'" + ", changeTime='" + getChangeTime() + "'" + "}";
     }
 }

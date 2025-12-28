@@ -1,6 +1,8 @@
 package com.aps.service.payment;
 
 import com.aps.domain.Customer;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -11,9 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class RazorpayService {
@@ -33,15 +32,15 @@ public class RazorpayService {
 
     private static final String RAZORPAY_API_BASE = "https://api.razorpay.com/v1";
 
-    public RazorpayService(RestTemplateBuilder restTemplateBuilder,
-            @org.springframework.context.annotation.Lazy com.aps.service.OrderService orderService,
-            @org.springframework.beans.factory.annotation.Value("${razorpay.key-id}") String keyId,
-            @org.springframework.beans.factory.annotation.Value("${razorpay.key-secret}") String keySecret) {
+    public RazorpayService(
+        RestTemplateBuilder restTemplateBuilder,
+        @org.springframework.context.annotation.Lazy com.aps.service.OrderService orderService,
+        @org.springframework.beans.factory.annotation.Value("${razorpay.key-id}") String keyId,
+        @org.springframework.beans.factory.annotation.Value("${razorpay.key-secret}") String keySecret
+    ) {
         this.keyId = keyId;
         this.keySecret = keySecret;
-        this.restTemplate = restTemplateBuilder
-                .basicAuthentication(keyId, keySecret)
-                .build();
+        this.restTemplate = restTemplateBuilder.basicAuthentication(keyId, keySecret).build();
         this.orderService = orderService;
     }
 
@@ -155,12 +154,12 @@ public class RazorpayService {
             if (response.getBody() != null && response.getBody().containsKey("short_url")) {
                 return (String) response.getBody().get("short_url");
             }
-
         } catch (Exception e) {
             log.error("Error creating Razorpay Link", e);
         }
         return null; // Handle error appropriately
     }
+
     // ==========================================
     // WEBHOOK HANDLING (Using Manual HMAC)
     // ==========================================
@@ -168,9 +167,7 @@ public class RazorpayService {
     public boolean verifySignature(String payload, String signature) {
         try {
             javax.crypto.Mac sha256_HMAC = javax.crypto.Mac.getInstance("HmacSHA256");
-            javax.crypto.spec.SecretKeySpec secret_key = new javax.crypto.spec.SecretKeySpec(
-                    webhookSecret.getBytes("UTF-8"),
-                    "HmacSHA256");
+            javax.crypto.spec.SecretKeySpec secret_key = new javax.crypto.spec.SecretKeySpec(webhookSecret.getBytes("UTF-8"), "HmacSHA256");
             sha256_HMAC.init(secret_key);
 
             byte[] hash = sha256_HMAC.doFinal(payload.getBytes("UTF-8"));
@@ -206,7 +203,6 @@ public class RazorpayService {
             } else if ("payment.failed".equals(event)) {
                 handlePaymentFailed(payload);
             }
-
         } catch (Exception e) {
             log.error("Error processing webhook payload", e);
         }
@@ -215,8 +211,7 @@ public class RazorpayService {
     private void handlePaymentCaptured(Map<String, Object> payload) {
         try {
             Map<String, Object> paymentEntity = getPaymentEntity(payload);
-            if (paymentEntity == null)
-                return;
+            if (paymentEntity == null) return;
 
             String paymentId = (String) paymentEntity.get("id");
             Double amount = ((Number) paymentEntity.get("amount")).doubleValue() / 100.0;
@@ -236,8 +231,7 @@ public class RazorpayService {
     private void handlePaymentFailed(Map<String, Object> payload) {
         try {
             Map<String, Object> paymentEntity = getPaymentEntity(payload);
-            if (paymentEntity == null)
-                return;
+            if (paymentEntity == null) return;
 
             String paymentId = (String) paymentEntity.get("id");
             Long orderId = extractOrderId(paymentEntity);

@@ -1,13 +1,13 @@
 package com.aps.config;
 
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 
 @Configuration
 @ConfigurationProperties(prefix = "whatsapp")
@@ -24,18 +24,16 @@ public class WhatsAppConfig {
         connectionManager.setMaxTotal(200);
         connectionManager.setDefaultMaxPerRoute(20);
 
-        CloseableHttpClient httpClient = HttpClients.custom()
-                .setConnectionManager(connectionManager)
-                .build();
+        CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connectionManager).build();
 
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
 
         return builder
-                .requestFactory(factory)
-                .baseUrl(getApiBaseUrl())
-                .defaultHeader("Authorization", "Bearer " + getApiToken())
-                .defaultHeader("Content-Type", "application/json")
-                .build();
+            .requestFactory(factory)
+            .baseUrl(getApiBaseUrl())
+            .defaultHeader("Authorization", "Bearer " + getApiToken())
+            .defaultHeader("Content-Type", "application/json")
+            .build();
     }
 
     public String getWebhookVerifyToken() {
@@ -83,6 +81,7 @@ public class WhatsAppConfig {
     }
 
     public static class Api {
+
         private String token;
         private String baseUrl;
 
@@ -104,6 +103,7 @@ public class WhatsAppConfig {
     }
 
     public static class Webhook {
+
         private String verifyToken;
 
         public String getVerifyToken() {

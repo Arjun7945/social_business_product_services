@@ -49,10 +49,11 @@ public class CustomerResource {
     private final com.aps.service.UserRemovalService userRemovalService;
 
     public CustomerResource(
-            CustomerService customerService,
-            CustomerRepository customerRepository,
-            CustomerQueryService customerQueryService,
-            com.aps.service.UserRemovalService userRemovalService) {
+        CustomerService customerService,
+        CustomerRepository customerRepository,
+        CustomerQueryService customerQueryService,
+        com.aps.service.UserRemovalService userRemovalService
+    ) {
         this.customerService = customerService;
         this.customerRepository = customerRepository;
         this.customerQueryService = customerQueryService;
@@ -69,17 +70,15 @@ public class CustomerResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerDTO customerDTO)
-            throws URISyntaxException {
+    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerDTO customerDTO) throws URISyntaxException {
         LOG.debug("REST request to save Customer : {}", customerDTO);
         if (customerDTO.getId() != null) {
             throw new BadRequestAlertException("A new customer cannot already have an ID", ENTITY_NAME, "idexists");
         }
         customerDTO = customerService.save(customerDTO);
         return ResponseEntity.created(new URI("/api/customers/" + customerDTO.getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME,
-                        customerDTO.getId().toString()))
-                .body(customerDTO);
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, customerDTO.getId().toString()))
+            .body(customerDTO);
     }
 
     /**
@@ -97,8 +96,9 @@ public class CustomerResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<CustomerDTO> updateCustomer(
-            @PathVariable(value = "id", required = false) final Long id,
-            @Valid @RequestBody CustomerDTO customerDTO) throws URISyntaxException {
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody CustomerDTO customerDTO
+    ) throws URISyntaxException {
         LOG.debug("REST request to update Customer : {}, {}", id, customerDTO);
         if (customerDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -113,9 +113,8 @@ public class CustomerResource {
 
         customerDTO = customerService.update(customerDTO);
         return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME,
-                        customerDTO.getId().toString()))
-                .body(customerDTO);
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, customerDTO.getId().toString()))
+            .body(customerDTO);
     }
 
     /**
@@ -136,8 +135,9 @@ public class CustomerResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<CustomerDTO> partialUpdateCustomer(
-            @PathVariable(value = "id", required = false) final Long id,
-            @NotNull @RequestBody CustomerDTO customerDTO) throws URISyntaxException {
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody CustomerDTO customerDTO
+    ) throws URISyntaxException {
         LOG.debug("REST request to partial update Customer partially : {}, {}", id, customerDTO);
         if (customerDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -153,8 +153,9 @@ public class CustomerResource {
         Optional<CustomerDTO> result = customerService.partialUpdate(customerDTO);
 
         return ResponseUtil.wrapOrNotFound(
-                result,
-                HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, customerDTO.getId().toString()));
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, customerDTO.getId().toString())
+        );
     }
 
     /**
@@ -167,13 +168,13 @@ public class CustomerResource {
      */
     @GetMapping("")
     public ResponseEntity<List<CustomerDTO>> getAllCustomers(
-            CustomerCriteria criteria,
-            @org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+        CustomerCriteria criteria,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
         LOG.debug("REST request to get Customers by criteria: {}", criteria);
 
         Page<CustomerDTO> page = customerQueryService.findByCriteria(criteria, pageable);
-        HttpHeaders headers = PaginationUtil
-                .generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
@@ -215,7 +216,7 @@ public class CustomerResource {
         LOG.debug("REST request to delete Customer : {}", id);
         userRemovalService.removeCustomer(id, "Removed by Admin");
         return ResponseEntity.noContent()
-                .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-                .build();
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

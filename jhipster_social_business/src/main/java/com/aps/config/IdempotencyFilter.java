@@ -26,13 +26,11 @@ public class IdempotencyFilter implements Filter {
     private final Map<String, Boolean> processedKeys = Collections.synchronizedMap(new ConcurrentHashMap<>());
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        if ("POST".equalsIgnoreCase(httpRequest.getMethod())
-                && httpRequest.getRequestURI().contains("/api/customer-orders")) {
+        if ("POST".equalsIgnoreCase(httpRequest.getMethod()) && httpRequest.getRequestURI().contains("/api/customer-orders")) {
             String idempotencyKey = httpRequest.getHeader("Idempotency-Key");
 
             if (idempotencyKey != null && !idempotencyKey.isBlank()) {

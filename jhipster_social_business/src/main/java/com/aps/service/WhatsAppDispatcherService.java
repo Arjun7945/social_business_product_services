@@ -1,19 +1,18 @@
 package com.aps.service;
 
+import com.aps.domain.BotSession;
 import com.aps.domain.Customer;
 import com.aps.domain.TeamMember;
 import com.aps.domain.enumeration.UserRole;
 import com.aps.repository.CustomerRepository;
 import com.aps.repository.TeamMemberRepository;
 import com.aps.service.dto.WhatsAppWebhookDto;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.springframework.scheduling.annotation.Async;
-import java.util.Optional;
-import com.aps.domain.BotSession;
 
 @Service
 @Transactional
@@ -34,17 +33,19 @@ public class WhatsAppDispatcherService {
     private final ButtonActionService buttonActionService;
     private final WhatsAppService whatsAppService;
 
-    public WhatsAppDispatcherService(TeamMemberRepository teamMemberRepository,
-            CustomerRepository customerRepository,
-            AdminFlowService adminFlowService,
-            ExecutiveFlowService executiveFlowService,
-            DeliveryFlowService deliveryFlowService,
-            AccountsFlowService accountsFlowService,
-            CustomerFlowService customerFlowService,
-            UnknownCustomerFlowService unknownCustomerFlowService,
-            BotSessionManager sessionManager,
-            ButtonActionService buttonActionService,
-            WhatsAppService whatsAppService) {
+    public WhatsAppDispatcherService(
+        TeamMemberRepository teamMemberRepository,
+        CustomerRepository customerRepository,
+        AdminFlowService adminFlowService,
+        ExecutiveFlowService executiveFlowService,
+        DeliveryFlowService deliveryFlowService,
+        AccountsFlowService accountsFlowService,
+        CustomerFlowService customerFlowService,
+        UnknownCustomerFlowService unknownCustomerFlowService,
+        BotSessionManager sessionManager,
+        ButtonActionService buttonActionService,
+        WhatsAppService whatsAppService
+    ) {
         this.teamMemberRepository = teamMemberRepository;
         this.customerRepository = customerRepository;
         this.adminFlowService = adminFlowService;
@@ -104,9 +105,11 @@ public class WhatsAppDispatcherService {
                 log.info("New unknown customer detected: {}", from);
                 String profileName = "Guest";
                 if (payloadValue != null && payloadValue.getContacts() != null) {
-                    Optional<WhatsAppWebhookDto.Contact> contactOpt = payloadValue.getContacts().stream()
-                            .filter(c -> c.getWaId().equals(from))
-                            .findFirst();
+                    Optional<WhatsAppWebhookDto.Contact> contactOpt = payloadValue
+                        .getContacts()
+                        .stream()
+                        .filter(c -> c.getWaId().equals(from))
+                        .findFirst();
                     if (contactOpt.isPresent() && contactOpt.get().getProfile() != null) {
                         profileName = contactOpt.get().getProfile().getName();
                     }
@@ -140,8 +143,7 @@ public class WhatsAppDispatcherService {
                 accountsFlowService.handleAccountsMessage(teamMember, message);
                 break;
             default:
-                log.warn("Unknown role {} for team member {}. Treating as Customer.", role,
-                        teamMember.getWaPhoneNumber());
+                log.warn("Unknown role {} for team member {}. Treating as Customer.", role, teamMember.getWaPhoneNumber());
                 // Fallback to customer flow? Or Error?
                 // For safety, maybe just ignore or send "Access Denied"
                 break;

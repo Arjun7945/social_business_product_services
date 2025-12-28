@@ -180,7 +180,6 @@ server:
       cookie:
         http-only: true
 
-
 springdoc:
   show-actuator: true
 

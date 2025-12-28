@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public class WhatsAppWebhookDto {
+
     private String object;
     private List<Entry> entry;
 
@@ -24,6 +25,7 @@ public class WhatsAppWebhookDto {
     }
 
     public static class Entry {
+
         private String id;
         private List<Change> changes;
 
@@ -45,6 +47,7 @@ public class WhatsAppWebhookDto {
     }
 
     public static class Change {
+
         private Value value;
         private String field;
 
@@ -66,8 +69,10 @@ public class WhatsAppWebhookDto {
     }
 
     public static class Value {
+
         @JsonProperty("messaging_product")
         private String messagingProduct;
+
         private Metadata metadata;
         private List<Contact> contacts;
         private List<Message> messages;
@@ -106,8 +111,10 @@ public class WhatsAppWebhookDto {
     }
 
     public static class Metadata {
+
         @JsonProperty("display_phone_number")
         private String displayPhoneNumber;
+
         @JsonProperty("phone_number_id")
         private String phoneNumberId;
 
@@ -129,7 +136,9 @@ public class WhatsAppWebhookDto {
     }
 
     public static class Contact {
+
         private Profile profile;
+
         @JsonProperty("wa_id")
         private String waId;
 
@@ -151,6 +160,7 @@ public class WhatsAppWebhookDto {
     }
 
     public static class Profile {
+
         private String name;
 
         public String getName() {
@@ -163,6 +173,7 @@ public class WhatsAppWebhookDto {
     }
 
     public static class Message {
+
         private String from;
         private String id;
         private String timestamp;
@@ -256,6 +267,7 @@ public class WhatsAppWebhookDto {
     }
 
     public static class Text {
+
         private String body;
 
         public String getBody() {
@@ -268,9 +280,12 @@ public class WhatsAppWebhookDto {
     }
 
     public static class Interactive {
+
         private String type;
+
         @JsonProperty("list_reply")
         private ListReply listReply;
+
         @JsonProperty("button_reply")
         private ButtonReply buttonReply;
 
@@ -300,6 +315,7 @@ public class WhatsAppWebhookDto {
     }
 
     public static class ListReply {
+
         private String id;
         private String title;
         private String description;
@@ -330,6 +346,7 @@ public class WhatsAppWebhookDto {
     }
 
     public static class ButtonReply {
+
         private String id;
         private String title;
 
@@ -351,6 +368,7 @@ public class WhatsAppWebhookDto {
     }
 
     public static class Button {
+
         private String payload;
         private String text;
 
@@ -372,6 +390,7 @@ public class WhatsAppWebhookDto {
     }
 
     public static class Location {
+
         private Double latitude;
         private Double longitude;
         private String name;
@@ -411,9 +430,12 @@ public class WhatsAppWebhookDto {
     }
 
     public static class Image {
+
         private String id;
+
         @JsonProperty("mime_type")
         private String mimeType;
+
         private String sha256;
 
         public String getId() {
@@ -442,6 +464,7 @@ public class WhatsAppWebhookDto {
     }
 
     public static class Context {
+
         private String from;
         private String id;
 

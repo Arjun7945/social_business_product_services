@@ -2,10 +2,9 @@ package com.aps.service;
 
 import com.aps.domain.BotSession;
 import com.aps.repository.BotSessionRepository;
+import java.time.Instant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
 
 /**
  * Helper service to manage BotSession (state) for users.
@@ -24,14 +23,15 @@ public class BotSessionManager {
      * Get existing session or create a new one.
      */
     public BotSession getSession(String waPhoneNumber) {
-        return botSessionRepository.findOne((root, query, cb) -> cb.equal(root.get("waPhoneNumber"), waPhoneNumber))
-                .orElseGet(() -> {
-                    BotSession newSession = new BotSession();
-                    newSession.setWaPhoneNumber(waPhoneNumber);
-                    newSession.setCurrentState("NEW");
-                    newSession.setLastActiveAt(Instant.now());
-                    return botSessionRepository.save(newSession);
-                });
+        return botSessionRepository
+            .findOne((root, query, cb) -> cb.equal(root.get("waPhoneNumber"), waPhoneNumber))
+            .orElseGet(() -> {
+                BotSession newSession = new BotSession();
+                newSession.setWaPhoneNumber(waPhoneNumber);
+                newSession.setCurrentState("NEW");
+                newSession.setLastActiveAt(Instant.now());
+                return botSessionRepository.save(newSession);
+            });
     }
 
     public void updateState(BotSession session, String newState) {

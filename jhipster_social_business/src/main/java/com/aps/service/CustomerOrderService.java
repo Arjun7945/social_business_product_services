@@ -31,9 +31,10 @@ public class CustomerOrderService {
     private final OrderStatusHistoryRepository orderStatusHistoryRepository;
 
     public CustomerOrderService(
-            CustomerOrderRepository customerOrderRepository,
-            CustomerOrderMapper customerOrderMapper,
-            OrderStatusHistoryRepository orderStatusHistoryRepository) {
+        CustomerOrderRepository customerOrderRepository,
+        CustomerOrderMapper customerOrderMapper,
+        OrderStatusHistoryRepository orderStatusHistoryRepository
+    ) {
         this.customerOrderRepository = customerOrderRepository;
         this.customerOrderMapper = customerOrderMapper;
         this.orderStatusHistoryRepository = orderStatusHistoryRepository;
@@ -72,9 +73,10 @@ public class CustomerOrderService {
         // However, to keep it simple and correct, let's fetch the ID.
         boolean statusChanged = false;
         if (customerOrderDTO.getId() != null) {
-            statusChanged = customerOrderRepository.findById(customerOrderDTO.getId())
-                    .map(existing -> !existing.getStatus().equals(customerOrderDTO.getStatus()))
-                    .orElse(true); // If not found (shouldn't happen in update), assume changed? Or let it proceed.
+            statusChanged = customerOrderRepository
+                .findById(customerOrderDTO.getId())
+                .map(existing -> !existing.getStatus().equals(customerOrderDTO.getStatus()))
+                .orElse(true); // If not found (shouldn't happen in update), assume changed? Or let it proceed.
         }
 
         CustomerOrder customerOrder = customerOrderMapper.toEntity(customerOrderDTO);
@@ -97,19 +99,19 @@ public class CustomerOrderService {
         LOG.debug("Request to partially update CustomerOrder : {}", customerOrderDTO);
 
         return customerOrderRepository
-                .findById(customerOrderDTO.getId())
-                .map(existingCustomerOrder -> {
-                    var oldStatus = existingCustomerOrder.getStatus();
-                    customerOrderMapper.partialUpdate(existingCustomerOrder, customerOrderDTO);
+            .findById(customerOrderDTO.getId())
+            .map(existingCustomerOrder -> {
+                var oldStatus = existingCustomerOrder.getStatus();
+                customerOrderMapper.partialUpdate(existingCustomerOrder, customerOrderDTO);
 
-                    if (!existingCustomerOrder.getStatus().equals(oldStatus)) {
-                        createStatusHistory(existingCustomerOrder);
-                    }
+                if (!existingCustomerOrder.getStatus().equals(oldStatus)) {
+                    createStatusHistory(existingCustomerOrder);
+                }
 
-                    return existingCustomerOrder;
-                })
-                .map(customerOrderRepository::save)
-                .map(customerOrderMapper::toDto);
+                return existingCustomerOrder;
+            })
+            .map(customerOrderRepository::save)
+            .map(customerOrderMapper::toDto);
     }
 
     private void createStatusHistory(CustomerOrder customerOrder) {

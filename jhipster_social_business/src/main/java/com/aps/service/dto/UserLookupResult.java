@@ -13,8 +13,7 @@ public class UserLookupResult {
     private UserRole role;
     private Object userEntity; // Can be TeamMember or Customer
 
-    public UserLookupResult() {
-    }
+    public UserLookupResult() {}
 
     public UserLookupResult(UserRole role, Object userEntity) {
         this.role = role;
@@ -71,7 +70,7 @@ public class UserLookupResult {
 
     /**
      * Get the entity as TeamMember
-     * 
+     *
      * @throws ClassCastException if entity is not a TeamMember
      */
     public TeamMember asTeamMember() {
@@ -80,7 +79,7 @@ public class UserLookupResult {
 
     /**
      * Get the entity as Customer
-     * 
+     *
      * @throws ClassCastException if entity is not a Customer
      */
     public Customer asCustomer() {

@@ -6,6 +6,7 @@ import com.aps.service.dto.ProductImageDTO;
 import com.aps.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -20,7 +21,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -44,8 +44,7 @@ public class ProductImageResource {
 
     private final ProductImageRepository productImageRepository;
 
-    public ProductImageResource(ProductImageService productImageService,
-            ProductImageRepository productImageRepository) {
+    public ProductImageResource(ProductImageService productImageService, ProductImageRepository productImageRepository) {
         this.productImageService = productImageService;
         this.productImageRepository = productImageRepository;
     }
@@ -61,8 +60,9 @@ public class ProductImageResource {
      */
     @PostMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<ProductImageDTO> createProductImage(
-            @RequestParam(value = "productId", required = false) Long productId,
-            @RequestParam("file") MultipartFile file) throws URISyntaxException, IOException {
+        @RequestParam(value = "productId", required = false) Long productId,
+        @RequestParam("file") MultipartFile file
+    ) throws URISyntaxException, IOException {
         LOG.debug("REST request to save ProductImage : {}", file.getOriginalFilename());
 
         ProductImageDTO productImageDTO = new ProductImageDTO();
@@ -76,9 +76,8 @@ public class ProductImageResource {
 
         ProductImageDTO result = productImageService.save(productImageDTO);
         return ResponseEntity.created(new URI("/api/product-images/" + result.getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME,
-                        result.getId().toString()))
-                .body(result);
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
     }
 
     /**
@@ -96,8 +95,9 @@ public class ProductImageResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<ProductImageDTO> updateProductImage(
-            @PathVariable(value = "id", required = false) final Long id,
-            @Valid @RequestBody ProductImageDTO productImageDTO) throws URISyntaxException {
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody ProductImageDTO productImageDTO
+    ) throws URISyntaxException {
         LOG.debug("REST request to update ProductImage : {}, {}", id, productImageDTO);
         if (productImageDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -112,9 +112,8 @@ public class ProductImageResource {
 
         productImageDTO = productImageService.update(productImageDTO);
         return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME,
-                        productImageDTO.getId().toString()))
-                .body(productImageDTO);
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, productImageDTO.getId().toString()))
+            .body(productImageDTO);
     }
 
     /**
@@ -135,8 +134,9 @@ public class ProductImageResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<ProductImageDTO> partialUpdateProductImage(
-            @PathVariable(value = "id", required = false) final Long id,
-            @NotNull @RequestBody ProductImageDTO productImageDTO) throws URISyntaxException {
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody ProductImageDTO productImageDTO
+    ) throws URISyntaxException {
         LOG.debug("REST request to partial update ProductImage partially : {}, {}", id, productImageDTO);
         if (productImageDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -152,9 +152,9 @@ public class ProductImageResource {
         Optional<ProductImageDTO> result = productImageService.partialUpdate(productImageDTO);
 
         return ResponseUtil.wrapOrNotFound(
-                result,
-                HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME,
-                        productImageDTO.getId().toString()));
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, productImageDTO.getId().toString())
+        );
     }
 
     /**
@@ -168,8 +168,9 @@ public class ProductImageResource {
      */
     @GetMapping("")
     public ResponseEntity<List<ProductImageDTO>> getAllProductImages(
-            @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-            @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+    ) {
         LOG.debug("REST request to get a page of ProductImages");
         Page<ProductImageDTO> page;
         if (eagerload) {
@@ -177,8 +178,7 @@ public class ProductImageResource {
         } else {
             page = productImageService.findAll(pageable);
         }
-        HttpHeaders headers = PaginationUtil
-                .generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
@@ -207,8 +207,8 @@ public class ProductImageResource {
         LOG.debug("REST request to delete ProductImage : {}", id);
         productImageService.delete(id);
         return ResponseEntity.noContent()
-                .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-                .build();
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 
     /**
@@ -236,9 +236,7 @@ public class ProductImageResource {
             mimeType = "image/jpeg";
         }
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, mimeType)
-                .body(imageData);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, mimeType).body(imageData);
     }
 
     /**
@@ -273,8 +271,6 @@ public class ProductImageResource {
             mimeType = "image/jpeg";
         }
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, mimeType)
-                .body(imageData);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, mimeType).body(imageData);
     }
 }

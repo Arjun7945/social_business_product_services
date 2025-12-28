@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem, Long>, JpaSpecificationExecutor<CartItem> {
-
     java.util.Optional<CartItem> findByCartIdAndProductId(Long cartId, Long productId);
 
     default Optional<CartItem> findOneWithEagerRelationships(Long id) {
@@ -29,7 +28,10 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long>, JpaSp
         return this.findAllWithToOneRelationships(pageable);
     }
 
-    @Query(value = "select cartItem from CartItem cartItem left join fetch cartItem.product", countQuery = "select count(cartItem) from CartItem cartItem")
+    @Query(
+        value = "select cartItem from CartItem cartItem left join fetch cartItem.product",
+        countQuery = "select count(cartItem) from CartItem cartItem"
+    )
     Page<CartItem> findAllWithToOneRelationships(Pageable pageable);
 
     @Query("select cartItem from CartItem cartItem left join fetch cartItem.product")

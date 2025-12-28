@@ -5,8 +5,7 @@ package com.aps.config;
  */
 public final class FlowConstants {
 
-    private FlowConstants() {
-    }
+    private FlowConstants() {}
 
     // Button IDs
     public static final String BTN_CONTINUE_SHOPPING = "CONTINUE_SHOPPING";
@@ -44,7 +43,8 @@ public final class FlowConstants {
     public static final String PREFIX_PAY_LINK = "PAY_LINK_";
 
     // Fallback Images
-    public static final String WHATSAPP_LOGO_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/1200px-WhatsApp.svg.png";
+    public static final String WHATSAPP_LOGO_URL =
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/1200px-WhatsApp.svg.png";
 
     // Commands
     public static final String CMD_DONE = "DONE";

@@ -21,5 +21,4 @@ public interface CustomerOrderMapper extends EntityMapper<CustomerOrderDTO, Cust
     @Mapping(target = "items", ignore = true)
     @Mapping(target = "removeItems", ignore = true)
     void partialUpdate(@MappingTarget CustomerOrder entity, CustomerOrderDTO dto);
-
 }

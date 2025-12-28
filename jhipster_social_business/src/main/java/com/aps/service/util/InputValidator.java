@@ -1,13 +1,12 @@
 package com.aps.service.util;
 
-import org.springframework.stereotype.Component;
 import java.util.Set;
+import org.springframework.stereotype.Component;
 
 @Component
 public class InputValidator {
 
-    private static final Set<String> INVALID_NAMES = Set.of(
-            "Hi", "Hello", "Start", "Test", "Guest");
+    private static final Set<String> INVALID_NAMES = Set.of("Hi", "Hello", "Start", "Test", "Guest");
 
     public boolean isValidName(String name) {
         if (name == null || name.trim().length() < 2) {
@@ -44,12 +43,7 @@ public class InputValidator {
         // Remove "kg", "grams", spaces, etc.
         // Replace comma with dot for international formats if needed (keeping simple
         // for now)
-        String cleaned = input.toLowerCase()
-                .replace("kg", "")
-                .replace("kgs", "")
-                .replace("kilograms", "")
-                .replace("kilo", "")
-                .trim();
+        String cleaned = input.toLowerCase().replace("kg", "").replace("kgs", "").replace("kilograms", "").replace("kilo", "").trim();
         try {
             return Double.parseDouble(cleaned);
         } catch (NumberFormatException e) {

@@ -1,9 +1,9 @@
 package com.aps.repository;
 
 import com.aps.domain.OrderStatusHistory;
+import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
-import java.util.List;
 
 /**
  * Spring Data JPA repository for the OrderStatusHistory entity.

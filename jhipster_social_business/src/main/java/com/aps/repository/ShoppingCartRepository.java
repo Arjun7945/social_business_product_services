@@ -13,9 +13,7 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository for the ShoppingCart entity.
  */
 @Repository
-public interface ShoppingCartRepository
-        extends JpaRepository<ShoppingCart, Long>, JpaSpecificationExecutor<ShoppingCart> {
-
+public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long>, JpaSpecificationExecutor<ShoppingCart> {
     java.util.Optional<ShoppingCart> findByCustomerId(Long customerId);
 
     default Optional<ShoppingCart> findOneWithEagerRelationships(Long id) {
@@ -30,7 +28,10 @@ public interface ShoppingCartRepository
         return this.findAllWithToOneRelationships(pageable);
     }
 
-    @Query(value = "select shoppingCart from ShoppingCart shoppingCart left join fetch shoppingCart.customer", countQuery = "select count(shoppingCart) from ShoppingCart shoppingCart")
+    @Query(
+        value = "select shoppingCart from ShoppingCart shoppingCart left join fetch shoppingCart.customer",
+        countQuery = "select count(shoppingCart) from ShoppingCart shoppingCart"
+    )
     Page<ShoppingCart> findAllWithToOneRelationships(Pageable pageable);
 
     @Query("select shoppingCart from ShoppingCart shoppingCart left join fetch shoppingCart.customer")

@@ -2,6 +2,7 @@ package com.aps.web.rest;
 
 import com.aps.domain.ProductImage;
 import com.aps.repository.ProductImageRepository;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -11,8 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 /**
  * Controller to serve product images stored in the database.
@@ -54,9 +53,7 @@ public class ProductImageController {
                     }
                 }
 
-                return ResponseEntity.ok()
-                        .contentType(mediaType)
-                        .body(imageData);
+                return ResponseEntity.ok().contentType(mediaType).body(imageData);
             }
         }
 

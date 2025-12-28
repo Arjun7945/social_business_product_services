@@ -26,8 +26,9 @@ public class OrderStatusHistoryService {
     private final OrderStatusHistoryMapper orderStatusHistoryMapper;
 
     public OrderStatusHistoryService(
-            OrderStatusHistoryRepository orderStatusHistoryRepository,
-            OrderStatusHistoryMapper orderStatusHistoryMapper) {
+        OrderStatusHistoryRepository orderStatusHistoryRepository,
+        OrderStatusHistoryMapper orderStatusHistoryMapper
+    ) {
         this.orderStatusHistoryRepository = orderStatusHistoryRepository;
         this.orderStatusHistoryMapper = orderStatusHistoryMapper;
     }
@@ -41,10 +42,11 @@ public class OrderStatusHistoryService {
     @Transactional(readOnly = true)
     public List<OrderStatusHistoryDTO> findAllByOrderId(Long orderId) {
         log.debug("Request to get OrderStatusHistory by orderId : {}", orderId);
-        return orderStatusHistoryRepository.findAllByCustomerOrderId(orderId)
-                .stream()
-                .map(orderStatusHistoryMapper::toDto)
-                .collect(Collectors.toCollection(LinkedList::new));
+        return orderStatusHistoryRepository
+            .findAllByCustomerOrderId(orderId)
+            .stream()
+            .map(orderStatusHistoryMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**

@@ -1,27 +1,24 @@
 package com.aps.service;
 
+import com.aps.config.FlowConstants;
 import com.aps.domain.BotSession;
 import com.aps.domain.TeamMember;
-import com.aps.config.FlowConstants;
 import com.aps.domain.enumeration.AdminFlowStage;
-
-import com.aps.service.admin.CustomerManagementService;
-import com.aps.service.admin.ProductManagementService;
-import com.aps.service.admin.DeliveryPersonManagementService;
-import com.aps.service.admin.ExecutiveManagementService;
 import com.aps.service.admin.AccountsManagementService;
 import com.aps.service.admin.AssistantAdminManagementService;
-
+import com.aps.service.admin.CustomerManagementService;
+import com.aps.service.admin.DeliveryPersonManagementService;
+import com.aps.service.admin.ExecutiveManagementService;
+import com.aps.service.admin.ProductManagementService;
 import com.aps.service.dto.WhatsAppMessageDto;
 import com.aps.service.dto.WhatsAppWebhookDto;
+import java.time.Instant;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
-import java.util.List;
 
 @Service
 @Transactional
@@ -38,14 +35,16 @@ public class AdminFlowService {
     private final AssistantAdminManagementService assistantAdminManagementService;
     private final AccountsManagementService accountsManagementService;
 
-    public AdminFlowService(@Lazy WhatsAppService whatsAppService,
-            BotSessionManager sessionManager,
-            CustomerManagementService customerManagementService,
-            ProductManagementService productManagementService,
-            DeliveryPersonManagementService deliveryPersonManagementService,
-            ExecutiveManagementService executiveManagementService,
-            AssistantAdminManagementService assistantAdminManagementService,
-            AccountsManagementService accountsManagementService) {
+    public AdminFlowService(
+        @Lazy WhatsAppService whatsAppService,
+        BotSessionManager sessionManager,
+        CustomerManagementService customerManagementService,
+        ProductManagementService productManagementService,
+        DeliveryPersonManagementService deliveryPersonManagementService,
+        ExecutiveManagementService executiveManagementService,
+        AssistantAdminManagementService assistantAdminManagementService,
+        AccountsManagementService accountsManagementService
+    ) {
         this.whatsAppService = whatsAppService;
         this.sessionManager = sessionManager;
         this.customerManagementService = customerManagementService;
@@ -110,7 +109,6 @@ public class AdminFlowService {
             case IDLE:
                 handleIdleState(admin, session, text);
                 break;
-
             // Customer Management
             case AWAITING_CUST_NAME:
                 customerManagementService.handleCustomerNameInput(admin, session, text);
@@ -124,7 +122,6 @@ public class AdminFlowService {
             case AWAITING_DELETE_CUST_ID:
                 customerManagementService.handleDeleteCustomerInput(admin, session, text);
                 break;
-
             // Product Management
             case AWAITING_PRODUCT_NAME:
                 productManagementService.handleProductNameInput(admin, session, text);
@@ -145,7 +142,6 @@ public class AdminFlowService {
                     productManagementService.finalizeProductAdd(admin, session);
                 }
                 break;
-
             // Delivery Person Management
             case AWAITING_DELIVERY_NAME:
                 deliveryPersonManagementService.handleDeliveryPersonNameInput(admin, session, text);
@@ -162,7 +158,6 @@ public class AdminFlowService {
             case AWAITING_DELETE_DELIVERY_ID:
                 deliveryPersonManagementService.handleDeleteDeliveryPersonInput(admin, session, text);
                 break;
-
             // Executive Management
             case AWAITING_EXEC_NAME:
                 executiveManagementService.handleExecutiveNameInput(admin, session, text);
@@ -176,7 +171,6 @@ public class AdminFlowService {
             case AWAITING_EXEC_STATUS:
                 executiveManagementService.handleExecutiveStatusInput(admin, session, text);
                 break;
-
             // Assistant Admin Management
             case AWAITING_ASSISTANT_NAME:
                 assistantAdminManagementService.handleAssistantAdminNameInput(admin, session, text);
@@ -190,7 +184,6 @@ public class AdminFlowService {
             case AWAITING_ASSISTANT_STATUS:
                 assistantAdminManagementService.handleAssistantAdminStatusInput(admin, session, text);
                 break;
-
             // Accounts Team Management
             case AWAITING_ACC_NAME:
                 accountsManagementService.handleAccountsNameInput(admin, session, text);
@@ -204,66 +197,39 @@ public class AdminFlowService {
             case AWAITING_ACC_STATUS:
                 accountsManagementService.handleAccountsStatusInput(admin, session, text);
                 break;
-
             default:
                 showMainMenu(admin, session);
         }
     }
 
     private void handleIdleState(TeamMember admin, BotSession session, String text) {
-        if (text.trim().equalsIgnoreCase(FlowConstants.CMD_HI)
-                || text.trim().equalsIgnoreCase(FlowConstants.CMD_HELLO)) {
+        if (text.trim().equalsIgnoreCase(FlowConstants.CMD_HI) || text.trim().equalsIgnoreCase(FlowConstants.CMD_HELLO)) {
             showMainMenu(admin, session);
         } else {
-            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                    "Send 'hi' to see the admin menu.");
+            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "Send 'hi' to see the admin menu.");
         }
     }
 
     private void showMainMenu(TeamMember admin, BotSession session) {
         List<WhatsAppMessageDto.RowDto> rows = List.of(
-                WhatsAppMessageDto.RowDto.builder()
-                        .id("CUSTOMER_SECTION")
-                        .title("👥 Customers")
-                        .description("Manage Customers")
-                        .build(),
-                WhatsAppMessageDto.RowDto.builder()
-                        .id("DELIVERY_SECTION")
-                        .title("🚚 Delivery")
-                        .description("Manage Delivery Staff")
-                        .build(),
-                WhatsAppMessageDto.RowDto.builder()
-                        .id("PRODUCT_SECTION")
-                        .title("🐟 Products")
-                        .description("Manage Inventory")
-                        .build(),
-                WhatsAppMessageDto.RowDto.builder()
-                        .id("EXECUTIVE_SECTION")
-                        .title("💼 Executives")
-                        .description("Manage Executives")
-                        .build(),
-                WhatsAppMessageDto.RowDto.builder()
-                        .id("ASSISTANT_SECTION")
-                        .title("�️ Assistants")
-                        .description("Manage Assistants")
-                        .build(),
-                WhatsAppMessageDto.RowDto.builder()
-                        .id("ACCOUNTS_SECTION")
-                        .title("� Accounts")
-                        .description("Manage Accounts Team")
-                        .build(),
-                WhatsAppMessageDto.RowDto.builder()
-                        .id("CONTACT_DEVELOPER")
-                        .title("👨‍� Contact Dev")
-                        .description("Get Technical Support")
-                        .build());
+            WhatsAppMessageDto.RowDto.builder().id("CUSTOMER_SECTION").title("👥 Customers").description("Manage Customers").build(),
+            WhatsAppMessageDto.RowDto.builder().id("DELIVERY_SECTION").title("🚚 Delivery").description("Manage Delivery Staff").build(),
+            WhatsAppMessageDto.RowDto.builder().id("PRODUCT_SECTION").title("🐟 Products").description("Manage Inventory").build(),
+            WhatsAppMessageDto.RowDto.builder().id("EXECUTIVE_SECTION").title("💼 Executives").description("Manage Executives").build(),
+            WhatsAppMessageDto.RowDto.builder().id("ASSISTANT_SECTION").title("�️ Assistants").description("Manage Assistants").build(),
+            WhatsAppMessageDto.RowDto.builder().id("ACCOUNTS_SECTION").title("� Accounts").description("Manage Accounts Team").build(),
+            WhatsAppMessageDto.RowDto.builder()
+                .id("CONTACT_DEVELOPER")
+                .title("👨‍� Contact Dev")
+                .description("Get Technical Support")
+                .build()
+        );
 
         String greeting = String.format(
-                "🎉 *Welcome, %s!* 👑\n\n" +
-                        "You are logged in as: *%s*\n\n" +
-                        "Please select a section to manage:",
-                admin.getName(),
-                admin.getRole());
+            "🎉 *Welcome, %s!* 👑\n\n" + "You are logged in as: *%s*\n\n" + "Please select a section to manage:",
+            admin.getName(),
+            admin.getRole()
+        );
 
         whatsAppService.sendInteractiveList(admin.getWaPhoneNumber(), greeting, rows);
         sessionManager.updateState(session, AdminFlowStage.IDLE.name());
@@ -293,66 +259,59 @@ public class AdminFlowService {
                 accountsManagementService.showAccountsMenu(admin);
                 break;
             case "CONTACT_DEVELOPER":
-                whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                        "📞 *Contact Developer*\n\nFor technical support, please contact:\n[Developer Contact Info]");
+                whatsAppService.sendSimpleText(
+                    admin.getWaPhoneNumber(),
+                    "📞 *Contact Developer*\n\nFor technical support, please contact:\n[Developer Contact Info]"
+                );
                 break;
-
             case "ADD_CUSTOMER":
                 customerManagementService.startAddCustomer(admin, session);
                 break;
             case "SHOW_ALL_CUSTOMERS":
                 customerManagementService.showAllCustomers(admin);
                 break;
-
             case "ADD_DELIVERY":
                 deliveryPersonManagementService.startAddDeliveryPerson(admin, session);
                 break;
             case "SHOW_ALL_DELIVERY":
                 deliveryPersonManagementService.showAllDeliveryPersons(admin);
                 break;
-
             case "ADD_EXECUTIVE":
                 executiveManagementService.startAddExecutive(admin, session);
                 break;
             case "SHOW_ALL_EXECUTIVE":
                 executiveManagementService.showAllExecutives(admin);
                 break;
-
             case "ADD_ASSISTANT":
                 assistantAdminManagementService.startAddAssistantAdmin(admin, session);
                 break;
             case "SHOW_ALL_ASSISTANT":
                 assistantAdminManagementService.showAllAssistantAdmins(admin);
                 break;
-
             case "ADD_ACCOUNTS":
                 accountsManagementService.startAddAccountsMember(admin, session);
                 break;
             case "SHOW_ALL_ACCOUNTS":
                 accountsManagementService.showAllAccountsMembers(admin);
                 break;
-
             case "CONFIRM_ADD":
                 handleConfirmAdd(admin, session);
                 break;
             case "CANCEL_OPERATION":
                 handleAbortCommand(admin, session);
                 break;
-
             case "ADD_PRODUCT":
                 productManagementService.startAddProduct(admin, session);
                 break;
             case "SHOW_ALL_PRODUCTS":
                 productManagementService.showAllProducts(admin);
                 break;
-
             case "AVAIL_YES":
                 productManagementService.handleProductAvailabilityInput(admin, session, "yes");
                 break;
             case "AVAIL_NO":
                 productManagementService.handleProductAvailabilityInput(admin, session, "no");
                 break;
-
             // Executive Status Buttons
             case "EXEC_ACTIVE_YES":
                 executiveManagementService.handleExecutiveStatusInput(admin, session, "yes");
@@ -360,7 +319,6 @@ public class AdminFlowService {
             case "EXEC_ACTIVE_NO":
                 executiveManagementService.handleExecutiveStatusInput(admin, session, "no");
                 break;
-
             // Delivery Status Buttons
             case "DELIVERY_ACTIVE_YES":
                 deliveryPersonManagementService.handleDeliveryPersonStatusInput(admin, session, "yes");
@@ -368,7 +326,6 @@ public class AdminFlowService {
             case "DELIVERY_ACTIVE_NO":
                 deliveryPersonManagementService.handleDeliveryPersonStatusInput(admin, session, "no");
                 break;
-
             // Assistant Status Buttons
             case "ASSISTANT_ACTIVE_YES":
                 assistantAdminManagementService.handleAssistantAdminStatusInput(admin, session, "yes");
@@ -376,7 +333,6 @@ public class AdminFlowService {
             case "ASSISTANT_ACTIVE_NO":
                 assistantAdminManagementService.handleAssistantAdminStatusInput(admin, session, "no");
                 break;
-
             // Accounts Status Buttons
             case "ACC_ACTIVE_YES":
                 accountsManagementService.handleAccountsStatusInput(admin, session, "yes");
@@ -384,11 +340,9 @@ public class AdminFlowService {
             case "ACC_ACTIVE_NO":
                 accountsManagementService.handleAccountsStatusInput(admin, session, "no");
                 break;
-
             case "BACK_TO_MAIN":
                 showMainMenu(admin, session);
                 break;
-
             default:
                 showMainMenu(admin, session);
         }
@@ -401,8 +355,7 @@ public class AdminFlowService {
             sessionManager.updateState(session, AdminFlowStage.PROCESSING.name());
             customerManagementService.finalizeCustomerAdd(admin, session);
         } else if (AdminFlowStage.CONFIRMING_DELIVERY_ADD.name().equals(currentState)) {
-            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                    "⏳ Processing delivery person addition... please wait.");
+            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "⏳ Processing delivery person addition... please wait.");
             sessionManager.updateState(session, AdminFlowStage.PROCESSING.name());
             deliveryPersonManagementService.finalizeDeliveryPersonAdd(admin, session);
         } else if (AdminFlowStage.CONFIRMING_EXEC_ADD.name().equals(currentState)) {
@@ -414,8 +367,7 @@ public class AdminFlowService {
             sessionManager.updateState(session, AdminFlowStage.PROCESSING.name());
             assistantAdminManagementService.finalizeAssistantAdminAdd(admin, session);
         } else if (AdminFlowStage.CONFIRMING_ACC_ADD.name().equals(currentState)) {
-            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                    "⏳ Processing accounts member addition... please wait.");
+            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "⏳ Processing accounts member addition... please wait.");
             sessionManager.updateState(session, AdminFlowStage.PROCESSING.name());
             accountsManagementService.finalizeAccountsMemberAdd(admin, session);
         }
@@ -432,8 +384,7 @@ public class AdminFlowService {
     private void handleAbortCommand(TeamMember admin, BotSession session) {
         session.setSessionData("{}"); // Clear data
         sessionManager.updateState(session, AdminFlowStage.IDLE.name());
-        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                "❌ *Operation Cancelled*\n\nReturning to main menu...");
+        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "❌ *Operation Cancelled*\n\nReturning to main menu...");
         showMainMenu(admin, session);
     }
 }

@@ -18,9 +18,12 @@ public class RazorpayLinkStrategy implements PaymentStrategy {
     private final com.aps.service.CustomerMessageService customerMessageService;
     private final com.aps.service.DeliveryPersonMessageService deliveryPersonMessageService;
 
-    public RazorpayLinkStrategy(RazorpayService razorpayService, @Lazy WhatsAppService whatsAppService,
-            com.aps.service.CustomerMessageService customerMessageService,
-            com.aps.service.DeliveryPersonMessageService deliveryPersonMessageService) {
+    public RazorpayLinkStrategy(
+        RazorpayService razorpayService,
+        @Lazy WhatsAppService whatsAppService,
+        com.aps.service.CustomerMessageService customerMessageService,
+        com.aps.service.DeliveryPersonMessageService deliveryPersonMessageService
+    ) {
         this.razorpayService = razorpayService;
         this.whatsAppService = whatsAppService;
         this.customerMessageService = customerMessageService;
@@ -32,13 +35,11 @@ public class RazorpayLinkStrategy implements PaymentStrategy {
         Customer customer = order.getCustomer();
 
         // Generate Link
-        String link = razorpayService.createPaymentLink(order.getId(),
-                order.getTotalAmount().doubleValue(), customer);
+        String link = razorpayService.createPaymentLink(order.getId(), order.getTotalAmount().doubleValue(), customer);
 
         if (link != null) {
             // Send to Delivery Person
-            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
-                    "🔗 *Payment Link:*\n" + link);
+            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), "🔗 *Payment Link:*\n" + link);
 
             // Send to Customer
             String message = customerMessageService.getPaymentLinkMessage(link, order.getTotalAmount().doubleValue());
@@ -47,10 +48,8 @@ public class RazorpayLinkStrategy implements PaymentStrategy {
             // Send Wait Message to Delivery Person
             String waitMsg = deliveryPersonMessageService.getPaymentWaitMessageLink();
             whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), waitMsg);
-
         } else {
-            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
-                    "⚠️ Failed to generate Payment Link.");
+            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), "⚠️ Failed to generate Payment Link.");
         }
     }
 

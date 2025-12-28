@@ -19,9 +19,12 @@ public class RazorpayQrStrategy implements PaymentStrategy {
     private final com.aps.service.CustomerMessageService customerMessageService;
     private final com.aps.service.DeliveryPersonMessageService deliveryPersonMessageService;
 
-    public RazorpayQrStrategy(RazorpayService razorpayService, @Lazy WhatsAppService whatsAppService,
-            com.aps.service.CustomerMessageService customerMessageService,
-            com.aps.service.DeliveryPersonMessageService deliveryPersonMessageService) {
+    public RazorpayQrStrategy(
+        RazorpayService razorpayService,
+        @Lazy WhatsAppService whatsAppService,
+        com.aps.service.CustomerMessageService customerMessageService,
+        com.aps.service.DeliveryPersonMessageService deliveryPersonMessageService
+    ) {
         this.razorpayService = razorpayService;
         this.whatsAppService = whatsAppService;
         this.customerMessageService = customerMessageService;
@@ -33,17 +36,14 @@ public class RazorpayQrStrategy implements PaymentStrategy {
         Customer customer = order.getCustomer();
 
         // Create Razorpay Customer
-        String razorpayCustId = razorpayService.createCustomer(customer.getName(),
-                customer.getPhoneNumber());
+        String razorpayCustId = razorpayService.createCustomer(customer.getName(), customer.getPhoneNumber());
 
         // Generate QR
-        String qrUrl = razorpayService.createQrCode(order.getId(),
-                order.getTotalAmount().doubleValue(), razorpayCustId);
+        String qrUrl = razorpayService.createQrCode(order.getId(), order.getTotalAmount().doubleValue(), razorpayCustId);
 
         if (qrUrl != null) {
             // Send to Delivery Person
-            whatsAppService.sendImageMessage(deliveryPerson.getWaPhoneNumber(),
-                    qrUrl, "📷 Scan to Pay");
+            whatsAppService.sendImageMessage(deliveryPerson.getWaPhoneNumber(), qrUrl, "📷 Scan to Pay");
 
             // Send to Customer
             String caption = customerMessageService.getPaymentQrCaption(order.getTotalAmount().doubleValue());
@@ -52,10 +52,8 @@ public class RazorpayQrStrategy implements PaymentStrategy {
             // Send Wait Message to Delivery Person
             String waitMsg = deliveryPersonMessageService.getPaymentWaitMessageQr();
             whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), waitMsg);
-
         } else {
-            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
-                    "⚠️ Failed to generate QR Code. (Check Settings)");
+            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), "⚠️ Failed to generate QR Code. (Check Settings)");
         }
     }
 

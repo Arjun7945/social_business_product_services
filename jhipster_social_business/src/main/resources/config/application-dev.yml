@@ -32,7 +32,7 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/whatsappProductService
+    url: jdbc:postgresql://localhost:5432/whatsappProductServiceDemo
     username: postgres
     password: arjun7945
     hikari:
@@ -107,13 +107,13 @@ jhipster:
 # application:
 whatsapp:
   api:
-    token: "EAAdVasahI1kBQM6BOAw1027RNMt74meyEej8hl8o4k9cXyry3ZCmblniFWTU7XosuDzX9PQZAtxv6NCNdNkNenx9JuZAaYsmTM7VMmaIMWRCPQGNthovYlHLvzdsApmnT7oCUGYFa8iRQndZC7bJc3JchLAfitnE4vzZCd0V1ypsaAkNkXoZAwLXVWfGL04Fr0t9dB6L49leieLgFNAF1Ah3KP4W7V7kRMOaYneN1ZB"
-    base-url: "https://graph.facebook.com/v20.0"
-  phone-number-id: "844388422097905"
+    token: 'EAAdVasahI1kBQM6BOAw1027RNMt74meyEej8hl8o4k9cXyry3ZCmblniFWTU7XosuDzX9PQZAtxv6NCNdNkNenx9JuZAaYsmTM7VMmaIMWRCPQGNthovYlHLvzdsApmnT7oCUGYFa8iRQndZC7bJc3JchLAfitnE4vzZCd0V1ypsaAkNkXoZAwLXVWfGL04Fr0t9dB6L49leieLgFNAF1Ah3KP4W7V7kRMOaYneN1ZB'
+    base-url: 'https://graph.facebook.com/v20.0'
+  phone-number-id: '844388422097905'
   webhook:
-    verify-token: "fish_seller_secret_123"
-  delivery-group-id: "{YOUR_PERSONAL_PHONE_NUMBER_OR_GROUP_ID}"
+    verify-token: 'fish_seller_secret_123'
+  delivery-group-id: '{YOUR_PERSONAL_PHONE_NUMBER_OR_GROUP_ID}'
 
 app:
   server:
-    url: "https://trying-demographically-maison.ngrok-free.dev"
+    url: 'https://trying-demographically-maison.ngrok-free.dev'

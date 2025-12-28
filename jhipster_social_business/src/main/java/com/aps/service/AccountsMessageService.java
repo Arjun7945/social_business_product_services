@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 public class AccountsMessageService {
 
     public String getAccountsWelcomeMessage(String name) {
-        return "👋 Welcome Accounts Team Member *" + name + "*! 📊\n\n" +
-                "Select a report to generate:";
+        return "👋 Welcome Accounts Team Member *" + name + "*! 📊\n\n" + "Select a report to generate:";
     }
 
     public String getReportFormatSelectionMessage() {

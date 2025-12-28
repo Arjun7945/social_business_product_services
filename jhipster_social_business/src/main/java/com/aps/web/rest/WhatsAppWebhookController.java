@@ -28,10 +28,10 @@ public class WhatsAppWebhookController {
      */
     @GetMapping("/webhook")
     public ResponseEntity<String> verifyWebhook(
-            @RequestParam("hub.mode") String mode,
-            @RequestParam("hub.verify_token") String token,
-            @RequestParam("hub.challenge") String challenge) {
-
+        @RequestParam("hub.mode") String mode,
+        @RequestParam("hub.verify_token") String token,
+        @RequestParam("hub.challenge") String challenge
+    ) {
         log.info("Received Webhook Verification Request: mode={}, token={}, challenge={}", mode, token, challenge);
 
         if ("subscribe".equals(mode) && whatsAppConfig.getWebhookVerifyToken().equals(token)) {
@@ -51,17 +51,24 @@ public class WhatsAppWebhookController {
         log.debug("Received Webhook Payload: {}", webhookDto);
 
         if (webhookDto.getEntry() != null) {
-            webhookDto.getEntry().forEach(entry -> {
-                if (entry.getChanges() != null) {
-                    entry.getChanges().forEach(change -> {
-                        if (change.getValue() != null && change.getValue().getMessages() != null) {
-                            change.getValue().getMessages().forEach(message -> {
-                                dispatcherService.handleIncomingMessage(change.getValue(), message);
+            webhookDto
+                .getEntry()
+                .forEach(entry -> {
+                    if (entry.getChanges() != null) {
+                        entry
+                            .getChanges()
+                            .forEach(change -> {
+                                if (change.getValue() != null && change.getValue().getMessages() != null) {
+                                    change
+                                        .getValue()
+                                        .getMessages()
+                                        .forEach(message -> {
+                                            dispatcherService.handleIncomingMessage(change.getValue(), message);
+                                        });
+                                }
                             });
-                        }
-                    });
-                }
-            });
+                    }
+                });
         }
 
         return ResponseEntity.ok("EVENT_RECEIVED");

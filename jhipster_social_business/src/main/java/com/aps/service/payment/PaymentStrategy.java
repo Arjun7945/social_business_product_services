@@ -6,10 +6,9 @@ import com.aps.domain.CustomerOrder;
  * Strategy interface for processing payments.
  */
 public interface PaymentStrategy {
-
     /**
      * Initiates the payment process.
-     * 
+     *
      * @param order          The order to process payment for.
      * @param deliveryPerson The delivery person initiating the payment.
      */
@@ -17,7 +16,7 @@ public interface PaymentStrategy {
 
     /**
      * Get the name of the payment method this strategy handles.
-     * 
+     *
      * @return Payment method name (e.g., "COD", "UPI").
      */
     String getPaymentMethodName();

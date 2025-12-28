@@ -8,8 +8,12 @@
         <span jhiTranslate="whatsappProductServiceApp.teamMember.home.refreshListLabel">Refresh list</span>
       </button>
 
-      <button id="jh-create-entity" data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-team-member" [routerLink]="['/team-member/new']">
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-team-member"
+        [routerLink]="['/team-member/new']"
+      >
         <fa-icon icon="plus"></fa-icon>
         <span jhiTranslate="whatsappProductServiceApp.teamMember.home.createLabel">Create a new Team Member</span>
       </button>
@@ -23,120 +27,124 @@
   <jhi-filter [filters]="filters"></jhi-filter>
 
   @if (teamMembers().length === 0) {
-  <div class="alert alert-warning" id="no-result">
-    <span jhiTranslate="whatsappProductServiceApp.teamMember.home.notFound">No Team Members found</span>
-  </div>
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="whatsappProductServiceApp.teamMember.home.notFound">No Team Members found</span>
+    </div>
   } @else {
-  <div class="table-responsive table-entities" id="entities">
-    <table class="table table-striped" aria-describedby="page-heading">
-      <thead>
-        <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-          <th scope="col" jhiSortBy="id">
-            <div class="d-flex">
-              <span jhiTranslate="global.field.id">ID</span>
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
 
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="name">
-            <div class="d-flex">
-              <span jhiTranslate="whatsappProductServiceApp.teamMember.name">Name</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="name">
+              <div class="d-flex">
+                <span jhiTranslate="whatsappProductServiceApp.teamMember.name">Name</span>
 
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="waPhoneNumber">
-            <div class="d-flex">
-              <span jhiTranslate="whatsappProductServiceApp.teamMember.waPhoneNumber">Wa Phone Number</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="waPhoneNumber">
+              <div class="d-flex">
+                <span jhiTranslate="whatsappProductServiceApp.teamMember.waPhoneNumber">Wa Phone Number</span>
 
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="phoneNumber">
-            <div class="d-flex">
-              <span jhiTranslate="whatsappProductServiceApp.teamMember.phoneNumber">Phone Number</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="phoneNumber">
+              <div class="d-flex">
+                <span jhiTranslate="whatsappProductServiceApp.teamMember.phoneNumber">Phone Number</span>
 
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="role">
-            <div class="d-flex">
-              <span jhiTranslate="whatsappProductServiceApp.teamMember.role">Role</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="role">
+              <div class="d-flex">
+                <span jhiTranslate="whatsappProductServiceApp.teamMember.role">Role</span>
 
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="isActive">
-            <div class="d-flex">
-              <span jhiTranslate="whatsappProductServiceApp.teamMember.isActive">Is Active</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="isActive">
+              <div class="d-flex">
+                <span jhiTranslate="whatsappProductServiceApp.teamMember.isActive">Is Active</span>
 
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (teamMember of teamMembers(); track trackId(teamMember)) {
-        <tr data-cy="entityTable">
-          <td>
-            <a [routerLink]="['/team-member', teamMember.id, 'view']">{{ teamMember.id }}</a>
-          </td>
-          <td>{{ teamMember.name }}</td>
-          <td>{{ teamMember.waPhoneNumber }}</td>
-          <td>{{ teamMember.phoneNumber }}</td>
-          <td [jhiTranslate]="'whatsappProductServiceApp.UserRole.' + (teamMember.role ?? 'null')">
-            {{
-            {
-            null: '',
-            CUSTOMER: 'CUSTOMER',
-            EXECUTIVE: 'EXECUTIVE',
-            DELIVERY_PERSON: 'DELIVERY_PERSON',
-            ASSISTANT_ADMIN: 'ASSISTANT_ADMIN',
-            ADMIN: 'ADMIN',
-            DEVELOPER: 'DEVELOPER',
-            ACCOUNTS_TEAM: 'ACCOUNTS_TEAM',
-            }[teamMember.role ?? 'null']
-            }}
-          </td>
-          <td>{{ teamMember.isActive }}</td>
-          <td class="text-end">
-            <div class="btn-group">
-              <a [routerLink]="['/team-member', teamMember.id, 'view']" class="btn btn-info btn-sm"
-                data-cy="entityDetailsButton">
-                <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-              </a>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (teamMember of teamMembers(); track trackId(teamMember)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/team-member', teamMember.id, 'view']">{{ teamMember.id }}</a>
+              </td>
+              <td>{{ teamMember.name }}</td>
+              <td>{{ teamMember.waPhoneNumber }}</td>
+              <td>{{ teamMember.phoneNumber }}</td>
+              <td [jhiTranslate]="'whatsappProductServiceApp.UserRole.' + (teamMember.role ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    CUSTOMER: 'CUSTOMER',
+                    EXECUTIVE: 'EXECUTIVE',
+                    DELIVERY_PERSON: 'DELIVERY_PERSON',
+                    ASSISTANT_ADMIN: 'ASSISTANT_ADMIN',
+                    ADMIN: 'ADMIN',
+                    DEVELOPER: 'DEVELOPER',
+                    ACCOUNTS_TEAM: 'ACCOUNTS_TEAM',
+                  }[teamMember.role ?? 'null']
+                }}
+              </td>
+              <td>{{ teamMember.isActive }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/team-member', teamMember.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
 
-              <a [routerLink]="['/team-member', teamMember.id, 'edit']" class="btn btn-primary btn-sm"
-                data-cy="entityEditButton">
-                <fa-icon icon="pencil-alt"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-              </a>
+                  <a [routerLink]="['/team-member', teamMember.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                  </a>
 
-              <button type="submit" (click)="delete(teamMember)" class="btn btn-danger btn-sm"
-                data-cy="entityDeleteButton">
-                <fa-icon icon="times"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+                  <button type="submit" (click)="delete(teamMember)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   }
   @if (teamMembers().length > 0) {
-  <div>
-    <div class="d-flex justify-content-center">
-      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
-    </div>
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+      </div>
 
-    <div class="d-flex justify-content-center">
-      <ngb-pagination [collectionSize]="totalItems" [page]="page" [pageSize]="itemsPerPage" [maxSize]="5"
-        [rotate]="true" [boundaryLinks]="true" (pageChange)="navigateToPage($event)"></ngb-pagination>
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
     </div>
-  </div>
   }
 </div>
