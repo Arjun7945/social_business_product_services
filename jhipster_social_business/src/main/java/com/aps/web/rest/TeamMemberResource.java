@@ -46,27 +46,21 @@ public class TeamMemberResource {
 
     private final TeamMemberQueryService teamMemberQueryService;
 
-    private final com.aps.service.UserRemovalService userRemovalService;
-
     public TeamMemberResource(
         TeamMemberService teamMemberService,
         TeamMemberRepository teamMemberRepository,
-        TeamMemberQueryService teamMemberQueryService,
-        com.aps.service.UserRemovalService userRemovalService
+        TeamMemberQueryService teamMemberQueryService
     ) {
         this.teamMemberService = teamMemberService;
         this.teamMemberRepository = teamMemberRepository;
         this.teamMemberQueryService = teamMemberQueryService;
-        this.userRemovalService = userRemovalService;
     }
 
     /**
      * {@code POST  /team-members} : Create a new teamMember.
      *
      * @param teamMemberDTO the teamMemberDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with
-     *         body the new teamMemberDTO, or with status {@code 400 (Bad Request)}
-     *         if the teamMember has already an ID.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new teamMemberDTO, or with status {@code 400 (Bad Request)} if the teamMember has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
@@ -84,14 +78,11 @@ public class TeamMemberResource {
     /**
      * {@code PUT  /team-members/:id} : Updates an existing teamMember.
      *
-     * @param id            the id of the teamMemberDTO to save.
+     * @param id the id of the teamMemberDTO to save.
      * @param teamMemberDTO the teamMemberDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
-     *         the updated teamMemberDTO,
-     *         or with status {@code 400 (Bad Request)} if the teamMemberDTO is not
-     *         valid,
-     *         or with status {@code 500 (Internal Server Error)} if the
-     *         teamMemberDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated teamMemberDTO,
+     * or with status {@code 400 (Bad Request)} if the teamMemberDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the teamMemberDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
@@ -118,19 +109,14 @@ public class TeamMemberResource {
     }
 
     /**
-     * {@code PATCH  /team-members/:id} : Partial updates given fields of an
-     * existing teamMember, field will ignore if it is null
+     * {@code PATCH  /team-members/:id} : Partial updates given fields of an existing teamMember, field will ignore if it is null
      *
-     * @param id            the id of the teamMemberDTO to save.
+     * @param id the id of the teamMemberDTO to save.
      * @param teamMemberDTO the teamMemberDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
-     *         the updated teamMemberDTO,
-     *         or with status {@code 400 (Bad Request)} if the teamMemberDTO is not
-     *         valid,
-     *         or with status {@code 404 (Not Found)} if the teamMemberDTO is not
-     *         found,
-     *         or with status {@code 500 (Internal Server Error)} if the
-     *         teamMemberDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated teamMemberDTO,
+     * or with status {@code 400 (Bad Request)} if the teamMemberDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the teamMemberDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the teamMemberDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
@@ -163,8 +149,7 @@ public class TeamMemberResource {
      *
      * @param pageable the pagination information.
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list
-     *         of teamMembers in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of teamMembers in body.
      */
     @GetMapping("")
     public ResponseEntity<List<TeamMemberDTO>> getAllTeamMembers(
@@ -182,8 +167,7 @@ public class TeamMemberResource {
      * {@code GET  /team-members/count} : count all the teamMembers.
      *
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count
-     *         in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
      */
     @GetMapping("/count")
     public ResponseEntity<Long> countTeamMembers(TeamMemberCriteria criteria) {
@@ -195,8 +179,7 @@ public class TeamMemberResource {
      * {@code GET  /team-members/:id} : get the "id" teamMember.
      *
      * @param id the id of the teamMemberDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
-     *         the teamMemberDTO, or with status {@code 404 (Not Found)}.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the teamMemberDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
     public ResponseEntity<TeamMemberDTO> getTeamMember(@PathVariable("id") Long id) {
@@ -214,8 +197,7 @@ public class TeamMemberResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTeamMember(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete TeamMember : {}", id);
-        // Use UserRemovalService for safe deletion (handles archiving and unlinking)
-        userRemovalService.removeDeliveryPerson(id, "Admin Deletion via API");
+        teamMemberService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();

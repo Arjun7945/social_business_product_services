@@ -1,12 +1,12 @@
 # This configuration is intended for development purpose, it's **your** responsibility to harden it for production
-name: whatsappproductservice
+name: whatsappproductservicepro
 services:
   postgresql:
     image: postgres:17.2
     # volumes:
-    #   - ~/volumes/jhipster/whatsappProductService/postgresql/:/var/lib/postgresql/data/
+    #   - ~/volumes/jhipster/whatsappProductServicePro/postgresql/:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=whatsappProductService
+      - POSTGRES_USER=whatsappProductServicePro
       - POSTGRES_HOST_AUTH_METHOD=trust
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER}']

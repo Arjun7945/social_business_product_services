@@ -10,6 +10,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Individual items within an order.
+ * Linked to CustomerOrder (1:N)
  */
 @Entity
 @Table(name = "order_item")
@@ -25,9 +26,6 @@ public class OrderItem implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    /**
-     * Quantity remains Double as weight can be fractional
-     */
     @NotNull
     @DecimalMin(value = "0")
     @Column(name = "quantity_kg", nullable = false)
@@ -39,16 +37,16 @@ public class OrderItem implements Serializable {
     private BigDecimal priceAtOrder;
 
     /**
-     * OrderItem links to a Product (Snapshot needed? usually yes but simple link here)
+     * OrderItem links to a Product
      */
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = { "images" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "image" }, allowSetters = true)
     private FishProduct product;
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = { "items", "deliveryPerson", "customer" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "history", "items", "customer", "deliveryPerson" }, allowSetters = true)
     private CustomerOrder order;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

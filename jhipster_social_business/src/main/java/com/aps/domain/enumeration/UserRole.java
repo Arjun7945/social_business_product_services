@@ -6,10 +6,9 @@ package com.aps.domain.enumeration;
 public enum UserRole {
     CUSTOMER,
     EXECUTIVE,
-    DELIVERY_PERSON,
     ASSISTANT_ADMIN,
     ADMIN,
     DEVELOPER,
+    DELIVERY_PERSON,
     ACCOUNTS_TEAM,
-    CREDIT_CUSTOMER,
 }

@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceProApp": {
+    "buttonAction": {
+      "home": {
+        "title": "Button Actions",
+        "refreshListLabel": "Liste aktualisieren",
+        "createLabel": "Button Action erstellen",
+        "createOrEditLabel": "Button Action erstellen oder bearbeiten",
+        "notFound": "Keine Button Actions gefunden"
+      },
+      "created": "Button Action erstellt mit ID {{ param }}",
+      "updated": "Button Action aktualisiert mit ID {{ param }}",
+      "deleted": "Button Action gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Button Action {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Button Action"
+      },
+      "id": "ID",
+      "waMessageId": "Wa Message Id",
+      "buttonId": "Button Id",
+      "clickedAt": "Clicked At",
+      "clickedBy": "Clicked By"
+    }
+  }
+}

@@ -1,8 +1,8 @@
 {
   "annotations": {
-    "changelogDate": "20251215140329"
+    "changelogDate": "20251228084013"
   },
-  "applications": ["whatsappProductService"],
+  "applications": ["whatsappProductServicePro"],
   "documentation": "Items currently in the shopping cart.",
   "dto": "mapstruct",
   "fields": [

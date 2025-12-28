@@ -14,7 +14,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 /**
  * Customer entity representing the end-user.
  * Stores WhatsApp details, location, and flow state.
- * Refactored: Removed temp fields, added address.
+ * NOW LINKED TO: DeliveryZone (Category A, B, C...)
  */
 @Entity
 @Table(name = "customer")
@@ -68,11 +68,11 @@ public class Customer implements Serializable {
     private Instant lastInteractionAt;
 
     /**
-     * One Customer has many Orders
+     * One Costumer has many Orders
      */
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "items", "deliveryPerson", "customer" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "history", "items", "customer", "deliveryPerson" }, allowSetters = true)
     private Set<CustomerOrder> orders = new HashSet<>();
 
     /**
@@ -84,10 +84,22 @@ public class Customer implements Serializable {
     private Set<ShoppingCart> carts = new HashSet<>();
 
     /**
-     * TeamMember (Executive) who added the Customer
+     * One Customer has many Returned Orders
+     */
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "histories", "items", "order", "customer" }, allowSetters = true)
+    private Set<ReturnedOrder> returns = new HashSet<>();
+
+    /**
+     * Executive who added the Customer
      */
     @ManyToOne(fetch = FetchType.LAZY)
     private TeamMember addedBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = { "customers", "deliveryPersons" }, allowSetters = true)
+    private DeliveryZone zone;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -309,6 +321,37 @@ public class Customer implements Serializable {
         return this;
     }
 
+    public Set<ReturnedOrder> getReturns() {
+        return this.returns;
+    }
+
+    public void setReturns(Set<ReturnedOrder> returnedOrders) {
+        if (this.returns != null) {
+            this.returns.forEach(i -> i.setCustomer(null));
+        }
+        if (returnedOrders != null) {
+            returnedOrders.forEach(i -> i.setCustomer(this));
+        }
+        this.returns = returnedOrders;
+    }
+
+    public Customer returns(Set<ReturnedOrder> returnedOrders) {
+        this.setReturns(returnedOrders);
+        return this;
+    }
+
+    public Customer addReturns(ReturnedOrder returnedOrder) {
+        this.returns.add(returnedOrder);
+        returnedOrder.setCustomer(this);
+        return this;
+    }
+
+    public Customer removeReturns(ReturnedOrder returnedOrder) {
+        this.returns.remove(returnedOrder);
+        returnedOrder.setCustomer(null);
+        return this;
+    }
+
     public TeamMember getAddedBy() {
         return this.addedBy;
     }
@@ -319,6 +362,19 @@ public class Customer implements Serializable {
 
     public Customer addedBy(TeamMember teamMember) {
         this.setAddedBy(teamMember);
+        return this;
+    }
+
+    public DeliveryZone getZone() {
+        return this.zone;
+    }
+
+    public void setZone(DeliveryZone deliveryZone) {
+        this.zone = deliveryZone;
+    }
+
+    public Customer zone(DeliveryZone deliveryZone) {
+        this.setZone(deliveryZone);
         return this;
     }
 

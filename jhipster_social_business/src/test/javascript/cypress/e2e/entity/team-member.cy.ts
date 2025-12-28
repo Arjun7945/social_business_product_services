@@ -15,7 +15,7 @@ describe('TeamMember e2e test', () => {
   const teamMemberPageUrlPattern = new RegExp('/team-member(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const teamMemberSample = { name: 'utter finger medium', phoneNumber: 'spectacles', role: 'ADMIN', isActive: true };
+  const teamMemberSample = { name: 'tomorrow ostrich or', phoneNumber: 'pfft perfumed', role: 'ADMIN', isActive: true };
 
   let teamMember;
 
@@ -136,7 +136,9 @@ describe('TeamMember e2e test', () => {
       });
 
       it('last delete button click should delete instance of TeamMember', () => {
+        cy.intercept('GET', '/api/team-members/*').as('dialogDeleteRequest');
         cy.get(entityDeleteButtonSelector).last().click();
+        cy.wait('@dialogDeleteRequest');
         cy.getEntityDeleteDialogHeading('teamMember').should('exist');
         cy.get(entityConfirmDeleteButtonSelector).click();
         cy.wait('@deleteEntityRequest').then(({ response }) => {
@@ -160,16 +162,16 @@ describe('TeamMember e2e test', () => {
     });
 
     it('should create an instance of TeamMember', () => {
-      cy.get(`[data-cy="name"]`).type('sudden');
-      cy.get(`[data-cy="name"]`).should('have.value', 'sudden');
+      cy.get(`[data-cy="name"]`).type('times psst');
+      cy.get(`[data-cy="name"]`).should('have.value', 'times psst');
 
-      cy.get(`[data-cy="waPhoneNumber"]`).type('monthly oof');
-      cy.get(`[data-cy="waPhoneNumber"]`).should('have.value', 'monthly oof');
+      cy.get(`[data-cy="waPhoneNumber"]`).type('aside blushing valentine');
+      cy.get(`[data-cy="waPhoneNumber"]`).should('have.value', 'aside blushing valentine');
 
-      cy.get(`[data-cy="phoneNumber"]`).type('of fishery meh');
-      cy.get(`[data-cy="phoneNumber"]`).should('have.value', 'of fishery meh');
+      cy.get(`[data-cy="phoneNumber"]`).type('supposing rust into');
+      cy.get(`[data-cy="phoneNumber"]`).should('have.value', 'supposing rust into');
 
-      cy.get(`[data-cy="role"]`).select('EXECUTIVE');
+      cy.get(`[data-cy="role"]`).select('ADMIN');
 
       cy.get(`[data-cy="isActive"]`).should('not.be.checked');
       cy.get(`[data-cy="isActive"]`).click();

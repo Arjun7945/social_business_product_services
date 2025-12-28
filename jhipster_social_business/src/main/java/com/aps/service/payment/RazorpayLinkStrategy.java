@@ -2,8 +2,10 @@ package com.aps.service.payment;
 
 import com.aps.domain.Customer;
 import com.aps.domain.CustomerOrder;
-import com.aps.domain.TeamMember;
+import com.aps.domain.DeliveryPerson;
 import com.aps.service.WhatsAppService;
+import com.aps.service.CustomerMessageService;
+import com.aps.service.DeliveryPersonMessageService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -15,15 +17,14 @@ public class RazorpayLinkStrategy implements PaymentStrategy {
 
     private final RazorpayService razorpayService;
     private final WhatsAppService whatsAppService;
-    private final com.aps.service.CustomerMessageService customerMessageService;
-    private final com.aps.service.DeliveryPersonMessageService deliveryPersonMessageService;
+    private final CustomerMessageService customerMessageService;
+    private final DeliveryPersonMessageService deliveryPersonMessageService;
 
     public RazorpayLinkStrategy(
-        RazorpayService razorpayService,
-        @Lazy WhatsAppService whatsAppService,
-        com.aps.service.CustomerMessageService customerMessageService,
-        com.aps.service.DeliveryPersonMessageService deliveryPersonMessageService
-    ) {
+            RazorpayService razorpayService,
+            @Lazy WhatsAppService whatsAppService,
+            CustomerMessageService customerMessageService,
+            DeliveryPersonMessageService deliveryPersonMessageService) {
         this.razorpayService = razorpayService;
         this.whatsAppService = whatsAppService;
         this.customerMessageService = customerMessageService;
@@ -31,7 +32,7 @@ public class RazorpayLinkStrategy implements PaymentStrategy {
     }
 
     @Override
-    public void initiatePayment(CustomerOrder order, TeamMember deliveryPerson) {
+    public void initiatePayment(CustomerOrder order, DeliveryPerson deliveryPerson) {
         Customer customer = order.getCustomer();
 
         // Generate Link

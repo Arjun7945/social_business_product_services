@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceProApp": {
+    "orderStatusHistory": {
+      "home": {
+        "title": "Order Status Histories",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Order Status History جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Order Status History",
+        "notFound": "لم يتم العثور على Order Status Histories"
+      },
+      "created": "Order Status History جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Order Status History تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Order Status History تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Order Status History {{ id }}؟"
+      },
+      "detail": {
+        "title": "Order Status History"
+      },
+      "id": "ID",
+      "status": "Status",
+      "changeTime": "Change Time",
+      "customerOrder": "Customer Order"
+    }
+  }
+}

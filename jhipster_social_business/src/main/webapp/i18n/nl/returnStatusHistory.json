@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceProApp": {
+    "returnStatusHistory": {
+      "home": {
+        "title": "Return Status Histories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Maak een nieuwe Return Status History",
+        "createOrEditLabel": "Maak of wijzig een Return Status History",
+        "notFound": "No Return Status Histories found"
+      },
+      "created": "A new Return Status History is created with identifier {{ param }}",
+      "updated": "A Return Status History is updated with identifier {{ param }}",
+      "deleted": "A Return Status History is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Bent u zeker dat u Return Status History {{ id }} wilt verwijderen?"
+      },
+      "detail": {
+        "title": "Return Status History"
+      },
+      "id": "ID",
+      "status": "Status",
+      "changeTime": "Change Time",
+      "returnedOrder": "Returned Order"
+    }
+  }
+}

@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * A DTO for the {@link com.aps.domain.OrderItem} entity.
  */
-@Schema(description = "Individual items within an order.")
+@Schema(description = "Individual items within an order.\nLinked to CustomerOrder (1:N)")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class OrderItemDTO implements Serializable {
 
@@ -17,7 +17,6 @@ public class OrderItemDTO implements Serializable {
 
     @NotNull
     @DecimalMin(value = "0")
-    @Schema(description = "Quantity remains Double as weight can be fractional", requiredMode = Schema.RequiredMode.REQUIRED)
     private Double quantityKg;
 
     @NotNull
@@ -25,7 +24,7 @@ public class OrderItemDTO implements Serializable {
     private BigDecimal priceAtOrder;
 
     @NotNull
-    @Schema(description = "OrderItem links to a Product (Snapshot needed? usually yes but simple link here)")
+    @Schema(description = "OrderItem links to a Product")
     private FishProductDTO product;
 
     @NotNull

@@ -122,9 +122,19 @@ public class CustomerQueryService extends QueryService<Customer> {
                     buildSpecification(criteria.getCartId(), root -> root.join(Customer_.carts, JoinType.LEFT).get(ShoppingCart_.id))
                 );
             }
+            if (criteria.getReturnsId() != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.getReturnsId(), root -> root.join(Customer_.returns, JoinType.LEFT).get(ReturnedOrder_.id))
+                );
+            }
             if (criteria.getAddedById() != null) {
                 specification = specification.and(
                     buildSpecification(criteria.getAddedById(), root -> root.join(Customer_.addedBy, JoinType.LEFT).get(TeamMember_.id))
+                );
+            }
+            if (criteria.getZoneId() != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.getZoneId(), root -> root.join(Customer_.zone, JoinType.LEFT).get(DeliveryZone_.id))
                 );
             }
         }

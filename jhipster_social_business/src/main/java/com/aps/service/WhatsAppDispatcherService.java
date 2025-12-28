@@ -3,9 +3,11 @@ package com.aps.service;
 import com.aps.domain.BotSession;
 import com.aps.domain.Customer;
 import com.aps.domain.TeamMember;
+import com.aps.domain.DeliveryPerson;
 import com.aps.domain.enumeration.UserRole;
 import com.aps.repository.CustomerRepository;
 import com.aps.repository.TeamMemberRepository;
+import com.aps.repository.DeliveryPersonRepository;
 import com.aps.service.dto.WhatsAppWebhookDto;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -21,6 +23,7 @@ public class WhatsAppDispatcherService {
     private final Logger log = LoggerFactory.getLogger(WhatsAppDispatcherService.class);
 
     private final TeamMemberRepository teamMemberRepository;
+    private final DeliveryPersonRepository deliveryPersonRepository;
     private final CustomerRepository customerRepository;
     private final AdminFlowService adminFlowService;
     private final ExecutiveFlowService executiveFlowService;
@@ -34,19 +37,20 @@ public class WhatsAppDispatcherService {
     private final WhatsAppService whatsAppService;
 
     public WhatsAppDispatcherService(
-        TeamMemberRepository teamMemberRepository,
-        CustomerRepository customerRepository,
-        AdminFlowService adminFlowService,
-        ExecutiveFlowService executiveFlowService,
-        DeliveryFlowService deliveryFlowService,
-        AccountsFlowService accountsFlowService,
-        CustomerFlowService customerFlowService,
-        UnknownCustomerFlowService unknownCustomerFlowService,
-        BotSessionManager sessionManager,
-        ButtonActionService buttonActionService,
-        WhatsAppService whatsAppService
-    ) {
+            TeamMemberRepository teamMemberRepository,
+            DeliveryPersonRepository deliveryPersonRepository,
+            CustomerRepository customerRepository,
+            AdminFlowService adminFlowService,
+            ExecutiveFlowService executiveFlowService,
+            DeliveryFlowService deliveryFlowService,
+            AccountsFlowService accountsFlowService,
+            CustomerFlowService customerFlowService,
+            UnknownCustomerFlowService unknownCustomerFlowService,
+            BotSessionManager sessionManager,
+            ButtonActionService buttonActionService,
+            WhatsAppService whatsAppService) {
         this.teamMemberRepository = teamMemberRepository;
+        this.deliveryPersonRepository = deliveryPersonRepository;
         this.customerRepository = customerRepository;
         this.adminFlowService = adminFlowService;
         this.executiveFlowService = executiveFlowService;
@@ -77,11 +81,22 @@ public class WhatsAppDispatcherService {
             Optional<TeamMember> teamMemberOpt = teamMemberRepository.findByWaPhoneNumber(from);
             if (teamMemberOpt.isPresent()) {
                 TeamMember teamMember = teamMemberOpt.get();
-                dispatchToTeamMemberFlow(teamMember, message);
+                // Ensure we don't accidentally process a Delivery Person if they are still in
+                // TeamMember table
+                if (teamMember.getRole() != UserRole.DELIVERY_PERSON) {
+                    dispatchToTeamMemberFlow(teamMember, message);
+                    return;
+                }
+            }
+
+            // 2. Check if it's a Delivery Person
+            Optional<DeliveryPerson> deliveryPersonOpt = deliveryPersonRepository.findByWaPhoneNumber(from);
+            if (deliveryPersonOpt.isPresent()) {
+                deliveryFlowService.handleDeliveryMessage(deliveryPersonOpt.get(), message);
                 return;
             }
 
-            // 2. Check if it's an existing Customer
+            // 3. Check if it's an existing Customer
             Optional<Customer> customerOpt = customerRepository.findByWaPhoneNumber(from);
             if (customerOpt.isPresent()) {
                 log.info("Found existing customer for: {}", from);
@@ -93,7 +108,7 @@ public class WhatsAppDispatcherService {
                 log.info("No existing customer found for: {}", from);
             }
 
-            // 3. New Customer (or in-progress onboarding)
+            // 4. New Customer (or in-progress onboarding)
             BotSession session = sessionManager.getSession(from);
             String currentState = session.getCurrentState();
 
@@ -106,10 +121,10 @@ public class WhatsAppDispatcherService {
                 String profileName = "Guest";
                 if (payloadValue != null && payloadValue.getContacts() != null) {
                     Optional<WhatsAppWebhookDto.Contact> contactOpt = payloadValue
-                        .getContacts()
-                        .stream()
-                        .filter(c -> c.getWaId().equals(from))
-                        .findFirst();
+                            .getContacts()
+                            .stream()
+                            .filter(c -> c.getWaId().equals(from))
+                            .findFirst();
                     if (contactOpt.isPresent() && contactOpt.get().getProfile() != null) {
                         profileName = contactOpt.get().getProfile().getName();
                     }
@@ -136,16 +151,19 @@ public class WhatsAppDispatcherService {
             case EXECUTIVE:
                 executiveFlowService.handleExecutiveMessage(teamMember, message);
                 break;
-            case DELIVERY_PERSON:
-                deliveryFlowService.handleDeliveryMessage(teamMember, message);
-                break;
             case ACCOUNTS_TEAM:
                 accountsFlowService.handleAccountsMessage(teamMember, message);
                 break;
+            // DELIVERY_PERSON handled in handleIncomingMessage directly via DeliveryPerson
+            // entity
+            case DELIVERY_PERSON:
+                log.warn(
+                        "Delivery Person found in TeamMember table but should be handled via DeliveryPerson entity: {}",
+                        teamMember.getWaPhoneNumber());
+                break;
             default:
-                log.warn("Unknown role {} for team member {}. Treating as Customer.", role, teamMember.getWaPhoneNumber());
-                // Fallback to customer flow? Or Error?
-                // For safety, maybe just ignore or send "Access Denied"
+                log.warn("Unknown role {} for team member {}. Treating as Customer.", role,
+                        teamMember.getWaPhoneNumber());
                 break;
         }
     }

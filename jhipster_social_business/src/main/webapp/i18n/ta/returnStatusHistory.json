@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceProApp": {
+    "returnStatusHistory": {
+      "home": {
+        "title": "Return Status Histories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Return Status History-ஐ உருவாக்கு",
+        "createOrEditLabel": "Return Status History -ஐ மாற்று (அ) உருவாக்கு",
+        "notFound": "No Return Status Histories found"
+      },
+      "created": "Return Status History புதிதாக உருவாக்கப்பட்டது, அடையாளம் {{ param }}",
+      "updated": "Return Status History மாற்றப்பட்டது, அடையாளம்  {{ param }}",
+      "deleted": "A Return Status History நீக்கப்பட்டது, அடையாளம {{ param }}",
+      "delete": {
+        "question": "நீக்குவதற்கு உறுதி செய் Return Status History {{ id }}?"
+      },
+      "detail": {
+        "title": "Return Status History"
+      },
+      "id": "ID",
+      "status": "Status",
+      "changeTime": "Change Time",
+      "returnedOrder": "Returned Order"
+    }
+  }
+}

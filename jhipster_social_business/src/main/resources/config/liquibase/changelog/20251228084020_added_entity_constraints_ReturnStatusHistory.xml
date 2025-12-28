@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity ReturnStatusHistory.
+    -->
+    <changeSet id="20251228084020-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="returned_order_id"
+                                 baseTableName="return_status_history"
+                                 constraintName="fk_return_status_history__returned_order_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="returned_order"
+                                 />
+    </changeSet>
+</databaseChangeLog>

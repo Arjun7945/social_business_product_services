@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceProApp": {
+    "removedOrderSummary": {
+      "home": {
+        "title": "Removed Order Summaries",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "కొత్త Removed Order Summary  సృష్టించండి",
+        "createOrEditLabel": "Removed Order Summary సృష్టించండి లేదా సవరించండి",
+        "notFound": "No Removed Order Summaries found"
+      },
+      "created": "{{ param }} ఐడీ తో ఒక కొత్త Removed Order Summary సృష్టించబడినది",
+      "updated": "{{ param }} ఐడీ తో ఒక కొత్త Removed Order Summary సవరించబడినది",
+      "deleted": "{{ param }} ఐడీ తో ఒక కొత్త Removed Order Summary తొలగించబడినది",
+      "delete": {
+        "question": "మీరు Removed Order Summary {{ id }} ఖచ్చితంగా తొలగించాలనుకుంటున్నారా?"
+      },
+      "detail": {
+        "title": "Removed Order Summary"
+      },
+      "id": "ID",
+      "userOriginalId": "User Original Id",
+      "userName": "User Name",
+      "userRole": "User Role",
+      "totalOrders": "Total Orders",
+      "totalAmount": "Total Amount",
+      "firstInteractionAt": "First Interaction At",
+      "lastInteractionAt": "Last Interaction At",
+      "removedAt": "Removed At"
+    }
+  }
+}

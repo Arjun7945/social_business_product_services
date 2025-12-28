@@ -30,8 +30,10 @@ class ProductImageTest {
 
         productImage.setProduct(fishProductBack);
         assertThat(productImage.getProduct()).isEqualTo(fishProductBack);
+        assertThat(fishProductBack.getImage()).isEqualTo(productImage);
 
         productImage.product(null);
         assertThat(productImage.getProduct()).isNull();
+        assertThat(fishProductBack.getImage()).isNull();
     }
 }

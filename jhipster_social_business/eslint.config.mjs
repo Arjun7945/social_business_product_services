@@ -4,8 +4,7 @@ import globals from 'globals';
 import prettier from 'eslint-plugin-prettier/recommended';
 import tseslint from 'typescript-eslint';
 import eslint from '@eslint/js';
-// For a detailed explanation, visit: https://github.com/angular-eslint/angular-eslint/blob/main/docs/CONFIGURING_FLAT_CONFIG.md
-import angular from 'angular-eslint';
+import react from 'eslint-plugin-react/configs/recommended.js';
 import cypress from 'eslint-plugin-cypress/flat';
 // jhipster-needle-eslint-add-import - JHipster will add additional import here
 
@@ -27,89 +26,66 @@ export default tseslint.config(
     },
   },
   {
-    files: ['src/main/webapp/**/*.ts'],
-    extends: [...tseslint.configs.strictTypeChecked, ...tseslint.configs.stylistic, ...angular.configs.tsRecommended],
+    files: ['src/main/webapp/**/*.{ts,tsx}'],
+    extends: [...tseslint.configs.recommendedTypeChecked, react],
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
     languageOptions: {
       globals: {
         ...globals.browser,
       },
       parserOptions: {
-        project: ['./tsconfig.app.json', './tsconfig.spec.json'],
+        project: ['./tsconfig.json', './tsconfig.test.json'],
       },
     },
-    processor: angular.processInlineTemplates,
     rules: {
-      '@angular-eslint/component-selector': [
-        'error',
-        {
-          type: 'element',
-          prefix: 'jhi',
-          style: 'kebab-case',
-        },
-      ],
-      '@angular-eslint/directive-selector': [
-        'error',
-        {
-          type: 'attribute',
-          prefix: 'jhi',
-          style: 'camelCase',
-        },
-      ],
-      '@angular-eslint/relative-url-prefix': 'error',
-      '@typescript-eslint/consistent-type-definitions': 'off',
-      '@typescript-eslint/explicit-function-return-type': ['error', { allowExpressions: true }],
-      '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/member-ordering': [
         'error',
         {
-          default: [
-            'public-static-field',
-            'protected-static-field',
-            'private-static-field',
-            'public-instance-field',
-            'protected-instance-field',
-            'private-instance-field',
-            'constructor',
-            'public-static-method',
-            'protected-static-method',
-            'private-static-method',
-            'public-instance-method',
-            'protected-instance-method',
-            'private-instance-method',
-          ],
+          default: ['static-field', 'instance-field', 'constructor', 'static-method', 'instance-method'],
         },
       ],
-      '@typescript-eslint/no-confusing-void-expression': 'off',
-      '@typescript-eslint/no-empty-object-type': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-extraneous-class': 'off',
-      '@typescript-eslint/no-floating-promises': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'off',
-      '@typescript-eslint/no-shadow': ['error'],
-      '@typescript-eslint/no-unnecessary-condition': 'error',
-      '@typescript-eslint/no-unsafe-argument': 'off',
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-unsafe-call': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
-      '@typescript-eslint/prefer-nullish-coalescing': 'error',
-      '@typescript-eslint/prefer-optional-chain': 'error',
-      '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
+      '@typescript-eslint/explicit-member-accessibility': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/restrict-plus-operands': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/interface-name-prefix': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/unbound-method': 'off',
-      'arrow-body-style': 'error',
-      curly: 'error',
-      eqeqeq: ['error', 'always', { null: 'ignore' }],
-      'guard-for-in': 'error',
-      'no-bitwise': 'error',
-      'no-caller': 'error',
-      'no-console': ['error', { allow: ['warn', 'error'] }],
-      'no-eval': 'error',
-      'no-labels': 'error',
-      'no-new': 'error',
-      'no-new-wrappers': 'error',
-      'object-shorthand': ['error', 'always', { avoidExplicitReturnArrows: true }],
-      radix: 'error',
+      '@typescript-eslint/array-type': 'off',
+      '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/no-shadow': 'error',
       'spaced-comment': ['warn', 'always'],
+      'guard-for-in': 'error',
+      'no-labels': 'error',
+      'no-caller': 'error',
+      'no-bitwise': 'error',
+      'no-console': ['error', { allow: ['warn', 'error'] }],
+      'no-new-wrappers': 'error',
+      'no-eval': 'error',
+      'no-new': 'error',
+      'no-var': 'error',
+      radix: 'error',
+      eqeqeq: ['error', 'always', { null: 'ignore' }],
+      'prefer-const': 'error',
+      'object-shorthand': ['error', 'always', { avoidExplicitReturnArrows: true }],
+      'default-case': 'error',
+      complexity: ['warn', 40],
+      'no-invalid-this': 'off',
+      'react/prop-types': 'off',
+      'react/display-name': 'off',
     },
   },
   {
@@ -117,16 +93,6 @@ export default tseslint.config(
     rules: {
       '@typescript-eslint/no-empty-function': 'off',
     },
-  },
-  {
-    files: ['**/*.html'],
-    extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
-    rules: {},
-  },
-  {
-    // Html templates requires some work
-    ignores: ['**/*.html'],
-    extends: [prettier],
   },
   {
     files: ['src/test/javascript/cypress/**/*.ts'],

@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceProApp": {
+    "orderStatusHistory": {
+      "home": {
+        "title": "Order Status Histories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Maak een nieuwe Order Status History",
+        "createOrEditLabel": "Maak of wijzig een Order Status History",
+        "notFound": "No Order Status Histories found"
+      },
+      "created": "A new Order Status History is created with identifier {{ param }}",
+      "updated": "A Order Status History is updated with identifier {{ param }}",
+      "deleted": "A Order Status History is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Bent u zeker dat u Order Status History {{ id }} wilt verwijderen?"
+      },
+      "detail": {
+        "title": "Order Status History"
+      },
+      "id": "ID",
+      "status": "Status",
+      "changeTime": "Change Time",
+      "customerOrder": "Customer Order"
+    }
+  }
+}

@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * A DTO for the {@link com.aps.domain.ProductImage} entity.
  */
-@Schema(description = "Images associated with a product.")
+@Schema(description = "Images associated with a product.\nNOW: The primary source of images for FishProduct.")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class ProductImageDTO implements Serializable {
 
@@ -19,9 +19,6 @@ public class ProductImageDTO implements Serializable {
 
     @NotNull
     private Integer displayOrder;
-
-    @NotNull
-    private FishProductDTO product;
 
     public Long getId() {
         return id;
@@ -45,35 +42,6 @@ public class ProductImageDTO implements Serializable {
 
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
-    }
-
-    public FishProductDTO getProduct() {
-        return product;
-    }
-
-    public void setProduct(FishProductDTO product) {
-        this.product = product;
-    }
-
-    @jakarta.persistence.Lob
-    private byte[] imageData;
-
-    private String mimeType;
-
-    public byte[] getImageData() {
-        return imageData;
-    }
-
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
-    }
-
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
     }
 
     @Override
@@ -101,10 +69,9 @@ public class ProductImageDTO implements Serializable {
     @Override
     public String toString() {
         return "ProductImageDTO{" +
-                "id=" + getId() +
-                ", imageUrl='" + getImageUrl() + "'" +
-                ", displayOrder=" + getDisplayOrder() +
-                ", product=" + getProduct() +
-                "}";
+            "id=" + getId() +
+            ", imageUrl='" + getImageUrl() + "'" +
+            ", displayOrder=" + getDisplayOrder() +
+            "}";
     }
 }

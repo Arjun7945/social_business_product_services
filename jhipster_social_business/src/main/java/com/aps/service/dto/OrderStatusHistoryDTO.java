@@ -1,6 +1,8 @@
 package com.aps.service.dto;
 
 import com.aps.domain.enumeration.OrderStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
@@ -8,15 +10,17 @@ import java.util.Objects;
 /**
  * A DTO for the {@link com.aps.domain.OrderStatusHistory} entity.
  */
+@Schema(description = "Tracks the history of Order Status changes.\nEssential for the Angular frontend status tracker.")
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class OrderStatusHistoryDTO implements Serializable {
 
     private Long id;
 
+    @NotNull
     private OrderStatus status;
 
+    @NotNull
     private Instant changeTime;
-
-    private CustomerOrderDTO customerOrder;
 
     public Long getId() {
         return id;
@@ -42,14 +46,6 @@ public class OrderStatusHistoryDTO implements Serializable {
         this.changeTime = changeTime;
     }
 
-    public CustomerOrderDTO getCustomerOrder() {
-        return customerOrder;
-    }
-
-    public void setCustomerOrder(CustomerOrderDTO customerOrder) {
-        this.customerOrder = customerOrder;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -71,10 +67,13 @@ public class OrderStatusHistoryDTO implements Serializable {
         return Objects.hash(this.id);
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
-        return (
-            "OrderStatusHistoryDTO{" + "id=" + getId() + ", status='" + getStatus() + "'" + ", changeTime='" + getChangeTime() + "'" + "}"
-        );
+        return "OrderStatusHistoryDTO{" +
+            "id=" + getId() +
+            ", status='" + getStatus() + "'" +
+            ", changeTime='" + getChangeTime() + "'" +
+            "}";
     }
 }

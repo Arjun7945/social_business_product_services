@@ -9,4 +9,4 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface RemovedUserRepository extends JpaRepository<RemovedUser, Long> {}
+public interface RemovedUserRepository extends JpaRepository<RemovedUser, Long>, JpaSpecificationExecutor<RemovedUser> {}

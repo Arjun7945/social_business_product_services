@@ -1,0 +1,43 @@
+{
+  "whatsappProductServiceProApp": {
+    "removedUser": {
+      "home": {
+        "title": "RemovedUsers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नया Removed User बनाएँ",
+        "createOrEditLabel": "Removed User बनाएँ या संपादित करें",
+        "notFound": "No Removed Users found"
+      },
+      "created": "एक नया Removed User [identifier: {{ param }}] तैयार है",
+      "updated": "एक Removed User [identifier: {{ param }}] का अद्यतन हुआ है",
+      "deleted": "Removed User [identifier: {{ param }}] हटा दिया है",
+      "delete": {
+        "question": "Removed User [id: {{ id }}] हटाने की पुष्टि करें"
+      },
+      "detail": {
+        "title": "Removed User"
+      },
+      "id": "ID",
+      "originalId": "Original Id",
+      "name": "Name",
+      "role": "Role",
+      "whatsappNumber": "Whatsapp Number",
+      "phoneNumber": "Phone Number",
+      "address": "Address",
+      "locationLat": "Location Lat",
+      "locationLon": "Location Lon",
+      "joinedAt": "Joined At",
+      "removedAt": "Removed At",
+      "reasonForRemoval": "Reason For Removal",
+      "lastSessionData": "Last Session Data",
+      "status": "Status",
+      "orderHistoryId": "Order History Id",
+      "distanceFromBusinessKm": "Distance From Business Km",
+      "isPincodeValid": "Is Pincode Valid",
+      "help": {
+        "distanceFromBusinessKm": "NEW: Stored for Customer audit",
+        "isPincodeValid": "NEW: Stored for Customer audit"
+      }
+    }
+  }
+}

@@ -5,24 +5,17 @@ import com.aps.domain.enumeration.UserRole;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Objects;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * A RemovedUser.
- * <p>
- * Stores comprehensive audit and restoration data for any user (Customer or
- * TeamMember)
- * who has been removed from the active system. This allows for:
- * 1. Audit trails (who was removed, when, and why).
- * 2. Potential account restoration.
- * 3. Linking orphaned historical orders to a known identity.
- * </p>
+ * RemovedUser.
+ * Updated to include distance and pincode status for audit.
  */
 @Entity
 @Table(name = "removed_user")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class RemovedUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -33,9 +26,6 @@ public class RemovedUser implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    /**
-     * The original ID of the user in the source table (customer or team_member).
-     */
     @Column(name = "original_id")
     private Long originalId;
 
@@ -52,9 +42,6 @@ public class RemovedUser implements Serializable {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    /**
-     * Stored for potential restoration of delivery logistics.
-     */
     @Column(name = "address")
     private String address;
 
@@ -64,9 +51,6 @@ public class RemovedUser implements Serializable {
     @Column(name = "location_lon")
     private Double locationLon;
 
-    /**
-     * The original join date, preserved to maintain seniority upon restoration.
-     */
     @Column(name = "joined_at")
     private Instant joinedAt;
 
@@ -76,9 +60,6 @@ public class RemovedUser implements Serializable {
     @Column(name = "reason_for_removal")
     private String reasonForRemoval;
 
-    /**
-     * Snapshot of the session state at the time of removal.
-     */
     @Lob
     @Column(name = "last_session_data")
     private String lastSessionData;
@@ -87,17 +68,30 @@ public class RemovedUser implements Serializable {
     @Column(name = "status")
     private AccountStatus status;
 
-    /**
-     * Link to the {@link RemovedOrderSummary} containing aggregate financial stats.
-     * Null if no relevant history exists (e.g. some staff roles).
-     */
     @Column(name = "order_history_id")
     private Long orderHistoryId;
 
-    // Direct Getters and Setters (JPA Requirement without Lombok)
+    /**
+     * NEW: Stored for Customer audit
+     */
+    @Column(name = "distance_from_business_km")
+    private Double distanceFromBusinessKm;
+
+    /**
+     * NEW: Stored for Customer audit
+     */
+    @Column(name = "is_pincode_valid")
+    private Boolean isPincodeValid;
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
         return this.id;
+    }
+
+    public RemovedUser id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -108,12 +102,22 @@ public class RemovedUser implements Serializable {
         return this.originalId;
     }
 
+    public RemovedUser originalId(Long originalId) {
+        this.setOriginalId(originalId);
+        return this;
+    }
+
     public void setOriginalId(Long originalId) {
         this.originalId = originalId;
     }
 
     public String getName() {
         return this.name;
+    }
+
+    public RemovedUser name(String name) {
+        this.setName(name);
+        return this;
     }
 
     public void setName(String name) {
@@ -124,12 +128,22 @@ public class RemovedUser implements Serializable {
         return this.role;
     }
 
+    public RemovedUser role(UserRole role) {
+        this.setRole(role);
+        return this;
+    }
+
     public void setRole(UserRole role) {
         this.role = role;
     }
 
     public String getWhatsappNumber() {
         return this.whatsappNumber;
+    }
+
+    public RemovedUser whatsappNumber(String whatsappNumber) {
+        this.setWhatsappNumber(whatsappNumber);
+        return this;
     }
 
     public void setWhatsappNumber(String whatsappNumber) {
@@ -140,12 +154,22 @@ public class RemovedUser implements Serializable {
         return this.phoneNumber;
     }
 
+    public RemovedUser phoneNumber(String phoneNumber) {
+        this.setPhoneNumber(phoneNumber);
+        return this;
+    }
+
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
     public String getAddress() {
         return this.address;
+    }
+
+    public RemovedUser address(String address) {
+        this.setAddress(address);
+        return this;
     }
 
     public void setAddress(String address) {
@@ -156,12 +180,22 @@ public class RemovedUser implements Serializable {
         return this.locationLat;
     }
 
+    public RemovedUser locationLat(Double locationLat) {
+        this.setLocationLat(locationLat);
+        return this;
+    }
+
     public void setLocationLat(Double locationLat) {
         this.locationLat = locationLat;
     }
 
     public Double getLocationLon() {
         return this.locationLon;
+    }
+
+    public RemovedUser locationLon(Double locationLon) {
+        this.setLocationLon(locationLon);
+        return this;
     }
 
     public void setLocationLon(Double locationLon) {
@@ -172,12 +206,22 @@ public class RemovedUser implements Serializable {
         return this.joinedAt;
     }
 
+    public RemovedUser joinedAt(Instant joinedAt) {
+        this.setJoinedAt(joinedAt);
+        return this;
+    }
+
     public void setJoinedAt(Instant joinedAt) {
         this.joinedAt = joinedAt;
     }
 
     public Instant getRemovedAt() {
         return this.removedAt;
+    }
+
+    public RemovedUser removedAt(Instant removedAt) {
+        this.setRemovedAt(removedAt);
+        return this;
     }
 
     public void setRemovedAt(Instant removedAt) {
@@ -188,12 +232,22 @@ public class RemovedUser implements Serializable {
         return this.reasonForRemoval;
     }
 
+    public RemovedUser reasonForRemoval(String reasonForRemoval) {
+        this.setReasonForRemoval(reasonForRemoval);
+        return this;
+    }
+
     public void setReasonForRemoval(String reasonForRemoval) {
         this.reasonForRemoval = reasonForRemoval;
     }
 
     public String getLastSessionData() {
         return this.lastSessionData;
+    }
+
+    public RemovedUser lastSessionData(String lastSessionData) {
+        this.setLastSessionData(lastSessionData);
+        return this;
     }
 
     public void setLastSessionData(String lastSessionData) {
@@ -204,6 +258,11 @@ public class RemovedUser implements Serializable {
         return this.status;
     }
 
+    public RemovedUser status(AccountStatus status) {
+        this.setStatus(status);
+        return this;
+    }
+
     public void setStatus(AccountStatus status) {
         this.status = status;
     }
@@ -212,30 +271,42 @@ public class RemovedUser implements Serializable {
         return this.orderHistoryId;
     }
 
+    public RemovedUser orderHistoryId(Long orderHistoryId) {
+        this.setOrderHistoryId(orderHistoryId);
+        return this;
+    }
+
     public void setOrderHistoryId(Long orderHistoryId) {
         this.orderHistoryId = orderHistoryId;
     }
 
-    // Fluent Setters for easier construction
-    public RemovedUser id(Long id) {
-        this.id = id;
+    public Double getDistanceFromBusinessKm() {
+        return this.distanceFromBusinessKm;
+    }
+
+    public RemovedUser distanceFromBusinessKm(Double distanceFromBusinessKm) {
+        this.setDistanceFromBusinessKm(distanceFromBusinessKm);
         return this;
     }
 
-    public RemovedUser name(String name) {
-        this.name = name;
+    public void setDistanceFromBusinessKm(Double distanceFromBusinessKm) {
+        this.distanceFromBusinessKm = distanceFromBusinessKm;
+    }
+
+    public Boolean getIsPincodeValid() {
+        return this.isPincodeValid;
+    }
+
+    public RemovedUser isPincodeValid(Boolean isPincodeValid) {
+        this.setIsPincodeValid(isPincodeValid);
         return this;
     }
 
-    public RemovedUser role(UserRole role) {
-        this.role = role;
-        return this;
+    public void setIsPincodeValid(Boolean isPincodeValid) {
+        this.isPincodeValid = isPincodeValid;
     }
 
-    public RemovedUser status(AccountStatus status) {
-        this.status = status;
-        return this;
-    }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -245,34 +316,36 @@ public class RemovedUser implements Serializable {
         if (!(o instanceof RemovedUser)) {
             return false;
         }
-        return id != null && id.equals(((RemovedUser) o).id);
+        return getId() != null && getId().equals(((RemovedUser) o).getId());
     }
 
     @Override
     public int hashCode() {
-        // JPA entity recommendation: Use class hashCode to allow lazy loading proxies
-        // to work correctly
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
-        return (
-            "RemovedUser{" +
-            "id=" +
-            getId() +
-            ", originalId=" +
-            getOriginalId() +
-            ", name='" +
-            getName() +
-            "'" +
-            ", role='" +
-            getRole() +
-            "'" +
-            ", status='" +
-            getStatus() +
-            "'" +
-            "}"
-        );
+        return "RemovedUser{" +
+            "id=" + getId() +
+            ", originalId=" + getOriginalId() +
+            ", name='" + getName() + "'" +
+            ", role='" + getRole() + "'" +
+            ", whatsappNumber='" + getWhatsappNumber() + "'" +
+            ", phoneNumber='" + getPhoneNumber() + "'" +
+            ", address='" + getAddress() + "'" +
+            ", locationLat=" + getLocationLat() +
+            ", locationLon=" + getLocationLon() +
+            ", joinedAt='" + getJoinedAt() + "'" +
+            ", removedAt='" + getRemovedAt() + "'" +
+            ", reasonForRemoval='" + getReasonForRemoval() + "'" +
+            ", lastSessionData='" + getLastSessionData() + "'" +
+            ", status='" + getStatus() + "'" +
+            ", orderHistoryId=" + getOrderHistoryId() +
+            ", distanceFromBusinessKm=" + getDistanceFromBusinessKm() +
+            ", isPincodeValid='" + getIsPincodeValid() + "'" +
+            "}";
     }
 }

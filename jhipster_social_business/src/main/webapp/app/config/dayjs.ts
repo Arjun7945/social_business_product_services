@@ -1,22 +1,22 @@
-import dayjs from 'dayjs/esm';
-import customParseFormat from 'dayjs/esm/plugin/customParseFormat';
-import duration from 'dayjs/esm/plugin/duration';
-import relativeTime from 'dayjs/esm/plugin/relativeTime';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 // jhipster-needle-i18n-language-dayjs-imports - JHipster will import languages from dayjs here
-import 'dayjs/esm/locale/en';
-import 'dayjs/esm/locale/ar-ly';
-import 'dayjs/esm/locale/nl';
-import 'dayjs/esm/locale/fr';
-import 'dayjs/esm/locale/de';
-import 'dayjs/esm/locale/el';
-import 'dayjs/esm/locale/hi';
-import 'dayjs/esm/locale/mr';
-import 'dayjs/esm/locale/pa-in';
-import 'dayjs/esm/locale/ru';
-import 'dayjs/esm/locale/es';
-import 'dayjs/esm/locale/ta';
-import 'dayjs/esm/locale/te';
+import 'dayjs/locale/en';
+import 'dayjs/locale/ar-ly';
+import 'dayjs/locale/nl';
+import 'dayjs/locale/fr';
+import 'dayjs/locale/de';
+import 'dayjs/locale/el';
+import 'dayjs/locale/hi';
+import 'dayjs/locale/mr';
+import 'dayjs/locale/pa-in';
+import 'dayjs/locale/ru';
+import 'dayjs/locale/es';
+import 'dayjs/locale/ta';
+import 'dayjs/locale/te';
 
 // DAYJS CONFIGURATION
 dayjs.extend(customParseFormat);

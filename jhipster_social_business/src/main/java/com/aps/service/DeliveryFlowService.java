@@ -4,12 +4,11 @@ import com.aps.config.FlowConstants;
 import com.aps.domain.BotSession;
 import com.aps.domain.Customer;
 import com.aps.domain.CustomerOrder;
-import com.aps.domain.TeamMember;
+import com.aps.domain.DeliveryPerson;
 import com.aps.domain.enumeration.OrderStatus;
-import com.aps.domain.enumeration.UserRole;
 import com.aps.repository.CustomerOrderRepository;
 import com.aps.repository.CustomerRepository;
-import com.aps.repository.TeamMemberRepository;
+import com.aps.repository.DeliveryPersonRepository;
 import com.aps.service.dto.CartItemDetailsDTO;
 import com.aps.service.dto.WhatsAppMessageDto;
 import com.aps.service.dto.WhatsAppWebhookDto;
@@ -21,7 +20,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -39,36 +37,35 @@ public class DeliveryFlowService {
     private final CustomerMessageService customerMessageService;
     private final CustomerFlowService customerFlowService;
     private final PaymentStrategyFactory paymentStrategyFactory;
-    private final TeamMemberRepository teamMemberRepository;
+    private final DeliveryPersonRepository deliveryPersonRepository;
     private final CustomerOrderRepository customerOrderRepository;
     private final CustomerRepository customerRepository;
     private final OrderStatusHistoryService orderStatusHistoryService;
 
     public DeliveryFlowService(
-        @Lazy WhatsAppService whatsAppService,
-        BotSessionManager sessionManager,
-        DeliveryPersonMessageService deliveryPersonMessageService,
-        CustomerMessageService customerMessageService,
-        CustomerFlowService customerFlowService,
-        PaymentStrategyFactory paymentStrategyFactory,
-        TeamMemberRepository teamMemberRepository,
-        CustomerOrderRepository customerOrderRepository,
-        CustomerRepository customerRepository,
-        OrderStatusHistoryService orderStatusHistoryService
-    ) {
+            @Lazy WhatsAppService whatsAppService,
+            BotSessionManager sessionManager,
+            DeliveryPersonMessageService deliveryPersonMessageService,
+            CustomerMessageService customerMessageService,
+            CustomerFlowService customerFlowService,
+            PaymentStrategyFactory paymentStrategyFactory,
+            DeliveryPersonRepository deliveryPersonRepository,
+            CustomerOrderRepository customerOrderRepository,
+            CustomerRepository customerRepository,
+            OrderStatusHistoryService orderStatusHistoryService) {
         this.whatsAppService = whatsAppService;
         this.sessionManager = sessionManager;
         this.deliveryPersonMessageService = deliveryPersonMessageService;
         this.customerMessageService = customerMessageService;
         this.customerFlowService = customerFlowService;
         this.paymentStrategyFactory = paymentStrategyFactory;
-        this.teamMemberRepository = teamMemberRepository;
+        this.deliveryPersonRepository = deliveryPersonRepository;
         this.customerOrderRepository = customerOrderRepository;
         this.customerRepository = customerRepository;
         this.orderStatusHistoryService = orderStatusHistoryService;
     }
 
-    public void handleDeliveryMessage(TeamMember deliveryPerson, WhatsAppWebhookDto.Message message) {
+    public void handleDeliveryMessage(DeliveryPerson deliveryPerson, WhatsAppWebhookDto.Message message) {
         log.info("Processing delivery message from: {}", deliveryPerson.getName());
 
         BotSession session = sessionManager.getSession(deliveryPerson.getWaPhoneNumber());
@@ -76,10 +73,12 @@ public class DeliveryFlowService {
         if (message.getType().equals("text")) {
             String text = message.getText().getBody();
             if (text.equalsIgnoreCase("hi") || text.equalsIgnoreCase("hello")) {
-                String welcomeMsg = deliveryPersonMessageService.getDeliveryPersonWelcomeMessage(deliveryPerson.getName());
+                String welcomeMsg = deliveryPersonMessageService
+                        .getDeliveryPersonWelcomeMessage(deliveryPerson.getName());
                 whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), welcomeMsg);
             } else {
-                whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), "Use buttons to interact with orders.");
+                whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
+                        "Use buttons to interact with orders.");
             }
         } else if (message.getType().equals("interactive")) {
             if (message.getInteractive().getType().equals("button_reply")) {
@@ -90,7 +89,8 @@ public class DeliveryFlowService {
         session.setLastActiveAt(Instant.now());
     }
 
-    private void handleButtonReply(TeamMember deliveryPerson, BotSession session, WhatsAppWebhookDto.ButtonReply buttonReply) {
+    private void handleButtonReply(DeliveryPerson deliveryPerson, BotSession session,
+            WhatsAppWebhookDto.ButtonReply buttonReply) {
         String buttonId = buttonReply.getId();
         log.info("Delivery button reply: {}", buttonId);
 
@@ -113,14 +113,15 @@ public class DeliveryFlowService {
             updateOrderStatus(deliveryPerson, orderId, OrderStatus.DELIVERY_ONWAY);
 
             notifyCustomerOrderShipped(orderId);
-            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), deliveryPersonMessageService.getOrderShippedSuccess());
+            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
+                    deliveryPersonMessageService.getOrderShippedSuccess());
         } else if (buttonId.startsWith(FlowConstants.PREFIX_DELIVERED)) {
             Long orderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_DELIVERED, ""));
             updateOrderStatus(deliveryPerson, orderId, OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
         }
     }
 
-    private void handlePaymentModeSelection(TeamMember deliveryPerson, BotSession session, String buttonId) {
+    private void handlePaymentModeSelection(DeliveryPerson deliveryPerson, BotSession session, String buttonId) {
         Long orderId = null;
         String mode = null;
 
@@ -171,14 +172,15 @@ public class DeliveryFlowService {
         }
     }
 
-    private void updateOrderStatus(TeamMember deliveryPerson, Long orderId, OrderStatus newStatus) {
+    private void updateOrderStatus(DeliveryPerson deliveryPerson, Long orderId, OrderStatus newStatus) {
         CustomerOrder order = customerOrderRepository
-            .findById(orderId)
-            .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+                .findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
 
-        // Verify ownership?
+        // Verify ownership
         if (order.getDeliveryPerson() == null || !order.getDeliveryPerson().getId().equals(deliveryPerson.getId())) {
-            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), deliveryPersonMessageService.getOrderNotAssignedWarning());
+            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
+                    deliveryPersonMessageService.getOrderNotAssignedWarning());
             return;
         }
 
@@ -188,30 +190,29 @@ public class DeliveryFlowService {
 
         if (newStatus == OrderStatus.ORDER_DELIVERED_SUCESSFULLY) {
             TransactionSynchronizationManager.registerSynchronization(
-                new TransactionSynchronization() {
-                    @Override
-                    public void afterCommit() {
-                        whatsAppService.sendSimpleText(
-                            deliveryPerson.getWaPhoneNumber(),
-                            deliveryPersonMessageService.getOrderDeliveredSuccess()
-                        );
-                        // Notify Customer
-                        whatsAppService.sendSimpleText(
-                            order.getCustomer().getWaPhoneNumber(),
-                            customerMessageService.getOrderDeliveredMessage()
-                        );
+                    new TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                            whatsAppService.sendSimpleText(
+                                    deliveryPerson.getWaPhoneNumber(),
+                                    deliveryPersonMessageService.getOrderDeliveredSuccess());
+                            // Notify Customer
+                            whatsAppService.sendSimpleText(
+                                    order.getCustomer().getWaPhoneNumber(),
+                                    customerMessageService.getOrderDeliveredMessage());
 
-                        // Trigger Re-order Flow
-                        customerFlowService.sendReOrderFlow(order.getCustomer());
-                    }
-                }
-            );
+                            // Trigger Re-order Flow
+                            customerFlowService.sendReOrderFlow(order.getCustomer());
+                        }
+                    });
         }
     }
 
     private void notifyCustomerOrderShipped(Long orderId) {
-        CustomerOrder order = customerOrderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
-        whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(), customerMessageService.getOrderShippedMessage());
+        CustomerOrder order = customerOrderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(),
+                customerMessageService.getOrderShippedMessage());
     }
 
     /**
@@ -219,7 +220,7 @@ public class DeliveryFlowService {
      */
     public void sendOrderToAllDeliveryPersons(CustomerOrder order, Customer customer, List<CartItemDetailsDTO> items) {
         // Fetch all active delivery persons
-        List<TeamMember> deliveryPersons = teamMemberRepository.findByRoleAndIsActive(UserRole.DELIVERY_PERSON, true);
+        List<DeliveryPerson> deliveryPersons = deliveryPersonRepository.findByIsActive(true);
 
         if (deliveryPersons.isEmpty()) {
             log.warn("No active delivery persons found!");
@@ -228,88 +229,63 @@ public class DeliveryFlowService {
 
         StringBuilder orderDetails = new StringBuilder();
         orderDetails.append(deliveryPersonMessageService.getOrderNotificationHeader(order.getId()));
-        orderDetails.append(deliveryPersonMessageService.getCustomerDetails(customer.getName(), customer.getPhoneNumber()));
-
-        /*
-         * // REMOVED: Location details (Lat/Lon/Km) for cleaner UI
-         * // Always add location details, send "null" as string if data is not
-         * available
-         * String lat = customer.getLocationLat() != null ? String.format("%.5f",
-         * customer.getLocationLat())
-         * : "null";
-         * String lon = customer.getLocationLon() != null ? String.format("%.5f",
-         * customer.getLocationLon())
-         * : "null";
-         * String distance = customer.getDistanceFromBusinessKm() != null
-         * ? String.format("%.2f", customer.getDistanceFromBusinessKm())
-         * : "null";
-         *
-         * orderDetails.append(deliveryPersonMessageService.getLocationDetails(lat, lon,
-         * distance));
-         */
+        orderDetails
+                .append(deliveryPersonMessageService.getCustomerDetails(customer.getName(), customer.getPhoneNumber()));
 
         orderDetails.append(deliveryPersonMessageService.getItemsHeader());
         for (CartItemDetailsDTO item : items) {
             orderDetails.append(
-                String.format(
-                    "• %s - %.2f kg × ₹%.2f = ₹%.2f\n",
-                    item.getFishName(),
-                    item.getQuantityKg(),
-                    item.getPricePerKg(),
-                    item.getSubtotal()
-                )
-            );
+                    String.format(
+                            "• %s - %.2f kg × ₹%.2f = ₹%.2f\n",
+                            item.getFishName(),
+                            item.getQuantityKg(),
+                            item.getPricePerKg(),
+                            item.getSubtotal()));
         }
 
         // Use BigDecimal for total
-        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy, hh:mm a").withZone(
-            java.time.ZoneId.systemDefault()
-        );
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+                .ofPattern("dd-MM-yyyy, hh:mm a").withZone(
+                        java.time.ZoneId.systemDefault());
         String formattedTime = formatter.format(order.getOrderTime());
 
-        orderDetails.append(deliveryPersonMessageService.getOrderFooter(order.getTotalAmount().doubleValue(), formattedTime));
+        orderDetails.append(
+                deliveryPersonMessageService.getOrderFooter(order.getTotalAmount().doubleValue(), formattedTime));
 
         // Send to each delivery person individually
-        for (TeamMember deliveryPerson : deliveryPersons) {
-            whatsAppService.sendInteractiveOrderAlert(deliveryPerson.getWaPhoneNumber(), orderDetails.toString(), order.getId());
+        for (DeliveryPerson deliveryPerson : deliveryPersons) {
+            whatsAppService.sendInteractiveOrderAlert(deliveryPerson.getWaPhoneNumber(), orderDetails.toString(),
+                    order.getId());
             log.info(
-                "Order {} sent to delivery person: {} ({})",
-                order.getId(),
-                deliveryPerson.getName(),
-                deliveryPerson.getWaPhoneNumber()
-            );
+                    "Order {} sent to delivery person: {} ({})",
+                    order.getId(),
+                    deliveryPerson.getName(),
+                    deliveryPerson.getWaPhoneNumber());
         }
 
         log.info("Order {} sent to {} active delivery persons", order.getId(), deliveryPersons.size());
     }
 
     /**
-     * Handle delivery delivery person confirmation with role validation
+     * Handle delivery delivery person confirmation
      */
     public void handleDeliveryConfirmation(String deliveryPersonWaId, Long orderId) {
         // 1. Fetch order
         CustomerOrder order = customerOrderRepository
-            .findById(orderId)
-            .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+                .findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
 
-        // 2. Validate delivery person role (Moved up to use in check)
-        Optional<TeamMember> teamMemberOpt = teamMemberRepository.findByWaPhoneNumber(deliveryPersonWaId);
+        // 2. Validate delivery person exists
+        Optional<DeliveryPerson> deliveryPersonOpt = deliveryPersonRepository.findByWaPhoneNumber(deliveryPersonWaId);
 
-        if (teamMemberOpt.isEmpty()) {
+        if (deliveryPersonOpt.isEmpty()) {
             // User not registered in system
             whatsAppService.sendUnauthorizedDeliveryMessage(deliveryPersonWaId);
             log.warn("Unauthorized delivery confirmation attempt by unregistered user: {}", deliveryPersonWaId);
             return;
         }
 
-        TeamMember teamMember = teamMemberOpt.get();
-
-        // Check if user has DELIVERY_PERSON role
-        if (teamMember.getRole() != UserRole.DELIVERY_PERSON) {
-            whatsAppService.sendUnauthorizedDeliveryMessage(deliveryPersonWaId);
-            log.warn("Unauthorized delivery confirmation attempt by user {} with role: {}", deliveryPersonWaId, teamMember.getRole());
-            return;
-        }
+        DeliveryPerson deliveryPerson = deliveryPersonOpt.get();
 
         // 3. Strict Status Check (Race Condition Fix)
         // If the order is NOT available (i.e. not in ORDER_NOT_TAKEN state), reject it.
@@ -317,90 +293,86 @@ public class DeliveryFlowService {
             String status = order.getStatus().toString();
 
             // Use existing message: "Order #123 is already DELIVERY_ONWAY..."
-            whatsAppService.sendSimpleText(deliveryPersonWaId, deliveryPersonMessageService.getOrderAlreadyTaken(orderId, status));
+            whatsAppService.sendSimpleText(deliveryPersonWaId,
+                    deliveryPersonMessageService.getOrderAlreadyTaken(orderId, status));
 
-            log.warn("Blocked attempt to take order {} by {} because status is {}", orderId, deliveryPersonWaId, status);
+            log.warn("Blocked attempt to take order {} by {} because status is {}", orderId, deliveryPersonWaId,
+                    status);
             return;
         }
 
         // 4. Update order with delivery person details
         order.setStatus(OrderStatus.DELIVERY_ONWAY);
-        order.setDeliveryPerson(teamMember);
+        order.setDeliveryPerson(deliveryPerson);
         order.setConfirmedAt(Instant.now());
         customerOrderRepository.save(order);
         orderStatusHistoryService.addEvent(order);
 
         TransactionSynchronizationManager.registerSynchronization(
-            new TransactionSynchronization() {
-                @Override
-                public void afterCommit() {
-                    // 5. Notify customer with delivery person details
-                    Customer customer = customerRepository
-                        .findById(order.getCustomer().getId())
-                        .orElseThrow(() -> new RuntimeException("Customer not found"));
+                new TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        // 5. Notify customer with delivery person details
+                        Customer customer = customerRepository
+                                .findById(order.getCustomer().getId())
+                                .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-                    whatsAppService.sendDeliveryAssignmentNotification(
-                        customer.getWaPhoneNumber(),
-                        teamMember.getName(),
-                        teamMember.getWaPhoneNumber()
-                    );
+                        whatsAppService.sendDeliveryAssignmentNotification(
+                                customer.getWaPhoneNumber(),
+                                deliveryPerson.getName(),
+                                deliveryPerson.getWaPhoneNumber());
 
-                    // 6. Notify delivery person of successful confirmation
-                    whatsAppService.sendSimpleText(
-                        deliveryPersonWaId,
-                        deliveryPersonMessageService.getOrderConfirmationSuccess(orderId, customer.getName(), customer.getPhoneNumber())
-                    );
+                        // 6. Notify delivery person of successful confirmation
+                        whatsAppService.sendSimpleText(
+                                deliveryPersonWaId,
+                                deliveryPersonMessageService.getOrderConfirmationSuccess(orderId, customer.getName(),
+                                        customer.getPhoneNumber()));
 
-                    // Send Location Map
-                    if (customer.getLocationLat() != null && customer.getLocationLon() != null) {
-                        whatsAppService.sendLocation(
-                            deliveryPersonWaId,
-                            customer.getLocationLat(),
-                            customer.getLocationLon(),
-                            customer.getName(),
-                            customer.getAddress()
-                        );
+                        // Send Location Map
+                        if (customer.getLocationLat() != null && customer.getLocationLon() != null) {
+                            whatsAppService.sendLocation(
+                                    deliveryPersonWaId,
+                                    customer.getLocationLat(),
+                                    customer.getLocationLon(),
+                                    customer.getName(),
+                                    customer.getAddress());
+                        }
+
+                        log.info("Order {} assigned to delivery person {} ({})", orderId, deliveryPerson.getName(),
+                                deliveryPerson.getPhoneNumber());
+
+                        // 7. Send Payment Mode Selection Buttons (Replaces Dashboard for now)
+                        sendPaymentModeSelection(deliveryPersonWaId, orderId, order.getTotalAmount().doubleValue());
                     }
-
-                    log.info("Order {} assigned to delivery person {} ({})", orderId, teamMember.getName(), teamMember.getPhoneNumber());
-
-                    // 7. Send Payment Mode Selection Buttons (Replaces Dashboard for now)
-                    sendPaymentModeSelection(deliveryPersonWaId, orderId, order.getTotalAmount().doubleValue());
-                }
-            }
-        );
+                });
     }
 
     private void sendPaymentModeSelection(String waId, Long orderId, double amount) {
         List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
-            WhatsAppMessageDto.ButtonDto.builder()
-                .type("reply")
-                .reply(
-                    WhatsAppMessageDto.ReplyDto.builder()
-                        .id(FlowConstants.PREFIX_PAY_COD + orderId)
-                        .title(deliveryPersonMessageService.getButtonCod())
-                        .build()
-                )
-                .build(),
-            WhatsAppMessageDto.ButtonDto.builder()
-                .type("reply")
-                .reply(
-                    WhatsAppMessageDto.ReplyDto.builder()
-                        .id(FlowConstants.PREFIX_PAY_QR + orderId)
-                        .title(deliveryPersonMessageService.getButtonQr())
-                        .build()
-                )
-                .build(),
-            WhatsAppMessageDto.ButtonDto.builder()
-                .type("reply")
-                .reply(
-                    WhatsAppMessageDto.ReplyDto.builder()
-                        .id(FlowConstants.PREFIX_PAY_LINK + orderId)
-                        .title(deliveryPersonMessageService.getButtonLink())
-                        .build()
-                )
-                .build()
-        );
+                WhatsAppMessageDto.ButtonDto.builder()
+                        .type("reply")
+                        .reply(
+                                WhatsAppMessageDto.ReplyDto.builder()
+                                        .id(FlowConstants.PREFIX_PAY_COD + orderId)
+                                        .title(deliveryPersonMessageService.getButtonCod())
+                                        .build())
+                        .build(),
+                WhatsAppMessageDto.ButtonDto.builder()
+                        .type("reply")
+                        .reply(
+                                WhatsAppMessageDto.ReplyDto.builder()
+                                        .id(FlowConstants.PREFIX_PAY_QR + orderId)
+                                        .title(deliveryPersonMessageService.getButtonQr())
+                                        .build())
+                        .build(),
+                WhatsAppMessageDto.ButtonDto.builder()
+                        .type("reply")
+                        .reply(
+                                WhatsAppMessageDto.ReplyDto.builder()
+                                        .id(FlowConstants.PREFIX_PAY_LINK + orderId)
+                                        .title(deliveryPersonMessageService.getButtonLink())
+                                        .build())
+                        .build());
 
         String message = deliveryPersonMessageService.getPaymentModeSelectionHeader(orderId, amount);
         whatsAppService.sendCartActionButtons(waId, message, buttons);

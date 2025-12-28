@@ -1,0 +1,44 @@
+{
+  "annotations": {
+    "changelogDate": "20251228084006"
+  },
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "DeliveryZone\\nRepresents the \"Category\" (A, B, C, etc.) based on pincodes.\\nUsed to group Customers and DeliveryPersons.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "documentation": "e.g., \"A\", \"B\", \"North-1\"",
+      "fieldName": "zoneName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "documentation": "specific pincode or pattern linked to this zone",
+      "fieldName": "pincode",
+      "fieldType": "String"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "DeliveryZone",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "documentation": "One Zone has many Customers",
+      "otherEntityName": "customer",
+      "otherEntityRelationshipName": "zone",
+      "relationshipName": "customers",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "documentation": "One Zone has many Delivery Persons",
+      "otherEntityName": "deliveryPerson",
+      "otherEntityRelationshipName": "zone",
+      "relationshipName": "deliveryPersons",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

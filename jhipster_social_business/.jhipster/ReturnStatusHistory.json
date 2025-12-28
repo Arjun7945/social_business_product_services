@@ -1,0 +1,37 @@
+{
+  "annotations": {
+    "changelogDate": "20251228084020"
+  },
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "Track the lifecycle of a return (Requested -> Picked Up -> Refunded).\\nEnables frontend tracking for customers.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "status",
+      "fieldType": "ReturnStatus",
+      "fieldTypeDocumentation": "Status for the Return Request Lifecycle",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "RETURN_REQUESTED,RETURN_APPROVED,PICKUP_SCHEDULED,PICKUP_COMPLETED,RECEIVED_AT_FACILITY,REFUND_INITIATED,REFUND_COMPLETED,RETURN_REJECTED"
+    },
+    {
+      "fieldName": "changeTime",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "ReturnStatusHistory",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "returnedOrder",
+      "otherEntityRelationshipName": "history",
+      "relationshipName": "returnedOrder",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

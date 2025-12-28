@@ -1,0 +1,32 @@
+{
+  "whatsappProductServiceProApp": {
+    "returnedOrder": {
+      "home": {
+        "title": "Returned Orders",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नवीन Returned Order तयार करा",
+        "createOrEditLabel": "Returned Order तयार किंवा संपादित करा",
+        "notFound": "No Returned Orders found"
+      },
+      "created": "Returned Order [identifier: {{ param }}] तयार आहे",
+      "updated": "Returned Order [identifier: {{ param }}] सुधारित केले आहे",
+      "deleted": "Returned Order [identifier: {{ param }}] हटविले आहे",
+      "delete": {
+        "question": "Returned Order [id: {{ id }}] काढून टाकण्याबाबत पुष्टी?"
+      },
+      "detail": {
+        "title": "Returned Order"
+      },
+      "id": "ID",
+      "returnDate": "Return Date",
+      "paymentReceivedMode": "Payment Received Mode",
+      "paymentReturnedMode": "Payment Returned Mode",
+      "productClaimStatus": "Product Claim Status",
+      "refundAmount": "Refund Amount",
+      "history": "History",
+      "items": "Items",
+      "order": "Order",
+      "customer": "Customer"
+    }
+  }
+}

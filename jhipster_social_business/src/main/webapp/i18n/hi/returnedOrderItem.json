@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceProApp": {
+    "returnedOrderItem": {
+      "home": {
+        "title": "ReturnedOrderItems",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नया Returned Order Item बनाएँ",
+        "createOrEditLabel": "Returned Order Item बनाएँ या संपादित करें",
+        "notFound": "No Returned Order Items found"
+      },
+      "created": "एक नया Returned Order Item [identifier: {{ param }}] तैयार है",
+      "updated": "एक Returned Order Item [identifier: {{ param }}] का अद्यतन हुआ है",
+      "deleted": "Returned Order Item [identifier: {{ param }}] हटा दिया है",
+      "delete": {
+        "question": "Returned Order Item [id: {{ id }}] हटाने की पुष्टि करें"
+      },
+      "detail": {
+        "title": "Returned Order Item"
+      },
+      "id": "ID",
+      "quantity": "Quantity",
+      "productComment": "Product Comment",
+      "product": "Product",
+      "returnedOrder": "Returned Order"
+    }
+  }
+}

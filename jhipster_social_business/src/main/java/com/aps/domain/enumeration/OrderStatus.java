@@ -1,7 +1,7 @@
 package com.aps.domain.enumeration;
 
 /**
- * The OrderStatus enumeration.
+ * UPDATED OrderStatus as per requirements.
  */
 public enum OrderStatus {
     ORDER_NOT_TAKEN,

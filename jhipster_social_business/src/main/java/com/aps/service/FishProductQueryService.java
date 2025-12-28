@@ -83,8 +83,8 @@ public class FishProductQueryService extends QueryService<FishProduct> {
             if (criteria.getPricePerKg() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getPricePerKg(), FishProduct_.pricePerKg));
             }
-            if (criteria.getImageUrl() != null) {
-                specification = specification.and(buildStringSpecification(criteria.getImageUrl(), FishProduct_.imageUrl));
+            if (criteria.getAvailableQuantity() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getAvailableQuantity(), FishProduct_.availableQuantity));
             }
             if (criteria.getDescription() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getDescription(), FishProduct_.description));
@@ -95,9 +95,9 @@ public class FishProductQueryService extends QueryService<FishProduct> {
             if (criteria.getCreatedAt() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getCreatedAt(), FishProduct_.createdAt));
             }
-            if (criteria.getImagesId() != null) {
+            if (criteria.getImageId() != null) {
                 specification = specification.and(
-                    buildSpecification(criteria.getImagesId(), root -> root.join(FishProduct_.images, JoinType.LEFT).get(ProductImage_.id))
+                    buildSpecification(criteria.getImageId(), root -> root.join(FishProduct_.image, JoinType.LEFT).get(ProductImage_.id))
                 );
             }
         }

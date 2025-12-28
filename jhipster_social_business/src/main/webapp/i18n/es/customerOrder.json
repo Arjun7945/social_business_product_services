@@ -1,5 +1,5 @@
 {
-  "whatsappProductServiceApp": {
+  "whatsappProductServiceProApp": {
     "customerOrder": {
       "home": {
         "title": "Customer Orders",
@@ -23,11 +23,16 @@
       "status": "Status",
       "paymentMethod": "Payment Method",
       "confirmedAt": "Confirmed At",
+      "removedCustomerId": "Removed Customer Id",
+      "removedDeliveryPersonId": "Removed Delivery Person Id",
+      "transactionId": "Transaction Id",
+      "history": "History",
       "items": "Items",
-      "deliveryPerson": "Delivery Person",
       "customer": "Customer",
-      "version": "Version",
-      "version": "Versión"
+      "deliveryPerson": "Delivery Person",
+      "help": {
+        "status": "Updated Enum: NOT_TAKEN, ON_WAY, etc."
+      }
     }
   }
 }

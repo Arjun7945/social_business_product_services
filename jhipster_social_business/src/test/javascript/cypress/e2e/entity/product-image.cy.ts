@@ -15,7 +15,7 @@ describe('ProductImage e2e test', () => {
   const productImagePageUrlPattern = new RegExp('/product-image(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const productImageSample = { imageUrl: 'repeatedly atrium', displayOrder: 20957 };
+  const productImageSample = { imageUrl: 'nimble apud', displayOrder: 8658 };
 
   let productImage;
   let fishProduct;
@@ -30,12 +30,12 @@ describe('ProductImage e2e test', () => {
       method: 'POST',
       url: '/api/fish-products',
       body: {
-        name: 'aha',
-        pricePerKg: 4522.47,
-        imageUrl: 'of officially quarrelsomely',
-        description: 'commandeer backbone concrete',
+        name: 'powerfully dearly',
+        pricePerKg: 7608.59,
+        availableQuantity: 10743.95,
+        description: 'display bright retract',
         isAvailable: true,
-        createdAt: '2025-12-14T23:36:31.400Z',
+        createdAt: '2025-12-27T20:56:31.801Z',
       },
     }).then(({ body }) => {
       fishProduct = body;
@@ -177,7 +177,9 @@ describe('ProductImage e2e test', () => {
       });
 
       it('last delete button click should delete instance of ProductImage', () => {
+        cy.intercept('GET', '/api/product-images/*').as('dialogDeleteRequest');
         cy.get(entityDeleteButtonSelector).last().click();
+        cy.wait('@dialogDeleteRequest');
         cy.getEntityDeleteDialogHeading('productImage').should('exist');
         cy.get(entityConfirmDeleteButtonSelector).click();
         cy.wait('@deleteEntityRequest').then(({ response }) => {
@@ -201,11 +203,11 @@ describe('ProductImage e2e test', () => {
     });
 
     it('should create an instance of ProductImage', () => {
-      cy.get(`[data-cy="imageUrl"]`).type('clearly');
-      cy.get(`[data-cy="imageUrl"]`).should('have.value', 'clearly');
+      cy.get(`[data-cy="imageUrl"]`).type('pish clumsy into');
+      cy.get(`[data-cy="imageUrl"]`).should('have.value', 'pish clumsy into');
 
-      cy.get(`[data-cy="displayOrder"]`).type('10481');
-      cy.get(`[data-cy="displayOrder"]`).should('have.value', '10481');
+      cy.get(`[data-cy="displayOrder"]`).type('8625');
+      cy.get(`[data-cy="displayOrder"]`).should('have.value', '8625');
 
       cy.get(`[data-cy="product"]`).select(1);
 

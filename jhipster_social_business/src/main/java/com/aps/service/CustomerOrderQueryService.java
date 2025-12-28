@@ -92,21 +92,41 @@ public class CustomerOrderQueryService extends QueryService<CustomerOrder> {
             if (criteria.getConfirmedAt() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getConfirmedAt(), CustomerOrder_.confirmedAt));
             }
+            if (criteria.getRemovedCustomerId() != null) {
+                specification = specification.and(
+                    buildRangeSpecification(criteria.getRemovedCustomerId(), CustomerOrder_.removedCustomerId)
+                );
+            }
+            if (criteria.getRemovedDeliveryPersonId() != null) {
+                specification = specification.and(
+                    buildRangeSpecification(criteria.getRemovedDeliveryPersonId(), CustomerOrder_.removedDeliveryPersonId)
+                );
+            }
+            if (criteria.getTransactionId() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getTransactionId(), CustomerOrder_.transactionId));
+            }
+            if (criteria.getHistoryId() != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.getHistoryId(), root ->
+                        root.join(CustomerOrder_.history, JoinType.LEFT).get(OrderStatusHistory_.id)
+                    )
+                );
+            }
             if (criteria.getItemsId() != null) {
                 specification = specification.and(
                     buildSpecification(criteria.getItemsId(), root -> root.join(CustomerOrder_.items, JoinType.LEFT).get(OrderItem_.id))
                 );
             }
-            if (criteria.getDeliveryPersonId() != null) {
-                specification = specification.and(
-                    buildSpecification(criteria.getDeliveryPersonId(), root ->
-                        root.join(CustomerOrder_.deliveryPerson, JoinType.LEFT).get(TeamMember_.id)
-                    )
-                );
-            }
             if (criteria.getCustomerId() != null) {
                 specification = specification.and(
                     buildSpecification(criteria.getCustomerId(), root -> root.join(CustomerOrder_.customer, JoinType.LEFT).get(Customer_.id)
+                    )
+                );
+            }
+            if (criteria.getDeliveryPersonId() != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.getDeliveryPersonId(), root ->
+                        root.join(CustomerOrder_.deliveryPerson, JoinType.LEFT).get(DeliveryPerson_.id)
                     )
                 );
             }

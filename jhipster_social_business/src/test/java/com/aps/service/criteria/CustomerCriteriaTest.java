@@ -89,7 +89,9 @@ class CustomerCriteriaTest {
         customerCriteria.lastInteractionAt();
         customerCriteria.ordersId();
         customerCriteria.cartId();
+        customerCriteria.returnsId();
         customerCriteria.addedById();
+        customerCriteria.zoneId();
         customerCriteria.distinct();
     }
 
@@ -110,7 +112,9 @@ class CustomerCriteriaTest {
                 condition.apply(criteria.getLastInteractionAt()) &&
                 condition.apply(criteria.getOrdersId()) &&
                 condition.apply(criteria.getCartId()) &&
+                condition.apply(criteria.getReturnsId()) &&
                 condition.apply(criteria.getAddedById()) &&
+                condition.apply(criteria.getZoneId()) &&
                 condition.apply(criteria.getDistinct()),
             "every filter matches"
         );
@@ -133,7 +137,9 @@ class CustomerCriteriaTest {
                 condition.apply(criteria.getLastInteractionAt(), copy.getLastInteractionAt()) &&
                 condition.apply(criteria.getOrdersId(), copy.getOrdersId()) &&
                 condition.apply(criteria.getCartId(), copy.getCartId()) &&
+                condition.apply(criteria.getReturnsId(), copy.getReturnsId()) &&
                 condition.apply(criteria.getAddedById(), copy.getAddedById()) &&
+                condition.apply(criteria.getZoneId(), copy.getZoneId()) &&
                 condition.apply(criteria.getDistinct(), copy.getDistinct()),
             "every filter matches"
         );

@@ -10,23 +10,18 @@ import java.util.Objects;
 /**
  * A DTO for the {@link com.aps.domain.BotSession} entity.
  */
-@Schema(
-    description = "NEW ENTITY: BotSession\nManages the conversation state and temporary data (scratchpad).\nReplaces all temp_ variables in main entities."
-)
+@Schema(description = "BotSession for conversation state.")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class BotSessionDTO implements Serializable {
 
     private Long id;
 
     @NotNull
-    @Schema(description = "Key to link to Customer or TeamMember", requiredMode = Schema.RequiredMode.REQUIRED)
     private String waPhoneNumber;
 
     @NotNull
-    @Schema(description = "Checkpoints the user's flow (e.g., AWAITING_NAME)", requiredMode = Schema.RequiredMode.REQUIRED)
     private String currentState;
 
-    @Schema(description = "JSON blob to store temp variables like { \"tempProductId\": 123, \"tempName\": \"John\" }")
     @Lob
     private String sessionData;
 

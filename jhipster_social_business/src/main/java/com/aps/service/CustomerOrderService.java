@@ -1,12 +1,9 @@
 package com.aps.service;
 
 import com.aps.domain.CustomerOrder;
-import com.aps.domain.OrderStatusHistory;
 import com.aps.repository.CustomerOrderRepository;
-import com.aps.repository.OrderStatusHistoryRepository;
 import com.aps.service.dto.CustomerOrderDTO;
 import com.aps.service.mapper.CustomerOrderMapper;
-import java.time.Instant;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,16 +25,9 @@ public class CustomerOrderService {
 
     private final CustomerOrderMapper customerOrderMapper;
 
-    private final OrderStatusHistoryRepository orderStatusHistoryRepository;
-
-    public CustomerOrderService(
-        CustomerOrderRepository customerOrderRepository,
-        CustomerOrderMapper customerOrderMapper,
-        OrderStatusHistoryRepository orderStatusHistoryRepository
-    ) {
+    public CustomerOrderService(CustomerOrderRepository customerOrderRepository, CustomerOrderMapper customerOrderMapper) {
         this.customerOrderRepository = customerOrderRepository;
         this.customerOrderMapper = customerOrderMapper;
-        this.orderStatusHistoryRepository = orderStatusHistoryRepository;
     }
 
     /**
@@ -50,10 +40,6 @@ public class CustomerOrderService {
         LOG.debug("Request to save CustomerOrder : {}", customerOrderDTO);
         CustomerOrder customerOrder = customerOrderMapper.toEntity(customerOrderDTO);
         customerOrder = customerOrderRepository.save(customerOrder);
-
-        // Create initial status history
-        createStatusHistory(customerOrder);
-
         return customerOrderMapper.toDto(customerOrder);
     }
 
@@ -65,27 +51,8 @@ public class CustomerOrderService {
      */
     public CustomerOrderDTO update(CustomerOrderDTO customerOrderDTO) {
         LOG.debug("Request to update CustomerOrder : {}", customerOrderDTO);
-
-        // Fetch existing to check for status change
-        // Note: Ideally we should use the existing entity, but for update(DTO) we often
-        // overwrite.
-        // We will check if the status is different from what's potentially in DB.
-        // However, to keep it simple and correct, let's fetch the ID.
-        boolean statusChanged = false;
-        if (customerOrderDTO.getId() != null) {
-            statusChanged = customerOrderRepository
-                .findById(customerOrderDTO.getId())
-                .map(existing -> !existing.getStatus().equals(customerOrderDTO.getStatus()))
-                .orElse(true); // If not found (shouldn't happen in update), assume changed? Or let it proceed.
-        }
-
         CustomerOrder customerOrder = customerOrderMapper.toEntity(customerOrderDTO);
         customerOrder = customerOrderRepository.save(customerOrder);
-
-        if (statusChanged) {
-            createStatusHistory(customerOrder);
-        }
-
         return customerOrderMapper.toDto(customerOrder);
     }
 
@@ -101,25 +68,12 @@ public class CustomerOrderService {
         return customerOrderRepository
             .findById(customerOrderDTO.getId())
             .map(existingCustomerOrder -> {
-                var oldStatus = existingCustomerOrder.getStatus();
                 customerOrderMapper.partialUpdate(existingCustomerOrder, customerOrderDTO);
-
-                if (!existingCustomerOrder.getStatus().equals(oldStatus)) {
-                    createStatusHistory(existingCustomerOrder);
-                }
 
                 return existingCustomerOrder;
             })
             .map(customerOrderRepository::save)
             .map(customerOrderMapper::toDto);
-    }
-
-    private void createStatusHistory(CustomerOrder customerOrder) {
-        OrderStatusHistory history = new OrderStatusHistory();
-        history.setStatus(customerOrder.getStatus());
-        history.setChangeTime(Instant.now());
-        history.setCustomerOrder(customerOrder);
-        orderStatusHistoryRepository.save(history);
     }
 
     /**

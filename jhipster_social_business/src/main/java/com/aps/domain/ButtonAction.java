@@ -1,17 +1,19 @@
 package com.aps.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * A ButtonAction to track consumed WhatsApp button messages (Context IDs).
+ * Context ID tracking for buttons.
  */
 @Entity
 @Table(name = "button_action")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class ButtonAction implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -22,7 +24,8 @@ public class ButtonAction implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "wa_message_id", unique = true, nullable = false)
+    @NotNull
+    @Column(name = "wa_message_id", nullable = false, unique = true)
     private String waMessageId;
 
     @Column(name = "button_id")
@@ -34,10 +37,15 @@ public class ButtonAction implements Serializable {
     @Column(name = "clicked_by")
     private String clickedBy;
 
-    // Getters and Setters
+    // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public ButtonAction id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -45,7 +53,12 @@ public class ButtonAction implements Serializable {
     }
 
     public String getWaMessageId() {
-        return waMessageId;
+        return this.waMessageId;
+    }
+
+    public ButtonAction waMessageId(String waMessageId) {
+        this.setWaMessageId(waMessageId);
+        return this;
     }
 
     public void setWaMessageId(String waMessageId) {
@@ -53,7 +66,12 @@ public class ButtonAction implements Serializable {
     }
 
     public String getButtonId() {
-        return buttonId;
+        return this.buttonId;
+    }
+
+    public ButtonAction buttonId(String buttonId) {
+        this.setButtonId(buttonId);
+        return this;
     }
 
     public void setButtonId(String buttonId) {
@@ -61,7 +79,12 @@ public class ButtonAction implements Serializable {
     }
 
     public Instant getClickedAt() {
-        return clickedAt;
+        return this.clickedAt;
+    }
+
+    public ButtonAction clickedAt(Instant clickedAt) {
+        this.setClickedAt(clickedAt);
+        return this;
     }
 
     public void setClickedAt(Instant clickedAt) {
@@ -69,12 +92,19 @@ public class ButtonAction implements Serializable {
     }
 
     public String getClickedBy() {
-        return clickedBy;
+        return this.clickedBy;
+    }
+
+    public ButtonAction clickedBy(String clickedBy) {
+        this.setClickedBy(clickedBy);
+        return this;
     }
 
     public void setClickedBy(String clickedBy) {
         this.clickedBy = clickedBy;
     }
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -84,33 +114,24 @@ public class ButtonAction implements Serializable {
         if (!(o instanceof ButtonAction)) {
             return false;
         }
-        return id != null && id.equals(((ButtonAction) o).id);
+        return getId() != null && getId().equals(((ButtonAction) o).getId());
     }
 
     @Override
     public int hashCode() {
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
-        return (
-            "ButtonAction{" +
-            "id=" +
-            getId() +
-            ", waMessageId='" +
-            getWaMessageId() +
-            "'" +
-            ", buttonId='" +
-            getButtonId() +
-            "'" +
-            ", clickedAt='" +
-            getClickedAt() +
-            "'" +
-            ", clickedBy='" +
-            getClickedBy() +
-            "'" +
-            "}"
-        );
+        return "ButtonAction{" +
+            "id=" + getId() +
+            ", waMessageId='" + getWaMessageId() + "'" +
+            ", buttonId='" + getButtonId() + "'" +
+            ", clickedAt='" + getClickedAt() + "'" +
+            ", clickedBy='" + getClickedBy() + "'" +
+            "}";
     }
 }

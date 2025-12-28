@@ -1,12 +1,13 @@
 package com.aps.web.rest;
 
 import com.aps.repository.ProductImageRepository;
+import com.aps.service.ProductImageQueryService;
 import com.aps.service.ProductImageService;
+import com.aps.service.criteria.ProductImageCriteria;
 import com.aps.service.dto.ProductImageDTO;
 import com.aps.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -20,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -44,53 +44,46 @@ public class ProductImageResource {
 
     private final ProductImageRepository productImageRepository;
 
-    public ProductImageResource(ProductImageService productImageService, ProductImageRepository productImageRepository) {
+    private final ProductImageQueryService productImageQueryService;
+
+    public ProductImageResource(
+        ProductImageService productImageService,
+        ProductImageRepository productImageRepository,
+        ProductImageQueryService productImageQueryService
+    ) {
         this.productImageService = productImageService;
         this.productImageRepository = productImageRepository;
+        this.productImageQueryService = productImageQueryService;
     }
 
     /**
      * {@code POST  /product-images} : Create a new productImage.
      *
      * @param productImageDTO the productImageDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with
-     *         body the new productImageDTO, or with status
-     *         {@code 400 (Bad Request)} if the productImage has already an ID.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new productImageDTO, or with status {@code 400 (Bad Request)} if the productImage has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping(consumes = { "multipart/form-data" })
-    public ResponseEntity<ProductImageDTO> createProductImage(
-        @RequestParam(value = "productId", required = false) Long productId,
-        @RequestParam("file") MultipartFile file
-    ) throws URISyntaxException, IOException {
-        LOG.debug("REST request to save ProductImage : {}", file.getOriginalFilename());
-
-        ProductImageDTO productImageDTO = new ProductImageDTO();
-        productImageDTO.setMimeType(file.getContentType());
-        productImageDTO.setImageData(file.getBytes());
-        if (productId != null) {
-            com.aps.service.dto.FishProductDTO fishProductDTO = new com.aps.service.dto.FishProductDTO();
-            fishProductDTO.setId(productId);
-            productImageDTO.setProduct(fishProductDTO);
+    @PostMapping("")
+    public ResponseEntity<ProductImageDTO> createProductImage(@Valid @RequestBody ProductImageDTO productImageDTO)
+        throws URISyntaxException {
+        LOG.debug("REST request to save ProductImage : {}", productImageDTO);
+        if (productImageDTO.getId() != null) {
+            throw new BadRequestAlertException("A new productImage cannot already have an ID", ENTITY_NAME, "idexists");
         }
-
-        ProductImageDTO result = productImageService.save(productImageDTO);
-        return ResponseEntity.created(new URI("/api/product-images/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        productImageDTO = productImageService.save(productImageDTO);
+        return ResponseEntity.created(new URI("/api/product-images/" + productImageDTO.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, productImageDTO.getId().toString()))
+            .body(productImageDTO);
     }
 
     /**
      * {@code PUT  /product-images/:id} : Updates an existing productImage.
      *
-     * @param id              the id of the productImageDTO to save.
+     * @param id the id of the productImageDTO to save.
      * @param productImageDTO the productImageDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
-     *         the updated productImageDTO,
-     *         or with status {@code 400 (Bad Request)} if the productImageDTO is
-     *         not valid,
-     *         or with status {@code 500 (Internal Server Error)} if the
-     *         productImageDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated productImageDTO,
+     * or with status {@code 400 (Bad Request)} if the productImageDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the productImageDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
@@ -117,19 +110,14 @@ public class ProductImageResource {
     }
 
     /**
-     * {@code PATCH  /product-images/:id} : Partial updates given fields of an
-     * existing productImage, field will ignore if it is null
+     * {@code PATCH  /product-images/:id} : Partial updates given fields of an existing productImage, field will ignore if it is null
      *
-     * @param id              the id of the productImageDTO to save.
+     * @param id the id of the productImageDTO to save.
      * @param productImageDTO the productImageDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
-     *         the updated productImageDTO,
-     *         or with status {@code 400 (Bad Request)} if the productImageDTO is
-     *         not valid,
-     *         or with status {@code 404 (Not Found)} if the productImageDTO is not
-     *         found,
-     *         or with status {@code 500 (Internal Server Error)} if the
-     *         productImageDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated productImageDTO,
+     * or with status {@code 400 (Bad Request)} if the productImageDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the productImageDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the productImageDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
@@ -160,34 +148,39 @@ public class ProductImageResource {
     /**
      * {@code GET  /product-images} : get all the productImages.
      *
-     * @param pageable  the pagination information.
-     * @param eagerload flag to eager load entities from relationships (This is
-     *                  applicable for many-to-many).
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list
-     *         of productImages in body.
+     * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of productImages in body.
      */
     @GetMapping("")
     public ResponseEntity<List<ProductImageDTO>> getAllProductImages(
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        ProductImageCriteria criteria,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
-        LOG.debug("REST request to get a page of ProductImages");
-        Page<ProductImageDTO> page;
-        if (eagerload) {
-            page = productImageService.findAllWithEagerRelationships(pageable);
-        } else {
-            page = productImageService.findAll(pageable);
-        }
+        LOG.debug("REST request to get ProductImages by criteria: {}", criteria);
+
+        Page<ProductImageDTO> page = productImageQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /product-images/count} : count all the productImages.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countProductImages(ProductImageCriteria criteria) {
+        LOG.debug("REST request to count ProductImages by criteria: {}", criteria);
+        return ResponseEntity.ok().body(productImageQueryService.countByCriteria(criteria));
     }
 
     /**
      * {@code GET  /product-images/:id} : get the "id" productImage.
      *
      * @param id the id of the productImageDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
-     *         the productImageDTO, or with status {@code 404 (Not Found)}.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the productImageDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
     public ResponseEntity<ProductImageDTO> getProductImage(@PathVariable("id") Long id) {
@@ -209,68 +202,5 @@ public class ProductImageResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
-    }
-
-    /**
-     * {@code GET  /product-images/public/:id/content} : get the "id" productImage
-     * content.
-     */
-    @GetMapping("/public/{id}/content")
-    public ResponseEntity<byte[]> getPublicImageContent(@PathVariable("id") Long id) {
-        LOG.debug("REST request to get ProductImage content : {}", id);
-        Optional<ProductImageDTO> productImageDTOOpt = productImageService.findOne(id);
-
-        if (productImageDTOOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        ProductImageDTO productImageDTO = productImageDTOOpt.get();
-        byte[] imageData = productImageDTO.getImageData();
-        String mimeType = productImageDTO.getMimeType();
-
-        if (imageData == null || imageData.length == 0) {
-            return ResponseEntity.notFound().build();
-        }
-
-        if (mimeType == null || mimeType.isEmpty()) {
-            mimeType = "image/jpeg";
-        }
-
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, mimeType).body(imageData);
-    }
-
-    /**
-     * {@code GET  /product-images/public/uuid/:uuid/content} : get the productImage
-     * content by UUID.
-     */
-    @GetMapping("/public/uuid/{uuid}/content")
-    public ResponseEntity<byte[]> getPublicImageContentByUuid(@PathVariable("uuid") String uuid) {
-        LOG.debug("REST request to get ProductImage content by UUID : {}", uuid);
-
-        // Reconstruct the partial URL or search by the UUID part if we stored just the
-        // UUID?
-        // The service stores the FULL URL. So we should search by the full URL pattern.
-        // URL format: "/api/product-images/public/uuid/" + uuid + "/content"
-        String lookupUrl = "/api/product-images/public/uuid/" + uuid + "/content";
-
-        Optional<com.aps.domain.ProductImage> productImageOpt = productImageRepository.findByImageUrl(lookupUrl);
-
-        if (productImageOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        com.aps.domain.ProductImage image = productImageOpt.get();
-        byte[] imageData = image.getImageData();
-        String mimeType = image.getMimeType();
-
-        if (imageData == null || imageData.length == 0) {
-            return ResponseEntity.notFound().build();
-        }
-
-        if (mimeType == null || mimeType.isEmpty()) {
-            mimeType = "image/jpeg";
-        }
-
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, mimeType).body(imageData);
     }
 }

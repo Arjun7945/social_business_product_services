@@ -26,7 +26,6 @@
     "status": {
       "UNKNOWN": "UNKNOWN",
       "UP": "மேல்",
-      "OUT_OF_SERVICE": "OUT_OF_SERVICE",
       "DOWN": "கீழ்"
     }
   }

@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceProApp": {
+    "deliveryZone": {
+      "home": {
+        "title": "Delivery Zones",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Delivery Zone",
+        "createOrEditLabel": "Create or edit a Delivery Zone",
+        "notFound": "No Delivery Zones found"
+      },
+      "created": "A new Delivery Zone is created with identifier {{ param }}",
+      "updated": "A Delivery Zone is updated with identifier {{ param }}",
+      "deleted": "A Delivery Zone is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Delivery Zone {{ id }}?"
+      },
+      "detail": {
+        "title": "Delivery Zone"
+      },
+      "id": "ID",
+      "zoneName": "Zone Name",
+      "pincode": "Pincode",
+      "customers": "Customers",
+      "deliveryPersons": "Delivery Persons",
+      "help": {
+        "zoneName": "e.g., &#34;A&#34;, &#34;B&#34;, &#34;North-1&#34;",
+        "pincode": "specific pincode or pattern linked to this zone"
+      }
+    }
+  }
+}

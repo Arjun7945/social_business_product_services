@@ -586,6 +586,8 @@ class CartItemResourceIT {
         CartItem partialUpdatedCartItem = new CartItem();
         partialUpdatedCartItem.setId(cartItem.getId());
 
+        partialUpdatedCartItem.quantityKg(UPDATED_QUANTITY_KG);
+
         restCartItemMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedCartItem.getId())

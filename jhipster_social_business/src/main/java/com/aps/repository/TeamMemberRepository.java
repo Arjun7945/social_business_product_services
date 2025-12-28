@@ -15,6 +15,4 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long>, J
     boolean existsByWaPhoneNumber(String waPhoneNumber);
 
     boolean existsByPhoneNumber(String phoneNumber);
-
-    java.util.List<TeamMember> findByRoleAndIsActive(com.aps.domain.enumeration.UserRole role, Boolean isActive);
 }

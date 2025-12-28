@@ -1,23 +1,19 @@
 {
   "home": {
-    "title": "Welcome, Product Services!",
-    "titleSuffix": " (Whatsapp Product Service)",
-    "subtitle": "This is your product homepage",
+    "title": "Welcome, Java Hipster!",
+    "subtitle": "This is your homepage",
     "logged": {
       "message": "You are logged in as user \"{{username}}\"."
     },
-    "signin": {
-      "prefix": "If you want to ",
-      "link": "sign in",
-      "suffix": ", use your registered account."
-    },
-    "question": "If you have any question contact dev:",
+    "question": "If you have any question on JHipster:",
     "link": {
-      "contact": "Contact Dev",
-      "devsite": "Visit Developer Site",
-      "ticket": "Create a Issue Ticket"
+      "homepage": "JHipster homepage",
+      "stackoverflow": "JHipster on Stack Overflow",
+      "bugtracker": "JHipster bug tracker",
+      "chat": "JHipster public chat room",
+      "follow": "follow @jhipster on Twitter"
     },
-    "like": "If you like our Work, don't forget to give us a star on",
+    "like": "If you like JHipster, don't forget to give us a star on",
     "github": "GitHub"
   }
 }

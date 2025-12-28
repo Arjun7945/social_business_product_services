@@ -1,0 +1,33 @@
+{
+  "annotations": {
+    "changelogDate": "20251228084016"
+  },
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "Context ID tracking for buttons.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "waMessageId",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "buttonId",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "clickedAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "clickedBy",
+      "fieldType": "String"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "ButtonAction",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

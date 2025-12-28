@@ -1,6 +1,7 @@
 package com.aps.repository;
 
 import com.aps.domain.Customer;
+import jakarta.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -26,27 +27,25 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSp
         return this.findAllWithToOneRelationships(pageable);
     }
 
-    @Query(
-        value = "select customer from Customer customer left join fetch customer.addedBy",
-        countQuery = "select count(customer) from Customer customer"
-    )
+    @Query(value = "select customer from Customer customer left join fetch customer.addedBy left join fetch customer.zone", countQuery = "select count(customer) from Customer customer")
     Page<Customer> findAllWithToOneRelationships(Pageable pageable);
 
-    @Query("select customer from Customer customer left join fetch customer.addedBy")
+    @Query("select customer from Customer customer left join fetch customer.addedBy left join fetch customer.zone")
     List<Customer> findAllWithToOneRelationships();
 
-    @Query("select customer from Customer customer left join fetch customer.addedBy where customer.id =:id")
+    @Query("select customer from Customer customer left join fetch customer.addedBy left join fetch customer.zone where customer.id =:id")
     Optional<Customer> findOneWithToOneRelationships(@Param("id") Long id);
 
     Optional<Customer> findByWaPhoneNumber(String waPhoneNumber);
 
     boolean existsByWaPhoneNumber(String waPhoneNumber);
 
-    boolean existsByPhoneNumber(String phoneNumber);
-
-    List<Customer> findByAddedBy(com.aps.domain.TeamMember addedBy);
+    List<Customer> findByAddedBy(com.aps.domain.TeamMember teamMember);
 
     @Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
-    @Query("select c from Customer c where c.id = :id")
+    @QueryHints({ @QueryHint(name = "jakarta.persistence.lock.timeout", value = "3000") })
+    @Query("SELECT c FROM Customer c WHERE c.id = :id")
     Optional<Customer> findByIdForUpdate(@Param("id") Long id);
+
+    boolean existsByPhoneNumber(String phoneNumber);
 }

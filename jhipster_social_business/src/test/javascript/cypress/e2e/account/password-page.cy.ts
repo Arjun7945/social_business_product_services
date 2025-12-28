@@ -27,6 +27,7 @@ describe('/account/password', () => {
   });
 
   it('requires current password', () => {
+    cy.get(submitPasswordSelector).click();
     cy.get(currentPasswordSelector).should('have.class', classInvalid);
     cy.get(currentPasswordSelector).type('wrong-current-password');
     cy.get(currentPasswordSelector).blur();
@@ -34,6 +35,7 @@ describe('/account/password', () => {
   });
 
   it('requires new password', () => {
+    cy.get(submitPasswordSelector).click();
     cy.get(newPasswordSelector).should('have.class', classInvalid);
     cy.get(newPasswordSelector).type('jhipster');
     cy.get(newPasswordSelector).blur();
@@ -41,6 +43,7 @@ describe('/account/password', () => {
   });
 
   it('requires confirm new password', () => {
+    cy.get(submitPasswordSelector).click();
     cy.get(newPasswordSelector).type('jhipster');
     cy.get(confirmPasswordSelector).should('have.class', classInvalid);
     cy.get(confirmPasswordSelector).type('jhipster');

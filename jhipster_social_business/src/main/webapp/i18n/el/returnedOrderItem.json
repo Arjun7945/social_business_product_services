@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceProApp": {
+    "returnedOrderItem": {
+      "home": {
+        "title": "Returned Order Items",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Δημιουργήστε ένα νέο Returned Order Item",
+        "createOrEditLabel": "Δημιουργήστε η επεξεργαστείτε ένα Returned Order Item",
+        "notFound": "No Returned Order Items found"
+      },
+      "created": "Ένα νέο Returned Order Item έχει δημιουργηθεί με αναγνωριστικό {{ param }}",
+      "updated": "Ένα Returned Order Item έχει ενημερωθεί με αναγνωριστικό {{ param }}",
+      "deleted": "Ένα Returned Order Item έχει διαγραφτεί με αναγνωριστικό {{ param }}",
+      "delete": {
+        "question": "Είστε βέβαιοι όταν θέλετε να διαγράψετε το ακόλουθο Returned Order Item {{ id }};"
+      },
+      "detail": {
+        "title": "Returned Order Item"
+      },
+      "id": "ID",
+      "quantity": "Quantity",
+      "productComment": "Product Comment",
+      "product": "Product",
+      "returnedOrder": "Returned Order"
+    }
+  }
+}

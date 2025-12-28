@@ -84,6 +84,9 @@ entity CustomerOrder {
     status OrderStatus required /** Updated Enum: NOT_TAKEN, ON_WAY, etc. */
     paymentMethod String required
     confirmedAt Instant
+    removedCustomerId Long
+    removedDeliveryPersonId Long
+    transactionId String
 }
 
 /**
@@ -228,17 +231,18 @@ enum UserRole {
     EXECUTIVE,
     ASSISTANT_ADMIN,
     ADMIN,
-    DEVELOPER
+    DEVELOPER,
+    DELIVERY_PERSON
 }
 
 /**
  * UPDATED OrderStatus as per requirements.
  */
 enum OrderStatus {
-    NOT_TAKEN,
-    ON_WAY,
-    DELIVERED_SUCCESSFULLY,
-    FAILED_ORDER
+    ORDER_NOT_TAKEN,
+    DELIVERY_ONWAY,
+    ORDER_DELIVERED_SUCESSFULLY,
+    ORDER_FAILED
 }
 
 /**
@@ -326,7 +330,7 @@ relationship OneToOne {
 
 relationship OneToMany {
     /** One Costumer has many Orders */
-    Customer{orders} to CustomerOrder{customer(name) required}
+    Customer{orders} to CustomerOrder{customer(name)}
 
     // REMOVED FishProduct{images} (Moved to OneToOne)
 

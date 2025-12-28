@@ -15,7 +15,7 @@ describe('CartItem e2e test', () => {
   const cartItemPageUrlPattern = new RegExp('/cart-item(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  // const cartItemSample = {"quantityKg":1150.59};
+  // const cartItemSample = {"quantityKg":6580.83};
 
   let cartItem;
   // let fishProduct;
@@ -31,7 +31,7 @@ describe('CartItem e2e test', () => {
     cy.authenticatedRequest({
       method: 'POST',
       url: '/api/fish-products',
-      body: {"name":"where","pricePerKg":17212.21,"imageUrl":"with pro yowza","description":"modulo","isAvailable":false,"createdAt":"2025-12-15T12:07:15.437Z"},
+      body: {"name":"beneath teriyaki","pricePerKg":4174.48,"availableQuantity":14603.59,"description":"into gah furlough","isAvailable":true,"createdAt":"2025-12-28T05:11:33.497Z"},
     }).then(({ body }) => {
       fishProduct = body;
     });
@@ -39,7 +39,7 @@ describe('CartItem e2e test', () => {
     cy.authenticatedRequest({
       method: 'POST',
       url: '/api/shopping-carts',
-      body: {"createdAt":"2025-12-14T19:31:51.949Z","updatedAt":"2025-12-14T19:57:11.470Z"},
+      body: {"createdAt":"2025-12-28T05:24:50.260Z","updatedAt":"2025-12-27T14:29:30.052Z"},
     }).then(({ body }) => {
       shoppingCart = body;
     });
@@ -213,7 +213,9 @@ describe('CartItem e2e test', () => {
 
       // Reason: cannot create a required entity with relationship with required relationships.
       it.skip('last delete button click should delete instance of CartItem', () => {
+        cy.intercept('GET', '/api/cart-items/*').as('dialogDeleteRequest');
         cy.get(entityDeleteButtonSelector).last().click();
+        cy.wait('@dialogDeleteRequest');
         cy.getEntityDeleteDialogHeading('cartItem').should('exist');
         cy.get(entityConfirmDeleteButtonSelector).click();
         cy.wait('@deleteEntityRequest').then(({ response }) => {
@@ -238,12 +240,12 @@ describe('CartItem e2e test', () => {
 
     // Reason: cannot create a required entity with relationship with required relationships.
     it.skip('should create an instance of CartItem', () => {
-      cy.get(`[data-cy="quantityKg"]`).type('6632.06');
-      cy.get(`[data-cy="quantityKg"]`).should('have.value', '6632.06');
+      cy.get(`[data-cy="quantityKg"]`).type('1395.84');
+      cy.get(`[data-cy="quantityKg"]`).should('have.value', '1395.84');
 
-      cy.get(`[data-cy="addedAt"]`).type('2025-12-14T17:54');
+      cy.get(`[data-cy="addedAt"]`).type('2025-12-28T02:29');
       cy.get(`[data-cy="addedAt"]`).blur();
-      cy.get(`[data-cy="addedAt"]`).should('have.value', '2025-12-14T17:54');
+      cy.get(`[data-cy="addedAt"]`).should('have.value', '2025-12-28T02:29');
 
       cy.get(`[data-cy="product"]`).select(1);
       cy.get(`[data-cy="cart"]`).select(1);

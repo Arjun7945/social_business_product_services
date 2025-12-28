@@ -2,9 +2,10 @@ package com.aps.service.payment;
 
 import com.aps.domain.Customer;
 import com.aps.domain.CustomerOrder;
-import com.aps.domain.TeamMember;
+import com.aps.domain.DeliveryPerson;
 import com.aps.service.WhatsAppService;
-// import com.aps.service.DeliveryFlowService; // Circular dependency if used
+import com.aps.service.CustomerMessageService;
+import com.aps.service.DeliveryPersonMessageService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -16,15 +17,14 @@ public class RazorpayQrStrategy implements PaymentStrategy {
 
     private final RazorpayService razorpayService;
     private final WhatsAppService whatsAppService;
-    private final com.aps.service.CustomerMessageService customerMessageService;
-    private final com.aps.service.DeliveryPersonMessageService deliveryPersonMessageService;
+    private final CustomerMessageService customerMessageService;
+    private final DeliveryPersonMessageService deliveryPersonMessageService;
 
     public RazorpayQrStrategy(
-        RazorpayService razorpayService,
-        @Lazy WhatsAppService whatsAppService,
-        com.aps.service.CustomerMessageService customerMessageService,
-        com.aps.service.DeliveryPersonMessageService deliveryPersonMessageService
-    ) {
+            RazorpayService razorpayService,
+            @Lazy WhatsAppService whatsAppService,
+            CustomerMessageService customerMessageService,
+            DeliveryPersonMessageService deliveryPersonMessageService) {
         this.razorpayService = razorpayService;
         this.whatsAppService = whatsAppService;
         this.customerMessageService = customerMessageService;
@@ -32,14 +32,15 @@ public class RazorpayQrStrategy implements PaymentStrategy {
     }
 
     @Override
-    public void initiatePayment(CustomerOrder order, TeamMember deliveryPerson) {
+    public void initiatePayment(CustomerOrder order, DeliveryPerson deliveryPerson) {
         Customer customer = order.getCustomer();
 
         // Create Razorpay Customer
         String razorpayCustId = razorpayService.createCustomer(customer.getName(), customer.getPhoneNumber());
 
         // Generate QR
-        String qrUrl = razorpayService.createQrCode(order.getId(), order.getTotalAmount().doubleValue(), razorpayCustId);
+        String qrUrl = razorpayService.createQrCode(order.getId(), order.getTotalAmount().doubleValue(),
+                razorpayCustId);
 
         if (qrUrl != null) {
             // Send to Delivery Person
@@ -53,7 +54,8 @@ public class RazorpayQrStrategy implements PaymentStrategy {
             String waitMsg = deliveryPersonMessageService.getPaymentWaitMessageQr();
             whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), waitMsg);
         } else {
-            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), "⚠️ Failed to generate QR Code. (Check Settings)");
+            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
+                    "⚠️ Failed to generate QR Code. (Check Settings)");
         }
     }
 

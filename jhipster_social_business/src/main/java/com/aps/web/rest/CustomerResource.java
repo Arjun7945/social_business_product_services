@@ -46,27 +46,21 @@ public class CustomerResource {
 
     private final CustomerQueryService customerQueryService;
 
-    private final com.aps.service.UserRemovalService userRemovalService;
-
     public CustomerResource(
         CustomerService customerService,
         CustomerRepository customerRepository,
-        CustomerQueryService customerQueryService,
-        com.aps.service.UserRemovalService userRemovalService
+        CustomerQueryService customerQueryService
     ) {
         this.customerService = customerService;
         this.customerRepository = customerRepository;
         this.customerQueryService = customerQueryService;
-        this.userRemovalService = userRemovalService;
     }
 
     /**
      * {@code POST  /customers} : Create a new customer.
      *
      * @param customerDTO the customerDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with
-     *         body the new customerDTO, or with status {@code 400 (Bad Request)} if
-     *         the customer has already an ID.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new customerDTO, or with status {@code 400 (Bad Request)} if the customer has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
@@ -84,14 +78,11 @@ public class CustomerResource {
     /**
      * {@code PUT  /customers/:id} : Updates an existing customer.
      *
-     * @param id          the id of the customerDTO to save.
+     * @param id the id of the customerDTO to save.
      * @param customerDTO the customerDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
-     *         the updated customerDTO,
-     *         or with status {@code 400 (Bad Request)} if the customerDTO is not
-     *         valid,
-     *         or with status {@code 500 (Internal Server Error)} if the customerDTO
-     *         couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated customerDTO,
+     * or with status {@code 400 (Bad Request)} if the customerDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the customerDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
@@ -118,19 +109,14 @@ public class CustomerResource {
     }
 
     /**
-     * {@code PATCH  /customers/:id} : Partial updates given fields of an existing
-     * customer, field will ignore if it is null
+     * {@code PATCH  /customers/:id} : Partial updates given fields of an existing customer, field will ignore if it is null
      *
-     * @param id          the id of the customerDTO to save.
+     * @param id the id of the customerDTO to save.
      * @param customerDTO the customerDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
-     *         the updated customerDTO,
-     *         or with status {@code 400 (Bad Request)} if the customerDTO is not
-     *         valid,
-     *         or with status {@code 404 (Not Found)} if the customerDTO is not
-     *         found,
-     *         or with status {@code 500 (Internal Server Error)} if the customerDTO
-     *         couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated customerDTO,
+     * or with status {@code 400 (Bad Request)} if the customerDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the customerDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the customerDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
@@ -163,8 +149,7 @@ public class CustomerResource {
      *
      * @param pageable the pagination information.
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list
-     *         of customers in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of customers in body.
      */
     @GetMapping("")
     public ResponseEntity<List<CustomerDTO>> getAllCustomers(
@@ -182,8 +167,7 @@ public class CustomerResource {
      * {@code GET  /customers/count} : count all the customers.
      *
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count
-     *         in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
      */
     @GetMapping("/count")
     public ResponseEntity<Long> countCustomers(CustomerCriteria criteria) {
@@ -195,8 +179,7 @@ public class CustomerResource {
      * {@code GET  /customers/:id} : get the "id" customer.
      *
      * @param id the id of the customerDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
-     *         the customerDTO, or with status {@code 404 (Not Found)}.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the customerDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("id") Long id) {
@@ -214,7 +197,7 @@ public class CustomerResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Customer : {}", id);
-        userRemovalService.removeCustomer(id, "Removed by Admin");
+        customerService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();

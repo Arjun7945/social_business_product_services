@@ -1,0 +1,37 @@
+{
+  "annotations": {
+    "changelogDate": "20251228084017"
+  },
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "Tracks the history of Order Status changes.\\nEssential for the Angular frontend status tracker.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "status",
+      "fieldType": "OrderStatus",
+      "fieldTypeDocumentation": "UPDATED OrderStatus as per requirements.",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "ORDER_NOT_TAKEN,DELIVERY_ONWAY,ORDER_DELIVERED_SUCESSFULLY,ORDER_FAILED"
+    },
+    {
+      "fieldName": "changeTime",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "OrderStatusHistory",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "customerOrder",
+      "otherEntityRelationshipName": "history",
+      "relationshipName": "customerOrder",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

@@ -1,13 +1,12 @@
 {
   "annotations": {
-    "changelogDate": "20251215140327"
+    "changelogDate": "20251228084011"
   },
-  "applications": ["whatsappProductService"],
-  "documentation": "Individual items within an order.",
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "Individual items within an order.\\nLinked to CustomerOrder (1:N)",
   "dto": "mapstruct",
   "fields": [
     {
-      "documentation": "Quantity remains Double as weight can be fractional",
       "fieldName": "quantityKg",
       "fieldType": "Double",
       "fieldValidateRules": ["required", "min"],
@@ -25,7 +24,7 @@
   "pagination": "pagination",
   "relationships": [
     {
-      "documentation": "OrderItem links to a Product (Snapshot needed? usually yes but simple link here)",
+      "documentation": "OrderItem links to a Product",
       "otherEntityField": "name",
       "otherEntityName": "fishProduct",
       "relationshipName": "product",

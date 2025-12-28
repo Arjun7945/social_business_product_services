@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.aps.IntegrationTest;
 import com.aps.domain.FishProduct;
+import com.aps.domain.ProductImage;
 import com.aps.repository.FishProductRepository;
 import com.aps.service.dto.FishProductDTO;
 import com.aps.service.mapper.FishProductMapper;
@@ -45,8 +46,9 @@ class FishProductResourceIT {
     private static final BigDecimal UPDATED_PRICE_PER_KG = new BigDecimal(1);
     private static final BigDecimal SMALLER_PRICE_PER_KG = new BigDecimal(0 - 1);
 
-    private static final String DEFAULT_IMAGE_URL = "AAAAAAAAAA";
-    private static final String UPDATED_IMAGE_URL = "BBBBBBBBBB";
+    private static final Double DEFAULT_AVAILABLE_QUANTITY = 1D;
+    private static final Double UPDATED_AVAILABLE_QUANTITY = 2D;
+    private static final Double SMALLER_AVAILABLE_QUANTITY = 1D - 1D;
 
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
@@ -92,7 +94,7 @@ class FishProductResourceIT {
         return new FishProduct()
             .name(DEFAULT_NAME)
             .pricePerKg(DEFAULT_PRICE_PER_KG)
-            .imageUrl(DEFAULT_IMAGE_URL)
+            .availableQuantity(DEFAULT_AVAILABLE_QUANTITY)
             .description(DEFAULT_DESCRIPTION)
             .isAvailable(DEFAULT_IS_AVAILABLE)
             .createdAt(DEFAULT_CREATED_AT);
@@ -108,7 +110,7 @@ class FishProductResourceIT {
         return new FishProduct()
             .name(UPDATED_NAME)
             .pricePerKg(UPDATED_PRICE_PER_KG)
-            .imageUrl(UPDATED_IMAGE_URL)
+            .availableQuantity(UPDATED_AVAILABLE_QUANTITY)
             .description(UPDATED_DESCRIPTION)
             .isAvailable(UPDATED_IS_AVAILABLE)
             .createdAt(UPDATED_CREATED_AT);
@@ -234,7 +236,7 @@ class FishProductResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(fishProduct.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].pricePerKg").value(hasItem(sameNumber(DEFAULT_PRICE_PER_KG))))
-            .andExpect(jsonPath("$.[*].imageUrl").value(hasItem(DEFAULT_IMAGE_URL)))
+            .andExpect(jsonPath("$.[*].availableQuantity").value(hasItem(DEFAULT_AVAILABLE_QUANTITY)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
             .andExpect(jsonPath("$.[*].isAvailable").value(hasItem(DEFAULT_IS_AVAILABLE)))
             .andExpect(jsonPath("$.[*].createdAt").value(hasItem(DEFAULT_CREATED_AT.toString())));
@@ -254,7 +256,7 @@ class FishProductResourceIT {
             .andExpect(jsonPath("$.id").value(fishProduct.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.pricePerKg").value(sameNumber(DEFAULT_PRICE_PER_KG)))
-            .andExpect(jsonPath("$.imageUrl").value(DEFAULT_IMAGE_URL))
+            .andExpect(jsonPath("$.availableQuantity").value(DEFAULT_AVAILABLE_QUANTITY))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
             .andExpect(jsonPath("$.isAvailable").value(DEFAULT_IS_AVAILABLE))
             .andExpect(jsonPath("$.createdAt").value(DEFAULT_CREATED_AT.toString()));
@@ -406,52 +408,90 @@ class FishProductResourceIT {
 
     @Test
     @Transactional
-    void getAllFishProductsByImageUrlIsEqualToSomething() throws Exception {
+    void getAllFishProductsByAvailableQuantityIsEqualToSomething() throws Exception {
         // Initialize the database
         insertedFishProduct = fishProductRepository.saveAndFlush(fishProduct);
 
-        // Get all the fishProductList where imageUrl equals to
-        defaultFishProductFiltering("imageUrl.equals=" + DEFAULT_IMAGE_URL, "imageUrl.equals=" + UPDATED_IMAGE_URL);
+        // Get all the fishProductList where availableQuantity equals to
+        defaultFishProductFiltering(
+            "availableQuantity.equals=" + DEFAULT_AVAILABLE_QUANTITY,
+            "availableQuantity.equals=" + UPDATED_AVAILABLE_QUANTITY
+        );
     }
 
     @Test
     @Transactional
-    void getAllFishProductsByImageUrlIsInShouldWork() throws Exception {
+    void getAllFishProductsByAvailableQuantityIsInShouldWork() throws Exception {
         // Initialize the database
         insertedFishProduct = fishProductRepository.saveAndFlush(fishProduct);
 
-        // Get all the fishProductList where imageUrl in
-        defaultFishProductFiltering("imageUrl.in=" + DEFAULT_IMAGE_URL + "," + UPDATED_IMAGE_URL, "imageUrl.in=" + UPDATED_IMAGE_URL);
+        // Get all the fishProductList where availableQuantity in
+        defaultFishProductFiltering(
+            "availableQuantity.in=" + DEFAULT_AVAILABLE_QUANTITY + "," + UPDATED_AVAILABLE_QUANTITY,
+            "availableQuantity.in=" + UPDATED_AVAILABLE_QUANTITY
+        );
     }
 
     @Test
     @Transactional
-    void getAllFishProductsByImageUrlIsNullOrNotNull() throws Exception {
+    void getAllFishProductsByAvailableQuantityIsNullOrNotNull() throws Exception {
         // Initialize the database
         insertedFishProduct = fishProductRepository.saveAndFlush(fishProduct);
 
-        // Get all the fishProductList where imageUrl is not null
-        defaultFishProductFiltering("imageUrl.specified=true", "imageUrl.specified=false");
+        // Get all the fishProductList where availableQuantity is not null
+        defaultFishProductFiltering("availableQuantity.specified=true", "availableQuantity.specified=false");
     }
 
     @Test
     @Transactional
-    void getAllFishProductsByImageUrlContainsSomething() throws Exception {
+    void getAllFishProductsByAvailableQuantityIsGreaterThanOrEqualToSomething() throws Exception {
         // Initialize the database
         insertedFishProduct = fishProductRepository.saveAndFlush(fishProduct);
 
-        // Get all the fishProductList where imageUrl contains
-        defaultFishProductFiltering("imageUrl.contains=" + DEFAULT_IMAGE_URL, "imageUrl.contains=" + UPDATED_IMAGE_URL);
+        // Get all the fishProductList where availableQuantity is greater than or equal to
+        defaultFishProductFiltering(
+            "availableQuantity.greaterThanOrEqual=" + DEFAULT_AVAILABLE_QUANTITY,
+            "availableQuantity.greaterThanOrEqual=" + UPDATED_AVAILABLE_QUANTITY
+        );
     }
 
     @Test
     @Transactional
-    void getAllFishProductsByImageUrlNotContainsSomething() throws Exception {
+    void getAllFishProductsByAvailableQuantityIsLessThanOrEqualToSomething() throws Exception {
         // Initialize the database
         insertedFishProduct = fishProductRepository.saveAndFlush(fishProduct);
 
-        // Get all the fishProductList where imageUrl does not contain
-        defaultFishProductFiltering("imageUrl.doesNotContain=" + UPDATED_IMAGE_URL, "imageUrl.doesNotContain=" + DEFAULT_IMAGE_URL);
+        // Get all the fishProductList where availableQuantity is less than or equal to
+        defaultFishProductFiltering(
+            "availableQuantity.lessThanOrEqual=" + DEFAULT_AVAILABLE_QUANTITY,
+            "availableQuantity.lessThanOrEqual=" + SMALLER_AVAILABLE_QUANTITY
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllFishProductsByAvailableQuantityIsLessThanSomething() throws Exception {
+        // Initialize the database
+        insertedFishProduct = fishProductRepository.saveAndFlush(fishProduct);
+
+        // Get all the fishProductList where availableQuantity is less than
+        defaultFishProductFiltering(
+            "availableQuantity.lessThan=" + UPDATED_AVAILABLE_QUANTITY,
+            "availableQuantity.lessThan=" + DEFAULT_AVAILABLE_QUANTITY
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllFishProductsByAvailableQuantityIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        insertedFishProduct = fishProductRepository.saveAndFlush(fishProduct);
+
+        // Get all the fishProductList where availableQuantity is greater than
+        defaultFishProductFiltering(
+            "availableQuantity.greaterThan=" + SMALLER_AVAILABLE_QUANTITY,
+            "availableQuantity.greaterThan=" + DEFAULT_AVAILABLE_QUANTITY
+        );
     }
 
     @Test
@@ -573,6 +613,28 @@ class FishProductResourceIT {
         defaultFishProductFiltering("createdAt.specified=true", "createdAt.specified=false");
     }
 
+    @Test
+    @Transactional
+    void getAllFishProductsByImageIsEqualToSomething() throws Exception {
+        ProductImage image;
+        if (TestUtil.findAll(em, ProductImage.class).isEmpty()) {
+            fishProductRepository.saveAndFlush(fishProduct);
+            image = ProductImageResourceIT.createEntity(em);
+        } else {
+            image = TestUtil.findAll(em, ProductImage.class).get(0);
+        }
+        em.persist(image);
+        em.flush();
+        fishProduct.setImage(image);
+        fishProductRepository.saveAndFlush(fishProduct);
+        Long imageId = image.getId();
+        // Get all the fishProductList where image equals to imageId
+        defaultFishProductShouldBeFound("imageId.equals=" + imageId);
+
+        // Get all the fishProductList where image equals to (imageId + 1)
+        defaultFishProductShouldNotBeFound("imageId.equals=" + (imageId + 1));
+    }
+
     private void defaultFishProductFiltering(String shouldBeFound, String shouldNotBeFound) throws Exception {
         defaultFishProductShouldBeFound(shouldBeFound);
         defaultFishProductShouldNotBeFound(shouldNotBeFound);
@@ -589,7 +651,7 @@ class FishProductResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(fishProduct.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].pricePerKg").value(hasItem(sameNumber(DEFAULT_PRICE_PER_KG))))
-            .andExpect(jsonPath("$.[*].imageUrl").value(hasItem(DEFAULT_IMAGE_URL)))
+            .andExpect(jsonPath("$.[*].availableQuantity").value(hasItem(DEFAULT_AVAILABLE_QUANTITY)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
             .andExpect(jsonPath("$.[*].isAvailable").value(hasItem(DEFAULT_IS_AVAILABLE)))
             .andExpect(jsonPath("$.[*].createdAt").value(hasItem(DEFAULT_CREATED_AT.toString())));
@@ -643,7 +705,7 @@ class FishProductResourceIT {
         updatedFishProduct
             .name(UPDATED_NAME)
             .pricePerKg(UPDATED_PRICE_PER_KG)
-            .imageUrl(UPDATED_IMAGE_URL)
+            .availableQuantity(UPDATED_AVAILABLE_QUANTITY)
             .description(UPDATED_DESCRIPTION)
             .isAvailable(UPDATED_IS_AVAILABLE)
             .createdAt(UPDATED_CREATED_AT);
@@ -736,7 +798,7 @@ class FishProductResourceIT {
         FishProduct partialUpdatedFishProduct = new FishProduct();
         partialUpdatedFishProduct.setId(fishProduct.getId());
 
-        partialUpdatedFishProduct.pricePerKg(UPDATED_PRICE_PER_KG).createdAt(UPDATED_CREATED_AT);
+        partialUpdatedFishProduct.description(UPDATED_DESCRIPTION).isAvailable(UPDATED_IS_AVAILABLE).createdAt(UPDATED_CREATED_AT);
 
         restFishProductMockMvc
             .perform(
@@ -770,7 +832,7 @@ class FishProductResourceIT {
         partialUpdatedFishProduct
             .name(UPDATED_NAME)
             .pricePerKg(UPDATED_PRICE_PER_KG)
-            .imageUrl(UPDATED_IMAGE_URL)
+            .availableQuantity(UPDATED_AVAILABLE_QUANTITY)
             .description(UPDATED_DESCRIPTION)
             .isAvailable(UPDATED_IS_AVAILABLE)
             .createdAt(UPDATED_CREATED_AT);

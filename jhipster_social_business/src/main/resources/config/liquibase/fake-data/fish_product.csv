@@ -1,11 +1,11 @@
-id;name;price_per_kg;image_url;description;is_available;created_at
-1;nor difficult scarily;7911.11;interviewer row given;since till;false;2025-12-14T19:14:57
-2;throbbing;1588.68;geez disappointment wash;since gah;true;2025-12-15T09:28:27
-3;provided;13198.3;ack gah;aw;true;2025-12-15T09:35:46
-4;pfft;27784.51;because;brr in whopping;false;2025-12-15T06:43:59
-5;tall where;5502.16;sanity;circa;false;2025-12-15T06:25:22
-6;minus although;25843.52;frantically irritably sweatshop;obsess aw;false;2025-12-15T02:48:55
-7;safely if;32377.78;solace vivaciously;grounded;true;2025-12-15T06:29:25
-8;woefully whoa;6546.98;troubled why wherever;epic fishery;false;2025-12-15T00:36:54
-9;below machine;10061.31;gracious;voluntarily vanish;true;2025-12-14T14:30:35
-10;majestically;15024.87;meanwhile super unto;barring;false;2025-12-14T15:41:52
+id;name;price_per_kg;available_quantity;description;is_available;created_at
+1;subtract profane times;2376.59;27615.03;pfft preregister;false;2025-12-28T01:09:20
+2;boo justly;12668.67;11474.22;midst yowza;false;2025-12-27T21:54:40
+3;mainstream while yum;14749.34;28523.09;switch toward;true;2025-12-28T05:30:24
+4;upon after;14937.15;32577.64;politely overconfidently;false;2025-12-27T18:36:16
+5;topsail exalt;13390.43;14484.99;overwork;false;2025-12-27T20:23:41
+6;politely who;26412.12;17299.99;puppet;false;2025-12-28T06:48:41
+7;beautifully underneath;21745.86;25052.54;forearm drive impartial;false;2025-12-27T19:39:53
+8;intently;18678.98;7167.54;though;true;2025-12-27T11:16:21
+9;bah;12176.11;7096.35;per;false;2025-12-27T09:10:37
+10;cinch huge snarling;16059.29;3160.04;unless disadvantage of;true;2025-12-27T12:13:17

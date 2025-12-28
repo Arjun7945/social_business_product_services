@@ -78,11 +78,11 @@ class FishProductCriteriaTest {
         fishProductCriteria.id();
         fishProductCriteria.name();
         fishProductCriteria.pricePerKg();
-        fishProductCriteria.imageUrl();
+        fishProductCriteria.availableQuantity();
         fishProductCriteria.description();
         fishProductCriteria.isAvailable();
         fishProductCriteria.createdAt();
-        fishProductCriteria.imagesId();
+        fishProductCriteria.imageId();
         fishProductCriteria.distinct();
     }
 
@@ -92,11 +92,11 @@ class FishProductCriteriaTest {
                 condition.apply(criteria.getId()) &&
                 condition.apply(criteria.getName()) &&
                 condition.apply(criteria.getPricePerKg()) &&
-                condition.apply(criteria.getImageUrl()) &&
+                condition.apply(criteria.getAvailableQuantity()) &&
                 condition.apply(criteria.getDescription()) &&
                 condition.apply(criteria.getIsAvailable()) &&
                 condition.apply(criteria.getCreatedAt()) &&
-                condition.apply(criteria.getImagesId()) &&
+                condition.apply(criteria.getImageId()) &&
                 condition.apply(criteria.getDistinct()),
             "every filter matches"
         );
@@ -108,11 +108,11 @@ class FishProductCriteriaTest {
                 condition.apply(criteria.getId(), copy.getId()) &&
                 condition.apply(criteria.getName(), copy.getName()) &&
                 condition.apply(criteria.getPricePerKg(), copy.getPricePerKg()) &&
-                condition.apply(criteria.getImageUrl(), copy.getImageUrl()) &&
+                condition.apply(criteria.getAvailableQuantity(), copy.getAvailableQuantity()) &&
                 condition.apply(criteria.getDescription(), copy.getDescription()) &&
                 condition.apply(criteria.getIsAvailable(), copy.getIsAvailable()) &&
                 condition.apply(criteria.getCreatedAt(), copy.getCreatedAt()) &&
-                condition.apply(criteria.getImagesId(), copy.getImagesId()) &&
+                condition.apply(criteria.getImageId(), copy.getImageId()) &&
                 condition.apply(criteria.getDistinct(), copy.getDistinct()),
             "every filter matches"
         );

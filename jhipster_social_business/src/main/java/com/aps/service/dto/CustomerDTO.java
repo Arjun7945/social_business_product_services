@@ -11,7 +11,7 @@ import java.util.Objects;
  * A DTO for the {@link com.aps.domain.Customer} entity.
  */
 @Schema(
-    description = "Customer entity representing the end-user.\nStores WhatsApp details, location, and flow state.\nRefactored: Removed temp fields, added address."
+    description = "Customer entity representing the end-user.\nStores WhatsApp details, location, and flow state.\nNOW LINKED TO: DeliveryZone (Category A, B, C...)"
 )
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class CustomerDTO implements Serializable {
@@ -43,8 +43,10 @@ public class CustomerDTO implements Serializable {
 
     private Instant lastInteractionAt;
 
-    @Schema(description = "TeamMember (Executive) who added the Customer")
+    @Schema(description = "Executive who added the Customer")
     private TeamMemberDTO addedBy;
+
+    private DeliveryZoneDTO zone;
 
     public Long getId() {
         return id;
@@ -150,6 +152,14 @@ public class CustomerDTO implements Serializable {
         this.addedBy = addedBy;
     }
 
+    public DeliveryZoneDTO getZone() {
+        return zone;
+    }
+
+    public void setZone(DeliveryZoneDTO zone) {
+        this.zone = zone;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -188,6 +198,7 @@ public class CustomerDTO implements Serializable {
             ", joinedAt='" + getJoinedAt() + "'" +
             ", lastInteractionAt='" + getLastInteractionAt() + "'" +
             ", addedBy=" + getAddedBy() +
+            ", zone=" + getZone() +
             "}";
     }
 }

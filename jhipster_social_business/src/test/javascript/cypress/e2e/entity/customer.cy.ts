@@ -15,7 +15,7 @@ describe('Customer e2e test', () => {
   const customerPageUrlPattern = new RegExp('/customer(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const customerSample = { waPhoneNumber: 'what oof unexpectedly', isPincodeValid: true, role: 'EXECUTIVE' };
+  const customerSample = { waPhoneNumber: 'hospitable aha fathom', isPincodeValid: true, role: 'DELIVERY_PERSON' };
 
   let customer;
 
@@ -136,7 +136,9 @@ describe('Customer e2e test', () => {
       });
 
       it('last delete button click should delete instance of Customer', () => {
+        cy.intercept('GET', '/api/customers/*').as('dialogDeleteRequest');
         cy.get(entityDeleteButtonSelector).last().click();
+        cy.wait('@dialogDeleteRequest');
         cy.getEntityDeleteDialogHeading('customer').should('exist');
         cy.get(entityConfirmDeleteButtonSelector).click();
         cy.wait('@deleteEntityRequest').then(({ response }) => {
@@ -160,40 +162,40 @@ describe('Customer e2e test', () => {
     });
 
     it('should create an instance of Customer', () => {
-      cy.get(`[data-cy="waPhoneNumber"]`).type('yuck astonishing');
-      cy.get(`[data-cy="waPhoneNumber"]`).should('have.value', 'yuck astonishing');
+      cy.get(`[data-cy="waPhoneNumber"]`).type('deprave although utterly');
+      cy.get(`[data-cy="waPhoneNumber"]`).should('have.value', 'deprave although utterly');
 
-      cy.get(`[data-cy="name"]`).type('appreciate');
-      cy.get(`[data-cy="name"]`).should('have.value', 'appreciate');
+      cy.get(`[data-cy="name"]`).type('blowgun valiantly continually');
+      cy.get(`[data-cy="name"]`).should('have.value', 'blowgun valiantly continually');
 
-      cy.get(`[data-cy="phoneNumber"]`).type('physically');
-      cy.get(`[data-cy="phoneNumber"]`).should('have.value', 'physically');
+      cy.get(`[data-cy="phoneNumber"]`).type('digitize heavily frightfully');
+      cy.get(`[data-cy="phoneNumber"]`).should('have.value', 'digitize heavily frightfully');
 
-      cy.get(`[data-cy="locationLat"]`).type('9394.61');
-      cy.get(`[data-cy="locationLat"]`).should('have.value', '9394.61');
+      cy.get(`[data-cy="locationLat"]`).type('21776.92');
+      cy.get(`[data-cy="locationLat"]`).should('have.value', '21776.92');
 
-      cy.get(`[data-cy="locationLon"]`).type('3818.04');
-      cy.get(`[data-cy="locationLon"]`).should('have.value', '3818.04');
+      cy.get(`[data-cy="locationLon"]`).type('13471.49');
+      cy.get(`[data-cy="locationLon"]`).should('have.value', '13471.49');
 
-      cy.get(`[data-cy="address"]`).type('incidentally inasmuch misjudge');
-      cy.get(`[data-cy="address"]`).should('have.value', 'incidentally inasmuch misjudge');
+      cy.get(`[data-cy="address"]`).type('accelerator');
+      cy.get(`[data-cy="address"]`).should('have.value', 'accelerator');
 
-      cy.get(`[data-cy="distanceFromBusinessKm"]`).type('7580.96');
-      cy.get(`[data-cy="distanceFromBusinessKm"]`).should('have.value', '7580.96');
+      cy.get(`[data-cy="distanceFromBusinessKm"]`).type('6178.59');
+      cy.get(`[data-cy="distanceFromBusinessKm"]`).should('have.value', '6178.59');
 
       cy.get(`[data-cy="isPincodeValid"]`).should('not.be.checked');
       cy.get(`[data-cy="isPincodeValid"]`).click();
       cy.get(`[data-cy="isPincodeValid"]`).should('be.checked');
 
-      cy.get(`[data-cy="role"]`).select('ADMIN');
+      cy.get(`[data-cy="role"]`).select('DELIVERY_PERSON');
 
-      cy.get(`[data-cy="joinedAt"]`).type('2025-12-15T11:45');
+      cy.get(`[data-cy="joinedAt"]`).type('2025-12-28T02:57');
       cy.get(`[data-cy="joinedAt"]`).blur();
-      cy.get(`[data-cy="joinedAt"]`).should('have.value', '2025-12-15T11:45');
+      cy.get(`[data-cy="joinedAt"]`).should('have.value', '2025-12-28T02:57');
 
-      cy.get(`[data-cy="lastInteractionAt"]`).type('2025-12-15T00:26');
+      cy.get(`[data-cy="lastInteractionAt"]`).type('2025-12-27T15:29');
       cy.get(`[data-cy="lastInteractionAt"]`).blur();
-      cy.get(`[data-cy="lastInteractionAt"]`).should('have.value', '2025-12-15T00:26');
+      cy.get(`[data-cy="lastInteractionAt"]`).should('have.value', '2025-12-27T15:29');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

@@ -68,7 +68,11 @@ public class CustomerCriteria implements Serializable, Criteria {
 
     private LongFilter cartId;
 
+    private LongFilter returnsId;
+
     private LongFilter addedById;
+
+    private LongFilter zoneId;
 
     private Boolean distinct;
 
@@ -89,7 +93,9 @@ public class CustomerCriteria implements Serializable, Criteria {
         this.lastInteractionAt = other.optionalLastInteractionAt().map(InstantFilter::copy).orElse(null);
         this.ordersId = other.optionalOrdersId().map(LongFilter::copy).orElse(null);
         this.cartId = other.optionalCartId().map(LongFilter::copy).orElse(null);
+        this.returnsId = other.optionalReturnsId().map(LongFilter::copy).orElse(null);
         this.addedById = other.optionalAddedById().map(LongFilter::copy).orElse(null);
+        this.zoneId = other.optionalZoneId().map(LongFilter::copy).orElse(null);
         this.distinct = other.distinct;
     }
 
@@ -364,6 +370,25 @@ public class CustomerCriteria implements Serializable, Criteria {
         this.cartId = cartId;
     }
 
+    public LongFilter getReturnsId() {
+        return returnsId;
+    }
+
+    public Optional<LongFilter> optionalReturnsId() {
+        return Optional.ofNullable(returnsId);
+    }
+
+    public LongFilter returnsId() {
+        if (returnsId == null) {
+            setReturnsId(new LongFilter());
+        }
+        return returnsId;
+    }
+
+    public void setReturnsId(LongFilter returnsId) {
+        this.returnsId = returnsId;
+    }
+
     public LongFilter getAddedById() {
         return addedById;
     }
@@ -381,6 +406,25 @@ public class CustomerCriteria implements Serializable, Criteria {
 
     public void setAddedById(LongFilter addedById) {
         this.addedById = addedById;
+    }
+
+    public LongFilter getZoneId() {
+        return zoneId;
+    }
+
+    public Optional<LongFilter> optionalZoneId() {
+        return Optional.ofNullable(zoneId);
+    }
+
+    public LongFilter zoneId() {
+        if (zoneId == null) {
+            setZoneId(new LongFilter());
+        }
+        return zoneId;
+    }
+
+    public void setZoneId(LongFilter zoneId) {
+        this.zoneId = zoneId;
     }
 
     public Boolean getDistinct() {
@@ -426,7 +470,9 @@ public class CustomerCriteria implements Serializable, Criteria {
             Objects.equals(lastInteractionAt, that.lastInteractionAt) &&
             Objects.equals(ordersId, that.ordersId) &&
             Objects.equals(cartId, that.cartId) &&
+            Objects.equals(returnsId, that.returnsId) &&
             Objects.equals(addedById, that.addedById) &&
+            Objects.equals(zoneId, that.zoneId) &&
             Objects.equals(distinct, that.distinct)
         );
     }
@@ -448,7 +494,9 @@ public class CustomerCriteria implements Serializable, Criteria {
             lastInteractionAt,
             ordersId,
             cartId,
+            returnsId,
             addedById,
+            zoneId,
             distinct
         );
     }
@@ -471,7 +519,9 @@ public class CustomerCriteria implements Serializable, Criteria {
             optionalLastInteractionAt().map(f -> "lastInteractionAt=" + f + ", ").orElse("") +
             optionalOrdersId().map(f -> "ordersId=" + f + ", ").orElse("") +
             optionalCartId().map(f -> "cartId=" + f + ", ").orElse("") +
+            optionalReturnsId().map(f -> "returnsId=" + f + ", ").orElse("") +
             optionalAddedById().map(f -> "addedById=" + f + ", ").orElse("") +
+            optionalZoneId().map(f -> "zoneId=" + f + ", ").orElse("") +
             optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
         "}";
     }

@@ -1,0 +1,43 @@
+{
+  "whatsappProductServiceProApp": {
+    "removedUser": {
+      "home": {
+        "title": "Removed Users",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Removed User",
+        "createOrEditLabel": "Create or edit a Removed User",
+        "notFound": "No Removed Users found"
+      },
+      "created": "A new Removed User is created with identifier {{ param }}",
+      "updated": "A Removed User is updated with identifier {{ param }}",
+      "deleted": "A Removed User is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Removed User {{ id }}?"
+      },
+      "detail": {
+        "title": "Removed User"
+      },
+      "id": "ID",
+      "originalId": "Original Id",
+      "name": "Name",
+      "role": "Role",
+      "whatsappNumber": "Whatsapp Number",
+      "phoneNumber": "Phone Number",
+      "address": "Address",
+      "locationLat": "Location Lat",
+      "locationLon": "Location Lon",
+      "joinedAt": "Joined At",
+      "removedAt": "Removed At",
+      "reasonForRemoval": "Reason For Removal",
+      "lastSessionData": "Last Session Data",
+      "status": "Status",
+      "orderHistoryId": "Order History Id",
+      "distanceFromBusinessKm": "Distance From Business Km",
+      "isPincodeValid": "Is Pincode Valid",
+      "help": {
+        "distanceFromBusinessKm": "NEW: Stored for Customer audit",
+        "isPincodeValid": "NEW: Stored for Customer audit"
+      }
+    }
+  }
+}

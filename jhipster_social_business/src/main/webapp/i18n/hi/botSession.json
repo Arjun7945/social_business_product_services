@@ -1,5 +1,5 @@
 {
-  "whatsappProductServiceApp": {
+  "whatsappProductServiceProApp": {
     "botSession": {
       "home": {
         "title": "BotSessions",
@@ -21,12 +21,7 @@
       "waPhoneNumber": "Wa Phone Number",
       "currentState": "Current State",
       "sessionData": "Session Data",
-      "lastActiveAt": "Last Active At",
-      "help": {
-        "waPhoneNumber": "Key to link to Customer or TeamMember",
-        "currentState": "Checkpoints the user&#39;s flow (e.g., AWAITING_NAME)",
-        "sessionData": "JSON blob to store temp variables like { &#34;tempProductId&#34;: 123, &#34;tempName&#34;: &#34;John&#34; }"
-      }
+      "lastActiveAt": "Last Active At"
     }
   }
 }

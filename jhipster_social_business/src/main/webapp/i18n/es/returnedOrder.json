@@ -1,0 +1,32 @@
+{
+  "whatsappProductServiceProApp": {
+    "returnedOrder": {
+      "home": {
+        "title": "Returned Orders",
+        "refreshListLabel": "Refrescar lista",
+        "createLabel": "Crear nuevo Returned Order",
+        "createOrEditLabel": "Crear o editar Returned Order",
+        "notFound": "Ningún Returned Orders encontrado"
+      },
+      "created": "Un nuevo Returned Order ha sido creado con el identificador {{ param }}",
+      "updated": "Un Returned Order ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Returned Order ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Returned Order {{ id }}?"
+      },
+      "detail": {
+        "title": "Returned Order"
+      },
+      "id": "ID",
+      "returnDate": "Return Date",
+      "paymentReceivedMode": "Payment Received Mode",
+      "paymentReturnedMode": "Payment Returned Mode",
+      "productClaimStatus": "Product Claim Status",
+      "refundAmount": "Refund Amount",
+      "history": "History",
+      "items": "Items",
+      "order": "Order",
+      "customer": "Customer"
+    }
+  }
+}

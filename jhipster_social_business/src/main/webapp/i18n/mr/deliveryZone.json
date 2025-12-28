@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceProApp": {
+    "deliveryZone": {
+      "home": {
+        "title": "Delivery Zones",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नवीन Delivery Zone तयार करा",
+        "createOrEditLabel": "Delivery Zone तयार किंवा संपादित करा",
+        "notFound": "No Delivery Zones found"
+      },
+      "created": "Delivery Zone [identifier: {{ param }}] तयार आहे",
+      "updated": "Delivery Zone [identifier: {{ param }}] सुधारित केले आहे",
+      "deleted": "Delivery Zone [identifier: {{ param }}] हटविले आहे",
+      "delete": {
+        "question": "Delivery Zone [id: {{ id }}] काढून टाकण्याबाबत पुष्टी?"
+      },
+      "detail": {
+        "title": "Delivery Zone"
+      },
+      "id": "ID",
+      "zoneName": "Zone Name",
+      "pincode": "Pincode",
+      "customers": "Customers",
+      "deliveryPersons": "Delivery Persons",
+      "help": {
+        "zoneName": "e.g., &#34;A&#34;, &#34;B&#34;, &#34;North-1&#34;",
+        "pincode": "specific pincode or pattern linked to this zone"
+      }
+    }
+  }
+}

@@ -15,7 +15,7 @@
 
 spring:
   application:
-    name: whatsappProductService
+    name: whatsappProductServicePro
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
     contexts: test
@@ -36,13 +36,13 @@ spring:
           authorities-claim-name: auth
   task:
     execution:
-      thread-name-prefix: whatsapp-product-service-task-
+      thread-name-prefix: whatsapp-product-service-pro-task-
       pool:
         core-size: 1
         max-size: 50
         queue-capacity: 10000
     scheduling:
-      thread-name-prefix: whatsapp-product-service-scheduling-
+      thread-name-prefix: whatsapp-product-service-pro-scheduling-
       pool:
         size: 20
   thymeleaf:
@@ -59,9 +59,9 @@ server:
 # ===================================================================
 jhipster:
   clientApp:
-    name: 'whatsappProductServiceApp'
+    name: 'whatsappProductServiceProApp'
   mail:
-    from: whatsappProductService@localhost.com
+    from: whatsappProductServicePro@localhost.com
     base-url: http://127.0.0.1:8080
   logging:
     # To test json console appender

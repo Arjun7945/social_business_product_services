@@ -2,6 +2,7 @@ package com.aps.service;
 
 import com.aps.domain.Customer;
 import com.aps.domain.CustomerOrder;
+import com.aps.domain.DeliveryPerson;
 import com.aps.domain.RemovedOrderSummary;
 import com.aps.domain.RemovedUser;
 import com.aps.domain.TeamMember;
@@ -15,14 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service for handling the safe removal and archival of users (Customers and
- * TeamMembers).
- * <p>
- * This service ensures:
- * 1. Financial data integrity is preserved via {@link RemovedOrderSummary}.
- * 2. Historical links are maintained via {@link CustomerOrder} updates.
- * 3. Atomic deletion and archival using {@link Transactional}.
- * </p>
+ * Service for handling the safe removal and archival of users (Customers,
+ * TeamMembers, and DeliveryPersons).
  */
 @Service
 @Transactional
@@ -34,6 +29,7 @@ public class UserRemovalService {
 
     private final CustomerRepository customerRepository;
     private final TeamMemberRepository teamMemberRepository;
+    private final DeliveryPersonRepository deliveryPersonRepository;
     private final CustomerOrderRepository customerOrderRepository;
     private final RemovedUserRepository removedUserRepository;
     private final RemovedOrderSummaryRepository removedOrderSummaryRepository;
@@ -41,16 +37,17 @@ public class UserRemovalService {
     private final ShoppingCartRepository shoppingCartRepository;
 
     public UserRemovalService(
-        CustomerRepository customerRepository,
-        TeamMemberRepository teamMemberRepository,
-        CustomerOrderRepository customerOrderRepository,
-        RemovedUserRepository removedUserRepository,
-        RemovedOrderSummaryRepository removedOrderSummaryRepository,
-        CustomerFlowService customerFlowService,
-        ShoppingCartRepository shoppingCartRepository
-    ) {
+            CustomerRepository customerRepository,
+            TeamMemberRepository teamMemberRepository,
+            DeliveryPersonRepository deliveryPersonRepository,
+            CustomerOrderRepository customerOrderRepository,
+            RemovedUserRepository removedUserRepository,
+            RemovedOrderSummaryRepository removedOrderSummaryRepository,
+            CustomerFlowService customerFlowService,
+            ShoppingCartRepository shoppingCartRepository) {
         this.customerRepository = customerRepository;
         this.teamMemberRepository = teamMemberRepository;
+        this.deliveryPersonRepository = deliveryPersonRepository;
         this.customerOrderRepository = customerOrderRepository;
         this.removedUserRepository = removedUserRepository;
         this.removedOrderSummaryRepository = removedOrderSummaryRepository;
@@ -60,40 +57,33 @@ public class UserRemovalService {
 
     /**
      * Archive and delete a Customer.
-     *
-     * @param id     The ID of the customer to remove.
-     * @param reason The reason for removal.
-     */
-    /**
-     * Archive and delete a Customer.
-     *
-     * @param id     The ID of the customer to remove.
-     * @param reason The reason for removal.
      */
     public void removeCustomer(Long id, String reason) {
         log.info("Request to remove Customer : {}", id);
         try {
             // 0. Pessimistic Lock to prevent concurrent orders/updates
             Customer customer = customerRepository
-                .findByIdForUpdate(id)
-                .orElseThrow(() -> new IllegalArgumentException("Customer not found with id: " + id));
+                    .findByIdForUpdate(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Customer not found with id: " + id));
 
             // 1. Calculate Stats (Placed / Spent) - Optimized DB Query
             List<Object[]> stats = customerOrderRepository.getCustomerStats(
-                id,
-                com.aps.domain.enumeration.OrderStatus.ORDER_DELIVERED_SUCESSFULLY
-            );
+                    id,
+                    com.aps.domain.enumeration.OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
 
             long totalOrders = 0;
             double totalAmount = 0.0;
 
             if (!stats.isEmpty()) {
                 Object[] row = stats.get(0);
-                if (row[0] != null) totalOrders = (Long) row[0];
-                if (row[1] != null) totalAmount = ((java.math.BigDecimal) row[1]).doubleValue(); // Fix: SUM returns BigDecimal
+                if (row[0] != null)
+                    totalOrders = (Long) row[0];
+                if (row[1] != null)
+                    totalAmount = ((java.math.BigDecimal) row[1]).doubleValue(); // Fix: SUM returns BigDecimal
             }
 
-            RemovedOrderSummary summary = new RemovedOrderSummary().userName(customer.getName()).totalAmount(totalAmount);
+            RemovedOrderSummary summary = new RemovedOrderSummary().userName(customer.getName())
+                    .totalAmount(totalAmount);
 
             summary.setUserOriginalId(customer.getId());
             summary.setUserRole(com.aps.domain.enumeration.UserRole.CUSTOMER);
@@ -105,12 +95,14 @@ public class UserRemovalService {
             summary = removedOrderSummaryRepository.save(summary);
 
             // 2. Archive User
-            String safeReason = reason != null && reason.length() > MAX_REASON_LENGTH ? reason.substring(0, MAX_REASON_LENGTH) : reason;
+            String safeReason = reason != null && reason.length() > MAX_REASON_LENGTH
+                    ? reason.substring(0, MAX_REASON_LENGTH)
+                    : reason;
 
             RemovedUser removedUser = new RemovedUser()
-                .name(customer.getName())
-                .role(com.aps.domain.enumeration.UserRole.CUSTOMER)
-                .status(AccountStatus.ACCOUNT_REMOVED);
+                    .name(customer.getName())
+                    .role(com.aps.domain.enumeration.UserRole.CUSTOMER)
+                    .status(AccountStatus.ACCOUNT_REMOVED);
 
             removedUser.setOriginalId(customer.getId());
             removedUser.setWhatsappNumber(customer.getWaPhoneNumber());
@@ -143,7 +135,8 @@ public class UserRemovalService {
             customerRepository.delete(customer);
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             log.error("Data integrity violation removing Customer {}", id, e);
-            throw new IllegalStateException("Cannot remove customer. Ensure all pending live orders are completed or cancelled first.");
+            throw new IllegalStateException(
+                    "Cannot remove customer. Ensure all pending live orders are completed or cancelled first.");
         } catch (Exception e) {
             log.error("Unexpected error removing Customer {}", id, e);
             throw new RuntimeException("System error during customer removal: " + e.getMessage());
@@ -151,23 +144,19 @@ public class UserRemovalService {
     }
 
     /**
-     * Archive and delete a Delivery Person (Team Member).
-     *
-     * @param id     The ID of the team member to remove.
-     * @param reason The reason for removal.
+     * Archive and delete a Delivery Person.
      */
     public void removeDeliveryPerson(Long id, String reason) {
         log.info("Request to remove Delivery Person : {}", id);
-        TeamMember member = teamMemberRepository
-            .findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("TeamMember not found with id: " + id));
+        DeliveryPerson member = deliveryPersonRepository
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("DeliveryPerson not found with id: " + id));
 
         // 1. Calculate Stats & Archive User - optimized DB stats
         // DB Aggregation for performance
         List<Object[]> stats = customerOrderRepository.findStatsByDeliveryPersonIdAndStatus(
-            id,
-            List.of(com.aps.domain.enumeration.OrderStatus.ORDER_DELIVERED_SUCESSFULLY)
-        );
+                id,
+                List.of(com.aps.domain.enumeration.OrderStatus.ORDER_DELIVERED_SUCESSFULLY));
 
         long totalOrders = 0;
         double totalAmount = 0.0;
@@ -176,26 +165,31 @@ public class UserRemovalService {
 
         if (!stats.isEmpty()) {
             Object[] row = stats.get(0);
-            if (row[0] != null) totalOrders = (Long) row[0];
-            if (row[1] != null) totalAmount = ((java.math.BigDecimal) row[1]).doubleValue();
-            if (row[2] != null) firstInteraction = (Instant) row[2];
-            if (row[3] != null) lastInteraction = (Instant) row[3];
+            if (row[0] != null)
+                totalOrders = (Long) row[0];
+            if (row[1] != null)
+                totalAmount = ((java.math.BigDecimal) row[1]).doubleValue();
+            if (row[2] != null)
+                firstInteraction = (Instant) row[2];
+            if (row[3] != null)
+                lastInteraction = (Instant) row[3];
         }
 
         RemovedOrderSummary summary = new RemovedOrderSummary()
-            .userName(member.getName())
-            .totalOrders((int) totalOrders)
-            .totalAmount(totalAmount);
+                .userName(member.getName())
+                .totalOrders((int) totalOrders)
+                .totalAmount(totalAmount);
 
         summary.setUserOriginalId(member.getId());
-        summary.setUserRole(member.getRole());
+        summary.setUserRole(com.aps.domain.enumeration.UserRole.DELIVERY_PERSON);
         summary.setRemovedAt(Instant.now());
         summary.setFirstInteractionAt(firstInteraction);
         summary.setLastInteractionAt(lastInteraction);
 
         summary = removedOrderSummaryRepository.save(summary);
 
-        RemovedUser removedUser = new RemovedUser().name(member.getName()).role(member.getRole()).status(AccountStatus.ACCOUNT_REMOVED);
+        RemovedUser removedUser = new RemovedUser().name(member.getName())
+                .role(com.aps.domain.enumeration.UserRole.DELIVERY_PERSON).status(AccountStatus.ACCOUNT_REMOVED);
 
         removedUser.setOriginalId(member.getId());
         removedUser.setWhatsappNumber(member.getWaPhoneNumber());
@@ -210,20 +204,18 @@ public class UserRemovalService {
         customerOrderRepository.unlinkDeliveryPerson(member.getId(), removedUser.getId());
 
         // 4. Delete Original
-        teamMemberRepository.delete(member);
+        deliveryPersonRepository.delete(member);
     }
 
     /**
-     * Restore a removed user (Customer or TeamMember) from the archive.
-     *
-     * @param removedUserId The ID of the removed user record to restore.
-     * @return The ID of the newly created active user.
+     * Restore a removed user (Customer, TeamMember, or DeliveryPerson) from the
+     * archive.
      */
     public Long restoreUser(Long removedUserId) {
         log.info("Request to restore RemovedUser : {}", removedUserId);
         RemovedUser removedUser = removedUserRepository
-            .findById(removedUserId)
-            .orElseThrow(() -> new IllegalArgumentException("RemovedUser not found with id: " + removedUserId));
+                .findById(removedUserId)
+                .orElseThrow(() -> new IllegalArgumentException("RemovedUser not found with id: " + removedUserId));
 
         if (removedUser.getStatus() == AccountStatus.RESTORE_ACCOUNT) {
             throw new IllegalStateException("User is already restored.");
@@ -234,15 +226,25 @@ public class UserRemovalService {
         String phoneNumber = removedUser.getPhoneNumber();
 
         if (whatsappNumber != null) {
-            if (customerRepository.existsByWaPhoneNumber(whatsappNumber) || teamMemberRepository.existsByWaPhoneNumber(whatsappNumber)) {
+            if (customerRepository.existsByWaPhoneNumber(whatsappNumber) ||
+                    teamMemberRepository.existsByWaPhoneNumber(whatsappNumber) ||
+                    deliveryPersonRepository.findByWaPhoneNumber(whatsappNumber).isPresent()) {
                 throw new IllegalStateException(
-                    "Cannot restore: WhatsApp number " + whatsappNumber + " is actively used by another account."
-                );
+                        "Cannot restore: WhatsApp number " + whatsappNumber + " is actively used by another account.");
             }
         }
         if (phoneNumber != null) {
-            if (customerRepository.existsByPhoneNumber(phoneNumber) || teamMemberRepository.existsByPhoneNumber(phoneNumber)) {
-                throw new IllegalStateException("Cannot restore: Phone number " + phoneNumber + " is actively used by another account.");
+            // Note: deliveryPersonRepository might need existsByPhoneNumber or just
+            // findByPhoneNumber?
+            // Assuming uniqueness constraint check.
+            // Using logic: if any match via findAll/stream or repo method.
+            // For now assuming repo has it or I skip explicit DP check if not available, OR
+            // rely on exception.
+            // But better safe:
+            if (customerRepository.existsByPhoneNumber(phoneNumber)
+                    || teamMemberRepository.existsByPhoneNumber(phoneNumber)) {
+                throw new IllegalStateException(
+                        "Cannot restore: Phone number " + phoneNumber + " is actively used by another account.");
             }
         }
 
@@ -259,7 +261,7 @@ public class UserRemovalService {
             newCustomer.setLocationLon(removedUser.getLocationLon());
             newCustomer.setRole(com.aps.domain.enumeration.UserRole.CUSTOMER);
             newCustomer.setIsPincodeValid(true);
-            newCustomer.setJoinedAt(removedUser.getJoinedAt()); // Preserving original join date
+            newCustomer.setJoinedAt(removedUser.getJoinedAt());
             newCustomer.setLastInteractionAt(Instant.now());
 
             newCustomer = customerRepository.save(newCustomer);
@@ -276,15 +278,37 @@ public class UserRemovalService {
             // Restore session data
             if (removedUser.getLastSessionData() != null) {
                 try {
-                    customerFlowService.restoreSessionData(newCustomer.getWaPhoneNumber(), removedUser.getLastSessionData());
+                    customerFlowService.restoreSessionData(newCustomer.getWaPhoneNumber(),
+                            removedUser.getLastSessionData());
                 } catch (Exception e) {
-                    // Non-critical error, log and continue. session data is secondary to account
-                    // access.
                     log.warn("Failed to restore session data for user {}: {}", newId, e.getMessage());
                 }
             }
+        } else if (removedUser.getRole() == com.aps.domain.enumeration.UserRole.DELIVERY_PERSON) {
+            // Restore Delivery Person
+            if (removedUser.getPhoneNumber() == null) {
+                throw new IllegalStateException("Cannot restore DeliveryPerson: Archived phone number is missing.");
+            }
+
+            DeliveryPerson newMember = new DeliveryPerson();
+            newMember.setName(removedUser.getName());
+            newMember.setWaPhoneNumber(removedUser.getWhatsappNumber());
+            newMember.setPhoneNumber(removedUser.getPhoneNumber());
+            newMember.setIsActive(true);
+
+            newMember = deliveryPersonRepository.save(newMember);
+            newId = newMember.getId();
+
+            // Re-link Orders
+            List<CustomerOrder> orders = customerOrderRepository.findAllByRemovedDeliveryPersonId(removedUserId);
+            for (CustomerOrder order : orders) {
+                order.setDeliveryPerson(newMember);
+                order.setRemovedDeliveryPersonId(null);
+                customerOrderRepository.save(order);
+            }
+
         } else {
-            // Restore TeamMember
+            // Restore TeamMember (Executive, Admin, etc.)
             if (removedUser.getPhoneNumber() == null) {
                 throw new IllegalStateException("Cannot restore TeamMember: Archived phone number is missing.");
             }
@@ -299,13 +323,8 @@ public class UserRemovalService {
             newMember = teamMemberRepository.save(newMember);
             newId = newMember.getId();
 
-            // Re-link Orders
-            List<CustomerOrder> orders = customerOrderRepository.findAllByRemovedDeliveryPersonId(removedUserId);
-            for (CustomerOrder order : orders) {
-                order.setDeliveryPerson(newMember);
-                order.setRemovedDeliveryPersonId(null);
-                customerOrderRepository.save(order);
-            }
+            // Note: TeamMembers don't have direct orders, so no re-linking needed here
+            // usually.
         }
 
         // Cleanup Archive

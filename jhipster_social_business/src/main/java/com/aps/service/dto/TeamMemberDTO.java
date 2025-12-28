@@ -9,7 +9,9 @@ import java.util.Objects;
 /**
  * A DTO for the {@link com.aps.domain.TeamMember} entity.
  */
-@Schema(description = "Internal Team Members (Admins, Executives, Delivery).\nRefactored: Removed all temp_ fields.")
+@Schema(
+    description = "Internal Team Members (Admins, Executives, Assistant Admins).\nNOTE: Delivery Persons use the separate DeliveryPerson entity now."
+)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class TeamMemberDTO implements Serializable {
 

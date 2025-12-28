@@ -71,6 +71,7 @@ public class CustomerAsserts {
     public static void assertCustomerUpdatableRelationshipsEquals(Customer expected, Customer actual) {
         assertThat(expected)
             .as("Verify Customer relationships")
-            .satisfies(e -> assertThat(e.getAddedBy()).as("check addedBy").isEqualTo(actual.getAddedBy()));
+            .satisfies(e -> assertThat(e.getAddedBy()).as("check addedBy").isEqualTo(actual.getAddedBy()))
+            .satisfies(e -> assertThat(e.getZone()).as("check zone").isEqualTo(actual.getZone()));
     }
 }

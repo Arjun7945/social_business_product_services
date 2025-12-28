@@ -37,7 +37,7 @@ public class CartItem implements Serializable {
      */
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = { "images" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "image" }, allowSetters = true)
     private FishProduct product;
 
     @ManyToOne(optional = false)

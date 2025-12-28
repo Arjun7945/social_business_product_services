@@ -1,7 +1,7 @@
 package com.aps.repository;
 
 import com.aps.domain.CustomerOrder;
-import java.time.Instant;
+import com.aps.domain.enumeration.OrderStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -14,7 +14,8 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository for the CustomerOrder entity.
  */
 @Repository
-public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Long>, JpaSpecificationExecutor<CustomerOrder> {
+public interface CustomerOrderRepository
+        extends JpaRepository<CustomerOrder, Long>, JpaSpecificationExecutor<CustomerOrder> {
     default Optional<CustomerOrder> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
@@ -27,56 +28,35 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Lo
         return this.findAllWithToOneRelationships(pageable);
     }
 
-    @Query(
-        value = "select customerOrder from CustomerOrder customerOrder left join fetch customerOrder.deliveryPerson left join fetch customerOrder.customer",
-        countQuery = "select count(customerOrder) from CustomerOrder customerOrder"
-    )
+    @Query(value = "select customerOrder from CustomerOrder customerOrder left join fetch customerOrder.customer left join fetch customerOrder.deliveryPerson", countQuery = "select count(customerOrder) from CustomerOrder customerOrder")
     Page<CustomerOrder> findAllWithToOneRelationships(Pageable pageable);
 
-    @Query(
-        "select customerOrder from CustomerOrder customerOrder left join fetch customerOrder.deliveryPerson left join fetch customerOrder.customer"
-    )
+    @Query("select customerOrder from CustomerOrder customerOrder left join fetch customerOrder.customer left join fetch customerOrder.deliveryPerson")
     List<CustomerOrder> findAllWithToOneRelationships();
 
-    @Query(
-        "select customerOrder from CustomerOrder customerOrder left join fetch customerOrder.deliveryPerson left join fetch customerOrder.customer where customerOrder.id =:id"
-    )
+    @Query("select customerOrder from CustomerOrder customerOrder left join fetch customerOrder.customer left join fetch customerOrder.deliveryPerson where customerOrder.id =:id")
     Optional<CustomerOrder> findOneWithToOneRelationships(@Param("id") Long id);
 
-    @Query("select o from CustomerOrder o left join fetch o.customer where o.orderTime between :start and :end")
-    List<CustomerOrder> findAllByOrderTimeBetween(@Param("start") Instant start, @Param("end") Instant end);
+    @Query("SELECT COUNT(o), SUM(o.totalAmount) FROM CustomerOrder o WHERE o.customer.id = :customerId AND o.status = :status")
+    List<Object[]> getCustomerStats(@Param("customerId") Long customerId, @Param("status") OrderStatus status);
 
-    @Query("select o from CustomerOrder o left join fetch o.customer where o.status = :status")
-    List<CustomerOrder> findAllByStatus(@Param("status") com.aps.domain.enumeration.OrderStatus status);
+    @Query("SELECT COUNT(o), SUM(o.totalAmount), MIN(o.orderTime), MAX(o.orderTime) FROM CustomerOrder o WHERE o.deliveryPerson.id = :dpId AND o.status IN :statuses")
+    List<Object[]> findStatsByDeliveryPersonIdAndStatus(@Param("dpId") Long dpId,
+            @Param("statuses") List<OrderStatus> statuses);
 
-    @Query("select o from CustomerOrder o where o.deliveryPerson.id = :id")
-    List<CustomerOrder> findOrdersByDeliveryPersonId(@Param("id") Long id);
+    @Modifying
+    @Query("UPDATE CustomerOrder o SET o.customer = null, o.removedCustomerId = :removedId WHERE o.customer.id = :custId")
+    void unlinkCustomer(@Param("custId") Long custId, @Param("removedId") Long removedId);
 
-    @Query("select o from CustomerOrder o where o.customer.id = :id")
-    List<CustomerOrder> findOrdersByCustomerId(@Param("id") Long id);
+    @Modifying
+    @Query("UPDATE CustomerOrder o SET o.deliveryPerson = null, o.removedDeliveryPersonId = :removedId WHERE o.deliveryPerson.id = :dpId")
+    void unlinkDeliveryPerson(@Param("dpId") Long dpId, @Param("removedId") Long removedId);
 
     List<CustomerOrder> findAllByRemovedCustomerId(Long removedCustomerId);
 
     List<CustomerOrder> findAllByRemovedDeliveryPersonId(Long removedDeliveryPersonId);
 
-    @Modifying
-    @Query("update CustomerOrder o set o.customer = null, o.removedCustomerId = :removedId where o.customer.id = :customerId")
-    int unlinkCustomer(@Param("customerId") Long customerId, @Param("removedId") Long removedId);
+    List<CustomerOrder> findAllByOrderTimeBetween(java.time.Instant start, java.time.Instant end);
 
-    @Modifying
-    @Query(
-        "update CustomerOrder o set o.deliveryPerson = null, o.removedDeliveryPersonId = :removedId where o.deliveryPerson.id = :deliveryPersonId"
-    )
-    int unlinkDeliveryPerson(@Param("deliveryPersonId") Long deliveryPersonId, @Param("removedId") Long removedId);
-
-    @Query(
-        "select count(o), sum(o.totalAmount), min(o.orderTime), max(o.orderTime) from CustomerOrder o where o.deliveryPerson.id = :id and o.status in (:statuses)"
-    )
-    List<Object[]> findStatsByDeliveryPersonIdAndStatus(
-        @Param("id") Long id,
-        @Param("statuses") List<com.aps.domain.enumeration.OrderStatus> statuses
-    );
-
-    @Query("select count(o), sum(o.totalAmount) from CustomerOrder o where o.customer.id = :id and o.status = :status")
-    List<Object[]> getCustomerStats(@Param("id") Long id, @Param("status") com.aps.domain.enumeration.OrderStatus status);
+    List<CustomerOrder> findAllByStatus(OrderStatus status);
 }

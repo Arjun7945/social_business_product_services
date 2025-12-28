@@ -1,0 +1,10 @@
+{
+  "whatsappProductServiceProApp": {
+    "DeliveryStatus": {
+      "null": "",
+      "FREE": "FREE",
+      "BUSY": "BUSY",
+      "OFF_DUTY": "OFF_DUTY"
+    }
+  }
+}

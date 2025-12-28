@@ -15,23 +15,29 @@ describe('OrderItem e2e test', () => {
   const orderItemPageUrlPattern = new RegExp('/order-item(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  // const orderItemSample = {"quantityKg":17172.73,"priceAtOrder":26629.89};
+  const orderItemSample = { quantityKg: 10918.86, priceAtOrder: 13116.34 };
 
   let orderItem;
-  // let fishProduct;
-  // let customerOrder;
+  let fishProduct;
+  let customerOrder;
 
   beforeEach(() => {
     cy.login(username, password);
   });
 
-  /* Disabled due to incompatibility
   beforeEach(() => {
     // create an instance at the required relationship entity:
     cy.authenticatedRequest({
       method: 'POST',
       url: '/api/fish-products',
-      body: {"name":"doubtfully inquisitively","pricePerKg":31728.24,"imageUrl":"wisecrack clearly degrease","description":"calculus wafer merit","isAvailable":true,"createdAt":"2025-12-14T16:04:44.446Z"},
+      body: {
+        name: 'jagged',
+        pricePerKg: 23720.2,
+        availableQuantity: 23911.63,
+        description: 'penalise ceramic except',
+        isAvailable: true,
+        createdAt: '2025-12-27T11:57:48.500Z',
+      },
     }).then(({ body }) => {
       fishProduct = body;
     });
@@ -39,12 +45,20 @@ describe('OrderItem e2e test', () => {
     cy.authenticatedRequest({
       method: 'POST',
       url: '/api/customer-orders',
-      body: {"orderTime":"2025-12-14T22:12:19.528Z","totalAmount":25910.09,"status":"CANCELLED","paymentMethod":"serpentine","confirmedAt":"2025-12-15T09:14:46.524Z"},
+      body: {
+        orderTime: '2025-12-28T01:01:00.101Z',
+        totalAmount: 23229.86,
+        status: 'ORDER_NOT_TAKEN',
+        paymentMethod: 'too into',
+        confirmedAt: '2025-12-28T07:48:58.957Z',
+        removedCustomerId: 21626,
+        removedDeliveryPersonId: 20646,
+        transactionId: 'short wildly modulo',
+      },
     }).then(({ body }) => {
       customerOrder = body;
     });
   });
-   */
 
   beforeEach(() => {
     cy.intercept('GET', '/api/order-items+(?*|)').as('entitiesRequest');
@@ -52,7 +66,6 @@ describe('OrderItem e2e test', () => {
     cy.intercept('DELETE', '/api/order-items/*').as('deleteEntityRequest');
   });
 
-  /* Disabled due to incompatibility
   beforeEach(() => {
     // Simulate relationships api for better performance and reproducibility.
     cy.intercept('GET', '/api/fish-products', {
@@ -64,9 +77,7 @@ describe('OrderItem e2e test', () => {
       statusCode: 200,
       body: [customerOrder],
     });
-
   });
-   */
 
   afterEach(() => {
     if (orderItem) {
@@ -79,7 +90,6 @@ describe('OrderItem e2e test', () => {
     }
   });
 
-  /* Disabled due to incompatibility
   afterEach(() => {
     if (fishProduct) {
       cy.authenticatedRequest({
@@ -98,7 +108,6 @@ describe('OrderItem e2e test', () => {
       });
     }
   });
-   */
 
   it('OrderItems menu should load OrderItems page', () => {
     cy.visit('/');
@@ -135,7 +144,6 @@ describe('OrderItem e2e test', () => {
     });
 
     describe('with existing value', () => {
-      /* Disabled due to incompatibility
       beforeEach(() => {
         cy.authenticatedRequest({
           method: 'POST',
@@ -160,24 +168,13 @@ describe('OrderItem e2e test', () => {
                 link: '<http://localhost/api/order-items?page=0&size=20>; rel="last",<http://localhost/api/order-items?page=0&size=20>; rel="first"',
               },
               body: [orderItem],
-            }
+            },
           ).as('entitiesRequestInternal');
         });
 
         cy.visit(orderItemPageUrl);
 
         cy.wait('@entitiesRequestInternal');
-      });
-       */
-
-      beforeEach(function () {
-        cy.visit(orderItemPageUrl);
-
-        cy.wait('@entitiesRequest').then(({ response }) => {
-          if (response?.body.length === 0) {
-            this.skip();
-          }
-        });
       });
 
       it('detail button click should load details OrderItem page', () => {
@@ -211,9 +208,10 @@ describe('OrderItem e2e test', () => {
         cy.url().should('match', orderItemPageUrlPattern);
       });
 
-      // Reason: cannot create a required entity with relationship with required relationships.
-      it.skip('last delete button click should delete instance of OrderItem', () => {
+      it('last delete button click should delete instance of OrderItem', () => {
+        cy.intercept('GET', '/api/order-items/*').as('dialogDeleteRequest');
         cy.get(entityDeleteButtonSelector).last().click();
+        cy.wait('@dialogDeleteRequest');
         cy.getEntityDeleteDialogHeading('orderItem').should('exist');
         cy.get(entityConfirmDeleteButtonSelector).click();
         cy.wait('@deleteEntityRequest').then(({ response }) => {
@@ -236,13 +234,12 @@ describe('OrderItem e2e test', () => {
       cy.getEntityCreateUpdateHeading('OrderItem');
     });
 
-    // Reason: cannot create a required entity with relationship with required relationships.
-    it.skip('should create an instance of OrderItem', () => {
-      cy.get(`[data-cy="quantityKg"]`).type('8111.54');
-      cy.get(`[data-cy="quantityKg"]`).should('have.value', '8111.54');
+    it('should create an instance of OrderItem', () => {
+      cy.get(`[data-cy="quantityKg"]`).type('7620.42');
+      cy.get(`[data-cy="quantityKg"]`).should('have.value', '7620.42');
 
-      cy.get(`[data-cy="priceAtOrder"]`).type('7536.49');
-      cy.get(`[data-cy="priceAtOrder"]`).should('have.value', '7536.49');
+      cy.get(`[data-cy="priceAtOrder"]`).type('30255.94');
+      cy.get(`[data-cy="priceAtOrder"]`).should('have.value', '30255.94');
 
       cy.get(`[data-cy="product"]`).select(1);
       cy.get(`[data-cy="order"]`).select(1);

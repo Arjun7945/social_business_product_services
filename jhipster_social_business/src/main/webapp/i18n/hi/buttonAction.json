@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceProApp": {
+    "buttonAction": {
+      "home": {
+        "title": "ButtonActions",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नया Button Action बनाएँ",
+        "createOrEditLabel": "Button Action बनाएँ या संपादित करें",
+        "notFound": "No Button Actions found"
+      },
+      "created": "एक नया Button Action [identifier: {{ param }}] तैयार है",
+      "updated": "एक Button Action [identifier: {{ param }}] का अद्यतन हुआ है",
+      "deleted": "Button Action [identifier: {{ param }}] हटा दिया है",
+      "delete": {
+        "question": "Button Action [id: {{ id }}] हटाने की पुष्टि करें"
+      },
+      "detail": {
+        "title": "Button Action"
+      },
+      "id": "ID",
+      "waMessageId": "Wa Message Id",
+      "buttonId": "Button Id",
+      "clickedAt": "Clicked At",
+      "clickedBy": "Clicked By"
+    }
+  }
+}

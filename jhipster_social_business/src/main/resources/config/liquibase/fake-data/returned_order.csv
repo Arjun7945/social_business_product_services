@@ -1,0 +1,11 @@
+id;return_date;payment_received_mode;payment_returned_mode;product_claim_status;refund_amount;order_id;customer_id
+1;2025-12-27T09:50:57;midst er ligate;lampoon broadly;RECEIVED_DAMAGED;31680.02;1;1
+2;2025-12-28T03:14:29;mature;during pish;PENDING_RECEIPT;22548.79;2;2
+3;2025-12-27T19:43:38;even;toward when;RECEIVED_OK;24896.08;3;3
+4;2025-12-28T03:12:13;augment;anaesthetise;RECEIVED_OK;22901.67;4;4
+5;2025-12-27T13:16:36;ick;shanghai;RECEIVED_OK;11493.6;5;5
+6;2025-12-28T08:23:42;narrowcast;cute pertinent zesty;RECEIVED_OK;7653.84;6;6
+7;2025-12-27T12:19:53;since print;indeed wearily;RECEIVED_DAMAGED;2737.55;7;7
+8;2025-12-27T17:53:56;off near bah;past disrespect;RECEIVED_DAMAGED;26580.79;8;8
+9;2025-12-28T04:43:47;upright;nor recovery requite;RECEIVED_DAMAGED;9943.7;9;9
+10;2025-12-28T05:11:09;esteemed er rightfully;frankly;NOT_RECEIVED;3119.91;10;10

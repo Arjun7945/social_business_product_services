@@ -1,0 +1,35 @@
+{
+  "whatsappProductServiceProApp": {
+    "deliveryPerson": {
+      "home": {
+        "title": "Delivery People",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Delivery Person",
+        "createOrEditLabel": "Create or edit a Delivery Person",
+        "notFound": "No Delivery People found"
+      },
+      "created": "A new Delivery Person is created with identifier {{ param }}",
+      "updated": "A Delivery Person is updated with identifier {{ param }}",
+      "deleted": "A Delivery Person is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Delivery Person {{ id }}?"
+      },
+      "detail": {
+        "title": "Delivery Person"
+      },
+      "id": "ID",
+      "name": "Name",
+      "waPhoneNumber": "Wa Phone Number",
+      "phoneNumber": "Phone Number",
+      "status": "Status",
+      "joinedAt": "Joined At",
+      "isActive": "Is Active",
+      "orders": "Orders",
+      "addedBy": "Added By",
+      "zone": "Zone",
+      "help": {
+        "status": "FREE, BUSY, OFF_DUTY"
+      }
+    }
+  }
+}

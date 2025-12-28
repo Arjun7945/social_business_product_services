@@ -10,7 +10,9 @@ import java.util.Objects;
 /**
  * A DTO for the {@link com.aps.domain.FishProduct} entity.
  */
-@Schema(description = "Product catalog entity.\nIndexed in Elasticsearch for fast search.")
+@Schema(
+    description = "Product catalog entity.\nIndexed in Elasticsearch for fast search.\nUPDATED: 'imageUrl' removed in favor of ProductImage entity relation."
+)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class FishProductDTO implements Serializable {
 
@@ -23,18 +25,19 @@ public class FishProductDTO implements Serializable {
     @DecimalMin(value = "0")
     private BigDecimal pricePerKg;
 
-    private Long version;
-
-    private String imageUrl;
+    @Schema(description = "To track available stock")
+    private Double availableQuantity;
 
     @Size(max = 2000)
-    @Schema(description = "Increased length for SEO descriptions")
     private String description;
 
     @NotNull
     private Boolean isAvailable;
 
     private Instant createdAt;
+
+    @Schema(description = "One Product has exactly One Image")
+    private ProductImageDTO image;
 
     public Long getId() {
         return id;
@@ -60,20 +63,12 @@ public class FishProductDTO implements Serializable {
         this.pricePerKg = pricePerKg;
     }
 
-    public Long getVersion() {
-        return version;
+    public Double getAvailableQuantity() {
+        return availableQuantity;
     }
 
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setAvailableQuantity(Double availableQuantity) {
+        this.availableQuantity = availableQuantity;
     }
 
     public String getDescription() {
@@ -98,6 +93,14 @@ public class FishProductDTO implements Serializable {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public ProductImageDTO getImage() {
+        return image;
+    }
+
+    public void setImage(ProductImageDTO image) {
+        this.image = image;
     }
 
     @Override
@@ -125,13 +128,14 @@ public class FishProductDTO implements Serializable {
     @Override
     public String toString() {
         return "FishProductDTO{" +
-                "id=" + getId() +
-                ", name='" + getName() + "'" +
-                ", pricePerKg=" + getPricePerKg() +
-                ", imageUrl='" + getImageUrl() + "'" +
-                ", description='" + getDescription() + "'" +
-                ", isAvailable='" + getIsAvailable() + "'" +
-                ", createdAt='" + getCreatedAt() + "'" +
-                "}";
+            "id=" + getId() +
+            ", name='" + getName() + "'" +
+            ", pricePerKg=" + getPricePerKg() +
+            ", availableQuantity=" + getAvailableQuantity() +
+            ", description='" + getDescription() + "'" +
+            ", isAvailable='" + getIsAvailable() + "'" +
+            ", createdAt='" + getCreatedAt() + "'" +
+            ", image=" + getImage() +
+            "}";
     }
 }

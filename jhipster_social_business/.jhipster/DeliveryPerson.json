@@ -1,0 +1,74 @@
+{
+  "annotations": {
+    "changelogDate": "20251228084007"
+  },
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "DeliveryPerson\\nSeparated from TeamMember to handle specific delivery logic and categorization.\\nSPLIT BY: DeliveryZone (A delivery person in Zone A only delivers to Customers in Zone A).\\nNEW: Added by Team Member relationship.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "waPhoneNumber",
+      "fieldType": "String",
+      "fieldValidateRules": ["unique"]
+    },
+    {
+      "fieldName": "phoneNumber",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "documentation": "FREE, BUSY, OFF_DUTY",
+      "fieldName": "status",
+      "fieldType": "DeliveryStatus",
+      "fieldTypeDocumentation": "Status for Delivery Person availability.",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "FREE,BUSY,OFF_DUTY"
+    },
+    {
+      "fieldName": "joinedAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "isActive",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "DeliveryPerson",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "documentation": "One Delivery Person controls many Orders (History/Active)",
+      "otherEntityName": "customerOrder",
+      "otherEntityRelationshipName": "deliveryPerson",
+      "relationshipName": "orders",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "documentation": "Delivery Person added by TeamMember (e.g. Admin)",
+      "otherEntityField": "name",
+      "otherEntityName": "teamMember",
+      "relationshipName": "addedBy",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "zoneName",
+      "otherEntityName": "deliveryZone",
+      "otherEntityRelationshipName": "deliveryPersons",
+      "relationshipName": "zone",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

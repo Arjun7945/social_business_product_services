@@ -21,6 +21,9 @@ logging:
     com.aps: DEBUG
 
 spring:
+  docker:
+    compose:
+      enabled: false
   devtools:
     restart:
       enabled: false
@@ -32,7 +35,7 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/whatsappProductServiceDemo
+    url: jdbc:postgresql://localhost:5432/whatsappProductServicePro
     username: postgres
     password: arjun7945
     hikari:
@@ -70,7 +73,7 @@ jhipster:
   # CORS is only enabled by default with the "dev" profile
   cors:
     # Allow Ionic for JHipster by default (* no longer allowed in Spring Boot 2.4+)
-    allowed-origins: 'http://localhost:8100,https://localhost:8100,http://localhost:9000,https://localhost:9000,http://localhost:4200,https://localhost:4200'
+    allowed-origins: 'http://localhost:8100,https://localhost:8100,http://localhost:9000,https://localhost:9000,http://localhost:9060,https://localhost:9060'
     # Enable CORS when running in GitHub Codespaces
     allowed-origin-patterns: 'https://*.githubpreview.dev'
     allowed-methods: '*'
@@ -104,7 +107,7 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+
 whatsapp:
   api:
     token: 'EAAdVasahI1kBQM6BOAw1027RNMt74meyEej8hl8o4k9cXyry3ZCmblniFWTU7XosuDzX9PQZAtxv6NCNdNkNenx9JuZAaYsmTM7VMmaIMWRCPQGNthovYlHLvzdsApmnT7oCUGYFa8iRQndZC7bJc3JchLAfitnE4vzZCd0V1ypsaAkNkXoZAwLXVWfGL04Fr0t9dB6L49leieLgFNAF1Ah3KP4W7V7kRMOaYneN1ZB'
@@ -117,3 +120,8 @@ whatsapp:
 app:
   server:
     url: 'https://trying-demographically-maison.ngrok-free.dev'
+
+razorpay:
+  key-id: rzp_test_RshgtaFKamUyGc
+  key-secret: h61PSTYMvmWgQ1hqfBL3deEZ
+  webhook-secret: social_business_webhook_secret

@@ -1,0 +1,84 @@
+{
+  "annotations": {
+    "changelogDate": "20251228084022"
+  },
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "RemovedUser.\\nUpdated to include distance and pincode status for audit.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "originalId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "role",
+      "fieldType": "UserRole",
+      "fieldValues": "CUSTOMER,EXECUTIVE,ASSISTANT_ADMIN,ADMIN,DEVELOPER,DELIVERY_PERSON"
+    },
+    {
+      "fieldName": "whatsappNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "phoneNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "address",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "locationLat",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "locationLon",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "joinedAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "removedAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "reasonForRemoval",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "lastSessionData",
+      "fieldType": "TextBlob"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "AccountStatus",
+      "fieldValues": "ACCOUNT_REMOVED,RESTORE_ACCOUNT"
+    },
+    {
+      "fieldName": "orderHistoryId",
+      "fieldType": "Long"
+    },
+    {
+      "documentation": "NEW: Stored for Customer audit",
+      "fieldName": "distanceFromBusinessKm",
+      "fieldType": "Double"
+    },
+    {
+      "documentation": "NEW: Stored for Customer audit",
+      "fieldName": "isPincodeValid",
+      "fieldType": "Boolean"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "RemovedUser",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

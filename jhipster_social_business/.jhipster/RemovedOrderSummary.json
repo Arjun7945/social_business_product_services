@@ -1,0 +1,49 @@
+{
+  "annotations": {
+    "changelogDate": "20251228084021"
+  },
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "RemovedOrderSummary.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "userOriginalId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "userName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "userRole",
+      "fieldType": "UserRole",
+      "fieldValues": "CUSTOMER,EXECUTIVE,ASSISTANT_ADMIN,ADMIN,DEVELOPER,DELIVERY_PERSON"
+    },
+    {
+      "fieldName": "totalOrders",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "totalAmount",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "firstInteractionAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "lastInteractionAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "removedAt",
+      "fieldType": "Instant"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "RemovedOrderSummary",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

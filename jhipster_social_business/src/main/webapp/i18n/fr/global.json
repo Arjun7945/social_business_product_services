@@ -1,6 +1,6 @@
 {
   "global": {
-    "title": "WhatsappProductService",
+    "title": "WhatsappProductServicePro",
     "browsehappy": "Vous utilisez un <strong>ancien</strong> navigateur. Veuillez <a href=\"http://browsehappy.com/?locale=fr\">mettre à jour votre navigateur</a> pour une meilleure expérience.",
     "menu": {
       "home": "Accueil",
@@ -8,8 +8,9 @@
       "entities": {
         "main": "Entités",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
-        "adminAuthority": "Authority",
         "customer": "Customer",
+        "deliveryZone": "Delivery Zone",
+        "deliveryPerson": "Delivery Person",
         "fishProduct": "Fish Product",
         "productImage": "Product Image",
         "customerOrder": "Customer Order",
@@ -17,7 +18,14 @@
         "shoppingCart": "Shopping Cart",
         "cartItem": "Cart Item",
         "teamMember": "Team Member",
-        "botSession": "Bot Session"
+        "botSession": "Bot Session",
+        "buttonAction": "Button Action",
+        "orderStatusHistory": "Order Status History",
+        "returnedOrder": "Returned Order",
+        "returnedOrderItem": "Returned Order Item",
+        "returnStatusHistory": "Return Status History",
+        "removedOrderSummary": "Removed Order Summary",
+        "removedUser": "Removed User"
       },
       "account": {
         "main": "Compte",

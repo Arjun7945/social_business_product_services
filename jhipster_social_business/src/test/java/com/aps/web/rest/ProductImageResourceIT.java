@@ -4,32 +4,23 @@ import static com.aps.domain.ProductImageAsserts.*;
 import static com.aps.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.aps.IntegrationTest;
-import com.aps.domain.FishProduct;
 import com.aps.domain.ProductImage;
 import com.aps.repository.ProductImageRepository;
-import com.aps.service.ProductImageService;
 import com.aps.service.dto.ProductImageDTO;
 import com.aps.service.mapper.ProductImageMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link ProductImageResource} REST controller.
  */
 @IntegrationTest
-@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class ProductImageResourceIT {
@@ -49,6 +39,7 @@ class ProductImageResourceIT {
 
     private static final Integer DEFAULT_DISPLAY_ORDER = 1;
     private static final Integer UPDATED_DISPLAY_ORDER = 2;
+    private static final Integer SMALLER_DISPLAY_ORDER = 1 - 1;
 
     private static final String ENTITY_API_URL = "/api/product-images";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -62,14 +53,8 @@ class ProductImageResourceIT {
     @Autowired
     private ProductImageRepository productImageRepository;
 
-    @Mock
-    private ProductImageRepository productImageRepositoryMock;
-
     @Autowired
     private ProductImageMapper productImageMapper;
-
-    @Mock
-    private ProductImageService productImageServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -89,16 +74,6 @@ class ProductImageResourceIT {
      */
     public static ProductImage createEntity(EntityManager em) {
         ProductImage productImage = new ProductImage().imageUrl(DEFAULT_IMAGE_URL).displayOrder(DEFAULT_DISPLAY_ORDER);
-        // Add required entity
-        FishProduct fishProduct;
-        if (TestUtil.findAll(em, FishProduct.class).isEmpty()) {
-            fishProduct = FishProductResourceIT.createEntity();
-            em.persist(fishProduct);
-            em.flush();
-        } else {
-            fishProduct = TestUtil.findAll(em, FishProduct.class).get(0);
-        }
-        productImage.setProduct(fishProduct);
         return productImage;
     }
 
@@ -110,16 +85,6 @@ class ProductImageResourceIT {
      */
     public static ProductImage createUpdatedEntity(EntityManager em) {
         ProductImage updatedProductImage = new ProductImage().imageUrl(UPDATED_IMAGE_URL).displayOrder(UPDATED_DISPLAY_ORDER);
-        // Add required entity
-        FishProduct fishProduct;
-        if (TestUtil.findAll(em, FishProduct.class).isEmpty()) {
-            fishProduct = FishProductResourceIT.createUpdatedEntity();
-            em.persist(fishProduct);
-            em.flush();
-        } else {
-            fishProduct = TestUtil.findAll(em, FishProduct.class).get(0);
-        }
-        updatedProductImage.setProduct(fishProduct);
         return updatedProductImage;
     }
 
@@ -228,23 +193,6 @@ class ProductImageResourceIT {
             .andExpect(jsonPath("$.[*].displayOrder").value(hasItem(DEFAULT_DISPLAY_ORDER)));
     }
 
-    @SuppressWarnings({ "unchecked" })
-    void getAllProductImagesWithEagerRelationshipsIsEnabled() throws Exception {
-        when(productImageServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-
-        restProductImageMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
-
-        verify(productImageServiceMock, times(1)).findAllWithEagerRelationships(any());
-    }
-
-    @SuppressWarnings({ "unchecked" })
-    void getAllProductImagesWithEagerRelationshipsIsNotEnabled() throws Exception {
-        when(productImageServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-
-        restProductImageMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
-        verify(productImageRepositoryMock, times(1)).findAll(any(Pageable.class));
-    }
-
     @Test
     @Transactional
     void getProductImage() throws Exception {
@@ -259,6 +207,197 @@ class ProductImageResourceIT {
             .andExpect(jsonPath("$.id").value(productImage.getId().intValue()))
             .andExpect(jsonPath("$.imageUrl").value(DEFAULT_IMAGE_URL))
             .andExpect(jsonPath("$.displayOrder").value(DEFAULT_DISPLAY_ORDER));
+    }
+
+    @Test
+    @Transactional
+    void getProductImagesByIdFiltering() throws Exception {
+        // Initialize the database
+        insertedProductImage = productImageRepository.saveAndFlush(productImage);
+
+        Long id = productImage.getId();
+
+        defaultProductImageFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultProductImageFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultProductImageFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    @Transactional
+    void getAllProductImagesByImageUrlIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedProductImage = productImageRepository.saveAndFlush(productImage);
+
+        // Get all the productImageList where imageUrl equals to
+        defaultProductImageFiltering("imageUrl.equals=" + DEFAULT_IMAGE_URL, "imageUrl.equals=" + UPDATED_IMAGE_URL);
+    }
+
+    @Test
+    @Transactional
+    void getAllProductImagesByImageUrlIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedProductImage = productImageRepository.saveAndFlush(productImage);
+
+        // Get all the productImageList where imageUrl in
+        defaultProductImageFiltering("imageUrl.in=" + DEFAULT_IMAGE_URL + "," + UPDATED_IMAGE_URL, "imageUrl.in=" + UPDATED_IMAGE_URL);
+    }
+
+    @Test
+    @Transactional
+    void getAllProductImagesByImageUrlIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedProductImage = productImageRepository.saveAndFlush(productImage);
+
+        // Get all the productImageList where imageUrl is not null
+        defaultProductImageFiltering("imageUrl.specified=true", "imageUrl.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllProductImagesByImageUrlContainsSomething() throws Exception {
+        // Initialize the database
+        insertedProductImage = productImageRepository.saveAndFlush(productImage);
+
+        // Get all the productImageList where imageUrl contains
+        defaultProductImageFiltering("imageUrl.contains=" + DEFAULT_IMAGE_URL, "imageUrl.contains=" + UPDATED_IMAGE_URL);
+    }
+
+    @Test
+    @Transactional
+    void getAllProductImagesByImageUrlNotContainsSomething() throws Exception {
+        // Initialize the database
+        insertedProductImage = productImageRepository.saveAndFlush(productImage);
+
+        // Get all the productImageList where imageUrl does not contain
+        defaultProductImageFiltering("imageUrl.doesNotContain=" + UPDATED_IMAGE_URL, "imageUrl.doesNotContain=" + DEFAULT_IMAGE_URL);
+    }
+
+    @Test
+    @Transactional
+    void getAllProductImagesByDisplayOrderIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedProductImage = productImageRepository.saveAndFlush(productImage);
+
+        // Get all the productImageList where displayOrder equals to
+        defaultProductImageFiltering("displayOrder.equals=" + DEFAULT_DISPLAY_ORDER, "displayOrder.equals=" + UPDATED_DISPLAY_ORDER);
+    }
+
+    @Test
+    @Transactional
+    void getAllProductImagesByDisplayOrderIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedProductImage = productImageRepository.saveAndFlush(productImage);
+
+        // Get all the productImageList where displayOrder in
+        defaultProductImageFiltering(
+            "displayOrder.in=" + DEFAULT_DISPLAY_ORDER + "," + UPDATED_DISPLAY_ORDER,
+            "displayOrder.in=" + UPDATED_DISPLAY_ORDER
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllProductImagesByDisplayOrderIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedProductImage = productImageRepository.saveAndFlush(productImage);
+
+        // Get all the productImageList where displayOrder is not null
+        defaultProductImageFiltering("displayOrder.specified=true", "displayOrder.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllProductImagesByDisplayOrderIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedProductImage = productImageRepository.saveAndFlush(productImage);
+
+        // Get all the productImageList where displayOrder is greater than or equal to
+        defaultProductImageFiltering(
+            "displayOrder.greaterThanOrEqual=" + DEFAULT_DISPLAY_ORDER,
+            "displayOrder.greaterThanOrEqual=" + UPDATED_DISPLAY_ORDER
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllProductImagesByDisplayOrderIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedProductImage = productImageRepository.saveAndFlush(productImage);
+
+        // Get all the productImageList where displayOrder is less than or equal to
+        defaultProductImageFiltering(
+            "displayOrder.lessThanOrEqual=" + DEFAULT_DISPLAY_ORDER,
+            "displayOrder.lessThanOrEqual=" + SMALLER_DISPLAY_ORDER
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllProductImagesByDisplayOrderIsLessThanSomething() throws Exception {
+        // Initialize the database
+        insertedProductImage = productImageRepository.saveAndFlush(productImage);
+
+        // Get all the productImageList where displayOrder is less than
+        defaultProductImageFiltering("displayOrder.lessThan=" + UPDATED_DISPLAY_ORDER, "displayOrder.lessThan=" + DEFAULT_DISPLAY_ORDER);
+    }
+
+    @Test
+    @Transactional
+    void getAllProductImagesByDisplayOrderIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        insertedProductImage = productImageRepository.saveAndFlush(productImage);
+
+        // Get all the productImageList where displayOrder is greater than
+        defaultProductImageFiltering(
+            "displayOrder.greaterThan=" + SMALLER_DISPLAY_ORDER,
+            "displayOrder.greaterThan=" + DEFAULT_DISPLAY_ORDER
+        );
+    }
+
+    private void defaultProductImageFiltering(String shouldBeFound, String shouldNotBeFound) throws Exception {
+        defaultProductImageShouldBeFound(shouldBeFound);
+        defaultProductImageShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultProductImageShouldBeFound(String filter) throws Exception {
+        restProductImageMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(productImage.getId().intValue())))
+            .andExpect(jsonPath("$.[*].imageUrl").value(hasItem(DEFAULT_IMAGE_URL)))
+            .andExpect(jsonPath("$.[*].displayOrder").value(hasItem(DEFAULT_DISPLAY_ORDER)));
+
+        // Check, that the count call also returns 1
+        restProductImageMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultProductImageShouldNotBeFound(String filter) throws Exception {
+        restProductImageMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restProductImageMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("0"));
     }
 
     @Test
@@ -369,8 +508,6 @@ class ProductImageResourceIT {
         // Update the productImage using partial update
         ProductImage partialUpdatedProductImage = new ProductImage();
         partialUpdatedProductImage.setId(productImage.getId());
-
-        partialUpdatedProductImage.imageUrl(UPDATED_IMAGE_URL);
 
         restProductImageMockMvc
             .perform(

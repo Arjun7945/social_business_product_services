@@ -1,9 +1,9 @@
 {
   "annotations": {
-    "changelogDate": "20251215140323"
+    "changelogDate": "20251228084005"
   },
-  "applications": ["whatsappProductService"],
-  "documentation": "Customer entity representing the end-user.\\nStores WhatsApp details, location, and flow state.\\nRefactored: Removed temp fields, added address.",
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "Customer entity representing the end-user.\\nStores WhatsApp details, location, and flow state.\\nNOW LINKED TO: DeliveryZone (Category A, B, C...)",
   "dto": "mapstruct",
   "fields": [
     {
@@ -44,7 +44,7 @@
       "fieldName": "role",
       "fieldType": "UserRole",
       "fieldValidateRules": ["required"],
-      "fieldValues": "CUSTOMER,EXECUTIVE,DELIVERY_PERSON,ASSISTANT_ADMIN,ADMIN,DEVELOPER"
+      "fieldValues": "CUSTOMER,EXECUTIVE,ASSISTANT_ADMIN,ADMIN,DEVELOPER,DELIVERY_PERSON"
     },
     {
       "fieldName": "joinedAt",
@@ -60,7 +60,7 @@
   "pagination": "pagination",
   "relationships": [
     {
-      "documentation": "One Customer has many Orders",
+      "documentation": "One Costumer has many Orders",
       "otherEntityName": "customerOrder",
       "otherEntityRelationshipName": "customer",
       "relationshipName": "orders",
@@ -76,11 +76,27 @@
       "relationshipType": "one-to-many"
     },
     {
-      "documentation": "TeamMember (Executive) who added the Customer",
+      "documentation": "One Customer has many Returned Orders",
+      "otherEntityName": "returnedOrder",
+      "otherEntityRelationshipName": "customer",
+      "relationshipName": "returns",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "documentation": "Executive who added the Customer",
       "otherEntityField": "name",
       "otherEntityName": "teamMember",
       "relationshipName": "addedBy",
       "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "zoneName",
+      "otherEntityName": "deliveryZone",
+      "otherEntityRelationshipName": "customers",
+      "relationshipName": "zone",
+      "relationshipSide": "right",
       "relationshipType": "many-to-one"
     }
   ],

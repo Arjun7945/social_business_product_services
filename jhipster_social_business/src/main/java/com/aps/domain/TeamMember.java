@@ -8,8 +8,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * Internal Team Members (Admins, Executives, Delivery).
- * Refactored: Removed all temp_ fields.
+ * Internal Team Members (Admins, Executives, Assistant Admins).
+ * NOTE: Delivery Persons use the separate DeliveryPerson entity now.
  */
 @Entity
 @Table(name = "team_member")

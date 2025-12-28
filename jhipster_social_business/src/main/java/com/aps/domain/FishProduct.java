@@ -6,14 +6,13 @@ import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Product catalog entity.
  * Indexed in Elasticsearch for fast search.
+ * UPDATED: 'imageUrl' removed in favor of ProductImage entity relation.
  */
 @Entity
 @Table(name = "fish_product")
@@ -38,16 +37,12 @@ public class FishProduct implements Serializable {
     @Column(name = "price_per_kg", precision = 21, scale = 2, nullable = false)
     private BigDecimal pricePerKg;
 
-    @Version
-    @Column(name = "version")
-    private Long version;
-
-    @Column(name = "image_url")
-    private String imageUrl;
-
     /**
-     * Increased length for SEO descriptions
+     * To track available stock
      */
+    @Column(name = "available_quantity")
+    private Double availableQuantity;
+
     @Size(max = 2000)
     @Column(name = "description", length = 2000)
     private String description;
@@ -60,12 +55,12 @@ public class FishProduct implements Serializable {
     private Instant createdAt;
 
     /**
-     * One Product has many Images
+     * One Product has exactly One Image
      */
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "product" }, allowSetters = true)
-    private Set<ProductImage> images = new HashSet<>();
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(unique = true)
+    private ProductImage image;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -108,25 +103,17 @@ public class FishProduct implements Serializable {
         this.pricePerKg = pricePerKg;
     }
 
-    public Long getVersion() {
-        return version;
+    public Double getAvailableQuantity() {
+        return this.availableQuantity;
     }
 
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
-    public String getImageUrl() {
-        return this.imageUrl;
-    }
-
-    public FishProduct imageUrl(String imageUrl) {
-        this.setImageUrl(imageUrl);
+    public FishProduct availableQuantity(Double availableQuantity) {
+        this.setAvailableQuantity(availableQuantity);
         return this;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setAvailableQuantity(Double availableQuantity) {
+        this.availableQuantity = availableQuantity;
     }
 
     public String getDescription() {
@@ -168,39 +155,20 @@ public class FishProduct implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Set<ProductImage> getImages() {
-        return this.images;
+    public ProductImage getImage() {
+        return this.image;
     }
 
-    public void setImages(Set<ProductImage> productImages) {
-        if (this.images != null) {
-            this.images.forEach(i -> i.setProduct(null));
-        }
-        if (productImages != null) {
-            productImages.forEach(i -> i.setProduct(this));
-        }
-        this.images = productImages;
+    public void setImage(ProductImage productImage) {
+        this.image = productImage;
     }
 
-    public FishProduct images(Set<ProductImage> productImages) {
-        this.setImages(productImages);
+    public FishProduct image(ProductImage productImage) {
+        this.setImage(productImage);
         return this;
     }
 
-    public FishProduct addImages(ProductImage productImage) {
-        this.images.add(productImage);
-        productImage.setProduct(this);
-        return this;
-    }
-
-    public FishProduct removeImages(ProductImage productImage) {
-        this.images.remove(productImage);
-        productImage.setProduct(null);
-        return this;
-    }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
-    // setters here
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -215,8 +183,7 @@ public class FishProduct implements Serializable {
 
     @Override
     public int hashCode() {
-        // see
-        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -224,13 +191,13 @@ public class FishProduct implements Serializable {
     @Override
     public String toString() {
         return "FishProduct{" +
-                "id=" + getId() +
-                ", name='" + getName() + "'" +
-                ", pricePerKg=" + getPricePerKg() +
-                ", imageUrl='" + getImageUrl() + "'" +
-                ", description='" + getDescription() + "'" +
-                ", isAvailable='" + getIsAvailable() + "'" +
-                ", createdAt='" + getCreatedAt() + "'" +
-                "}";
+            "id=" + getId() +
+            ", name='" + getName() + "'" +
+            ", pricePerKg=" + getPricePerKg() +
+            ", availableQuantity=" + getAvailableQuantity() +
+            ", description='" + getDescription() + "'" +
+            ", isAvailable='" + getIsAvailable() + "'" +
+            ", createdAt='" + getCreatedAt() + "'" +
+            "}";
     }
 }

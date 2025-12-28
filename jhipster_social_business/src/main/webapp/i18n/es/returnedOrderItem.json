@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceProApp": {
+    "returnedOrderItem": {
+      "home": {
+        "title": "Returned Order Items",
+        "refreshListLabel": "Refrescar lista",
+        "createLabel": "Crear nuevo Returned Order Item",
+        "createOrEditLabel": "Crear o editar Returned Order Item",
+        "notFound": "Ningún Returned Order Items encontrado"
+      },
+      "created": "Un nuevo Returned Order Item ha sido creado con el identificador {{ param }}",
+      "updated": "Un Returned Order Item ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Returned Order Item ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Returned Order Item {{ id }}?"
+      },
+      "detail": {
+        "title": "Returned Order Item"
+      },
+      "id": "ID",
+      "quantity": "Quantity",
+      "productComment": "Product Comment",
+      "product": "Product",
+      "returnedOrder": "Returned Order"
+    }
+  }
+}

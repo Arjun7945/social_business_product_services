@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceProApp": {
+    "returnedOrderItem": {
+      "home": {
+        "title": "Returned Order Items",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Returned Order Item-ஐ உருவாக்கு",
+        "createOrEditLabel": "Returned Order Item -ஐ மாற்று (அ) உருவாக்கு",
+        "notFound": "No Returned Order Items found"
+      },
+      "created": "Returned Order Item புதிதாக உருவாக்கப்பட்டது, அடையாளம் {{ param }}",
+      "updated": "Returned Order Item மாற்றப்பட்டது, அடையாளம்  {{ param }}",
+      "deleted": "A Returned Order Item நீக்கப்பட்டது, அடையாளம {{ param }}",
+      "delete": {
+        "question": "நீக்குவதற்கு உறுதி செய் Returned Order Item {{ id }}?"
+      },
+      "detail": {
+        "title": "Returned Order Item"
+      },
+      "id": "ID",
+      "quantity": "Quantity",
+      "productComment": "Product Comment",
+      "product": "Product",
+      "returnedOrder": "Returned Order"
+    }
+  }
+}

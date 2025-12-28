@@ -71,9 +71,9 @@ export const configurationPageHeadingSelector = '[data-cy="configurationPageHead
 // End Specific Selector Attributes for Cypress
 // ***********************************************
 
-export const classInvalid = 'ng-invalid';
+export const classInvalid = 'is-invalid';
 
-export const classValid = 'ng-valid';
+export const classValid = 'is-valid';
 
 Cypress.Commands.add('authenticatedRequest', data => {
   const jwtToken = sessionStorage.getItem(Cypress.env('jwtStorageName'));

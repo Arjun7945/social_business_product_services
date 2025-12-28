@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceProApp": {
+    "buttonAction": {
+      "home": {
+        "title": "Button Actions",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Button Action جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Button Action",
+        "notFound": "لم يتم العثور على Button Actions"
+      },
+      "created": "Button Action جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Button Action تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Button Action تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Button Action {{ id }}؟"
+      },
+      "detail": {
+        "title": "Button Action"
+      },
+      "id": "ID",
+      "waMessageId": "Wa Message Id",
+      "buttonId": "Button Id",
+      "clickedAt": "Clicked At",
+      "clickedBy": "Clicked By"
+    }
+  }
+}

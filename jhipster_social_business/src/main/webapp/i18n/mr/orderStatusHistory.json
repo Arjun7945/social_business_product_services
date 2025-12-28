@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceProApp": {
+    "orderStatusHistory": {
+      "home": {
+        "title": "Order Status Histories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नवीन Order Status History तयार करा",
+        "createOrEditLabel": "Order Status History तयार किंवा संपादित करा",
+        "notFound": "No Order Status Histories found"
+      },
+      "created": "Order Status History [identifier: {{ param }}] तयार आहे",
+      "updated": "Order Status History [identifier: {{ param }}] सुधारित केले आहे",
+      "deleted": "Order Status History [identifier: {{ param }}] हटविले आहे",
+      "delete": {
+        "question": "Order Status History [id: {{ id }}] काढून टाकण्याबाबत पुष्टी?"
+      },
+      "detail": {
+        "title": "Order Status History"
+      },
+      "id": "ID",
+      "status": "Status",
+      "changeTime": "Change Time",
+      "customerOrder": "Customer Order"
+    }
+  }
+}

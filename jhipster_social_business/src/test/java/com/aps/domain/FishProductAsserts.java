@@ -52,7 +52,7 @@ public class FishProductAsserts {
             .satisfies(e ->
                 assertThat(e.getPricePerKg()).as("check pricePerKg").usingComparator(bigDecimalCompareTo).isEqualTo(actual.getPricePerKg())
             )
-            .satisfies(e -> assertThat(e.getImageUrl()).as("check imageUrl").isEqualTo(actual.getImageUrl()))
+            .satisfies(e -> assertThat(e.getAvailableQuantity()).as("check availableQuantity").isEqualTo(actual.getAvailableQuantity()))
             .satisfies(e -> assertThat(e.getDescription()).as("check description").isEqualTo(actual.getDescription()))
             .satisfies(e -> assertThat(e.getIsAvailable()).as("check isAvailable").isEqualTo(actual.getIsAvailable()))
             .satisfies(e -> assertThat(e.getCreatedAt()).as("check createdAt").isEqualTo(actual.getCreatedAt()));
@@ -65,6 +65,8 @@ public class FishProductAsserts {
      * @param actual the actual entity
      */
     public static void assertFishProductUpdatableRelationshipsEquals(FishProduct expected, FishProduct actual) {
-        // empty method
+        assertThat(expected)
+            .as("Verify FishProduct relationships")
+            .satisfies(e -> assertThat(e.getImage()).as("check image").isEqualTo(actual.getImage()));
     }
 }

@@ -26,7 +26,6 @@
     "status": {
       "UNKNOWN": "ਅਣਜਾਣ",
       "UP": "ਚਾਲੂ",
-      "OUT_OF_SERVICE": "OUT_OF_SERVICE",
       "DOWN": "ਬੰਦ"
     }
   }

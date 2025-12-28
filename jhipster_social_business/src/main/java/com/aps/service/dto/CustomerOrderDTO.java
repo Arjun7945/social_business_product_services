@@ -11,7 +11,7 @@ import java.util.Objects;
 /**
  * A DTO for the {@link com.aps.domain.CustomerOrder} entity.
  */
-@Schema(description = "Main Order entity.\nRenamed to CustomerOrder to avoid SQL keyword conflicts.")
+@Schema(description = "Main Order entity.")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class CustomerOrderDTO implements Serializable {
 
@@ -24,9 +24,8 @@ public class CustomerOrderDTO implements Serializable {
     @DecimalMin(value = "0")
     private BigDecimal totalAmount;
 
-    private Long version;
-
     @NotNull
+    @Schema(description = "Updated Enum: NOT_TAKEN, ON_WAY, etc.", requiredMode = Schema.RequiredMode.REQUIRED)
     private OrderStatus status;
 
     @NotNull
@@ -34,29 +33,21 @@ public class CustomerOrderDTO implements Serializable {
 
     private Instant confirmedAt;
 
-    @Schema(description = "TeamMember (Delivery) assigned to Order")
-    private TeamMemberDTO deliveryPerson;
-
-    @NotNull
-    private CustomerDTO customer;
-
     private Long removedCustomerId;
 
     private Long removedDeliveryPersonId;
 
-    @Size(max = 255)
     private String transactionId;
+
+    @Schema(description = "One Order has exactly One Status History (Current Status Detail)")
+    private OrderStatusHistoryDTO history;
+
+    private CustomerDTO customer;
+
+    private DeliveryPersonDTO deliveryPerson;
 
     public Long getId() {
         return id;
-    }
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
     }
 
     public void setId(Long id) {
@@ -77,14 +68,6 @@ public class CustomerOrderDTO implements Serializable {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
     }
 
     public OrderStatus getStatus() {
@@ -111,22 +94,6 @@ public class CustomerOrderDTO implements Serializable {
         this.confirmedAt = confirmedAt;
     }
 
-    public TeamMemberDTO getDeliveryPerson() {
-        return deliveryPerson;
-    }
-
-    public void setDeliveryPerson(TeamMemberDTO deliveryPerson) {
-        this.deliveryPerson = deliveryPerson;
-    }
-
-    public CustomerDTO getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(CustomerDTO customer) {
-        this.customer = customer;
-    }
-
     public Long getRemovedCustomerId() {
         return removedCustomerId;
     }
@@ -141,6 +108,38 @@ public class CustomerOrderDTO implements Serializable {
 
     public void setRemovedDeliveryPersonId(Long removedDeliveryPersonId) {
         this.removedDeliveryPersonId = removedDeliveryPersonId;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public OrderStatusHistoryDTO getHistory() {
+        return history;
+    }
+
+    public void setHistory(OrderStatusHistoryDTO history) {
+        this.history = history;
+    }
+
+    public CustomerDTO getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerDTO customer) {
+        this.customer = customer;
+    }
+
+    public DeliveryPersonDTO getDeliveryPerson() {
+        return deliveryPerson;
+    }
+
+    public void setDeliveryPerson(DeliveryPersonDTO deliveryPerson) {
+        this.deliveryPerson = deliveryPerson;
     }
 
     @Override
@@ -168,17 +167,18 @@ public class CustomerOrderDTO implements Serializable {
     @Override
     public String toString() {
         return "CustomerOrderDTO{" +
-                "id=" + getId() +
-                ", orderTime='" + getOrderTime() + "'" +
-                ", totalAmount=" + getTotalAmount() +
-                ", status='" + getStatus() + "'" +
-                ", paymentMethod='" + getPaymentMethod() + "'" +
-                ", confirmedAt='" + getConfirmedAt() + "'" +
-                ", deliveryPerson=" + getDeliveryPerson() +
-                ", customer=" + getCustomer() +
-                ", removedCustomerId=" + getRemovedCustomerId() +
-                ", removedDeliveryPersonId=" + getRemovedDeliveryPersonId() +
-                ", transactionId='" + getTransactionId() + "'" +
-                "}";
+            "id=" + getId() +
+            ", orderTime='" + getOrderTime() + "'" +
+            ", totalAmount=" + getTotalAmount() +
+            ", status='" + getStatus() + "'" +
+            ", paymentMethod='" + getPaymentMethod() + "'" +
+            ", confirmedAt='" + getConfirmedAt() + "'" +
+            ", removedCustomerId=" + getRemovedCustomerId() +
+            ", removedDeliveryPersonId=" + getRemovedDeliveryPersonId() +
+            ", transactionId='" + getTransactionId() + "'" +
+            ", history=" + getHistory() +
+            ", customer=" + getCustomer() +
+            ", deliveryPerson=" + getDeliveryPerson() +
+            "}";
     }
 }

@@ -4,11 +4,13 @@ import com.aps.domain.ProductImage;
 import com.aps.repository.ProductImageRepository;
 import com.aps.service.dto.ProductImageDTO;
 import com.aps.service.mapper.ProductImageMapper;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,24 +79,16 @@ public class ProductImageService {
     }
 
     /**
-     * Get all the productImages.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
+     *  Get all the productImages where Product is {@code null}.
+     *  @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<ProductImageDTO> findAll(Pageable pageable) {
-        LOG.debug("Request to get all ProductImages");
-        return productImageRepository.findAll(pageable).map(productImageMapper::toDto);
-    }
-
-    /**
-     * Get all the productImages with eager load of many-to-many relationships.
-     *
-     * @return the list of entities.
-     */
-    public Page<ProductImageDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return productImageRepository.findAllWithEagerRelationships(pageable).map(productImageMapper::toDto);
+    public List<ProductImageDTO> findAllWhereProductIsNull() {
+        LOG.debug("Request to get all productImages where Product is null");
+        return StreamSupport.stream(productImageRepository.findAll().spliterator(), false)
+            .filter(productImage -> productImage.getProduct() == null)
+            .map(productImageMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
@@ -106,7 +100,7 @@ public class ProductImageService {
     @Transactional(readOnly = true)
     public Optional<ProductImageDTO> findOne(Long id) {
         LOG.debug("Request to get ProductImage : {}", id);
-        return productImageRepository.findOneWithEagerRelationships(id).map(productImageMapper::toDto);
+        return productImageRepository.findById(id).map(productImageMapper::toDto);
     }
 
     /**

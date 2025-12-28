@@ -9,6 +9,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Images associated with a product.
+ * NOW: The primary source of images for FishProduct.
  */
 @Entity
 @Table(name = "product_image")
@@ -32,13 +33,6 @@ public class ProductImage implements Serializable {
     @Column(name = "display_order", nullable = false)
     private Integer displayOrder;
 
-    @ManyToOne(optional = false)
-    @NotNull
-    @JsonIgnoreProperties(value = { "images" }, allowSetters = true)
-    private FishProduct product;
-
-    // jhipster-needle-entity-add-field - JHipster will add fields here
-
     @Lob
     @Column(name = "image_data")
     private byte[] imageData;
@@ -46,21 +40,11 @@ public class ProductImage implements Serializable {
     @Column(name = "mime_type")
     private String mimeType;
 
-    public byte[] getImageData() {
-        return imageData;
-    }
+    @JsonIgnoreProperties(value = { "image" }, allowSetters = true)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "image")
+    private FishProduct product;
 
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
-    }
-
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
+    // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
         return this.id;
@@ -101,11 +85,33 @@ public class ProductImage implements Serializable {
         this.displayOrder = displayOrder;
     }
 
+    public byte[] getImageData() {
+        return this.imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
+    }
+
+    public String getMimeType() {
+        return this.mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
     public FishProduct getProduct() {
         return this.product;
     }
 
     public void setProduct(FishProduct fishProduct) {
+        if (this.product != null) {
+            this.product.setImage(null);
+        }
+        if (fishProduct != null) {
+            fishProduct.setImage(this);
+        }
         this.product = fishProduct;
     }
 

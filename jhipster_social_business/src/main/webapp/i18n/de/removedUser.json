@@ -1,0 +1,43 @@
+{
+  "whatsappProductServiceProApp": {
+    "removedUser": {
+      "home": {
+        "title": "Removed Users",
+        "refreshListLabel": "Liste aktualisieren",
+        "createLabel": "Removed User erstellen",
+        "createOrEditLabel": "Removed User erstellen oder bearbeiten",
+        "notFound": "Keine Removed Users gefunden"
+      },
+      "created": "Removed User erstellt mit ID {{ param }}",
+      "updated": "Removed User aktualisiert mit ID {{ param }}",
+      "deleted": "Removed User gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Removed User {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Removed User"
+      },
+      "id": "ID",
+      "originalId": "Original Id",
+      "name": "Name",
+      "role": "Role",
+      "whatsappNumber": "Whatsapp Number",
+      "phoneNumber": "Phone Number",
+      "address": "Address",
+      "locationLat": "Location Lat",
+      "locationLon": "Location Lon",
+      "joinedAt": "Joined At",
+      "removedAt": "Removed At",
+      "reasonForRemoval": "Reason For Removal",
+      "lastSessionData": "Last Session Data",
+      "status": "Status",
+      "orderHistoryId": "Order History Id",
+      "distanceFromBusinessKm": "Distance From Business Km",
+      "isPincodeValid": "Is Pincode Valid",
+      "help": {
+        "distanceFromBusinessKm": "NEW: Stored for Customer audit",
+        "isPincodeValid": "NEW: Stored for Customer audit"
+      }
+    }
+  }
+}

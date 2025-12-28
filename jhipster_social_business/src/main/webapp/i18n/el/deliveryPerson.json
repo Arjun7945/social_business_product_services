@@ -1,0 +1,35 @@
+{
+  "whatsappProductServiceProApp": {
+    "deliveryPerson": {
+      "home": {
+        "title": "Delivery People",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Δημιουργήστε ένα νέο Delivery Person",
+        "createOrEditLabel": "Δημιουργήστε η επεξεργαστείτε ένα Delivery Person",
+        "notFound": "No Delivery People found"
+      },
+      "created": "Ένα νέο Delivery Person έχει δημιουργηθεί με αναγνωριστικό {{ param }}",
+      "updated": "Ένα Delivery Person έχει ενημερωθεί με αναγνωριστικό {{ param }}",
+      "deleted": "Ένα Delivery Person έχει διαγραφτεί με αναγνωριστικό {{ param }}",
+      "delete": {
+        "question": "Είστε βέβαιοι όταν θέλετε να διαγράψετε το ακόλουθο Delivery Person {{ id }};"
+      },
+      "detail": {
+        "title": "Delivery Person"
+      },
+      "id": "ID",
+      "name": "Name",
+      "waPhoneNumber": "Wa Phone Number",
+      "phoneNumber": "Phone Number",
+      "status": "Status",
+      "joinedAt": "Joined At",
+      "isActive": "Is Active",
+      "orders": "Orders",
+      "addedBy": "Added By",
+      "zone": "Zone",
+      "help": {
+        "status": "FREE, BUSY, OFF_DUTY"
+      }
+    }
+  }
+}

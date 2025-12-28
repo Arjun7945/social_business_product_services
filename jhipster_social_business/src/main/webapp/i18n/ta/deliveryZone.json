@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceProApp": {
+    "deliveryZone": {
+      "home": {
+        "title": "Delivery Zones",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Delivery Zone-ஐ உருவாக்கு",
+        "createOrEditLabel": "Delivery Zone -ஐ மாற்று (அ) உருவாக்கு",
+        "notFound": "No Delivery Zones found"
+      },
+      "created": "Delivery Zone புதிதாக உருவாக்கப்பட்டது, அடையாளம் {{ param }}",
+      "updated": "Delivery Zone மாற்றப்பட்டது, அடையாளம்  {{ param }}",
+      "deleted": "A Delivery Zone நீக்கப்பட்டது, அடையாளம {{ param }}",
+      "delete": {
+        "question": "நீக்குவதற்கு உறுதி செய் Delivery Zone {{ id }}?"
+      },
+      "detail": {
+        "title": "Delivery Zone"
+      },
+      "id": "ID",
+      "zoneName": "Zone Name",
+      "pincode": "Pincode",
+      "customers": "Customers",
+      "deliveryPersons": "Delivery Persons",
+      "help": {
+        "zoneName": "e.g., &#34;A&#34;, &#34;B&#34;, &#34;North-1&#34;",
+        "pincode": "specific pincode or pattern linked to this zone"
+      }
+    }
+  }
+}

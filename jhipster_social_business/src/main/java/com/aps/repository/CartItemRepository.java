@@ -14,8 +14,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem, Long>, JpaSpecificationExecutor<CartItem> {
-    java.util.Optional<CartItem> findByCartIdAndProductId(Long cartId, Long productId);
-
     default Optional<CartItem> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
@@ -28,10 +26,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long>, JpaSp
         return this.findAllWithToOneRelationships(pageable);
     }
 
-    @Query(
-        value = "select cartItem from CartItem cartItem left join fetch cartItem.product",
-        countQuery = "select count(cartItem) from CartItem cartItem"
-    )
+    @Query(value = "select cartItem from CartItem cartItem left join fetch cartItem.product", countQuery = "select count(cartItem) from CartItem cartItem")
     Page<CartItem> findAllWithToOneRelationships(Pageable pageable);
 
     @Query("select cartItem from CartItem cartItem left join fetch cartItem.product")
@@ -40,10 +35,9 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long>, JpaSp
     @Query("select cartItem from CartItem cartItem left join fetch cartItem.product where cartItem.id =:id")
     Optional<CartItem> findOneWithToOneRelationships(@Param("id") Long id);
 
-    @Query("select cartItem from CartItem cartItem left join fetch cartItem.product where cartItem.cart.id = :cartId")
-    List<CartItem> findByCartId(@Param("cartId") Long cartId);
+    Optional<CartItem> findByCartIdAndProductId(Long cartId, Long productId);
 
-    @Modifying
-    @Query("delete from CartItem c where c.cart.id = :cartId")
-    void deleteByCartId(@Param("cartId") Long cartId);
+    List<CartItem> findByCartId(Long cartId);
+
+    void deleteByCartId(Long cartId);
 }

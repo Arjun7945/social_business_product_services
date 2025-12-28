@@ -1,0 +1,35 @@
+{
+  "whatsappProductServiceProApp": {
+    "deliveryPerson": {
+      "home": {
+        "title": "DeliveryPeople",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नया Delivery Person बनाएँ",
+        "createOrEditLabel": "Delivery Person बनाएँ या संपादित करें",
+        "notFound": "No Delivery People found"
+      },
+      "created": "एक नया Delivery Person [identifier: {{ param }}] तैयार है",
+      "updated": "एक Delivery Person [identifier: {{ param }}] का अद्यतन हुआ है",
+      "deleted": "Delivery Person [identifier: {{ param }}] हटा दिया है",
+      "delete": {
+        "question": "Delivery Person [id: {{ id }}] हटाने की पुष्टि करें"
+      },
+      "detail": {
+        "title": "Delivery Person"
+      },
+      "id": "ID",
+      "name": "Name",
+      "waPhoneNumber": "Wa Phone Number",
+      "phoneNumber": "Phone Number",
+      "status": "Status",
+      "joinedAt": "Joined At",
+      "isActive": "Is Active",
+      "orders": "Orders",
+      "addedBy": "Added By",
+      "zone": "Zone",
+      "help": {
+        "status": "FREE, BUSY, OFF_DUTY"
+      }
+    }
+  }
+}

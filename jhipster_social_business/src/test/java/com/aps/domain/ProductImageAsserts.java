@@ -58,8 +58,6 @@ public class ProductImageAsserts {
      * @param actual the actual entity
      */
     public static void assertProductImageUpdatableRelationshipsEquals(ProductImage expected, ProductImage actual) {
-        assertThat(expected)
-            .as("Verify ProductImage relationships")
-            .satisfies(e -> assertThat(e.getProduct()).as("check product").isEqualTo(actual.getProduct()));
+        // empty method
     }
 }

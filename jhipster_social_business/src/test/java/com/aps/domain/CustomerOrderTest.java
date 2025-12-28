@@ -2,8 +2,9 @@ package com.aps.domain;
 
 import static com.aps.domain.CustomerOrderTestSamples.*;
 import static com.aps.domain.CustomerTestSamples.*;
+import static com.aps.domain.DeliveryPersonTestSamples.*;
 import static com.aps.domain.OrderItemTestSamples.*;
-import static com.aps.domain.TeamMemberTestSamples.*;
+import static com.aps.domain.OrderStatusHistoryTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.aps.web.rest.TestUtil;
@@ -25,6 +26,18 @@ class CustomerOrderTest {
 
         customerOrder2 = getCustomerOrderSample2();
         assertThat(customerOrder1).isNotEqualTo(customerOrder2);
+    }
+
+    @Test
+    void historyTest() {
+        CustomerOrder customerOrder = getCustomerOrderRandomSampleGenerator();
+        OrderStatusHistory orderStatusHistoryBack = getOrderStatusHistoryRandomSampleGenerator();
+
+        customerOrder.setHistory(orderStatusHistoryBack);
+        assertThat(customerOrder.getHistory()).isEqualTo(orderStatusHistoryBack);
+
+        customerOrder.history(null);
+        assertThat(customerOrder.getHistory()).isNull();
     }
 
     @Test
@@ -50,18 +63,6 @@ class CustomerOrderTest {
     }
 
     @Test
-    void deliveryPersonTest() {
-        CustomerOrder customerOrder = getCustomerOrderRandomSampleGenerator();
-        TeamMember teamMemberBack = getTeamMemberRandomSampleGenerator();
-
-        customerOrder.setDeliveryPerson(teamMemberBack);
-        assertThat(customerOrder.getDeliveryPerson()).isEqualTo(teamMemberBack);
-
-        customerOrder.deliveryPerson(null);
-        assertThat(customerOrder.getDeliveryPerson()).isNull();
-    }
-
-    @Test
     void customerTest() {
         CustomerOrder customerOrder = getCustomerOrderRandomSampleGenerator();
         Customer customerBack = getCustomerRandomSampleGenerator();
@@ -71,5 +72,17 @@ class CustomerOrderTest {
 
         customerOrder.customer(null);
         assertThat(customerOrder.getCustomer()).isNull();
+    }
+
+    @Test
+    void deliveryPersonTest() {
+        CustomerOrder customerOrder = getCustomerOrderRandomSampleGenerator();
+        DeliveryPerson deliveryPersonBack = getDeliveryPersonRandomSampleGenerator();
+
+        customerOrder.setDeliveryPerson(deliveryPersonBack);
+        assertThat(customerOrder.getDeliveryPerson()).isEqualTo(deliveryPersonBack);
+
+        customerOrder.deliveryPerson(null);
+        assertThat(customerOrder.getDeliveryPerson()).isNull();
     }
 }

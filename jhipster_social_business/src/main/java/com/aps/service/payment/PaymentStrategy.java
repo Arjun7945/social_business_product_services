@@ -12,7 +12,7 @@ public interface PaymentStrategy {
      * @param order          The order to process payment for.
      * @param deliveryPerson The delivery person initiating the payment.
      */
-    void initiatePayment(CustomerOrder order, com.aps.domain.TeamMember deliveryPerson);
+    void initiatePayment(CustomerOrder order, com.aps.domain.DeliveryPerson deliveryPerson);
 
     /**
      * Get the name of the payment method this strategy handles.

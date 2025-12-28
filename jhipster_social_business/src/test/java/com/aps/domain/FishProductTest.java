@@ -5,8 +5,6 @@ import static com.aps.domain.ProductImageTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.aps.web.rest.TestUtil;
-import java.util.HashSet;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 class FishProductTest {
@@ -26,24 +24,14 @@ class FishProductTest {
     }
 
     @Test
-    void imagesTest() {
+    void imageTest() {
         FishProduct fishProduct = getFishProductRandomSampleGenerator();
         ProductImage productImageBack = getProductImageRandomSampleGenerator();
 
-        fishProduct.addImages(productImageBack);
-        assertThat(fishProduct.getImages()).containsOnly(productImageBack);
-        assertThat(productImageBack.getProduct()).isEqualTo(fishProduct);
+        fishProduct.setImage(productImageBack);
+        assertThat(fishProduct.getImage()).isEqualTo(productImageBack);
 
-        fishProduct.removeImages(productImageBack);
-        assertThat(fishProduct.getImages()).doesNotContain(productImageBack);
-        assertThat(productImageBack.getProduct()).isNull();
-
-        fishProduct.images(new HashSet<>(Set.of(productImageBack)));
-        assertThat(fishProduct.getImages()).containsOnly(productImageBack);
-        assertThat(productImageBack.getProduct()).isEqualTo(fishProduct);
-
-        fishProduct.setImages(new HashSet<>());
-        assertThat(fishProduct.getImages()).doesNotContain(productImageBack);
-        assertThat(productImageBack.getProduct()).isNull();
+        fishProduct.image(null);
+        assertThat(fishProduct.getImage()).isNull();
     }
 }

@@ -1,5 +1,5 @@
 {
-  "whatsappProductServiceApp": {
+  "whatsappProductServiceProApp": {
     "orderItem": {
       "home": {
         "title": "OrderItems",
@@ -21,10 +21,7 @@
       "quantityKg": "Quantity Kg",
       "priceAtOrder": "Price At Order",
       "product": "Product",
-      "order": "Order",
-      "help": {
-        "quantityKg": "Quantity remains Double as weight can be fractional"
-      }
+      "order": "Order"
     }
   }
 }

@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.aps.IntegrationTest;
 import com.aps.domain.Customer;
+import com.aps.domain.DeliveryZone;
 import com.aps.domain.TeamMember;
 import com.aps.domain.enumeration.UserRole;
 import com.aps.repository.CustomerRepository;
@@ -953,6 +954,28 @@ class CustomerResourceIT {
         defaultCustomerShouldNotBeFound("addedById.equals=" + (addedById + 1));
     }
 
+    @Test
+    @Transactional
+    void getAllCustomersByZoneIsEqualToSomething() throws Exception {
+        DeliveryZone zone;
+        if (TestUtil.findAll(em, DeliveryZone.class).isEmpty()) {
+            customerRepository.saveAndFlush(customer);
+            zone = DeliveryZoneResourceIT.createEntity();
+        } else {
+            zone = TestUtil.findAll(em, DeliveryZone.class).get(0);
+        }
+        em.persist(zone);
+        em.flush();
+        customer.setZone(zone);
+        customerRepository.saveAndFlush(customer);
+        Long zoneId = zone.getId();
+        // Get all the customerList where zone equals to zoneId
+        defaultCustomerShouldBeFound("zoneId.equals=" + zoneId);
+
+        // Get all the customerList where zone equals to (zoneId + 1)
+        defaultCustomerShouldNotBeFound("zoneId.equals=" + (zoneId + 1));
+    }
+
     private void defaultCustomerFiltering(String shouldBeFound, String shouldNotBeFound) throws Exception {
         defaultCustomerShouldBeFound(shouldBeFound);
         defaultCustomerShouldNotBeFound(shouldNotBeFound);
@@ -1127,10 +1150,11 @@ class CustomerResourceIT {
         partialUpdatedCustomer.setId(customer.getId());
 
         partialUpdatedCustomer
-            .phoneNumber(UPDATED_PHONE_NUMBER)
+            .locationLat(UPDATED_LOCATION_LAT)
             .locationLon(UPDATED_LOCATION_LON)
-            .distanceFromBusinessKm(UPDATED_DISTANCE_FROM_BUSINESS_KM)
+            .address(UPDATED_ADDRESS)
             .role(UPDATED_ROLE)
+            .joinedAt(UPDATED_JOINED_AT)
             .lastInteractionAt(UPDATED_LAST_INTERACTION_AT);
 
         restCustomerMockMvc

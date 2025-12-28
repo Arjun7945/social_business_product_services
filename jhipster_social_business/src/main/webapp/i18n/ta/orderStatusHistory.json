@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceProApp": {
+    "orderStatusHistory": {
+      "home": {
+        "title": "Order Status Histories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Order Status History-ஐ உருவாக்கு",
+        "createOrEditLabel": "Order Status History -ஐ மாற்று (அ) உருவாக்கு",
+        "notFound": "No Order Status Histories found"
+      },
+      "created": "Order Status History புதிதாக உருவாக்கப்பட்டது, அடையாளம் {{ param }}",
+      "updated": "Order Status History மாற்றப்பட்டது, அடையாளம்  {{ param }}",
+      "deleted": "A Order Status History நீக்கப்பட்டது, அடையாளம {{ param }}",
+      "delete": {
+        "question": "நீக்குவதற்கு உறுதி செய் Order Status History {{ id }}?"
+      },
+      "detail": {
+        "title": "Order Status History"
+      },
+      "id": "ID",
+      "status": "Status",
+      "changeTime": "Change Time",
+      "customerOrder": "Customer Order"
+    }
+  }
+}

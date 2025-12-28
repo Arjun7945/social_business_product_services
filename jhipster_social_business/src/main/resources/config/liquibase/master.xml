@@ -11,33 +11,36 @@
     <property name="datetimeType" value="datetime" dbms="postgresql"/>
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140323_added_entity_Customer.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140324_added_entity_FishProduct.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140325_added_entity_ProductImage.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084005_added_entity_Customer.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084006_added_entity_DeliveryZone.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084007_added_entity_DeliveryPerson.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084008_added_entity_FishProduct.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084009_added_entity_ProductImage.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084010_added_entity_CustomerOrder.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084011_added_entity_OrderItem.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084012_added_entity_ShoppingCart.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084013_added_entity_CartItem.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084014_added_entity_TeamMember.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084015_added_entity_BotSession.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084016_added_entity_ButtonAction.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084017_added_entity_OrderStatusHistory.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084018_added_entity_ReturnedOrder.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084019_added_entity_ReturnedOrderItem.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084020_added_entity_ReturnStatusHistory.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084021_added_entity_RemovedOrderSummary.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084022_added_entity_RemovedUser.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251215200000_add_image_data_to_product_image.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140326_added_entity_CustomerOrder.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140327_added_entity_OrderItem.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140328_added_entity_ShoppingCart.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140329_added_entity_CartItem.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140330_added_entity_TeamMember.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140331_added_entity_BotSession.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251220190000_added_entity_ButtonAction.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251221003000_added_entity_RemovedUser.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251221003001_added_entity_RemovedOrderSummary.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251221003002_updated_entity_CustomerOrder.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251221004500_relax_customer_order_constraints.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251222114500_added_version_to_customer_order.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251222121000_add_version_to_product_and_cart.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251222213000_initialize_version_columns.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251224095800_added_transaction_id.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251224170000_added_entity_OrderStatusHistory.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
-    <include file="config/liquibase/changelog/20251215140323_added_entity_constraints_Customer.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140325_added_entity_constraints_ProductImage.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140326_added_entity_constraints_CustomerOrder.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140327_added_entity_constraints_OrderItem.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140328_added_entity_constraints_ShoppingCart.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20251215140329_added_entity_constraints_CartItem.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084005_added_entity_constraints_Customer.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084007_added_entity_constraints_DeliveryPerson.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084008_added_entity_constraints_FishProduct.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084010_added_entity_constraints_CustomerOrder.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084011_added_entity_constraints_OrderItem.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084012_added_entity_constraints_ShoppingCart.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084013_added_entity_constraints_CartItem.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084018_added_entity_constraints_ReturnedOrder.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084019_added_entity_constraints_ReturnedOrderItem.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251228084020_added_entity_constraints_ReturnStatusHistory.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

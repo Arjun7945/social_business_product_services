@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller to serve product images stored in the database.
  */
 @RestController
-@RequestMapping("/api/public/images")
+@RequestMapping("/api/product-images/public")
 @Transactional
 public class ProductImageController {
 
@@ -29,7 +29,7 @@ public class ProductImageController {
         this.productImageRepository = productImageRepository;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/content")
     public ResponseEntity<byte[]> getProductImage(@PathVariable Long id) {
         log.debug("REST request to get ProductImage : {}", id);
         Optional<ProductImage> imageOpt = productImageRepository.findById(id);

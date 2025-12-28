@@ -3,7 +3,7 @@ package com.aps.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Properties specific to Whatsapp Product Service.
+ * Properties specific to Whatsapp Product Service Pro.
  * <p>
  * Properties are configured in the {@code application.yml} file.
  * See {@link tech.jhipster.config.JHipsterProperties} for a good example.

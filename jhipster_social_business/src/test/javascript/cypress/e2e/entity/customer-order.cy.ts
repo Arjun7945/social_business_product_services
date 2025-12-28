@@ -15,60 +15,23 @@ describe('CustomerOrder e2e test', () => {
   const customerOrderPageUrlPattern = new RegExp('/customer-order(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const customerOrderSample = { orderTime: '2025-12-15T02:29:21.131Z', totalAmount: 27496.5, status: 'CANCELLED', paymentMethod: 'where' };
+  const customerOrderSample = {
+    orderTime: '2025-12-27T21:34:15.828Z',
+    totalAmount: 22504.06,
+    status: 'ORDER_FAILED',
+    paymentMethod: 'coolly superficial yum',
+  };
 
   let customerOrder;
-  let customer;
 
   beforeEach(() => {
     cy.login(username, password);
   });
 
   beforeEach(() => {
-    // create an instance at the required relationship entity:
-    cy.authenticatedRequest({
-      method: 'POST',
-      url: '/api/customers',
-      body: {
-        waPhoneNumber: 'aha naturally into',
-        name: 'delete',
-        phoneNumber: 'yuck abaft',
-        locationLat: 9037.16,
-        locationLon: 14818.32,
-        address: 'psst',
-        distanceFromBusinessKm: 4468.41,
-        isPincodeValid: false,
-        role: 'DEVELOPER',
-        joinedAt: '2025-12-14T19:32:05.275Z',
-        lastInteractionAt: '2025-12-14T18:57:53.874Z',
-      },
-    }).then(({ body }) => {
-      customer = body;
-    });
-  });
-
-  beforeEach(() => {
     cy.intercept('GET', '/api/customer-orders+(?*|)').as('entitiesRequest');
     cy.intercept('POST', '/api/customer-orders').as('postEntityRequest');
     cy.intercept('DELETE', '/api/customer-orders/*').as('deleteEntityRequest');
-  });
-
-  beforeEach(() => {
-    // Simulate relationships api for better performance and reproducibility.
-    cy.intercept('GET', '/api/order-items', {
-      statusCode: 200,
-      body: [],
-    });
-
-    cy.intercept('GET', '/api/team-members', {
-      statusCode: 200,
-      body: [],
-    });
-
-    cy.intercept('GET', '/api/customers', {
-      statusCode: 200,
-      body: [customer],
-    });
   });
 
   afterEach(() => {
@@ -78,17 +41,6 @@ describe('CustomerOrder e2e test', () => {
         url: `/api/customer-orders/${customerOrder.id}`,
       }).then(() => {
         customerOrder = undefined;
-      });
-    }
-  });
-
-  afterEach(() => {
-    if (customer) {
-      cy.authenticatedRequest({
-        method: 'DELETE',
-        url: `/api/customers/${customer.id}`,
-      }).then(() => {
-        customer = undefined;
       });
     }
   });
@@ -132,10 +84,7 @@ describe('CustomerOrder e2e test', () => {
         cy.authenticatedRequest({
           method: 'POST',
           url: '/api/customer-orders',
-          body: {
-            ...customerOrderSample,
-            customer,
-          },
+          body: customerOrderSample,
         }).then(({ body }) => {
           customerOrder = body;
 
@@ -192,7 +141,9 @@ describe('CustomerOrder e2e test', () => {
       });
 
       it('last delete button click should delete instance of CustomerOrder', () => {
+        cy.intercept('GET', '/api/customer-orders/*').as('dialogDeleteRequest');
         cy.get(entityDeleteButtonSelector).last().click();
+        cy.wait('@dialogDeleteRequest');
         cy.getEntityDeleteDialogHeading('customerOrder').should('exist');
         cy.get(entityConfirmDeleteButtonSelector).click();
         cy.wait('@deleteEntityRequest').then(({ response }) => {
@@ -216,23 +167,30 @@ describe('CustomerOrder e2e test', () => {
     });
 
     it('should create an instance of CustomerOrder', () => {
-      cy.get(`[data-cy="orderTime"]`).type('2025-12-14T14:09');
+      cy.get(`[data-cy="orderTime"]`).type('2025-12-27T15:13');
       cy.get(`[data-cy="orderTime"]`).blur();
-      cy.get(`[data-cy="orderTime"]`).should('have.value', '2025-12-14T14:09');
+      cy.get(`[data-cy="orderTime"]`).should('have.value', '2025-12-27T15:13');
 
-      cy.get(`[data-cy="totalAmount"]`).type('2987.91');
-      cy.get(`[data-cy="totalAmount"]`).should('have.value', '2987.91');
+      cy.get(`[data-cy="totalAmount"]`).type('14151');
+      cy.get(`[data-cy="totalAmount"]`).should('have.value', '14151');
 
-      cy.get(`[data-cy="status"]`).select('PENDING');
+      cy.get(`[data-cy="status"]`).select('DELIVERY_ONWAY');
 
-      cy.get(`[data-cy="paymentMethod"]`).type('elegantly');
-      cy.get(`[data-cy="paymentMethod"]`).should('have.value', 'elegantly');
+      cy.get(`[data-cy="paymentMethod"]`).type('impact gah');
+      cy.get(`[data-cy="paymentMethod"]`).should('have.value', 'impact gah');
 
-      cy.get(`[data-cy="confirmedAt"]`).type('2025-12-15T03:03');
+      cy.get(`[data-cy="confirmedAt"]`).type('2025-12-27T18:59');
       cy.get(`[data-cy="confirmedAt"]`).blur();
-      cy.get(`[data-cy="confirmedAt"]`).should('have.value', '2025-12-15T03:03');
+      cy.get(`[data-cy="confirmedAt"]`).should('have.value', '2025-12-27T18:59');
 
-      cy.get(`[data-cy="customer"]`).select(1);
+      cy.get(`[data-cy="removedCustomerId"]`).type('183');
+      cy.get(`[data-cy="removedCustomerId"]`).should('have.value', '183');
+
+      cy.get(`[data-cy="removedDeliveryPersonId"]`).type('3263');
+      cy.get(`[data-cy="removedDeliveryPersonId"]`).should('have.value', '3263');
+
+      cy.get(`[data-cy="transactionId"]`).type('into skyscraper');
+      cy.get(`[data-cy="transactionId"]`).should('have.value', 'into skyscraper');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

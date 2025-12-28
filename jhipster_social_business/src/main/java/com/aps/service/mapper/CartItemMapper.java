@@ -11,7 +11,7 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link CartItem} and its DTO {@link CartItemDTO}.
  */
-@Mapper(componentModel = "spring", uses = { FishProductMapper.class, ShoppingCartMapper.class })
+@Mapper(componentModel = "spring")
 public interface CartItemMapper extends EntityMapper<CartItemDTO, CartItem> {
     @Mapping(target = "product", source = "product", qualifiedByName = "fishProductName")
     @Mapping(target = "cart", source = "cart", qualifiedByName = "shoppingCartId")

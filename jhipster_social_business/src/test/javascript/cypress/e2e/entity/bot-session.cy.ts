@@ -15,7 +15,7 @@ describe('BotSession e2e test', () => {
   const botSessionPageUrlPattern = new RegExp('/bot-session(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const botSessionSample = { waPhoneNumber: 'fly', currentState: 'brr dally' };
+  const botSessionSample = { waPhoneNumber: 'yuck hidden hawk', currentState: 'yearly goose' };
 
   let botSession;
 
@@ -136,7 +136,9 @@ describe('BotSession e2e test', () => {
       });
 
       it('last delete button click should delete instance of BotSession', () => {
+        cy.intercept('GET', '/api/bot-sessions/*').as('dialogDeleteRequest');
         cy.get(entityDeleteButtonSelector).last().click();
+        cy.wait('@dialogDeleteRequest');
         cy.getEntityDeleteDialogHeading('botSession').should('exist');
         cy.get(entityConfirmDeleteButtonSelector).click();
         cy.wait('@deleteEntityRequest').then(({ response }) => {
@@ -160,18 +162,18 @@ describe('BotSession e2e test', () => {
     });
 
     it('should create an instance of BotSession', () => {
-      cy.get(`[data-cy="waPhoneNumber"]`).type('what yogurt frilly');
-      cy.get(`[data-cy="waPhoneNumber"]`).should('have.value', 'what yogurt frilly');
+      cy.get(`[data-cy="waPhoneNumber"]`).type('however palatable on');
+      cy.get(`[data-cy="waPhoneNumber"]`).should('have.value', 'however palatable on');
 
-      cy.get(`[data-cy="currentState"]`).type('violently muted');
-      cy.get(`[data-cy="currentState"]`).should('have.value', 'violently muted');
+      cy.get(`[data-cy="currentState"]`).type('upon oblong');
+      cy.get(`[data-cy="currentState"]`).should('have.value', 'upon oblong');
 
       cy.get(`[data-cy="sessionData"]`).type('../fake-data/blob/hipster.txt');
       cy.get(`[data-cy="sessionData"]`).invoke('val').should('match', new RegExp('../fake-data/blob/hipster.txt'));
 
-      cy.get(`[data-cy="lastActiveAt"]`).type('2025-12-14T14:53');
+      cy.get(`[data-cy="lastActiveAt"]`).type('2025-12-27T20:07');
       cy.get(`[data-cy="lastActiveAt"]`).blur();
-      cy.get(`[data-cy="lastActiveAt"]`).should('have.value', '2025-12-14T14:53');
+      cy.get(`[data-cy="lastActiveAt"]`).should('have.value', '2025-12-27T20:07');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

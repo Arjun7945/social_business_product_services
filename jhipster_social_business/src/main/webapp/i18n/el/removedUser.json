@@ -1,0 +1,43 @@
+{
+  "whatsappProductServiceProApp": {
+    "removedUser": {
+      "home": {
+        "title": "Removed Users",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Δημιουργήστε ένα νέο Removed User",
+        "createOrEditLabel": "Δημιουργήστε η επεξεργαστείτε ένα Removed User",
+        "notFound": "No Removed Users found"
+      },
+      "created": "Ένα νέο Removed User έχει δημιουργηθεί με αναγνωριστικό {{ param }}",
+      "updated": "Ένα Removed User έχει ενημερωθεί με αναγνωριστικό {{ param }}",
+      "deleted": "Ένα Removed User έχει διαγραφτεί με αναγνωριστικό {{ param }}",
+      "delete": {
+        "question": "Είστε βέβαιοι όταν θέλετε να διαγράψετε το ακόλουθο Removed User {{ id }};"
+      },
+      "detail": {
+        "title": "Removed User"
+      },
+      "id": "ID",
+      "originalId": "Original Id",
+      "name": "Name",
+      "role": "Role",
+      "whatsappNumber": "Whatsapp Number",
+      "phoneNumber": "Phone Number",
+      "address": "Address",
+      "locationLat": "Location Lat",
+      "locationLon": "Location Lon",
+      "joinedAt": "Joined At",
+      "removedAt": "Removed At",
+      "reasonForRemoval": "Reason For Removal",
+      "lastSessionData": "Last Session Data",
+      "status": "Status",
+      "orderHistoryId": "Order History Id",
+      "distanceFromBusinessKm": "Distance From Business Km",
+      "isPincodeValid": "Is Pincode Valid",
+      "help": {
+        "distanceFromBusinessKm": "NEW: Stored for Customer audit",
+        "isPincodeValid": "NEW: Stored for Customer audit"
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "global": {
-    "title": "WhatsappProductService",
+    "title": "WhatsappProductServicePro",
     "browsehappy": "మీది <strong>కాలం చెల్లిన</strong> బ్రౌజరు. దయచేసి <a href=\"http://browsehappy.com/?locale=en\">నవీకరణ చేసుకోండి</a> ",
     "menu": {
       "home": "ఇల్లు",
@@ -8,8 +8,9 @@
       "entities": {
         "main": "ఎంటిటీలు",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
-        "adminAuthority": "Authority",
         "customer": "Customer",
+        "deliveryZone": "Delivery Zone",
+        "deliveryPerson": "Delivery Person",
         "fishProduct": "Fish Product",
         "productImage": "Product Image",
         "customerOrder": "Customer Order",
@@ -17,7 +18,14 @@
         "shoppingCart": "Shopping Cart",
         "cartItem": "Cart Item",
         "teamMember": "Team Member",
-        "botSession": "Bot Session"
+        "botSession": "Bot Session",
+        "buttonAction": "Button Action",
+        "orderStatusHistory": "Order Status History",
+        "returnedOrder": "Returned Order",
+        "returnedOrderItem": "Returned Order Item",
+        "returnStatusHistory": "Return Status History",
+        "removedOrderSummary": "Removed Order Summary",
+        "removedUser": "Removed User"
       },
       "account": {
         "main": "ఖాతా",

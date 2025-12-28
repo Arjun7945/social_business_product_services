@@ -81,9 +81,13 @@ class CustomerOrderCriteriaTest {
         customerOrderCriteria.status();
         customerOrderCriteria.paymentMethod();
         customerOrderCriteria.confirmedAt();
+        customerOrderCriteria.removedCustomerId();
+        customerOrderCriteria.removedDeliveryPersonId();
+        customerOrderCriteria.transactionId();
+        customerOrderCriteria.historyId();
         customerOrderCriteria.itemsId();
-        customerOrderCriteria.deliveryPersonId();
         customerOrderCriteria.customerId();
+        customerOrderCriteria.deliveryPersonId();
         customerOrderCriteria.distinct();
     }
 
@@ -96,9 +100,13 @@ class CustomerOrderCriteriaTest {
                 condition.apply(criteria.getStatus()) &&
                 condition.apply(criteria.getPaymentMethod()) &&
                 condition.apply(criteria.getConfirmedAt()) &&
+                condition.apply(criteria.getRemovedCustomerId()) &&
+                condition.apply(criteria.getRemovedDeliveryPersonId()) &&
+                condition.apply(criteria.getTransactionId()) &&
+                condition.apply(criteria.getHistoryId()) &&
                 condition.apply(criteria.getItemsId()) &&
-                condition.apply(criteria.getDeliveryPersonId()) &&
                 condition.apply(criteria.getCustomerId()) &&
+                condition.apply(criteria.getDeliveryPersonId()) &&
                 condition.apply(criteria.getDistinct()),
             "every filter matches"
         );
@@ -116,9 +124,13 @@ class CustomerOrderCriteriaTest {
                 condition.apply(criteria.getStatus(), copy.getStatus()) &&
                 condition.apply(criteria.getPaymentMethod(), copy.getPaymentMethod()) &&
                 condition.apply(criteria.getConfirmedAt(), copy.getConfirmedAt()) &&
+                condition.apply(criteria.getRemovedCustomerId(), copy.getRemovedCustomerId()) &&
+                condition.apply(criteria.getRemovedDeliveryPersonId(), copy.getRemovedDeliveryPersonId()) &&
+                condition.apply(criteria.getTransactionId(), copy.getTransactionId()) &&
+                condition.apply(criteria.getHistoryId(), copy.getHistoryId()) &&
                 condition.apply(criteria.getItemsId(), copy.getItemsId()) &&
-                condition.apply(criteria.getDeliveryPersonId(), copy.getDeliveryPersonId()) &&
                 condition.apply(criteria.getCustomerId(), copy.getCustomerId()) &&
+                condition.apply(criteria.getDeliveryPersonId(), copy.getDeliveryPersonId()) &&
                 condition.apply(criteria.getDistinct(), copy.getDistinct()),
             "every filter matches"
         );

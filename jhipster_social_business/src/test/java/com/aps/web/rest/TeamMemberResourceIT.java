@@ -667,7 +667,7 @@ class TeamMemberResourceIT {
         TeamMember partialUpdatedTeamMember = new TeamMember();
         partialUpdatedTeamMember.setId(teamMember.getId());
 
-        partialUpdatedTeamMember.name(UPDATED_NAME).phoneNumber(UPDATED_PHONE_NUMBER).role(UPDATED_ROLE);
+        partialUpdatedTeamMember.name(UPDATED_NAME).waPhoneNumber(UPDATED_WA_PHONE_NUMBER);
 
         restTeamMemberMockMvc
             .perform(

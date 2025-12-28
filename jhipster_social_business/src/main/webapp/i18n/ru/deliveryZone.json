@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceProApp": {
+    "deliveryZone": {
+      "home": {
+        "title": "Delivery Zones",
+        "refreshListLabel": "Обновить список",
+        "createLabel": "Создать новый Delivery Zone",
+        "createOrEditLabel": "Создать или отредактировать Delivery Zone",
+        "notFound": "Delivery Zones не найдено"
+      },
+      "created": "Новый Delivery Zone создан с идентификатором {{ param }}",
+      "updated": "Delivery Zone обновлен с идентификатором {{ param }}",
+      "deleted": "Delivery Zone удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Delivery Zone {{ id }}?"
+      },
+      "detail": {
+        "title": "Delivery Zone"
+      },
+      "id": "ID",
+      "zoneName": "Zone Name",
+      "pincode": "Pincode",
+      "customers": "Customers",
+      "deliveryPersons": "Delivery Persons",
+      "help": {
+        "zoneName": "e.g., &#34;A&#34;, &#34;B&#34;, &#34;North-1&#34;",
+        "pincode": "specific pincode or pattern linked to this zone"
+      }
+    }
+  }
+}

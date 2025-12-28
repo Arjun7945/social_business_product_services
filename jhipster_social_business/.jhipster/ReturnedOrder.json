@@ -1,0 +1,77 @@
+{
+  "annotations": {
+    "changelogDate": "20251228084018"
+  },
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "NEW ENTITY: ReturnedOrder\\nStores information about returned orders.\\nLinked to Order, and Customer for full context.\\nNOTE: Products are now Master-Detail via ReturnedOrderItem.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "returnDate",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "paymentReceivedMode",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "paymentReturnedMode",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "productClaimStatus",
+      "fieldType": "ReturnProductStatus",
+      "fieldTypeDocumentation": "Status of the Physical Product upon return",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PENDING_RECEIPT,RECEIVED_DAMAGED,RECEIVED_OK,NOT_RECEIVED"
+    },
+    {
+      "fieldName": "refundAmount",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["min"],
+      "fieldValidateRulesMin": "0"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "ReturnedOrder",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "documentation": "Return Status History tracking",
+      "otherEntityName": "returnStatusHistory",
+      "otherEntityRelationshipName": "returnedOrder",
+      "relationshipName": "history",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "documentation": "Support multiple products in one return order",
+      "otherEntityName": "returnedOrderItem",
+      "otherEntityRelationshipName": "returnedOrder",
+      "relationshipName": "items",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "documentation": "Returned Order links to Original Order",
+      "otherEntityField": "id",
+      "otherEntityName": "customerOrder",
+      "relationshipName": "order",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "customer",
+      "otherEntityRelationshipName": "returns",
+      "relationshipName": "customer",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

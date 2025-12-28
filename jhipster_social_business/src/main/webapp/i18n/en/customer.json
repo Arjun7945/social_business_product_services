@@ -1,5 +1,5 @@
 {
-  "whatsappProductServiceApp": {
+  "whatsappProductServiceProApp": {
     "customer": {
       "home": {
         "title": "Customers",
@@ -31,8 +31,9 @@
       "lastInteractionAt": "Last Interaction At",
       "orders": "Orders",
       "cart": "Cart",
+      "returns": "Returns",
       "addedBy": "Added By",
-      "selfAdded": "SELF_ADDED"
+      "zone": "Zone"
     }
   }
 }

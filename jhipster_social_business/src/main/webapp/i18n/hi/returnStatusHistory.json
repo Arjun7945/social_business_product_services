@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceProApp": {
+    "returnStatusHistory": {
+      "home": {
+        "title": "ReturnStatusHistories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नया Return Status History बनाएँ",
+        "createOrEditLabel": "Return Status History बनाएँ या संपादित करें",
+        "notFound": "No Return Status Histories found"
+      },
+      "created": "एक नया Return Status History [identifier: {{ param }}] तैयार है",
+      "updated": "एक Return Status History [identifier: {{ param }}] का अद्यतन हुआ है",
+      "deleted": "Return Status History [identifier: {{ param }}] हटा दिया है",
+      "delete": {
+        "question": "Return Status History [id: {{ id }}] हटाने की पुष्टि करें"
+      },
+      "detail": {
+        "title": "Return Status History"
+      },
+      "id": "ID",
+      "status": "Status",
+      "changeTime": "Change Time",
+      "returnedOrder": "Returned Order"
+    }
+  }
+}

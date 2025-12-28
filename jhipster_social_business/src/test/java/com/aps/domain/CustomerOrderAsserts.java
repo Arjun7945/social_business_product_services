@@ -57,7 +57,14 @@ public class CustomerOrderAsserts {
             )
             .satisfies(e -> assertThat(e.getStatus()).as("check status").isEqualTo(actual.getStatus()))
             .satisfies(e -> assertThat(e.getPaymentMethod()).as("check paymentMethod").isEqualTo(actual.getPaymentMethod()))
-            .satisfies(e -> assertThat(e.getConfirmedAt()).as("check confirmedAt").isEqualTo(actual.getConfirmedAt()));
+            .satisfies(e -> assertThat(e.getConfirmedAt()).as("check confirmedAt").isEqualTo(actual.getConfirmedAt()))
+            .satisfies(e -> assertThat(e.getRemovedCustomerId()).as("check removedCustomerId").isEqualTo(actual.getRemovedCustomerId()))
+            .satisfies(e ->
+                assertThat(e.getRemovedDeliveryPersonId())
+                    .as("check removedDeliveryPersonId")
+                    .isEqualTo(actual.getRemovedDeliveryPersonId())
+            )
+            .satisfies(e -> assertThat(e.getTransactionId()).as("check transactionId").isEqualTo(actual.getTransactionId()));
     }
 
     /**
@@ -69,7 +76,8 @@ public class CustomerOrderAsserts {
     public static void assertCustomerOrderUpdatableRelationshipsEquals(CustomerOrder expected, CustomerOrder actual) {
         assertThat(expected)
             .as("Verify CustomerOrder relationships")
-            .satisfies(e -> assertThat(e.getDeliveryPerson()).as("check deliveryPerson").isEqualTo(actual.getDeliveryPerson()))
-            .satisfies(e -> assertThat(e.getCustomer()).as("check customer").isEqualTo(actual.getCustomer()));
+            .satisfies(e -> assertThat(e.getHistory()).as("check history").isEqualTo(actual.getHistory()))
+            .satisfies(e -> assertThat(e.getCustomer()).as("check customer").isEqualTo(actual.getCustomer()))
+            .satisfies(e -> assertThat(e.getDeliveryPerson()).as("check deliveryPerson").isEqualTo(actual.getDeliveryPerson()));
     }
 }

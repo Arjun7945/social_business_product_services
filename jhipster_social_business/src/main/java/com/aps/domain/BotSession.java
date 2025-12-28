@@ -8,9 +8,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * NEW ENTITY: BotSession
- * Manages the conversation state and temporary data (scratchpad).
- * Replaces all temp_ variables in main entities.
+ * BotSession for conversation state.
  */
 @Entity
 @Table(name = "bot_session")
@@ -26,24 +24,15 @@ public class BotSession implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    /**
-     * Key to link to Customer or TeamMember
-     */
     @NotNull
     @Column(name = "wa_phone_number", nullable = false, unique = true)
     private String waPhoneNumber;
 
-    /**
-     * Checkpoints the user's flow (e.g., AWAITING_NAME)
-     */
     @NotNull
     @Column(name = "current_state", nullable = false)
     private String currentState;
 
-    /**
-     * JSON blob to store temp variables like { \"tempProductId\": 123,
-     * \"tempName\": \"John\" }
-     */
+    @Lob
     @Column(name = "session_data")
     private String sessionData;
 
@@ -117,8 +106,7 @@ public class BotSession implements Serializable {
         this.lastActiveAt = lastActiveAt;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
-    // setters here
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -133,8 +121,7 @@ public class BotSession implements Serializable {
 
     @Override
     public int hashCode() {
-        // see
-        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -142,11 +129,11 @@ public class BotSession implements Serializable {
     @Override
     public String toString() {
         return "BotSession{" +
-                "id=" + getId() +
-                ", waPhoneNumber='" + getWaPhoneNumber() + "'" +
-                ", currentState='" + getCurrentState() + "'" +
-                ", sessionData='" + getSessionData() + "'" +
-                ", lastActiveAt='" + getLastActiveAt() + "'" +
-                "}";
+            "id=" + getId() +
+            ", waPhoneNumber='" + getWaPhoneNumber() + "'" +
+            ", currentState='" + getCurrentState() + "'" +
+            ", sessionData='" + getSessionData() + "'" +
+            ", lastActiveAt='" + getLastActiveAt() + "'" +
+            "}";
     }
 }

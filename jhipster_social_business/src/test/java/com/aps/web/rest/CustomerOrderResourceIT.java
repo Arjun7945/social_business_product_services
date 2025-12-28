@@ -12,7 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.aps.IntegrationTest;
 import com.aps.domain.Customer;
 import com.aps.domain.CustomerOrder;
-import com.aps.domain.TeamMember;
+import com.aps.domain.DeliveryPerson;
+import com.aps.domain.OrderStatusHistory;
 import com.aps.domain.enumeration.OrderStatus;
 import com.aps.repository.CustomerOrderRepository;
 import com.aps.service.CustomerOrderService;
@@ -66,8 +67,26 @@ class CustomerOrderResourceIT {
     private static final Instant DEFAULT_CONFIRMED_AT = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_CONFIRMED_AT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
+    private static final Long DEFAULT_REMOVED_CUSTOMER_ID = 1L;
+    private static final Long UPDATED_REMOVED_CUSTOMER_ID = 2L;
+    private static final Long SMALLER_REMOVED_CUSTOMER_ID = 1L - 1L;
+
+    private static final Long DEFAULT_REMOVED_DELIVERY_PERSON_ID = 1L;
+    private static final Long UPDATED_REMOVED_DELIVERY_PERSON_ID = 2L;
+    private static final Long SMALLER_REMOVED_DELIVERY_PERSON_ID = 1L - 1L;
+
+    private static final String DEFAULT_TRANSACTION_ID = "AAAAAAAAAA";
+    private static final String UPDATED_TRANSACTION_ID = "BBBBBBBBBB";
+
     private static final String ENTITY_API_URL = "/api/customer-orders";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+
+    // Constants for DeliveryPerson creation
+    private static final String DP_DEFAULT_NAME = "AAAAAAAAAA";
+    private static final String DP_DEFAULT_WA_PHONE_NUMBER = "AAAAAAAAAA";
+    private static final String DP_DEFAULT_PHONE_NUMBER = "AAAAAAAAAA";
+    private static final com.aps.domain.enumeration.DeliveryStatus DP_DEFAULT_STATUS = com.aps.domain.enumeration.DeliveryStatus.FREE;
+    private static final Boolean DP_DEFAULT_IS_ACTIVE = false;
 
     private static Random random = new Random();
     private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
@@ -103,24 +122,16 @@ class CustomerOrderResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static CustomerOrder createEntity(EntityManager em) {
-        CustomerOrder customerOrder = new CustomerOrder()
-            .orderTime(DEFAULT_ORDER_TIME)
-            .totalAmount(DEFAULT_TOTAL_AMOUNT)
-            .status(DEFAULT_STATUS)
-            .paymentMethod(DEFAULT_PAYMENT_METHOD)
-            .confirmedAt(DEFAULT_CONFIRMED_AT);
-        // Add required entity
-        Customer customer;
-        if (TestUtil.findAll(em, Customer.class).isEmpty()) {
-            customer = CustomerResourceIT.createEntity();
-            em.persist(customer);
-            em.flush();
-        } else {
-            customer = TestUtil.findAll(em, Customer.class).get(0);
-        }
-        customerOrder.setCustomer(customer);
-        return customerOrder;
+    public static CustomerOrder createEntity() {
+        return new CustomerOrder()
+                .orderTime(DEFAULT_ORDER_TIME)
+                .totalAmount(DEFAULT_TOTAL_AMOUNT)
+                .status(DEFAULT_STATUS)
+                .paymentMethod(DEFAULT_PAYMENT_METHOD)
+                .confirmedAt(DEFAULT_CONFIRMED_AT)
+                .removedCustomerId(DEFAULT_REMOVED_CUSTOMER_ID)
+                .removedDeliveryPersonId(DEFAULT_REMOVED_DELIVERY_PERSON_ID)
+                .transactionId(DEFAULT_TRANSACTION_ID);
     }
 
     /**
@@ -129,29 +140,45 @@ class CustomerOrderResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static CustomerOrder createUpdatedEntity(EntityManager em) {
-        CustomerOrder updatedCustomerOrder = new CustomerOrder()
-            .orderTime(UPDATED_ORDER_TIME)
-            .totalAmount(UPDATED_TOTAL_AMOUNT)
-            .status(UPDATED_STATUS)
-            .paymentMethod(UPDATED_PAYMENT_METHOD)
-            .confirmedAt(UPDATED_CONFIRMED_AT);
+    public static CustomerOrder createUpdatedEntity() {
+        return new CustomerOrder()
+                .orderTime(UPDATED_ORDER_TIME)
+                .totalAmount(UPDATED_TOTAL_AMOUNT)
+                .status(UPDATED_STATUS)
+                .paymentMethod(UPDATED_PAYMENT_METHOD)
+                .confirmedAt(UPDATED_CONFIRMED_AT)
+                .removedCustomerId(UPDATED_REMOVED_CUSTOMER_ID)
+                .removedDeliveryPersonId(UPDATED_REMOVED_DELIVERY_PERSON_ID)
+                .transactionId(UPDATED_TRANSACTION_ID);
+    }
+
+    public static DeliveryPerson createDeliveryPersonEntity(EntityManager em) {
+        DeliveryPerson deliveryPerson = new DeliveryPerson()
+                .name(DP_DEFAULT_NAME)
+                .waPhoneNumber(DP_DEFAULT_WA_PHONE_NUMBER)
+                .phoneNumber(DP_DEFAULT_PHONE_NUMBER)
+                .status(DP_DEFAULT_STATUS)
+                .isActive(DP_DEFAULT_IS_ACTIVE);
         // Add required entity
-        Customer customer;
-        if (TestUtil.findAll(em, Customer.class).isEmpty()) {
-            customer = CustomerResourceIT.createUpdatedEntity();
-            em.persist(customer);
+        com.aps.domain.DeliveryZone deliveryZone;
+        if (TestUtil.findAll(em, com.aps.domain.DeliveryZone.class).isEmpty()) {
+            // Placeholder: Assume DeliveryZoneResourceIT.createEntity exists or create
+            // manually
+            // Using reflection or assuming DeliveryZoneResourceIT is available.
+            // Safe fallback: Create manual zone if resourceIT fails
+            deliveryZone = new com.aps.domain.DeliveryZone().zoneName("Zone A").pincode("123456");
+            em.persist(deliveryZone);
             em.flush();
         } else {
-            customer = TestUtil.findAll(em, Customer.class).get(0);
+            deliveryZone = TestUtil.findAll(em, com.aps.domain.DeliveryZone.class).get(0);
         }
-        updatedCustomerOrder.setCustomer(customer);
-        return updatedCustomerOrder;
+        deliveryPerson.setZone(deliveryZone);
+        return deliveryPerson;
     }
 
     @BeforeEach
     public void initTest() {
-        customerOrder = createEntity(em);
+        customerOrder = createEntity();
     }
 
     @AfterEach
@@ -169,19 +196,20 @@ class CustomerOrderResourceIT {
         // Create the CustomerOrder
         CustomerOrderDTO customerOrderDTO = customerOrderMapper.toDto(customerOrder);
         var returnedCustomerOrderDTO = om.readValue(
-            restCustomerOrderMockMvc
-                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
-                .andExpect(status().isCreated())
-                .andReturn()
-                .getResponse()
-                .getContentAsString(),
-            CustomerOrderDTO.class
-        );
+                restCustomerOrderMockMvc
+                        .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
+                                .content(om.writeValueAsBytes(customerOrderDTO)))
+                        .andExpect(status().isCreated())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString(),
+                CustomerOrderDTO.class);
 
         // Validate the CustomerOrder in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         var returnedCustomerOrder = customerOrderMapper.toEntity(returnedCustomerOrderDTO);
-        assertCustomerOrderUpdatableFieldsEquals(returnedCustomerOrder, getPersistedCustomerOrder(returnedCustomerOrder));
+        assertCustomerOrderUpdatableFieldsEquals(returnedCustomerOrder,
+                getPersistedCustomerOrder(returnedCustomerOrder));
 
         insertedCustomerOrder = returnedCustomerOrder;
     }
@@ -197,8 +225,9 @@ class CustomerOrderResourceIT {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restCustomerOrderMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
-            .andExpect(status().isBadRequest());
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsBytes(customerOrderDTO)))
+                .andExpect(status().isBadRequest());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeCreate);
@@ -215,8 +244,9 @@ class CustomerOrderResourceIT {
         CustomerOrderDTO customerOrderDTO = customerOrderMapper.toDto(customerOrder);
 
         restCustomerOrderMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
-            .andExpect(status().isBadRequest());
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsBytes(customerOrderDTO)))
+                .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
     }
@@ -232,8 +262,9 @@ class CustomerOrderResourceIT {
         CustomerOrderDTO customerOrderDTO = customerOrderMapper.toDto(customerOrder);
 
         restCustomerOrderMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
-            .andExpect(status().isBadRequest());
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsBytes(customerOrderDTO)))
+                .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
     }
@@ -249,8 +280,9 @@ class CustomerOrderResourceIT {
         CustomerOrderDTO customerOrderDTO = customerOrderMapper.toDto(customerOrder);
 
         restCustomerOrderMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
-            .andExpect(status().isBadRequest());
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsBytes(customerOrderDTO)))
+                .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
     }
@@ -266,8 +298,9 @@ class CustomerOrderResourceIT {
         CustomerOrderDTO customerOrderDTO = customerOrderMapper.toDto(customerOrder);
 
         restCustomerOrderMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
-            .andExpect(status().isBadRequest());
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsBytes(customerOrderDTO)))
+                .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
     }
@@ -280,15 +313,19 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList
         restCustomerOrderMockMvc
-            .perform(get(ENTITY_API_URL + "?sort=id,desc"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(customerOrder.getId().intValue())))
-            .andExpect(jsonPath("$.[*].orderTime").value(hasItem(DEFAULT_ORDER_TIME.toString())))
-            .andExpect(jsonPath("$.[*].totalAmount").value(hasItem(sameNumber(DEFAULT_TOTAL_AMOUNT))))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
-            .andExpect(jsonPath("$.[*].paymentMethod").value(hasItem(DEFAULT_PAYMENT_METHOD)))
-            .andExpect(jsonPath("$.[*].confirmedAt").value(hasItem(DEFAULT_CONFIRMED_AT.toString())));
+                .perform(get(ENTITY_API_URL + "?sort=id,desc"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(customerOrder.getId().intValue())))
+                .andExpect(jsonPath("$.[*].orderTime").value(hasItem(DEFAULT_ORDER_TIME.toString())))
+                .andExpect(jsonPath("$.[*].totalAmount").value(hasItem(sameNumber(DEFAULT_TOTAL_AMOUNT))))
+                .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
+                .andExpect(jsonPath("$.[*].paymentMethod").value(hasItem(DEFAULT_PAYMENT_METHOD)))
+                .andExpect(jsonPath("$.[*].confirmedAt").value(hasItem(DEFAULT_CONFIRMED_AT.toString())))
+                .andExpect(jsonPath("$.[*].removedCustomerId").value(hasItem(DEFAULT_REMOVED_CUSTOMER_ID.intValue())))
+                .andExpect(jsonPath("$.[*].removedDeliveryPersonId")
+                        .value(hasItem(DEFAULT_REMOVED_DELIVERY_PERSON_ID.intValue())))
+                .andExpect(jsonPath("$.[*].transactionId").value(hasItem(DEFAULT_TRANSACTION_ID)));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -316,15 +353,18 @@ class CustomerOrderResourceIT {
 
         // Get the customerOrder
         restCustomerOrderMockMvc
-            .perform(get(ENTITY_API_URL_ID, customerOrder.getId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(customerOrder.getId().intValue()))
-            .andExpect(jsonPath("$.orderTime").value(DEFAULT_ORDER_TIME.toString()))
-            .andExpect(jsonPath("$.totalAmount").value(sameNumber(DEFAULT_TOTAL_AMOUNT)))
-            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
-            .andExpect(jsonPath("$.paymentMethod").value(DEFAULT_PAYMENT_METHOD))
-            .andExpect(jsonPath("$.confirmedAt").value(DEFAULT_CONFIRMED_AT.toString()));
+                .perform(get(ENTITY_API_URL_ID, customerOrder.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.id").value(customerOrder.getId().intValue()))
+                .andExpect(jsonPath("$.orderTime").value(DEFAULT_ORDER_TIME.toString()))
+                .andExpect(jsonPath("$.totalAmount").value(sameNumber(DEFAULT_TOTAL_AMOUNT)))
+                .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
+                .andExpect(jsonPath("$.paymentMethod").value(DEFAULT_PAYMENT_METHOD))
+                .andExpect(jsonPath("$.confirmedAt").value(DEFAULT_CONFIRMED_AT.toString()))
+                .andExpect(jsonPath("$.removedCustomerId").value(DEFAULT_REMOVED_CUSTOMER_ID.intValue()))
+                .andExpect(jsonPath("$.removedDeliveryPersonId").value(DEFAULT_REMOVED_DELIVERY_PERSON_ID.intValue()))
+                .andExpect(jsonPath("$.transactionId").value(DEFAULT_TRANSACTION_ID));
     }
 
     @Test
@@ -349,7 +389,8 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where orderTime equals to
-        defaultCustomerOrderFiltering("orderTime.equals=" + DEFAULT_ORDER_TIME, "orderTime.equals=" + UPDATED_ORDER_TIME);
+        defaultCustomerOrderFiltering("orderTime.equals=" + DEFAULT_ORDER_TIME,
+                "orderTime.equals=" + UPDATED_ORDER_TIME);
     }
 
     @Test
@@ -360,9 +401,8 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where orderTime in
         defaultCustomerOrderFiltering(
-            "orderTime.in=" + DEFAULT_ORDER_TIME + "," + UPDATED_ORDER_TIME,
-            "orderTime.in=" + UPDATED_ORDER_TIME
-        );
+                "orderTime.in=" + DEFAULT_ORDER_TIME + "," + UPDATED_ORDER_TIME,
+                "orderTime.in=" + UPDATED_ORDER_TIME);
     }
 
     @Test
@@ -382,7 +422,8 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where totalAmount equals to
-        defaultCustomerOrderFiltering("totalAmount.equals=" + DEFAULT_TOTAL_AMOUNT, "totalAmount.equals=" + UPDATED_TOTAL_AMOUNT);
+        defaultCustomerOrderFiltering("totalAmount.equals=" + DEFAULT_TOTAL_AMOUNT,
+                "totalAmount.equals=" + UPDATED_TOTAL_AMOUNT);
     }
 
     @Test
@@ -393,9 +434,8 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where totalAmount in
         defaultCustomerOrderFiltering(
-            "totalAmount.in=" + DEFAULT_TOTAL_AMOUNT + "," + UPDATED_TOTAL_AMOUNT,
-            "totalAmount.in=" + UPDATED_TOTAL_AMOUNT
-        );
+                "totalAmount.in=" + DEFAULT_TOTAL_AMOUNT + "," + UPDATED_TOTAL_AMOUNT,
+                "totalAmount.in=" + UPDATED_TOTAL_AMOUNT);
     }
 
     @Test
@@ -416,9 +456,8 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where totalAmount is greater than or equal to
         defaultCustomerOrderFiltering(
-            "totalAmount.greaterThanOrEqual=" + DEFAULT_TOTAL_AMOUNT,
-            "totalAmount.greaterThanOrEqual=" + UPDATED_TOTAL_AMOUNT
-        );
+                "totalAmount.greaterThanOrEqual=" + DEFAULT_TOTAL_AMOUNT,
+                "totalAmount.greaterThanOrEqual=" + UPDATED_TOTAL_AMOUNT);
     }
 
     @Test
@@ -429,9 +468,8 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where totalAmount is less than or equal to
         defaultCustomerOrderFiltering(
-            "totalAmount.lessThanOrEqual=" + DEFAULT_TOTAL_AMOUNT,
-            "totalAmount.lessThanOrEqual=" + SMALLER_TOTAL_AMOUNT
-        );
+                "totalAmount.lessThanOrEqual=" + DEFAULT_TOTAL_AMOUNT,
+                "totalAmount.lessThanOrEqual=" + SMALLER_TOTAL_AMOUNT);
     }
 
     @Test
@@ -441,7 +479,8 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where totalAmount is less than
-        defaultCustomerOrderFiltering("totalAmount.lessThan=" + UPDATED_TOTAL_AMOUNT, "totalAmount.lessThan=" + DEFAULT_TOTAL_AMOUNT);
+        defaultCustomerOrderFiltering("totalAmount.lessThan=" + UPDATED_TOTAL_AMOUNT,
+                "totalAmount.lessThan=" + DEFAULT_TOTAL_AMOUNT);
     }
 
     @Test
@@ -451,7 +490,8 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where totalAmount is greater than
-        defaultCustomerOrderFiltering("totalAmount.greaterThan=" + SMALLER_TOTAL_AMOUNT, "totalAmount.greaterThan=" + DEFAULT_TOTAL_AMOUNT);
+        defaultCustomerOrderFiltering("totalAmount.greaterThan=" + SMALLER_TOTAL_AMOUNT,
+                "totalAmount.greaterThan=" + DEFAULT_TOTAL_AMOUNT);
     }
 
     @Test
@@ -471,7 +511,8 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where status in
-        defaultCustomerOrderFiltering("status.in=" + DEFAULT_STATUS + "," + UPDATED_STATUS, "status.in=" + UPDATED_STATUS);
+        defaultCustomerOrderFiltering("status.in=" + DEFAULT_STATUS + "," + UPDATED_STATUS,
+                "status.in=" + UPDATED_STATUS);
     }
 
     @Test
@@ -491,7 +532,8 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where paymentMethod equals to
-        defaultCustomerOrderFiltering("paymentMethod.equals=" + DEFAULT_PAYMENT_METHOD, "paymentMethod.equals=" + UPDATED_PAYMENT_METHOD);
+        defaultCustomerOrderFiltering("paymentMethod.equals=" + DEFAULT_PAYMENT_METHOD,
+                "paymentMethod.equals=" + UPDATED_PAYMENT_METHOD);
     }
 
     @Test
@@ -502,9 +544,8 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where paymentMethod in
         defaultCustomerOrderFiltering(
-            "paymentMethod.in=" + DEFAULT_PAYMENT_METHOD + "," + UPDATED_PAYMENT_METHOD,
-            "paymentMethod.in=" + UPDATED_PAYMENT_METHOD
-        );
+                "paymentMethod.in=" + DEFAULT_PAYMENT_METHOD + "," + UPDATED_PAYMENT_METHOD,
+                "paymentMethod.in=" + UPDATED_PAYMENT_METHOD);
     }
 
     @Test
@@ -525,9 +566,8 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where paymentMethod contains
         defaultCustomerOrderFiltering(
-            "paymentMethod.contains=" + DEFAULT_PAYMENT_METHOD,
-            "paymentMethod.contains=" + UPDATED_PAYMENT_METHOD
-        );
+                "paymentMethod.contains=" + DEFAULT_PAYMENT_METHOD,
+                "paymentMethod.contains=" + UPDATED_PAYMENT_METHOD);
     }
 
     @Test
@@ -538,9 +578,8 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where paymentMethod does not contain
         defaultCustomerOrderFiltering(
-            "paymentMethod.doesNotContain=" + UPDATED_PAYMENT_METHOD,
-            "paymentMethod.doesNotContain=" + DEFAULT_PAYMENT_METHOD
-        );
+                "paymentMethod.doesNotContain=" + UPDATED_PAYMENT_METHOD,
+                "paymentMethod.doesNotContain=" + DEFAULT_PAYMENT_METHOD);
     }
 
     @Test
@@ -550,7 +589,8 @@ class CustomerOrderResourceIT {
         insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
         // Get all the customerOrderList where confirmedAt equals to
-        defaultCustomerOrderFiltering("confirmedAt.equals=" + DEFAULT_CONFIRMED_AT, "confirmedAt.equals=" + UPDATED_CONFIRMED_AT);
+        defaultCustomerOrderFiltering("confirmedAt.equals=" + DEFAULT_CONFIRMED_AT,
+                "confirmedAt.equals=" + UPDATED_CONFIRMED_AT);
     }
 
     @Test
@@ -561,9 +601,8 @@ class CustomerOrderResourceIT {
 
         // Get all the customerOrderList where confirmedAt in
         defaultCustomerOrderFiltering(
-            "confirmedAt.in=" + DEFAULT_CONFIRMED_AT + "," + UPDATED_CONFIRMED_AT,
-            "confirmedAt.in=" + UPDATED_CONFIRMED_AT
-        );
+                "confirmedAt.in=" + DEFAULT_CONFIRMED_AT + "," + UPDATED_CONFIRMED_AT,
+                "confirmedAt.in=" + UPDATED_CONFIRMED_AT);
     }
 
     @Test
@@ -578,25 +617,251 @@ class CustomerOrderResourceIT {
 
     @Test
     @Transactional
-    void getAllCustomerOrdersByDeliveryPersonIsEqualToSomething() throws Exception {
-        TeamMember deliveryPerson;
-        if (TestUtil.findAll(em, TeamMember.class).isEmpty()) {
-            customerOrderRepository.saveAndFlush(customerOrder);
-            deliveryPerson = TeamMemberResourceIT.createEntity();
-        } else {
-            deliveryPerson = TestUtil.findAll(em, TeamMember.class).get(0);
-        }
-        em.persist(deliveryPerson);
-        em.flush();
-        customerOrder.setDeliveryPerson(deliveryPerson);
-        customerOrderRepository.saveAndFlush(customerOrder);
-        Long deliveryPersonId = deliveryPerson.getId();
-        // Get all the customerOrderList where deliveryPerson equals to deliveryPersonId
-        defaultCustomerOrderShouldBeFound("deliveryPersonId.equals=" + deliveryPersonId);
+    void getAllCustomerOrdersByRemovedCustomerIdIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
 
-        // Get all the customerOrderList where deliveryPerson equals to
-        // (deliveryPersonId + 1)
-        defaultCustomerOrderShouldNotBeFound("deliveryPersonId.equals=" + (deliveryPersonId + 1));
+        // Get all the customerOrderList where removedCustomerId equals to
+        defaultCustomerOrderFiltering(
+                "removedCustomerId.equals=" + DEFAULT_REMOVED_CUSTOMER_ID,
+                "removedCustomerId.equals=" + UPDATED_REMOVED_CUSTOMER_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByRemovedCustomerIdIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where removedCustomerId in
+        defaultCustomerOrderFiltering(
+                "removedCustomerId.in=" + DEFAULT_REMOVED_CUSTOMER_ID + "," + UPDATED_REMOVED_CUSTOMER_ID,
+                "removedCustomerId.in=" + UPDATED_REMOVED_CUSTOMER_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByRemovedCustomerIdIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where removedCustomerId is not null
+        defaultCustomerOrderFiltering("removedCustomerId.specified=true", "removedCustomerId.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByRemovedCustomerIdIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where removedCustomerId is greater than or
+        // equal to
+        defaultCustomerOrderFiltering(
+                "removedCustomerId.greaterThanOrEqual=" + DEFAULT_REMOVED_CUSTOMER_ID,
+                "removedCustomerId.greaterThanOrEqual=" + UPDATED_REMOVED_CUSTOMER_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByRemovedCustomerIdIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where removedCustomerId is less than or equal
+        // to
+        defaultCustomerOrderFiltering(
+                "removedCustomerId.lessThanOrEqual=" + DEFAULT_REMOVED_CUSTOMER_ID,
+                "removedCustomerId.lessThanOrEqual=" + SMALLER_REMOVED_CUSTOMER_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByRemovedCustomerIdIsLessThanSomething() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where removedCustomerId is less than
+        defaultCustomerOrderFiltering(
+                "removedCustomerId.lessThan=" + UPDATED_REMOVED_CUSTOMER_ID,
+                "removedCustomerId.lessThan=" + DEFAULT_REMOVED_CUSTOMER_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByRemovedCustomerIdIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where removedCustomerId is greater than
+        defaultCustomerOrderFiltering(
+                "removedCustomerId.greaterThan=" + SMALLER_REMOVED_CUSTOMER_ID,
+                "removedCustomerId.greaterThan=" + DEFAULT_REMOVED_CUSTOMER_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByRemovedDeliveryPersonIdIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where removedDeliveryPersonId equals to
+        defaultCustomerOrderFiltering(
+                "removedDeliveryPersonId.equals=" + DEFAULT_REMOVED_DELIVERY_PERSON_ID,
+                "removedDeliveryPersonId.equals=" + UPDATED_REMOVED_DELIVERY_PERSON_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByRemovedDeliveryPersonIdIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where removedDeliveryPersonId in
+        defaultCustomerOrderFiltering(
+                "removedDeliveryPersonId.in=" + DEFAULT_REMOVED_DELIVERY_PERSON_ID + ","
+                        + UPDATED_REMOVED_DELIVERY_PERSON_ID,
+                "removedDeliveryPersonId.in=" + UPDATED_REMOVED_DELIVERY_PERSON_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByRemovedDeliveryPersonIdIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where removedDeliveryPersonId is not null
+        defaultCustomerOrderFiltering("removedDeliveryPersonId.specified=true",
+                "removedDeliveryPersonId.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByRemovedDeliveryPersonIdIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where removedDeliveryPersonId is greater than
+        // or equal to
+        defaultCustomerOrderFiltering(
+                "removedDeliveryPersonId.greaterThanOrEqual=" + DEFAULT_REMOVED_DELIVERY_PERSON_ID,
+                "removedDeliveryPersonId.greaterThanOrEqual=" + UPDATED_REMOVED_DELIVERY_PERSON_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByRemovedDeliveryPersonIdIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where removedDeliveryPersonId is less than or
+        // equal to
+        defaultCustomerOrderFiltering(
+                "removedDeliveryPersonId.lessThanOrEqual=" + DEFAULT_REMOVED_DELIVERY_PERSON_ID,
+                "removedDeliveryPersonId.lessThanOrEqual=" + SMALLER_REMOVED_DELIVERY_PERSON_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByRemovedDeliveryPersonIdIsLessThanSomething() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where removedDeliveryPersonId is less than
+        defaultCustomerOrderFiltering(
+                "removedDeliveryPersonId.lessThan=" + UPDATED_REMOVED_DELIVERY_PERSON_ID,
+                "removedDeliveryPersonId.lessThan=" + DEFAULT_REMOVED_DELIVERY_PERSON_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByRemovedDeliveryPersonIdIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where removedDeliveryPersonId is greater than
+        defaultCustomerOrderFiltering(
+                "removedDeliveryPersonId.greaterThan=" + SMALLER_REMOVED_DELIVERY_PERSON_ID,
+                "removedDeliveryPersonId.greaterThan=" + DEFAULT_REMOVED_DELIVERY_PERSON_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByTransactionIdIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where transactionId equals to
+        defaultCustomerOrderFiltering("transactionId.equals=" + DEFAULT_TRANSACTION_ID,
+                "transactionId.equals=" + UPDATED_TRANSACTION_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByTransactionIdIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where transactionId in
+        defaultCustomerOrderFiltering(
+                "transactionId.in=" + DEFAULT_TRANSACTION_ID + "," + UPDATED_TRANSACTION_ID,
+                "transactionId.in=" + UPDATED_TRANSACTION_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByTransactionIdIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where transactionId is not null
+        defaultCustomerOrderFiltering("transactionId.specified=true", "transactionId.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByTransactionIdContainsSomething() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where transactionId contains
+        defaultCustomerOrderFiltering(
+                "transactionId.contains=" + DEFAULT_TRANSACTION_ID,
+                "transactionId.contains=" + UPDATED_TRANSACTION_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByTransactionIdNotContainsSomething() throws Exception {
+        // Initialize the database
+        insertedCustomerOrder = customerOrderRepository.saveAndFlush(customerOrder);
+
+        // Get all the customerOrderList where transactionId does not contain
+        defaultCustomerOrderFiltering(
+                "transactionId.doesNotContain=" + UPDATED_TRANSACTION_ID,
+                "transactionId.doesNotContain=" + DEFAULT_TRANSACTION_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByHistoryIsEqualToSomething() throws Exception {
+        OrderStatusHistory history;
+        if (TestUtil.findAll(em, OrderStatusHistory.class).isEmpty()) {
+            customerOrderRepository.saveAndFlush(customerOrder);
+            history = OrderStatusHistoryResourceIT.createEntity();
+        } else {
+            history = TestUtil.findAll(em, OrderStatusHistory.class).get(0);
+        }
+        em.persist(history);
+        em.flush();
+        customerOrder.setHistory(history);
+        customerOrderRepository.saveAndFlush(customerOrder);
+        Long historyId = history.getId();
+        // Get all the customerOrderList where history equals to historyId
+        defaultCustomerOrderShouldBeFound("historyId.equals=" + historyId);
+
+        // Get all the customerOrderList where history equals to (historyId + 1)
+        defaultCustomerOrderShouldNotBeFound("historyId.equals=" + (historyId + 1));
     }
 
     @Test
@@ -621,6 +886,29 @@ class CustomerOrderResourceIT {
         defaultCustomerOrderShouldNotBeFound("customerId.equals=" + (customerId + 1));
     }
 
+    @Test
+    @Transactional
+    void getAllCustomerOrdersByDeliveryPersonIsEqualToSomething() throws Exception {
+        DeliveryPerson deliveryPerson;
+        if (TestUtil.findAll(em, DeliveryPerson.class).isEmpty()) {
+            customerOrderRepository.saveAndFlush(customerOrder);
+            deliveryPerson = createDeliveryPersonEntity(em);
+        } else {
+            deliveryPerson = TestUtil.findAll(em, DeliveryPerson.class).get(0);
+        }
+        em.persist(deliveryPerson);
+        em.flush();
+        customerOrder.setDeliveryPerson(deliveryPerson);
+        customerOrderRepository.saveAndFlush(customerOrder);
+        Long deliveryPersonId = deliveryPerson.getId();
+        // Get all the customerOrderList where deliveryPerson equals to deliveryPersonId
+        defaultCustomerOrderShouldBeFound("deliveryPersonId.equals=" + deliveryPersonId);
+
+        // Get all the customerOrderList where deliveryPerson equals to
+        // (deliveryPersonId + 1)
+        defaultCustomerOrderShouldNotBeFound("deliveryPersonId.equals=" + (deliveryPersonId + 1));
+    }
+
     private void defaultCustomerOrderFiltering(String shouldBeFound, String shouldNotBeFound) throws Exception {
         defaultCustomerOrderShouldBeFound(shouldBeFound);
         defaultCustomerOrderShouldNotBeFound(shouldNotBeFound);
@@ -631,22 +919,26 @@ class CustomerOrderResourceIT {
      */
     private void defaultCustomerOrderShouldBeFound(String filter) throws Exception {
         restCustomerOrderMockMvc
-            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(customerOrder.getId().intValue())))
-            .andExpect(jsonPath("$.[*].orderTime").value(hasItem(DEFAULT_ORDER_TIME.toString())))
-            .andExpect(jsonPath("$.[*].totalAmount").value(hasItem(sameNumber(DEFAULT_TOTAL_AMOUNT))))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
-            .andExpect(jsonPath("$.[*].paymentMethod").value(hasItem(DEFAULT_PAYMENT_METHOD)))
-            .andExpect(jsonPath("$.[*].confirmedAt").value(hasItem(DEFAULT_CONFIRMED_AT.toString())));
+                .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(customerOrder.getId().intValue())))
+                .andExpect(jsonPath("$.[*].orderTime").value(hasItem(DEFAULT_ORDER_TIME.toString())))
+                .andExpect(jsonPath("$.[*].totalAmount").value(hasItem(sameNumber(DEFAULT_TOTAL_AMOUNT))))
+                .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
+                .andExpect(jsonPath("$.[*].paymentMethod").value(hasItem(DEFAULT_PAYMENT_METHOD)))
+                .andExpect(jsonPath("$.[*].confirmedAt").value(hasItem(DEFAULT_CONFIRMED_AT.toString())))
+                .andExpect(jsonPath("$.[*].removedCustomerId").value(hasItem(DEFAULT_REMOVED_CUSTOMER_ID.intValue())))
+                .andExpect(jsonPath("$.[*].removedDeliveryPersonId")
+                        .value(hasItem(DEFAULT_REMOVED_DELIVERY_PERSON_ID.intValue())))
+                .andExpect(jsonPath("$.[*].transactionId").value(hasItem(DEFAULT_TRANSACTION_ID)));
 
         // Check, that the count call also returns 1
         restCustomerOrderMockMvc
-            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(content().string("1"));
+                .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().string("1"));
     }
 
     /**
@@ -654,18 +946,18 @@ class CustomerOrderResourceIT {
      */
     private void defaultCustomerOrderShouldNotBeFound(String filter) throws Exception {
         restCustomerOrderMockMvc
-            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$").isEmpty());
+                .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
 
         // Check, that the count call also returns 0
         restCustomerOrderMockMvc
-            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(content().string("0"));
+                .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().string("0"));
     }
 
     @Test
@@ -689,20 +981,22 @@ class CustomerOrderResourceIT {
         // directly saved in db
         em.detach(updatedCustomerOrder);
         updatedCustomerOrder
-            .orderTime(UPDATED_ORDER_TIME)
-            .totalAmount(UPDATED_TOTAL_AMOUNT)
-            .status(UPDATED_STATUS)
-            .paymentMethod(UPDATED_PAYMENT_METHOD)
-            .confirmedAt(UPDATED_CONFIRMED_AT);
+                .orderTime(UPDATED_ORDER_TIME)
+                .totalAmount(UPDATED_TOTAL_AMOUNT)
+                .status(UPDATED_STATUS)
+                .paymentMethod(UPDATED_PAYMENT_METHOD)
+                .confirmedAt(UPDATED_CONFIRMED_AT)
+                .removedCustomerId(UPDATED_REMOVED_CUSTOMER_ID)
+                .removedDeliveryPersonId(UPDATED_REMOVED_DELIVERY_PERSON_ID)
+                .transactionId(UPDATED_TRANSACTION_ID);
         CustomerOrderDTO customerOrderDTO = customerOrderMapper.toDto(updatedCustomerOrder);
 
         restCustomerOrderMockMvc
-            .perform(
-                put(ENTITY_API_URL_ID, customerOrderDTO.getId())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(customerOrderDTO))
-            )
-            .andExpect(status().isOk());
+                .perform(
+                        put(ENTITY_API_URL_ID, customerOrderDTO.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(om.writeValueAsBytes(customerOrderDTO)))
+                .andExpect(status().isOk());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -720,12 +1014,11 @@ class CustomerOrderResourceIT {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCustomerOrderMockMvc
-            .perform(
-                put(ENTITY_API_URL_ID, customerOrderDTO.getId())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(customerOrderDTO))
-            )
-            .andExpect(status().isBadRequest());
+                .perform(
+                        put(ENTITY_API_URL_ID, customerOrderDTO.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(om.writeValueAsBytes(customerOrderDTO)))
+                .andExpect(status().isBadRequest());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -742,12 +1035,11 @@ class CustomerOrderResourceIT {
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCustomerOrderMockMvc
-            .perform(
-                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(customerOrderDTO))
-            )
-            .andExpect(status().isBadRequest());
+                .perform(
+                        put(ENTITY_API_URL_ID, longCount.incrementAndGet())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(om.writeValueAsBytes(customerOrderDTO)))
+                .andExpect(status().isBadRequest());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -764,8 +1056,9 @@ class CustomerOrderResourceIT {
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCustomerOrderMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customerOrderDTO)))
-            .andExpect(status().isMethodNotAllowed());
+                .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsBytes(customerOrderDTO)))
+                .andExpect(status().isMethodNotAllowed());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -783,23 +1076,26 @@ class CustomerOrderResourceIT {
         CustomerOrder partialUpdatedCustomerOrder = new CustomerOrder();
         partialUpdatedCustomerOrder.setId(customerOrder.getId());
 
-        partialUpdatedCustomerOrder.orderTime(UPDATED_ORDER_TIME).confirmedAt(UPDATED_CONFIRMED_AT);
+        partialUpdatedCustomerOrder
+                .orderTime(UPDATED_ORDER_TIME)
+                .status(UPDATED_STATUS)
+                .paymentMethod(UPDATED_PAYMENT_METHOD)
+                .confirmedAt(UPDATED_CONFIRMED_AT)
+                .transactionId(UPDATED_TRANSACTION_ID);
 
         restCustomerOrderMockMvc
-            .perform(
-                patch(ENTITY_API_URL_ID, partialUpdatedCustomerOrder.getId())
-                    .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(partialUpdatedCustomerOrder))
-            )
-            .andExpect(status().isOk());
+                .perform(
+                        patch(ENTITY_API_URL_ID, partialUpdatedCustomerOrder.getId())
+                                .contentType("application/merge-patch+json")
+                                .content(om.writeValueAsBytes(partialUpdatedCustomerOrder)))
+                .andExpect(status().isOk());
 
         // Validate the CustomerOrder in the database
 
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
         assertCustomerOrderUpdatableFieldsEquals(
-            createUpdateProxyForBean(partialUpdatedCustomerOrder, customerOrder),
-            getPersistedCustomerOrder(customerOrder)
-        );
+                createUpdateProxyForBean(partialUpdatedCustomerOrder, customerOrder),
+                getPersistedCustomerOrder(customerOrder));
     }
 
     @Test
@@ -815,24 +1111,27 @@ class CustomerOrderResourceIT {
         partialUpdatedCustomerOrder.setId(customerOrder.getId());
 
         partialUpdatedCustomerOrder
-            .orderTime(UPDATED_ORDER_TIME)
-            .totalAmount(UPDATED_TOTAL_AMOUNT)
-            .status(UPDATED_STATUS)
-            .paymentMethod(UPDATED_PAYMENT_METHOD)
-            .confirmedAt(UPDATED_CONFIRMED_AT);
+                .orderTime(UPDATED_ORDER_TIME)
+                .totalAmount(UPDATED_TOTAL_AMOUNT)
+                .status(UPDATED_STATUS)
+                .paymentMethod(UPDATED_PAYMENT_METHOD)
+                .confirmedAt(UPDATED_CONFIRMED_AT)
+                .removedCustomerId(UPDATED_REMOVED_CUSTOMER_ID)
+                .removedDeliveryPersonId(UPDATED_REMOVED_DELIVERY_PERSON_ID)
+                .transactionId(UPDATED_TRANSACTION_ID);
 
         restCustomerOrderMockMvc
-            .perform(
-                patch(ENTITY_API_URL_ID, partialUpdatedCustomerOrder.getId())
-                    .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(partialUpdatedCustomerOrder))
-            )
-            .andExpect(status().isOk());
+                .perform(
+                        patch(ENTITY_API_URL_ID, partialUpdatedCustomerOrder.getId())
+                                .contentType("application/merge-patch+json")
+                                .content(om.writeValueAsBytes(partialUpdatedCustomerOrder)))
+                .andExpect(status().isOk());
 
         // Validate the CustomerOrder in the database
 
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        assertCustomerOrderUpdatableFieldsEquals(partialUpdatedCustomerOrder, getPersistedCustomerOrder(partialUpdatedCustomerOrder));
+        assertCustomerOrderUpdatableFieldsEquals(partialUpdatedCustomerOrder,
+                getPersistedCustomerOrder(partialUpdatedCustomerOrder));
     }
 
     @Test
@@ -846,12 +1145,11 @@ class CustomerOrderResourceIT {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCustomerOrderMockMvc
-            .perform(
-                patch(ENTITY_API_URL_ID, customerOrderDTO.getId())
-                    .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(customerOrderDTO))
-            )
-            .andExpect(status().isBadRequest());
+                .perform(
+                        patch(ENTITY_API_URL_ID, customerOrderDTO.getId())
+                                .contentType("application/merge-patch+json")
+                                .content(om.writeValueAsBytes(customerOrderDTO)))
+                .andExpect(status().isBadRequest());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -868,12 +1166,11 @@ class CustomerOrderResourceIT {
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCustomerOrderMockMvc
-            .perform(
-                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
-                    .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(customerOrderDTO))
-            )
-            .andExpect(status().isBadRequest());
+                .perform(
+                        patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
+                                .contentType("application/merge-patch+json")
+                                .content(om.writeValueAsBytes(customerOrderDTO)))
+                .andExpect(status().isBadRequest());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -890,8 +1187,9 @@ class CustomerOrderResourceIT {
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCustomerOrderMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(customerOrderDTO)))
-            .andExpect(status().isMethodNotAllowed());
+                .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json")
+                        .content(om.writeValueAsBytes(customerOrderDTO)))
+                .andExpect(status().isMethodNotAllowed());
 
         // Validate the CustomerOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
@@ -907,8 +1205,8 @@ class CustomerOrderResourceIT {
 
         // Delete the customerOrder
         restCustomerOrderMockMvc
-            .perform(delete(ENTITY_API_URL_ID, customerOrder.getId()).accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNoContent());
+                .perform(delete(ENTITY_API_URL_ID, customerOrder.getId()).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
         assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
@@ -939,6 +1237,7 @@ class CustomerOrderResourceIT {
     }
 
     protected void assertPersistedCustomerOrderToMatchUpdatableProperties(CustomerOrder expectedCustomerOrder) {
-        assertCustomerOrderAllUpdatablePropertiesEquals(expectedCustomerOrder, getPersistedCustomerOrder(expectedCustomerOrder));
+        assertCustomerOrderAllUpdatablePropertiesEquals(expectedCustomerOrder,
+                getPersistedCustomerOrder(expectedCustomerOrder));
     }
 }

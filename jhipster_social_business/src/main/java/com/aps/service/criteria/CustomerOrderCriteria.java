@@ -52,11 +52,19 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
 
     private InstantFilter confirmedAt;
 
+    private LongFilter removedCustomerId;
+
+    private LongFilter removedDeliveryPersonId;
+
+    private StringFilter transactionId;
+
+    private LongFilter historyId;
+
     private LongFilter itemsId;
 
-    private LongFilter deliveryPersonId;
-
     private LongFilter customerId;
+
+    private LongFilter deliveryPersonId;
 
     private Boolean distinct;
 
@@ -69,9 +77,13 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
         this.status = other.optionalStatus().map(OrderStatusFilter::copy).orElse(null);
         this.paymentMethod = other.optionalPaymentMethod().map(StringFilter::copy).orElse(null);
         this.confirmedAt = other.optionalConfirmedAt().map(InstantFilter::copy).orElse(null);
+        this.removedCustomerId = other.optionalRemovedCustomerId().map(LongFilter::copy).orElse(null);
+        this.removedDeliveryPersonId = other.optionalRemovedDeliveryPersonId().map(LongFilter::copy).orElse(null);
+        this.transactionId = other.optionalTransactionId().map(StringFilter::copy).orElse(null);
+        this.historyId = other.optionalHistoryId().map(LongFilter::copy).orElse(null);
         this.itemsId = other.optionalItemsId().map(LongFilter::copy).orElse(null);
-        this.deliveryPersonId = other.optionalDeliveryPersonId().map(LongFilter::copy).orElse(null);
         this.customerId = other.optionalCustomerId().map(LongFilter::copy).orElse(null);
+        this.deliveryPersonId = other.optionalDeliveryPersonId().map(LongFilter::copy).orElse(null);
         this.distinct = other.distinct;
     }
 
@@ -194,6 +206,82 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
         this.confirmedAt = confirmedAt;
     }
 
+    public LongFilter getRemovedCustomerId() {
+        return removedCustomerId;
+    }
+
+    public Optional<LongFilter> optionalRemovedCustomerId() {
+        return Optional.ofNullable(removedCustomerId);
+    }
+
+    public LongFilter removedCustomerId() {
+        if (removedCustomerId == null) {
+            setRemovedCustomerId(new LongFilter());
+        }
+        return removedCustomerId;
+    }
+
+    public void setRemovedCustomerId(LongFilter removedCustomerId) {
+        this.removedCustomerId = removedCustomerId;
+    }
+
+    public LongFilter getRemovedDeliveryPersonId() {
+        return removedDeliveryPersonId;
+    }
+
+    public Optional<LongFilter> optionalRemovedDeliveryPersonId() {
+        return Optional.ofNullable(removedDeliveryPersonId);
+    }
+
+    public LongFilter removedDeliveryPersonId() {
+        if (removedDeliveryPersonId == null) {
+            setRemovedDeliveryPersonId(new LongFilter());
+        }
+        return removedDeliveryPersonId;
+    }
+
+    public void setRemovedDeliveryPersonId(LongFilter removedDeliveryPersonId) {
+        this.removedDeliveryPersonId = removedDeliveryPersonId;
+    }
+
+    public StringFilter getTransactionId() {
+        return transactionId;
+    }
+
+    public Optional<StringFilter> optionalTransactionId() {
+        return Optional.ofNullable(transactionId);
+    }
+
+    public StringFilter transactionId() {
+        if (transactionId == null) {
+            setTransactionId(new StringFilter());
+        }
+        return transactionId;
+    }
+
+    public void setTransactionId(StringFilter transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public LongFilter getHistoryId() {
+        return historyId;
+    }
+
+    public Optional<LongFilter> optionalHistoryId() {
+        return Optional.ofNullable(historyId);
+    }
+
+    public LongFilter historyId() {
+        if (historyId == null) {
+            setHistoryId(new LongFilter());
+        }
+        return historyId;
+    }
+
+    public void setHistoryId(LongFilter historyId) {
+        this.historyId = historyId;
+    }
+
     public LongFilter getItemsId() {
         return itemsId;
     }
@@ -213,25 +301,6 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
         this.itemsId = itemsId;
     }
 
-    public LongFilter getDeliveryPersonId() {
-        return deliveryPersonId;
-    }
-
-    public Optional<LongFilter> optionalDeliveryPersonId() {
-        return Optional.ofNullable(deliveryPersonId);
-    }
-
-    public LongFilter deliveryPersonId() {
-        if (deliveryPersonId == null) {
-            setDeliveryPersonId(new LongFilter());
-        }
-        return deliveryPersonId;
-    }
-
-    public void setDeliveryPersonId(LongFilter deliveryPersonId) {
-        this.deliveryPersonId = deliveryPersonId;
-    }
-
     public LongFilter getCustomerId() {
         return customerId;
     }
@@ -249,6 +318,25 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
 
     public void setCustomerId(LongFilter customerId) {
         this.customerId = customerId;
+    }
+
+    public LongFilter getDeliveryPersonId() {
+        return deliveryPersonId;
+    }
+
+    public Optional<LongFilter> optionalDeliveryPersonId() {
+        return Optional.ofNullable(deliveryPersonId);
+    }
+
+    public LongFilter deliveryPersonId() {
+        if (deliveryPersonId == null) {
+            setDeliveryPersonId(new LongFilter());
+        }
+        return deliveryPersonId;
+    }
+
+    public void setDeliveryPersonId(LongFilter deliveryPersonId) {
+        this.deliveryPersonId = deliveryPersonId;
     }
 
     public Boolean getDistinct() {
@@ -286,9 +374,13 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
             Objects.equals(status, that.status) &&
             Objects.equals(paymentMethod, that.paymentMethod) &&
             Objects.equals(confirmedAt, that.confirmedAt) &&
+            Objects.equals(removedCustomerId, that.removedCustomerId) &&
+            Objects.equals(removedDeliveryPersonId, that.removedDeliveryPersonId) &&
+            Objects.equals(transactionId, that.transactionId) &&
+            Objects.equals(historyId, that.historyId) &&
             Objects.equals(itemsId, that.itemsId) &&
-            Objects.equals(deliveryPersonId, that.deliveryPersonId) &&
             Objects.equals(customerId, that.customerId) &&
+            Objects.equals(deliveryPersonId, that.deliveryPersonId) &&
             Objects.equals(distinct, that.distinct)
         );
     }
@@ -302,9 +394,13 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
             status,
             paymentMethod,
             confirmedAt,
+            removedCustomerId,
+            removedDeliveryPersonId,
+            transactionId,
+            historyId,
             itemsId,
-            deliveryPersonId,
             customerId,
+            deliveryPersonId,
             distinct
         );
     }
@@ -319,9 +415,13 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
             optionalStatus().map(f -> "status=" + f + ", ").orElse("") +
             optionalPaymentMethod().map(f -> "paymentMethod=" + f + ", ").orElse("") +
             optionalConfirmedAt().map(f -> "confirmedAt=" + f + ", ").orElse("") +
+            optionalRemovedCustomerId().map(f -> "removedCustomerId=" + f + ", ").orElse("") +
+            optionalRemovedDeliveryPersonId().map(f -> "removedDeliveryPersonId=" + f + ", ").orElse("") +
+            optionalTransactionId().map(f -> "transactionId=" + f + ", ").orElse("") +
+            optionalHistoryId().map(f -> "historyId=" + f + ", ").orElse("") +
             optionalItemsId().map(f -> "itemsId=" + f + ", ").orElse("") +
-            optionalDeliveryPersonId().map(f -> "deliveryPersonId=" + f + ", ").orElse("") +
             optionalCustomerId().map(f -> "customerId=" + f + ", ").orElse("") +
+            optionalDeliveryPersonId().map(f -> "deliveryPersonId=" + f + ", ").orElse("") +
             optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
         "}";
     }

@@ -2,68 +2,120 @@ package com.aps.service;
 
 import com.aps.domain.ButtonAction;
 import com.aps.repository.ButtonActionRepository;
-import java.time.Instant;
+import com.aps.service.dto.ButtonActionDTO;
+import com.aps.service.mapper.ButtonActionMapper;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service for managing button action idempotency / duplicate checks.
+ * Service Implementation for managing {@link com.aps.domain.ButtonAction}.
  */
 @Service
 @Transactional
 public class ButtonActionService {
 
-    private final Logger log = LoggerFactory.getLogger(ButtonActionService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ButtonActionService.class);
+
     private final ButtonActionRepository buttonActionRepository;
 
-    public ButtonActionService(ButtonActionRepository buttonActionRepository) {
+    private final ButtonActionMapper buttonActionMapper;
+
+    public ButtonActionService(ButtonActionRepository buttonActionRepository, ButtonActionMapper buttonActionMapper) {
         this.buttonActionRepository = buttonActionRepository;
+        this.buttonActionMapper = buttonActionMapper;
     }
 
     /**
-     * Checks if a button action (identified by Message ID) has already been
-     * processed.
+     * Save a buttonAction.
      *
-     * @param waMessageId The WhatsApp Message ID (context.id)
-     * @return true if the message ID has already been recorded (consumed), false
-     *         otherwise.
+     * @param buttonActionDTO the entity to save.
+     * @return the persisted entity.
+     */
+    public ButtonActionDTO save(ButtonActionDTO buttonActionDTO) {
+        LOG.debug("Request to save ButtonAction : {}", buttonActionDTO);
+        ButtonAction buttonAction = buttonActionMapper.toEntity(buttonActionDTO);
+        buttonAction = buttonActionRepository.save(buttonAction);
+        return buttonActionMapper.toDto(buttonAction);
+    }
+
+    /**
+     * Update a buttonAction.
+     *
+     * @param buttonActionDTO the entity to save.
+     * @return the persisted entity.
+     */
+    public ButtonActionDTO update(ButtonActionDTO buttonActionDTO) {
+        LOG.debug("Request to update ButtonAction : {}", buttonActionDTO);
+        ButtonAction buttonAction = buttonActionMapper.toEntity(buttonActionDTO);
+        buttonAction = buttonActionRepository.save(buttonAction);
+        return buttonActionMapper.toDto(buttonAction);
+    }
+
+    /**
+     * Partially update a buttonAction.
+     *
+     * @param buttonActionDTO the entity to update partially.
+     * @return the persisted entity.
+     */
+    public Optional<ButtonActionDTO> partialUpdate(ButtonActionDTO buttonActionDTO) {
+        LOG.debug("Request to partially update ButtonAction : {}", buttonActionDTO);
+
+        return buttonActionRepository
+                .findById(buttonActionDTO.getId())
+                .map(existingButtonAction -> {
+                    buttonActionMapper.partialUpdate(existingButtonAction, buttonActionDTO);
+
+                    return existingButtonAction;
+                })
+                .map(buttonActionRepository::save)
+                .map(buttonActionMapper::toDto);
+    }
+
+    /**
+     * Get one buttonAction by id.
+     *
+     * @param id the id of the entity.
+     * @return the entity.
      */
     @Transactional(readOnly = true)
-    public boolean isButtonAlreadyClicked(String waMessageId) {
-        if (waMessageId == null || waMessageId.isBlank()) {
-            return false; // No ID, cannot check, assume unused (or rely on other validations)
-        }
-        return buttonActionRepository.existsByWaMessageId(waMessageId);
+    public Optional<ButtonActionDTO> findOne(Long id) {
+        LOG.debug("Request to get ButtonAction : {}", id);
+        return buttonActionRepository.findById(id).map(buttonActionMapper::toDto);
     }
 
     /**
-     * Records a consumed button action.
+     * Delete the buttonAction by id.
      *
-     * @param waMessageId The WhatsApp Message ID (context.id)
-     * @param buttonId    The payload of the button clicked
-     * @param userPhone   The phone number of the user
+     * @param id the id of the entity.
      */
-    public void recordButtonAction(String waMessageId, String buttonId, String userPhone) {
-        if (waMessageId == null || waMessageId.isBlank()) {
-            log.warn("Attempted to record button action without waMessageId");
+    public void delete(Long id) {
+        LOG.debug("Request to delete ButtonAction : {}", id);
+        buttonActionRepository.deleteById(id);
+    }
+
+    /**
+     * Check if a button action/message is already processed.
+     */
+    @Transactional(readOnly = true)
+    public boolean isButtonAlreadyClicked(String messageId) {
+        return buttonActionRepository.findByWaMessageId(messageId).isPresent();
+    }
+
+    /**
+     * Record a button action.
+     */
+    public void recordButtonAction(String messageId, String buttonId, String actionName) {
+        if (isButtonAlreadyClicked(messageId)) {
             return;
         }
-
-        // Double check to prevent unique constraint violation if called in parallel
-        if (buttonActionRepository.existsByWaMessageId(waMessageId)) {
-            log.warn("Button action already recorded for ID: {}", waMessageId);
-            return;
-        }
-
         ButtonAction action = new ButtonAction();
-        action.setWaMessageId(waMessageId);
+        action.setWaMessageId(messageId);
         action.setButtonId(buttonId);
-        action.setClickedBy(userPhone);
-        action.setClickedAt(Instant.now());
-
+        action.setClickedAt(java.time.Instant.now());
+        action.setClickedBy(actionName); // Using clickedBy field for generic action name/user info if needed
         buttonActionRepository.save(action);
-        log.debug("Recorded button action for Message ID: {}", waMessageId);
     }
 }

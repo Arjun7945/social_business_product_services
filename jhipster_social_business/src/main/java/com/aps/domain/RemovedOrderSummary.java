@@ -8,21 +8,12 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * A RemovedOrderSummary.
- * <p>
- * Captures a consolidated snapshot of a user's operational history at the
- * moment of removal.
- * <br>
- * Semantics vary by role:
- * <ul>
- * <li><b>Customer:</b> totalOrders = Placed, totalAmount = Spent</li>
- * <li><b>Delivery:</b> totalOrders = Delivered, totalAmount = Collected</li>
- * </ul>
- * </p>
+ * RemovedOrderSummary.
  */
 @Entity
 @Table(name = "removed_order_summary")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class RemovedOrderSummary implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -58,10 +49,15 @@ public class RemovedOrderSummary implements Serializable {
     @Column(name = "removed_at")
     private Instant removedAt;
 
-    // Direct Getters and Setters
+    // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
         return this.id;
+    }
+
+    public RemovedOrderSummary id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -72,12 +68,22 @@ public class RemovedOrderSummary implements Serializable {
         return this.userOriginalId;
     }
 
+    public RemovedOrderSummary userOriginalId(Long userOriginalId) {
+        this.setUserOriginalId(userOriginalId);
+        return this;
+    }
+
     public void setUserOriginalId(Long userOriginalId) {
         this.userOriginalId = userOriginalId;
     }
 
     public String getUserName() {
         return this.userName;
+    }
+
+    public RemovedOrderSummary userName(String userName) {
+        this.setUserName(userName);
+        return this;
     }
 
     public void setUserName(String userName) {
@@ -88,12 +94,22 @@ public class RemovedOrderSummary implements Serializable {
         return this.userRole;
     }
 
+    public RemovedOrderSummary userRole(UserRole userRole) {
+        this.setUserRole(userRole);
+        return this;
+    }
+
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
 
     public Integer getTotalOrders() {
         return this.totalOrders;
+    }
+
+    public RemovedOrderSummary totalOrders(Integer totalOrders) {
+        this.setTotalOrders(totalOrders);
+        return this;
     }
 
     public void setTotalOrders(Integer totalOrders) {
@@ -104,12 +120,22 @@ public class RemovedOrderSummary implements Serializable {
         return this.totalAmount;
     }
 
+    public RemovedOrderSummary totalAmount(Double totalAmount) {
+        this.setTotalAmount(totalAmount);
+        return this;
+    }
+
     public void setTotalAmount(Double totalAmount) {
         this.totalAmount = totalAmount;
     }
 
     public Instant getFirstInteractionAt() {
         return this.firstInteractionAt;
+    }
+
+    public RemovedOrderSummary firstInteractionAt(Instant firstInteractionAt) {
+        this.setFirstInteractionAt(firstInteractionAt);
+        return this;
     }
 
     public void setFirstInteractionAt(Instant firstInteractionAt) {
@@ -120,6 +146,11 @@ public class RemovedOrderSummary implements Serializable {
         return this.lastInteractionAt;
     }
 
+    public RemovedOrderSummary lastInteractionAt(Instant lastInteractionAt) {
+        this.setLastInteractionAt(lastInteractionAt);
+        return this;
+    }
+
     public void setLastInteractionAt(Instant lastInteractionAt) {
         this.lastInteractionAt = lastInteractionAt;
     }
@@ -128,31 +159,16 @@ public class RemovedOrderSummary implements Serializable {
         return this.removedAt;
     }
 
+    public RemovedOrderSummary removedAt(Instant removedAt) {
+        this.setRemovedAt(removedAt);
+        return this;
+    }
+
     public void setRemovedAt(Instant removedAt) {
         this.removedAt = removedAt;
     }
 
-    // Fluent Setters
-
-    public RemovedOrderSummary id(Long id) {
-        this.id = id;
-        return this;
-    }
-
-    public RemovedOrderSummary userName(String userName) {
-        this.userName = userName;
-        return this;
-    }
-
-    public RemovedOrderSummary totalOrders(Integer totalOrders) {
-        this.totalOrders = totalOrders;
-        return this;
-    }
-
-    public RemovedOrderSummary totalAmount(Double totalAmount) {
-        this.totalAmount = totalAmount;
-        return this;
-    }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -162,31 +178,28 @@ public class RemovedOrderSummary implements Serializable {
         if (!(o instanceof RemovedOrderSummary)) {
             return false;
         }
-        return id != null && id.equals(((RemovedOrderSummary) o).id);
+        return getId() != null && getId().equals(((RemovedOrderSummary) o).getId());
     }
 
     @Override
     public int hashCode() {
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
-        return (
-            "RemovedOrderSummary{" +
-            "id=" +
-            getId() +
-            ", userName='" +
-            getUserName() +
-            "'" +
-            ", userRole='" +
-            getUserRole() +
-            "'" +
-            ", totalOrders=" +
-            getTotalOrders() +
-            ", totalAmount=" +
-            getTotalAmount() +
-            "}"
-        );
+        return "RemovedOrderSummary{" +
+            "id=" + getId() +
+            ", userOriginalId=" + getUserOriginalId() +
+            ", userName='" + getUserName() + "'" +
+            ", userRole='" + getUserRole() + "'" +
+            ", totalOrders=" + getTotalOrders() +
+            ", totalAmount=" + getTotalAmount() +
+            ", firstInteractionAt='" + getFirstInteractionAt() + "'" +
+            ", lastInteractionAt='" + getLastInteractionAt() + "'" +
+            ", removedAt='" + getRemovedAt() + "'" +
+            "}";
     }
 }

@@ -28,7 +28,7 @@ public class FishProductCriteria implements Serializable, Criteria {
 
     private BigDecimalFilter pricePerKg;
 
-    private StringFilter imageUrl;
+    private DoubleFilter availableQuantity;
 
     private StringFilter description;
 
@@ -36,7 +36,7 @@ public class FishProductCriteria implements Serializable, Criteria {
 
     private InstantFilter createdAt;
 
-    private LongFilter imagesId;
+    private LongFilter imageId;
 
     private Boolean distinct;
 
@@ -46,11 +46,11 @@ public class FishProductCriteria implements Serializable, Criteria {
         this.id = other.optionalId().map(LongFilter::copy).orElse(null);
         this.name = other.optionalName().map(StringFilter::copy).orElse(null);
         this.pricePerKg = other.optionalPricePerKg().map(BigDecimalFilter::copy).orElse(null);
-        this.imageUrl = other.optionalImageUrl().map(StringFilter::copy).orElse(null);
+        this.availableQuantity = other.optionalAvailableQuantity().map(DoubleFilter::copy).orElse(null);
         this.description = other.optionalDescription().map(StringFilter::copy).orElse(null);
         this.isAvailable = other.optionalIsAvailable().map(BooleanFilter::copy).orElse(null);
         this.createdAt = other.optionalCreatedAt().map(InstantFilter::copy).orElse(null);
-        this.imagesId = other.optionalImagesId().map(LongFilter::copy).orElse(null);
+        this.imageId = other.optionalImageId().map(LongFilter::copy).orElse(null);
         this.distinct = other.distinct;
     }
 
@@ -116,23 +116,23 @@ public class FishProductCriteria implements Serializable, Criteria {
         this.pricePerKg = pricePerKg;
     }
 
-    public StringFilter getImageUrl() {
-        return imageUrl;
+    public DoubleFilter getAvailableQuantity() {
+        return availableQuantity;
     }
 
-    public Optional<StringFilter> optionalImageUrl() {
-        return Optional.ofNullable(imageUrl);
+    public Optional<DoubleFilter> optionalAvailableQuantity() {
+        return Optional.ofNullable(availableQuantity);
     }
 
-    public StringFilter imageUrl() {
-        if (imageUrl == null) {
-            setImageUrl(new StringFilter());
+    public DoubleFilter availableQuantity() {
+        if (availableQuantity == null) {
+            setAvailableQuantity(new DoubleFilter());
         }
-        return imageUrl;
+        return availableQuantity;
     }
 
-    public void setImageUrl(StringFilter imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setAvailableQuantity(DoubleFilter availableQuantity) {
+        this.availableQuantity = availableQuantity;
     }
 
     public StringFilter getDescription() {
@@ -192,23 +192,23 @@ public class FishProductCriteria implements Serializable, Criteria {
         this.createdAt = createdAt;
     }
 
-    public LongFilter getImagesId() {
-        return imagesId;
+    public LongFilter getImageId() {
+        return imageId;
     }
 
-    public Optional<LongFilter> optionalImagesId() {
-        return Optional.ofNullable(imagesId);
+    public Optional<LongFilter> optionalImageId() {
+        return Optional.ofNullable(imageId);
     }
 
-    public LongFilter imagesId() {
-        if (imagesId == null) {
-            setImagesId(new LongFilter());
+    public LongFilter imageId() {
+        if (imageId == null) {
+            setImageId(new LongFilter());
         }
-        return imagesId;
+        return imageId;
     }
 
-    public void setImagesId(LongFilter imagesId) {
-        this.imagesId = imagesId;
+    public void setImageId(LongFilter imageId) {
+        this.imageId = imageId;
     }
 
     public Boolean getDistinct() {
@@ -243,18 +243,18 @@ public class FishProductCriteria implements Serializable, Criteria {
             Objects.equals(id, that.id) &&
             Objects.equals(name, that.name) &&
             Objects.equals(pricePerKg, that.pricePerKg) &&
-            Objects.equals(imageUrl, that.imageUrl) &&
+            Objects.equals(availableQuantity, that.availableQuantity) &&
             Objects.equals(description, that.description) &&
             Objects.equals(isAvailable, that.isAvailable) &&
             Objects.equals(createdAt, that.createdAt) &&
-            Objects.equals(imagesId, that.imagesId) &&
+            Objects.equals(imageId, that.imageId) &&
             Objects.equals(distinct, that.distinct)
         );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, pricePerKg, imageUrl, description, isAvailable, createdAt, imagesId, distinct);
+        return Objects.hash(id, name, pricePerKg, availableQuantity, description, isAvailable, createdAt, imageId, distinct);
     }
 
     // prettier-ignore
@@ -264,11 +264,11 @@ public class FishProductCriteria implements Serializable, Criteria {
             optionalId().map(f -> "id=" + f + ", ").orElse("") +
             optionalName().map(f -> "name=" + f + ", ").orElse("") +
             optionalPricePerKg().map(f -> "pricePerKg=" + f + ", ").orElse("") +
-            optionalImageUrl().map(f -> "imageUrl=" + f + ", ").orElse("") +
+            optionalAvailableQuantity().map(f -> "availableQuantity=" + f + ", ").orElse("") +
             optionalDescription().map(f -> "description=" + f + ", ").orElse("") +
             optionalIsAvailable().map(f -> "isAvailable=" + f + ", ").orElse("") +
             optionalCreatedAt().map(f -> "createdAt=" + f + ", ").orElse("") +
-            optionalImagesId().map(f -> "imagesId=" + f + ", ").orElse("") +
+            optionalImageId().map(f -> "imageId=" + f + ", ").orElse("") +
             optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
         "}";
     }

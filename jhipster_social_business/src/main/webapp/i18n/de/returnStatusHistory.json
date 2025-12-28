@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceProApp": {
+    "returnStatusHistory": {
+      "home": {
+        "title": "Return Status Histories",
+        "refreshListLabel": "Liste aktualisieren",
+        "createLabel": "Return Status History erstellen",
+        "createOrEditLabel": "Return Status History erstellen oder bearbeiten",
+        "notFound": "Keine Return Status Histories gefunden"
+      },
+      "created": "Return Status History erstellt mit ID {{ param }}",
+      "updated": "Return Status History aktualisiert mit ID {{ param }}",
+      "deleted": "Return Status History gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Return Status History {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Return Status History"
+      },
+      "id": "ID",
+      "status": "Status",
+      "changeTime": "Change Time",
+      "returnedOrder": "Returned Order"
+    }
+  }
+}

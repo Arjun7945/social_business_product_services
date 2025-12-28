@@ -1,9 +1,9 @@
 {
   "annotations": {
-    "changelogDate": "20251215140325"
+    "changelogDate": "20251228084009"
   },
-  "applications": ["whatsappProductService"],
-  "documentation": "Images associated with a product.",
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "Images associated with a product.\\nNOW: The primary source of images for FishProduct.",
   "dto": "mapstruct",
   "fields": [
     {
@@ -17,16 +17,17 @@
       "fieldValidateRules": ["required"]
     }
   ],
+  "jpaMetamodelFiltering": true,
   "name": "ProductImage",
   "pagination": "pagination",
   "relationships": [
     {
       "otherEntityField": "name",
       "otherEntityName": "fishProduct",
-      "otherEntityRelationshipName": "images",
+      "otherEntityRelationshipName": "image",
       "relationshipName": "product",
       "relationshipSide": "right",
-      "relationshipType": "many-to-one",
+      "relationshipType": "one-to-one",
       "relationshipValidateRules": "required"
     }
   ],

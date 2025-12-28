@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceProApp": {
+    "orderStatusHistory": {
+      "home": {
+        "title": "Order Status Histories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Δημιουργήστε ένα νέο Order Status History",
+        "createOrEditLabel": "Δημιουργήστε η επεξεργαστείτε ένα Order Status History",
+        "notFound": "No Order Status Histories found"
+      },
+      "created": "Ένα νέο Order Status History έχει δημιουργηθεί με αναγνωριστικό {{ param }}",
+      "updated": "Ένα Order Status History έχει ενημερωθεί με αναγνωριστικό {{ param }}",
+      "deleted": "Ένα Order Status History έχει διαγραφτεί με αναγνωριστικό {{ param }}",
+      "delete": {
+        "question": "Είστε βέβαιοι όταν θέλετε να διαγράψετε το ακόλουθο Order Status History {{ id }};"
+      },
+      "detail": {
+        "title": "Order Status History"
+      },
+      "id": "ID",
+      "status": "Status",
+      "changeTime": "Change Time",
+      "customerOrder": "Customer Order"
+    }
+  }
+}

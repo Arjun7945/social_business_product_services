@@ -34,10 +34,6 @@ public class ShoppingCart implements Serializable {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
-    @Version
-    @Column(name = "version")
-    private Long version;
-
     /**
      * One ShoppingCart has many CartItems
      */
@@ -48,7 +44,7 @@ public class ShoppingCart implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = { "orders", "carts", "addedBy" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "orders", "carts", "returns", "addedBy", "zone" }, allowSetters = true)
     private Customer customer;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -90,14 +86,6 @@ public class ShoppingCart implements Serializable {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
     }
 
     public Set<CartItem> getItems() {
@@ -144,8 +132,7 @@ public class ShoppingCart implements Serializable {
         return this;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
-    // setters here
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -160,8 +147,7 @@ public class ShoppingCart implements Serializable {
 
     @Override
     public int hashCode() {
-        // see
-        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -169,9 +155,9 @@ public class ShoppingCart implements Serializable {
     @Override
     public String toString() {
         return "ShoppingCart{" +
-                "id=" + getId() +
-                ", createdAt='" + getCreatedAt() + "'" +
-                ", updatedAt='" + getUpdatedAt() + "'" +
-                "}";
+            "id=" + getId() +
+            ", createdAt='" + getCreatedAt() + "'" +
+            ", updatedAt='" + getUpdatedAt() + "'" +
+            "}";
     }
 }

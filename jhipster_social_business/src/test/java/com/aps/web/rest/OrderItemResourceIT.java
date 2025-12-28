@@ -107,7 +107,7 @@ class OrderItemResourceIT {
         // Add required entity
         CustomerOrder customerOrder;
         if (TestUtil.findAll(em, CustomerOrder.class).isEmpty()) {
-            customerOrder = CustomerOrderResourceIT.createEntity(em);
+            customerOrder = CustomerOrderResourceIT.createEntity();
             em.persist(customerOrder);
             em.flush();
         } else {
@@ -138,7 +138,7 @@ class OrderItemResourceIT {
         // Add required entity
         CustomerOrder customerOrder;
         if (TestUtil.findAll(em, CustomerOrder.class).isEmpty()) {
-            customerOrder = CustomerOrderResourceIT.createUpdatedEntity(em);
+            customerOrder = CustomerOrderResourceIT.createUpdatedEntity();
             em.persist(customerOrder);
             em.flush();
         } else {
@@ -487,7 +487,7 @@ class OrderItemResourceIT {
         CustomerOrder order;
         if (TestUtil.findAll(em, CustomerOrder.class).isEmpty()) {
             orderItemRepository.saveAndFlush(orderItem);
-            order = CustomerOrderResourceIT.createEntity(em);
+            order = CustomerOrderResourceIT.createEntity();
         } else {
             order = TestUtil.findAll(em, CustomerOrder.class).get(0);
         }
@@ -655,6 +655,8 @@ class OrderItemResourceIT {
         // Update the orderItem using partial update
         OrderItem partialUpdatedOrderItem = new OrderItem();
         partialUpdatedOrderItem.setId(orderItem.getId());
+
+        partialUpdatedOrderItem.priceAtOrder(UPDATED_PRICE_AT_ORDER);
 
         restOrderItemMockMvc
             .perform(

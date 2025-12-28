@@ -15,7 +15,7 @@ describe('FishProduct e2e test', () => {
   const fishProductPageUrlPattern = new RegExp('/fish-product(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const fishProductSample = { name: 'closely silently where', pricePerKg: 31237.31, isAvailable: false };
+  const fishProductSample = { name: 'uniform unless indeed', pricePerKg: 18691.17, isAvailable: true };
 
   let fishProduct;
 
@@ -136,7 +136,9 @@ describe('FishProduct e2e test', () => {
       });
 
       it('last delete button click should delete instance of FishProduct', () => {
+        cy.intercept('GET', '/api/fish-products/*').as('dialogDeleteRequest');
         cy.get(entityDeleteButtonSelector).last().click();
+        cy.wait('@dialogDeleteRequest');
         cy.getEntityDeleteDialogHeading('fishProduct').should('exist');
         cy.get(entityConfirmDeleteButtonSelector).click();
         cy.wait('@deleteEntityRequest').then(({ response }) => {
@@ -160,25 +162,25 @@ describe('FishProduct e2e test', () => {
     });
 
     it('should create an instance of FishProduct', () => {
-      cy.get(`[data-cy="name"]`).type('forenenst but excluding');
-      cy.get(`[data-cy="name"]`).should('have.value', 'forenenst but excluding');
+      cy.get(`[data-cy="name"]`).type('lest');
+      cy.get(`[data-cy="name"]`).should('have.value', 'lest');
 
-      cy.get(`[data-cy="pricePerKg"]`).type('7311.8');
-      cy.get(`[data-cy="pricePerKg"]`).should('have.value', '7311.8');
+      cy.get(`[data-cy="pricePerKg"]`).type('15640.77');
+      cy.get(`[data-cy="pricePerKg"]`).should('have.value', '15640.77');
 
-      cy.get(`[data-cy="imageUrl"]`).type('utilization');
-      cy.get(`[data-cy="imageUrl"]`).should('have.value', 'utilization');
+      cy.get(`[data-cy="availableQuantity"]`).type('12795.09');
+      cy.get(`[data-cy="availableQuantity"]`).should('have.value', '12795.09');
 
-      cy.get(`[data-cy="description"]`).type('psst');
-      cy.get(`[data-cy="description"]`).should('have.value', 'psst');
+      cy.get(`[data-cy="description"]`).type('where oof');
+      cy.get(`[data-cy="description"]`).should('have.value', 'where oof');
 
       cy.get(`[data-cy="isAvailable"]`).should('not.be.checked');
       cy.get(`[data-cy="isAvailable"]`).click();
       cy.get(`[data-cy="isAvailable"]`).should('be.checked');
 
-      cy.get(`[data-cy="createdAt"]`).type('2025-12-15T11:50');
+      cy.get(`[data-cy="createdAt"]`).type('2025-12-28T01:39');
       cy.get(`[data-cy="createdAt"]`).blur();
-      cy.get(`[data-cy="createdAt"]`).should('have.value', '2025-12-15T11:50');
+      cy.get(`[data-cy="createdAt"]`).should('have.value', '2025-12-28T01:39');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

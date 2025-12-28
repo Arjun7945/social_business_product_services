@@ -1,7 +1,6 @@
 package com.aps.repository;
 
 import com.aps.domain.OrderStatusHistory;
-import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface OrderStatusHistoryRepository extends JpaRepository<OrderStatusHistory, Long> {
-    List<OrderStatusHistory> findAllByCustomerOrderId(Long customerOrderId);
-}
+public interface OrderStatusHistoryRepository
+    extends JpaRepository<OrderStatusHistory, Long>, JpaSpecificationExecutor<OrderStatusHistory> {}

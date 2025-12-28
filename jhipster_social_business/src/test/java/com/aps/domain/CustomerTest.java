@@ -2,6 +2,8 @@ package com.aps.domain;
 
 import static com.aps.domain.CustomerOrderTestSamples.*;
 import static com.aps.domain.CustomerTestSamples.*;
+import static com.aps.domain.DeliveryZoneTestSamples.*;
+import static com.aps.domain.ReturnedOrderTestSamples.*;
 import static com.aps.domain.ShoppingCartTestSamples.*;
 import static com.aps.domain.TeamMemberTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,6 +74,28 @@ class CustomerTest {
     }
 
     @Test
+    void returnsTest() {
+        Customer customer = getCustomerRandomSampleGenerator();
+        ReturnedOrder returnedOrderBack = getReturnedOrderRandomSampleGenerator();
+
+        customer.addReturns(returnedOrderBack);
+        assertThat(customer.getReturns()).containsOnly(returnedOrderBack);
+        assertThat(returnedOrderBack.getCustomer()).isEqualTo(customer);
+
+        customer.removeReturns(returnedOrderBack);
+        assertThat(customer.getReturns()).doesNotContain(returnedOrderBack);
+        assertThat(returnedOrderBack.getCustomer()).isNull();
+
+        customer.returns(new HashSet<>(Set.of(returnedOrderBack)));
+        assertThat(customer.getReturns()).containsOnly(returnedOrderBack);
+        assertThat(returnedOrderBack.getCustomer()).isEqualTo(customer);
+
+        customer.setReturns(new HashSet<>());
+        assertThat(customer.getReturns()).doesNotContain(returnedOrderBack);
+        assertThat(returnedOrderBack.getCustomer()).isNull();
+    }
+
+    @Test
     void addedByTest() {
         Customer customer = getCustomerRandomSampleGenerator();
         TeamMember teamMemberBack = getTeamMemberRandomSampleGenerator();
@@ -81,5 +105,17 @@ class CustomerTest {
 
         customer.addedBy(null);
         assertThat(customer.getAddedBy()).isNull();
+    }
+
+    @Test
+    void zoneTest() {
+        Customer customer = getCustomerRandomSampleGenerator();
+        DeliveryZone deliveryZoneBack = getDeliveryZoneRandomSampleGenerator();
+
+        customer.setZone(deliveryZoneBack);
+        assertThat(customer.getZone()).isEqualTo(deliveryZoneBack);
+
+        customer.zone(null);
+        assertThat(customer.getZone()).isNull();
     }
 }

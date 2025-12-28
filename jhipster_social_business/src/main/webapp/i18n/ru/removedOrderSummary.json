@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceProApp": {
+    "removedOrderSummary": {
+      "home": {
+        "title": "Removed Order Summaries",
+        "refreshListLabel": "Обновить список",
+        "createLabel": "Создать новый Removed Order Summary",
+        "createOrEditLabel": "Создать или отредактировать Removed Order Summary",
+        "notFound": "Removed Order Summaries не найдено"
+      },
+      "created": "Новый Removed Order Summary создан с идентификатором {{ param }}",
+      "updated": "Removed Order Summary обновлен с идентификатором {{ param }}",
+      "deleted": "Removed Order Summary удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Removed Order Summary {{ id }}?"
+      },
+      "detail": {
+        "title": "Removed Order Summary"
+      },
+      "id": "ID",
+      "userOriginalId": "User Original Id",
+      "userName": "User Name",
+      "userRole": "User Role",
+      "totalOrders": "Total Orders",
+      "totalAmount": "Total Amount",
+      "firstInteractionAt": "First Interaction At",
+      "lastInteractionAt": "Last Interaction At",
+      "removedAt": "Removed At"
+    }
+  }
+}

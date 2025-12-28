@@ -26,7 +26,6 @@
     "status": {
       "UNKNOWN": "अज्ञात स्थिति",
       "UP": "ऊपर",
-      "OUT_OF_SERVICE": "OUT_OF_SERVICE",
       "DOWN": "नीचे"
     }
   }

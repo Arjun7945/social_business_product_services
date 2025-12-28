@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceProApp": {
+    "removedOrderSummary": {
+      "home": {
+        "title": "Removed Order Summaries",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नवीन Removed Order Summary तयार करा",
+        "createOrEditLabel": "Removed Order Summary तयार किंवा संपादित करा",
+        "notFound": "No Removed Order Summaries found"
+      },
+      "created": "Removed Order Summary [identifier: {{ param }}] तयार आहे",
+      "updated": "Removed Order Summary [identifier: {{ param }}] सुधारित केले आहे",
+      "deleted": "Removed Order Summary [identifier: {{ param }}] हटविले आहे",
+      "delete": {
+        "question": "Removed Order Summary [id: {{ id }}] काढून टाकण्याबाबत पुष्टी?"
+      },
+      "detail": {
+        "title": "Removed Order Summary"
+      },
+      "id": "ID",
+      "userOriginalId": "User Original Id",
+      "userName": "User Name",
+      "userRole": "User Role",
+      "totalOrders": "Total Orders",
+      "totalAmount": "Total Amount",
+      "firstInteractionAt": "First Interaction At",
+      "lastInteractionAt": "Last Interaction At",
+      "removedAt": "Removed At"
+    }
+  }
+}

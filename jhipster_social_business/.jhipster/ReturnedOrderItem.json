@@ -1,0 +1,44 @@
+{
+  "annotations": {
+    "changelogDate": "20251228084019"
+  },
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "NEW ENTITY: ReturnedOrderItem\\nHandles multiple products in a single return request.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "quantity",
+      "fieldType": "Double",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "productComment",
+      "fieldType": "String"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "ReturnedOrderItem",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "documentation": "Returned Order Item links to Specific Product",
+      "otherEntityField": "name",
+      "otherEntityName": "fishProduct",
+      "relationshipName": "product",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "returnedOrder",
+      "otherEntityRelationshipName": "items",
+      "relationshipName": "returnedOrder",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

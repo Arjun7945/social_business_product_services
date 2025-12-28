@@ -1,5 +1,5 @@
 {
-  "whatsappProductServiceApp": {
+  "whatsappProductServiceProApp": {
     "shoppingCart": {
       "home": {
         "title": "ShoppingCarts",
@@ -21,8 +21,7 @@
       "createdAt": "Created At",
       "updatedAt": "Updated At",
       "items": "Items",
-      "customer": "Customer",
-      "version": "Version"
+      "customer": "Customer"
     }
   }
 }

@@ -1,9 +1,9 @@
 {
   "annotations": {
-    "changelogDate": "20251215140324"
+    "changelogDate": "20251228084008"
   },
-  "applications": ["whatsappProductService"],
-  "documentation": "Product catalog entity.\\nIndexed in Elasticsearch for fast search.",
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "Product catalog entity.\\nIndexed in Elasticsearch for fast search.\\nUPDATED: 'imageUrl' removed in favor of ProductImage entity relation.",
   "dto": "mapstruct",
   "fields": [
     {
@@ -18,11 +18,11 @@
       "fieldValidateRulesMin": "0"
     },
     {
-      "fieldName": "imageUrl",
-      "fieldType": "String"
+      "documentation": "To track available stock",
+      "fieldName": "availableQuantity",
+      "fieldType": "Double"
     },
     {
-      "documentation": "Increased length for SEO descriptions",
       "fieldName": "description",
       "fieldType": "String",
       "fieldValidateRules": ["maxlength"],
@@ -43,12 +43,12 @@
   "pagination": "pagination",
   "relationships": [
     {
-      "documentation": "One Product has many Images",
+      "documentation": "One Product has exactly One Image",
       "otherEntityName": "productImage",
       "otherEntityRelationshipName": "product",
-      "relationshipName": "images",
+      "relationshipName": "image",
       "relationshipSide": "left",
-      "relationshipType": "one-to-many"
+      "relationshipType": "one-to-one"
     }
   ],
   "searchEngine": "no",

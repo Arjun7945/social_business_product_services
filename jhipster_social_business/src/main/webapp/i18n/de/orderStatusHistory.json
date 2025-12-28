@@ -1,0 +1,26 @@
+{
+  "whatsappProductServiceProApp": {
+    "orderStatusHistory": {
+      "home": {
+        "title": "Order Status Histories",
+        "refreshListLabel": "Liste aktualisieren",
+        "createLabel": "Order Status History erstellen",
+        "createOrEditLabel": "Order Status History erstellen oder bearbeiten",
+        "notFound": "Keine Order Status Histories gefunden"
+      },
+      "created": "Order Status History erstellt mit ID {{ param }}",
+      "updated": "Order Status History aktualisiert mit ID {{ param }}",
+      "deleted": "Order Status History gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Order Status History {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Order Status History"
+      },
+      "id": "ID",
+      "status": "Status",
+      "changeTime": "Change Time",
+      "customerOrder": "Customer Order"
+    }
+  }
+}

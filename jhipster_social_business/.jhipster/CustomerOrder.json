@@ -1,9 +1,9 @@
 {
   "annotations": {
-    "changelogDate": "20251215140326"
+    "changelogDate": "20251228084010"
   },
-  "applications": ["whatsappProductService"],
-  "documentation": "Main Order entity.\\nRenamed to CustomerOrder to avoid SQL keyword conflicts.",
+  "applications": ["whatsappProductServicePro"],
+  "documentation": "Main Order entity.",
   "dto": "mapstruct",
   "fields": [
     {
@@ -18,10 +18,12 @@
       "fieldValidateRulesMin": "0"
     },
     {
+      "documentation": "Updated Enum: NOT_TAKEN, ON_WAY, etc.",
       "fieldName": "status",
       "fieldType": "OrderStatus",
+      "fieldTypeDocumentation": "UPDATED OrderStatus as per requirements.",
       "fieldValidateRules": ["required"],
-      "fieldValues": "PENDING,CONFIRMED,DELIVERED,CANCELLED"
+      "fieldValues": "ORDER_NOT_TAKEN,DELIVERY_ONWAY,ORDER_DELIVERED_SUCESSFULLY,ORDER_FAILED"
     },
     {
       "fieldName": "paymentMethod",
@@ -31,12 +33,32 @@
     {
       "fieldName": "confirmedAt",
       "fieldType": "Instant"
+    },
+    {
+      "fieldName": "removedCustomerId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "removedDeliveryPersonId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "transactionId",
+      "fieldType": "String"
     }
   ],
   "jpaMetamodelFiltering": true,
   "name": "CustomerOrder",
   "pagination": "pagination",
   "relationships": [
+    {
+      "documentation": "One Order has exactly One Status History (Current Status Detail)",
+      "otherEntityName": "orderStatusHistory",
+      "otherEntityRelationshipName": "customerOrder",
+      "relationshipName": "history",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one"
+    },
     {
       "documentation": "One Order has many OrderItems",
       "otherEntityName": "orderItem",
@@ -46,21 +68,20 @@
       "relationshipType": "one-to-many"
     },
     {
-      "documentation": "TeamMember (Delivery) assigned to Order",
-      "otherEntityField": "name",
-      "otherEntityName": "teamMember",
-      "relationshipName": "deliveryPerson",
-      "relationshipSide": "left",
-      "relationshipType": "many-to-one"
-    },
-    {
       "otherEntityField": "name",
       "otherEntityName": "customer",
       "otherEntityRelationshipName": "orders",
       "relationshipName": "customer",
       "relationshipSide": "right",
-      "relationshipType": "many-to-one",
-      "relationshipValidateRules": "required"
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "deliveryPerson",
+      "otherEntityRelationshipName": "orders",
+      "relationshipName": "deliveryPerson",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
     }
   ],
   "searchEngine": "no",

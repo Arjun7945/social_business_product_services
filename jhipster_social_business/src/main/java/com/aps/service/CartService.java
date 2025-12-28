@@ -35,11 +35,10 @@ public class CartService {
     private final CustomerRepository customerRepository;
 
     public CartService(
-        ShoppingCartRepository shoppingCartRepository,
-        CartItemRepository cartItemRepository,
-        FishProductRepository fishProductRepository,
-        CustomerRepository customerRepository
-    ) {
+            ShoppingCartRepository shoppingCartRepository,
+            CartItemRepository cartItemRepository,
+            FishProductRepository fishProductRepository,
+            CustomerRepository customerRepository) {
         this.shoppingCartRepository = shoppingCartRepository;
         this.cartItemRepository = cartItemRepository;
         this.fishProductRepository = fishProductRepository;
@@ -51,19 +50,20 @@ public class CartService {
      */
     public ShoppingCart getOrCreateCart(Long customerId) {
         return shoppingCartRepository
-            .findByCustomerId(customerId)
-            .orElseGet(() -> {
-                Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
+                .findByCustomerId(customerId)
+                .orElseGet(() -> {
+                    Customer customer = customerRepository.findById(customerId)
+                            .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-                ShoppingCart cart = new ShoppingCart();
-                cart.setCustomer(customer);
-                cart.setCreatedAt(Instant.now());
-                cart.setUpdatedAt(Instant.now());
+                    ShoppingCart cart = new ShoppingCart();
+                    cart.setCustomer(customer);
+                    cart.setCreatedAt(Instant.now());
+                    cart.setUpdatedAt(Instant.now());
 
-                ShoppingCart savedCart = shoppingCartRepository.save(cart);
-                log.info("Created new shopping cart for customer {}", customerId);
-                return savedCart;
-            });
+                    ShoppingCart savedCart = shoppingCartRepository.save(cart);
+                    log.info("Created new shopping cart for customer {}", customerId);
+                    return savedCart;
+                });
     }
 
     /**
@@ -77,11 +77,12 @@ public class CartService {
         if (existingItem != null) {
             existingItem.setQuantityKg(existingItem.getQuantityKg() + quantityKg);
             cartItemRepository.save(existingItem);
-            log.info("Updated quantity for product {} in cart. New quantity: {}", fishProductId, existingItem.getQuantityKg());
+            log.info("Updated quantity for product {} in cart. New quantity: {}", fishProductId,
+                    existingItem.getQuantityKg());
         } else {
             FishProduct product = fishProductRepository
-                .findById(fishProductId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                    .findById(fishProductId)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
 
             CartItem newItem = new CartItem();
             newItem.setCart(cart);
@@ -103,11 +104,11 @@ public class CartService {
         ShoppingCart cart = getOrCreateCart(customerId);
 
         cartItemRepository
-            .findByCartIdAndProductId(cart.getId(), fishProductId)
-            .ifPresent(item -> {
-                cartItemRepository.delete(item);
-                log.info("Removed product {} from cart for customer {}", fishProductId, customerId);
-            });
+                .findByCartIdAndProductId(cart.getId(), fishProductId)
+                .ifPresent(item -> {
+                    cartItemRepository.delete(item);
+                    log.info("Removed product {} from cart for customer {}", fishProductId, customerId);
+                });
 
         cart.setUpdatedAt(Instant.now());
         shoppingCartRepository.save(cart);
@@ -120,8 +121,8 @@ public class CartService {
         ShoppingCart cart = getOrCreateCart(customerId);
 
         CartItem item = cartItemRepository
-            .findByCartIdAndProductId(cart.getId(), fishProductId)
-            .orElseThrow(() -> new RuntimeException("Item not found in cart"));
+                .findByCartIdAndProductId(cart.getId(), fishProductId)
+                .orElseThrow(() -> new RuntimeException("Item not found in cart"));
 
         item.setQuantityKg(newQuantity);
         cartItemRepository.save(item);
@@ -148,24 +149,28 @@ public class CartService {
         }
 
         return items
-            .stream()
-            .map(item -> {
-                FishProduct product = item.getProduct();
-                Double qty = item.getQuantityKg();
-                BigDecimal price = product.getPricePerKg();
+                .stream()
+                .map(item -> {
+                    FishProduct product = item.getProduct();
+                    Double qty = item.getQuantityKg();
+                    BigDecimal price = product.getPricePerKg();
 
-                double subtotal = qty * price.doubleValue();
+                    double subtotal = qty * price.doubleValue();
 
-                return CartItemDetailsDTO.builder()
-                    .fishProductId(product.getId())
-                    .fishName(product.getName())
-                    .quantityKg(qty)
-                    .pricePerKg(price.doubleValue())
-                    .subtotal(subtotal)
-                    .imageUrl(product.getImageUrl())
-                    .build();
-            })
-            .collect(Collectors.toList());
+                    return CartItemDetailsDTO.builder()
+                            .fishProductId(product.getId())
+                            .fishName(product.getName())
+                            .quantityKg(qty)
+                            .pricePerKg(price.doubleValue())
+                            .subtotal(subtotal)
+                            .subtotal(subtotal)
+                            .imageUrl(
+                                    product.getImage() != null
+                                            ? "/api/product-images/public/" + product.getImage().getId() + "/content"
+                                            : null)
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -182,14 +187,14 @@ public class CartService {
      */
     public void clearCart(Long customerId) {
         shoppingCartRepository
-            .findByCustomerId(customerId)
-            .ifPresent(cart -> {
-                cartItemRepository.deleteByCartId(cart.getId());
-                // Clear the collection in memory to avoid stale state in current transaction
-                if (cart.getItems() != null) {
-                    cart.getItems().clear();
-                }
-            });
+                .findByCustomerId(customerId)
+                .ifPresent(cart -> {
+                    cartItemRepository.deleteByCartId(cart.getId());
+                    // Clear the collection in memory to avoid stale state in current transaction
+                    if (cart.getItems() != null) {
+                        cart.getItems().clear();
+                    }
+                });
     }
 
     /**

@@ -15,7 +15,7 @@ describe('ShoppingCart e2e test', () => {
   const shoppingCartPageUrlPattern = new RegExp('/shopping-cart(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const shoppingCartSample = { createdAt: '2025-12-14T21:27:31.994Z' };
+  const shoppingCartSample = { createdAt: '2025-12-28T07:57:53.321Z' };
 
   let shoppingCart;
   let customer;
@@ -30,17 +30,17 @@ describe('ShoppingCart e2e test', () => {
       method: 'POST',
       url: '/api/customers',
       body: {
-        waPhoneNumber: 'duh minor upbeat',
-        name: 'qua smug whoa',
-        phoneNumber: 'lounge nice',
-        locationLat: 30131.51,
-        locationLon: 6336.29,
-        address: 'term',
-        distanceFromBusinessKm: 14058.26,
+        waPhoneNumber: 'phooey',
+        name: 'impostor even',
+        phoneNumber: 'slowly',
+        locationLat: 26694.47,
+        locationLon: 257.13,
+        address: 'cautiously sadly',
+        distanceFromBusinessKm: 24273.71,
         isPincodeValid: false,
-        role: 'CUSTOMER',
-        joinedAt: '2025-12-14T16:46:58.655Z',
-        lastInteractionAt: '2025-12-15T00:02:55.313Z',
+        role: 'ADMIN',
+        joinedAt: '2025-12-27T17:21:00.567Z',
+        lastInteractionAt: '2025-12-27T16:09:24.873Z',
       },
     }).then(({ body }) => {
       customer = body;
@@ -187,7 +187,9 @@ describe('ShoppingCart e2e test', () => {
       });
 
       it('last delete button click should delete instance of ShoppingCart', () => {
+        cy.intercept('GET', '/api/shopping-carts/*').as('dialogDeleteRequest');
         cy.get(entityDeleteButtonSelector).last().click();
+        cy.wait('@dialogDeleteRequest');
         cy.getEntityDeleteDialogHeading('shoppingCart').should('exist');
         cy.get(entityConfirmDeleteButtonSelector).click();
         cy.wait('@deleteEntityRequest').then(({ response }) => {
@@ -211,13 +213,13 @@ describe('ShoppingCart e2e test', () => {
     });
 
     it('should create an instance of ShoppingCart', () => {
-      cy.get(`[data-cy="createdAt"]`).type('2025-12-14T21:50');
+      cy.get(`[data-cy="createdAt"]`).type('2025-12-27T19:19');
       cy.get(`[data-cy="createdAt"]`).blur();
-      cy.get(`[data-cy="createdAt"]`).should('have.value', '2025-12-14T21:50');
+      cy.get(`[data-cy="createdAt"]`).should('have.value', '2025-12-27T19:19');
 
-      cy.get(`[data-cy="updatedAt"]`).type('2025-12-14T14:27');
+      cy.get(`[data-cy="updatedAt"]`).type('2025-12-27T19:06');
       cy.get(`[data-cy="updatedAt"]`).blur();
-      cy.get(`[data-cy="updatedAt"]`).should('have.value', '2025-12-14T14:27');
+      cy.get(`[data-cy="updatedAt"]`).should('have.value', '2025-12-27T19:06');
 
       cy.get(`[data-cy="customer"]`).select(1);
 

@@ -1,0 +1,27 @@
+{
+  "whatsappProductServiceProApp": {
+    "buttonAction": {
+      "home": {
+        "title": "Button Actions",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Button Action-ஐ உருவாக்கு",
+        "createOrEditLabel": "Button Action -ஐ மாற்று (அ) உருவாக்கு",
+        "notFound": "No Button Actions found"
+      },
+      "created": "Button Action புதிதாக உருவாக்கப்பட்டது, அடையாளம் {{ param }}",
+      "updated": "Button Action மாற்றப்பட்டது, அடையாளம்  {{ param }}",
+      "deleted": "A Button Action நீக்கப்பட்டது, அடையாளம {{ param }}",
+      "delete": {
+        "question": "நீக்குவதற்கு உறுதி செய் Button Action {{ id }}?"
+      },
+      "detail": {
+        "title": "Button Action"
+      },
+      "id": "ID",
+      "waMessageId": "Wa Message Id",
+      "buttonId": "Button Id",
+      "clickedAt": "Clicked At",
+      "clickedBy": "Clicked By"
+    }
+  }
+}

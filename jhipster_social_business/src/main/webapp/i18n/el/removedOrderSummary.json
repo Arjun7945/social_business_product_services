@@ -1,0 +1,31 @@
+{
+  "whatsappProductServiceProApp": {
+    "removedOrderSummary": {
+      "home": {
+        "title": "Removed Order Summaries",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Δημιουργήστε ένα νέο Removed Order Summary",
+        "createOrEditLabel": "Δημιουργήστε η επεξεργαστείτε ένα Removed Order Summary",
+        "notFound": "No Removed Order Summaries found"
+      },
+      "created": "Ένα νέο Removed Order Summary έχει δημιουργηθεί με αναγνωριστικό {{ param }}",
+      "updated": "Ένα Removed Order Summary έχει ενημερωθεί με αναγνωριστικό {{ param }}",
+      "deleted": "Ένα Removed Order Summary έχει διαγραφτεί με αναγνωριστικό {{ param }}",
+      "delete": {
+        "question": "Είστε βέβαιοι όταν θέλετε να διαγράψετε το ακόλουθο Removed Order Summary {{ id }};"
+      },
+      "detail": {
+        "title": "Removed Order Summary"
+      },
+      "id": "ID",
+      "userOriginalId": "User Original Id",
+      "userName": "User Name",
+      "userRole": "User Role",
+      "totalOrders": "Total Orders",
+      "totalAmount": "Total Amount",
+      "firstInteractionAt": "First Interaction At",
+      "lastInteractionAt": "Last Interaction At",
+      "removedAt": "Removed At"
+    }
+  }
+}
