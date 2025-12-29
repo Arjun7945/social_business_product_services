@@ -1,7 +1,7 @@
 const webpackMerge = require('webpack-merge').merge;
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
-const WebpackNotifierPlugin = require('webpack-notifier');
+// const WebpackNotifierPlugin = require('webpack-notifier');
 const path = require('path');
 const sass = require('sass');
 const postcssRTLCSS = require('postcss-rtlcss');
@@ -102,9 +102,10 @@ module.exports = async options =>
           reload: false,
         },
       ),
-      new WebpackNotifierPlugin({
-        title: 'Whatsapp Product Service Pro',
-        contentImage: path.join(__dirname, 'logo-jhipster.png'),
-      }),
+      // Disabled WebpackNotifierPlugin to fix ENAMETOOLONG error on Windows
+      // new WebpackNotifierPlugin({
+      //   title: 'Whatsapp Product Service Pro',
+      //   contentImage: path.join(__dirname, 'logo-jhipster.png'),
+      // }),
     ].filter(Boolean),
   });
