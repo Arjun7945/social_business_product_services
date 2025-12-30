@@ -20,6 +20,8 @@ export interface IRemovedUser {
   orderHistoryId?: number | null;
   distanceFromBusinessKm?: number | null;
   isPincodeValid?: boolean | null;
+  zoneName?: string | null;
+  zoneId?: number | null;
 }
 
 export const defaultValue: Readonly<IRemovedUser> = {

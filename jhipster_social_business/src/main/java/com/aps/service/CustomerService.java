@@ -25,9 +25,13 @@ public class CustomerService {
 
     private final CustomerMapper customerMapper;
 
-    public CustomerService(CustomerRepository customerRepository, CustomerMapper customerMapper) {
+    private final UserRemovalService userRemovalService;
+
+    public CustomerService(CustomerRepository customerRepository, CustomerMapper customerMapper,
+            UserRemovalService userRemovalService) {
         this.customerRepository = customerRepository;
         this.customerMapper = customerMapper;
+        this.userRemovalService = userRemovalService;
     }
 
     /**
@@ -66,14 +70,14 @@ public class CustomerService {
         LOG.debug("Request to partially update Customer : {}", customerDTO);
 
         return customerRepository
-            .findById(customerDTO.getId())
-            .map(existingCustomer -> {
-                customerMapper.partialUpdate(existingCustomer, customerDTO);
+                .findById(customerDTO.getId())
+                .map(existingCustomer -> {
+                    customerMapper.partialUpdate(existingCustomer, customerDTO);
 
-                return existingCustomer;
-            })
-            .map(customerRepository::save)
-            .map(customerMapper::toDto);
+                    return existingCustomer;
+                })
+                .map(customerRepository::save)
+                .map(customerMapper::toDto);
     }
 
     /**
@@ -104,6 +108,7 @@ public class CustomerService {
      */
     public void delete(Long id) {
         LOG.debug("Request to delete Customer : {}", id);
-        customerRepository.deleteById(id);
+        // customerRepository.deleteById(id);
+        userRemovalService.removeCustomer(id, "Deleted by Admin (via API)");
     }
 }

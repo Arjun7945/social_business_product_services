@@ -184,8 +184,20 @@ export const CustomerOrder = () => {
                       <TextFormat type="date" value={customerOrder.confirmedAt} format={APP_DATE_FORMAT} />
                     ) : null}
                   </td>
-                  <td>{customerOrder.removedCustomerId}</td>
-                  <td>{customerOrder.removedDeliveryPersonId}</td>
+                  <td>
+                    {customerOrder.removedCustomerId ? (
+                      <Link to={`/removed-user/${customerOrder.removedCustomerId}`}>{customerOrder.removedCustomerId}</Link>
+                    ) : (
+                      ''
+                    )}
+                  </td>
+                  <td>
+                    {customerOrder.removedDeliveryPersonId ? (
+                      <Link to={`/removed-user/${customerOrder.removedDeliveryPersonId}`}>{customerOrder.removedDeliveryPersonId}</Link>
+                    ) : (
+                      ''
+                    )}
+                  </td>
                   <td>{customerOrder.transactionId}</td>
                   <td>
                     {customerOrder.history ? (

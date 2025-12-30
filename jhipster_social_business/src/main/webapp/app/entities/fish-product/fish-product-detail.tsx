@@ -76,7 +76,9 @@ export const FishProductDetail = () => {
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.fishProduct.image">Image</Translate>
           </dt>
-          <dd>{fishProductEntity.image ? fishProductEntity.image.id : ''}</dd>
+          <dd>
+            {fishProductEntity.image ? <Link to={`/product-image/${fishProductEntity.image.id}`}>{fishProductEntity.image.id}</Link> : ''}
+          </dd>
         </dl>
         <Button tag={Link} to="/fish-product" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

@@ -119,7 +119,13 @@ export const RemovedUserDetail = () => {
               <Translate contentKey="whatsappProductServiceProApp.removedUser.orderHistoryId">Order History Id</Translate>
             </span>
           </dt>
-          <dd>{removedUserEntity.orderHistoryId}</dd>
+          <dd>
+            {removedUserEntity.orderHistoryId ? (
+              <Link to={`/removed-order-summary/${removedUserEntity.orderHistoryId}`}>{removedUserEntity.orderHistoryId}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
           <dt>
             <span id="distanceFromBusinessKm">
               <Translate contentKey="whatsappProductServiceProApp.removedUser.distanceFromBusinessKm">Distance From Business Km</Translate>
@@ -138,6 +144,12 @@ export const RemovedUserDetail = () => {
             </UncontrolledTooltip>
           </dt>
           <dd>{removedUserEntity.isPincodeValid ? 'true' : 'false'}</dd>
+          <dt>
+            <span id="zoneName">
+              <Translate contentKey="whatsappProductServiceProApp.removedUser.zoneName">Zone</Translate>
+            </span>
+          </dt>
+          <dd>{removedUserEntity.zoneName}</dd>
         </dl>
         <Button tag={Link} to="/removed-user" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

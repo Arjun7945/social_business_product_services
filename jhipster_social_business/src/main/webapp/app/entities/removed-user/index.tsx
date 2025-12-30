@@ -7,6 +7,7 @@ import RemovedUser from './removed-user';
 import RemovedUserDetail from './removed-user-detail';
 import RemovedUserUpdate from './removed-user-update';
 import RemovedUserDeleteDialog from './removed-user-delete-dialog';
+import RemovedUserRestoreDialog from './removed-user-restore-dialog';
 
 const RemovedUserRoutes = () => (
   <ErrorBoundaryRoutes>
@@ -16,6 +17,7 @@ const RemovedUserRoutes = () => (
       <Route index element={<RemovedUserDetail />} />
       <Route path="edit" element={<RemovedUserUpdate />} />
       <Route path="delete" element={<RemovedUserDeleteDialog />} />
+      <Route path="restore" element={<RemovedUserRestoreDialog />} />
     </Route>
   </ErrorBoundaryRoutes>
 );

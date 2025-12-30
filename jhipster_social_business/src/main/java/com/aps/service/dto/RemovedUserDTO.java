@@ -52,6 +52,26 @@ public class RemovedUserDTO implements Serializable {
     @Schema(description = "NEW: Stored for Customer audit")
     private Boolean isPincodeValid;
 
+    private String zoneName;
+
+    private Long zoneId;
+
+    public String getZoneName() {
+        return zoneName;
+    }
+
+    public void setZoneName(String zoneName) {
+        this.zoneName = zoneName;
+    }
+
+    public Long getZoneId() {
+        return zoneId;
+    }
+
+    public void setZoneId(Long zoneId) {
+        this.zoneId = zoneId;
+    }
+
     public Long getId() {
         return id;
     }
@@ -213,23 +233,25 @@ public class RemovedUserDTO implements Serializable {
     @Override
     public String toString() {
         return "RemovedUserDTO{" +
-            "id=" + getId() +
-            ", originalId=" + getOriginalId() +
-            ", name='" + getName() + "'" +
-            ", role='" + getRole() + "'" +
-            ", whatsappNumber='" + getWhatsappNumber() + "'" +
-            ", phoneNumber='" + getPhoneNumber() + "'" +
-            ", address='" + getAddress() + "'" +
-            ", locationLat=" + getLocationLat() +
-            ", locationLon=" + getLocationLon() +
-            ", joinedAt='" + getJoinedAt() + "'" +
-            ", removedAt='" + getRemovedAt() + "'" +
-            ", reasonForRemoval='" + getReasonForRemoval() + "'" +
-            ", lastSessionData='" + getLastSessionData() + "'" +
-            ", status='" + getStatus() + "'" +
-            ", orderHistoryId=" + getOrderHistoryId() +
-            ", distanceFromBusinessKm=" + getDistanceFromBusinessKm() +
-            ", isPincodeValid='" + getIsPincodeValid() + "'" +
-            "}";
+                "id=" + getId() +
+                ", originalId=" + getOriginalId() +
+                ", name='" + getName() + "'" +
+                ", role='" + getRole() + "'" +
+                ", whatsappNumber='" + getWhatsappNumber() + "'" +
+                ", phoneNumber='" + getPhoneNumber() + "'" +
+                ", address='" + getAddress() + "'" +
+                ", locationLat=" + getLocationLat() +
+                ", locationLon=" + getLocationLon() +
+                ", joinedAt='" + getJoinedAt() + "'" +
+                ", removedAt='" + getRemovedAt() + "'" +
+                ", reasonForRemoval='" + getReasonForRemoval() + "'" +
+                ", lastSessionData='" + getLastSessionData() + "'" +
+                ", status='" + getStatus() + "'" +
+                ", orderHistoryId=" + getOrderHistoryId() +
+                ", distanceFromBusinessKm=" + getDistanceFromBusinessKm() +
+                ", isPincodeValid='" + getIsPincodeValid() + "'" +
+                ", zoneName='" + getZoneName() + "'" +
+                ", zoneId=" + getZoneId() +
+                "}";
     }
 }

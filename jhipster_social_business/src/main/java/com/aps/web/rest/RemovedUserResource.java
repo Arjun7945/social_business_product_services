@@ -45,10 +45,9 @@ public class RemovedUserResource {
     private final RemovedUserQueryService removedUserQueryService;
 
     public RemovedUserResource(
-        RemovedUserService removedUserService,
-        RemovedUserRepository removedUserRepository,
-        RemovedUserQueryService removedUserQueryService
-    ) {
+            RemovedUserService removedUserService,
+            RemovedUserRepository removedUserRepository,
+            RemovedUserQueryService removedUserQueryService) {
         this.removedUserService = removedUserService;
         this.removedUserRepository = removedUserRepository;
         this.removedUserQueryService = removedUserQueryService;
@@ -58,36 +57,86 @@ public class RemovedUserResource {
      * {@code POST  /removed-users} : Create a new removedUser.
      *
      * @param removedUserDTO the removedUserDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new removedUserDTO, or with status {@code 400 (Bad Request)} if the removedUser has already an ID.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with
+     *         body the new removedUserDTO, or with status {@code 400 (Bad Request)}
+     *         if the removedUser has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    /**
+     * {@code POST  /removed-users/:id/restore} : Restore a removed user.
+     *
+     * @param id the id of the removedUser to restore.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the new entity ID.
+     */
+    @PostMapping("/{id}/restore")
+    public ResponseEntity<?> restoreUser(@PathVariable Long id) {
+        LOG.debug("REST request to restore RemovedUser : {}", id);
+        try {
+            Long newId = removedUserService.restoreUser(id);
+            return ResponseEntity.ok().body(newId);
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            LOG.error("Restore failed for user {}: {}", id, e.getMessage());
+            return ResponseEntity.badRequest()
+                    .header("X-App-Error", "restore.failed.conflict") // Custom header for specific client handling if
+                                                                      // needed
+                    .body(new ErrorResponse(e.getMessage()));
+        } catch (Exception e) {
+            LOG.error("Unexpected error restoring user {}", id, e);
+            return ResponseEntity.internalServerError()
+                    .header("X-App-Error", "restore.failed.internal")
+                    .body(new ErrorResponse("An unexpected error occurred: " + e.getMessage()));
+        }
+    }
+
+    // Simple DTO for error response
+    public static class ErrorResponse {
+        private String message;
+
+        public ErrorResponse(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+
     @PostMapping("")
-    public ResponseEntity<RemovedUserDTO> createRemovedUser(@RequestBody RemovedUserDTO removedUserDTO) throws URISyntaxException {
+    public ResponseEntity<RemovedUserDTO> createRemovedUser(@RequestBody RemovedUserDTO removedUserDTO)
+            throws URISyntaxException {
         LOG.debug("REST request to save RemovedUser : {}", removedUserDTO);
         if (removedUserDTO.getId() != null) {
             throw new BadRequestAlertException("A new removedUser cannot already have an ID", ENTITY_NAME, "idexists");
         }
         removedUserDTO = removedUserService.save(removedUserDTO);
         return ResponseEntity.created(new URI("/api/removed-users/" + removedUserDTO.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, removedUserDTO.getId().toString()))
-            .body(removedUserDTO);
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME,
+                        removedUserDTO.getId().toString()))
+                .body(removedUserDTO);
     }
 
     /**
      * {@code PUT  /removed-users/:id} : Updates an existing removedUser.
      *
-     * @param id the id of the removedUserDTO to save.
+     * @param id             the id of the removedUserDTO to save.
      * @param removedUserDTO the removedUserDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated removedUserDTO,
-     * or with status {@code 400 (Bad Request)} if the removedUserDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the removedUserDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the updated removedUserDTO,
+     *         or with status {@code 400 (Bad Request)} if the removedUserDTO is not
+     *         valid,
+     *         or with status {@code 500 (Internal Server Error)} if the
+     *         removedUserDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
     public ResponseEntity<RemovedUserDTO> updateRemovedUser(
-        @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody RemovedUserDTO removedUserDTO
-    ) throws URISyntaxException {
+            @PathVariable(value = "id", required = false) final Long id,
+            @RequestBody RemovedUserDTO removedUserDTO) throws URISyntaxException {
         LOG.debug("REST request to update RemovedUser : {}, {}", id, removedUserDTO);
         if (removedUserDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -102,26 +151,31 @@ public class RemovedUserResource {
 
         removedUserDTO = removedUserService.update(removedUserDTO);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, removedUserDTO.getId().toString()))
-            .body(removedUserDTO);
+                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME,
+                        removedUserDTO.getId().toString()))
+                .body(removedUserDTO);
     }
 
     /**
-     * {@code PATCH  /removed-users/:id} : Partial updates given fields of an existing removedUser, field will ignore if it is null
+     * {@code PATCH  /removed-users/:id} : Partial updates given fields of an
+     * existing removedUser, field will ignore if it is null
      *
-     * @param id the id of the removedUserDTO to save.
+     * @param id             the id of the removedUserDTO to save.
      * @param removedUserDTO the removedUserDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated removedUserDTO,
-     * or with status {@code 400 (Bad Request)} if the removedUserDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the removedUserDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the removedUserDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the updated removedUserDTO,
+     *         or with status {@code 400 (Bad Request)} if the removedUserDTO is not
+     *         valid,
+     *         or with status {@code 404 (Not Found)} if the removedUserDTO is not
+     *         found,
+     *         or with status {@code 500 (Internal Server Error)} if the
+     *         removedUserDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<RemovedUserDTO> partialUpdateRemovedUser(
-        @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody RemovedUserDTO removedUserDTO
-    ) throws URISyntaxException {
+            @PathVariable(value = "id", required = false) final Long id,
+            @RequestBody RemovedUserDTO removedUserDTO) throws URISyntaxException {
         LOG.debug("REST request to partial update RemovedUser partially : {}, {}", id, removedUserDTO);
         if (removedUserDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -137,9 +191,9 @@ public class RemovedUserResource {
         Optional<RemovedUserDTO> result = removedUserService.partialUpdate(removedUserDTO);
 
         return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, removedUserDTO.getId().toString())
-        );
+                result,
+                HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME,
+                        removedUserDTO.getId().toString()));
     }
 
     /**
@@ -147,17 +201,18 @@ public class RemovedUserResource {
      *
      * @param pageable the pagination information.
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of removedUsers in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list
+     *         of removedUsers in body.
      */
     @GetMapping("")
     public ResponseEntity<List<RemovedUserDTO>> getAllRemovedUsers(
-        RemovedUserCriteria criteria,
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable
-    ) {
+            RemovedUserCriteria criteria,
+            @org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         LOG.debug("REST request to get RemovedUsers by criteria: {}", criteria);
 
         Page<RemovedUserDTO> page = removedUserQueryService.findByCriteria(criteria, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        HttpHeaders headers = PaginationUtil
+                .generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
@@ -165,7 +220,8 @@ public class RemovedUserResource {
      * {@code GET  /removed-users/count} : count all the removedUsers.
      *
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count
+     *         in body.
      */
     @GetMapping("/count")
     public ResponseEntity<Long> countRemovedUsers(RemovedUserCriteria criteria) {
@@ -177,7 +233,8 @@ public class RemovedUserResource {
      * {@code GET  /removed-users/:id} : get the "id" removedUser.
      *
      * @param id the id of the removedUserDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the removedUserDTO, or with status {@code 404 (Not Found)}.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the removedUserDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
     public ResponseEntity<RemovedUserDTO> getRemovedUser(@PathVariable("id") Long id) {
@@ -197,7 +254,7 @@ public class RemovedUserResource {
         LOG.debug("REST request to delete RemovedUser : {}", id);
         removedUserService.delete(id);
         return ResponseEntity.noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-            .build();
+                .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+                .build();
     }
 }

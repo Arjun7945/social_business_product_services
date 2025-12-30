@@ -51,7 +51,13 @@ export const ReturnStatusHistoryDetail = () => {
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.returnStatusHistory.returnedOrder">Returned Order</Translate>
           </dt>
-          <dd>{returnStatusHistoryEntity.returnedOrder ? returnStatusHistoryEntity.returnedOrder.id : ''}</dd>
+          <dd>
+            {returnStatusHistoryEntity.returnedOrder ? (
+              <Link to={`/returned-order/${returnStatusHistoryEntity.returnedOrder.id}`}>{returnStatusHistoryEntity.returnedOrder.id}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
         </dl>
         <Button tag={Link} to="/return-status-history" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

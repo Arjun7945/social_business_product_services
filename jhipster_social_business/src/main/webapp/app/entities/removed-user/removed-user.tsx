@@ -180,6 +180,10 @@ export const RemovedUser = () => {
                   <Translate contentKey="whatsappProductServiceProApp.removedUser.isPincodeValid">Is Pincode Valid</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('isPincodeValid')} />
                 </th>
+                <th className="hand" onClick={sort('zoneName')}>
+                  <Translate contentKey="whatsappProductServiceProApp.removedUser.zoneName">Zone</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('zoneName')} />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -213,8 +217,21 @@ export const RemovedUser = () => {
                   <td>{removedUser.orderHistoryId}</td>
                   <td>{removedUser.distanceFromBusinessKm}</td>
                   <td>{removedUser.isPincodeValid ? 'true' : 'false'}</td>
+                  <td>{removedUser.zoneName}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
+                      <Button
+                        tag={Link}
+                        to={`/removed-user/${removedUser.id}/restore?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                        color="success"
+                        size="sm"
+                        data-cy="entityRestoreButton"
+                      >
+                        <FontAwesomeIcon icon="trash-restore" />{' '}
+                        <span className="d-none d-md-inline">
+                          <Translate contentKey="entity.action.restore">Restore</Translate>
+                        </span>
+                      </Button>
                       <Button tag={Link} to={`/removed-user/${removedUser.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" />{' '}
                         <span className="d-none d-md-inline">

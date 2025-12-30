@@ -141,6 +141,10 @@ export const ReturnedOrder = () => {
                   <Translate contentKey="whatsappProductServiceProApp.returnedOrder.customer">Customer</Translate>{' '}
                   <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('removedCustomerId')}>
+                  <Translate contentKey="whatsappProductServiceProApp.returnedOrder.removedCustomerId">Removed Customer Id</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('removedCustomerId')} />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -166,6 +170,13 @@ export const ReturnedOrder = () => {
                   </td>
                   <td>
                     {returnedOrder.customer ? <Link to={`/customer/${returnedOrder.customer.id}`}>{returnedOrder.customer.name}</Link> : ''}
+                  </td>
+                  <td>
+                    {returnedOrder.removedCustomerId ? (
+                      <Link to={`/removed-user/${returnedOrder.removedCustomerId}`}>{returnedOrder.removedCustomerId}</Link>
+                    ) : (
+                      ''
+                    )}
                   </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

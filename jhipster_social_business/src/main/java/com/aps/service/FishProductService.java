@@ -37,6 +37,9 @@ public class FishProductService {
     public FishProductDTO save(FishProductDTO fishProductDTO) {
         LOG.debug("Request to save FishProduct : {}", fishProductDTO);
         FishProduct fishProduct = fishProductMapper.toEntity(fishProductDTO);
+        if (fishProduct.getCreatedAt() == null) {
+            fishProduct.setCreatedAt(java.time.Instant.now());
+        }
         fishProduct = fishProductRepository.save(fishProduct);
         return fishProductMapper.toDto(fishProduct);
     }
@@ -64,14 +67,14 @@ public class FishProductService {
         LOG.debug("Request to partially update FishProduct : {}", fishProductDTO);
 
         return fishProductRepository
-            .findById(fishProductDTO.getId())
-            .map(existingFishProduct -> {
-                fishProductMapper.partialUpdate(existingFishProduct, fishProductDTO);
+                .findById(fishProductDTO.getId())
+                .map(existingFishProduct -> {
+                    fishProductMapper.partialUpdate(existingFishProduct, fishProductDTO);
 
-                return existingFishProduct;
-            })
-            .map(fishProductRepository::save)
-            .map(fishProductMapper::toDto);
+                    return existingFishProduct;
+                })
+                .map(fishProductRepository::save)
+                .map(fishProductMapper::toDto);
     }
 
     /**

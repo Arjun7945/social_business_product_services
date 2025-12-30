@@ -77,6 +77,17 @@ export const deleteEntity = createAsyncThunk(
   { serializeError: serializeAxiosError },
 );
 
+export const restoreEntity = createAsyncThunk(
+  'removedUser/restore_entity',
+  async (id: string | number, thunkAPI) => {
+    const requestUrl = `${apiUrl}/${id}/restore`;
+    const result = await axios.post<any>(requestUrl);
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError },
+);
+
 // slice
 
 export const RemovedUserSlice = createEntitySlice({
@@ -89,6 +100,11 @@ export const RemovedUserSlice = createEntitySlice({
         state.entity = action.payload.data;
       })
       .addCase(deleteEntity.fulfilled, state => {
+        state.updating = false;
+        state.updateSuccess = true;
+        state.entity = {};
+      })
+      .addCase(restoreEntity.fulfilled, state => {
         state.updating = false;
         state.updateSuccess = true;
         state.entity = {};
@@ -114,7 +130,7 @@ export const RemovedUserSlice = createEntitySlice({
         state.updateSuccess = false;
         state.loading = true;
       })
-      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity), state => {
+      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity, restoreEntity), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.updating = true;

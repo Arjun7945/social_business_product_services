@@ -35,6 +35,8 @@ public class UserRemovalService {
     private final RemovedOrderSummaryRepository removedOrderSummaryRepository;
     private final CustomerFlowService customerFlowService;
     private final ShoppingCartRepository shoppingCartRepository;
+    private final ReturnedOrderRepository returnedOrderRepository;
+    private final DeliveryZoneRepository deliveryZoneRepository;
 
     public UserRemovalService(
             CustomerRepository customerRepository,
@@ -44,7 +46,9 @@ public class UserRemovalService {
             RemovedUserRepository removedUserRepository,
             RemovedOrderSummaryRepository removedOrderSummaryRepository,
             CustomerFlowService customerFlowService,
-            ShoppingCartRepository shoppingCartRepository) {
+            ShoppingCartRepository shoppingCartRepository,
+            ReturnedOrderRepository returnedOrderRepository,
+            DeliveryZoneRepository deliveryZoneRepository) {
         this.customerRepository = customerRepository;
         this.teamMemberRepository = teamMemberRepository;
         this.deliveryPersonRepository = deliveryPersonRepository;
@@ -53,6 +57,8 @@ public class UserRemovalService {
         this.removedOrderSummaryRepository = removedOrderSummaryRepository;
         this.customerFlowService = customerFlowService;
         this.shoppingCartRepository = shoppingCartRepository;
+        this.returnedOrderRepository = returnedOrderRepository;
+        this.deliveryZoneRepository = deliveryZoneRepository;
     }
 
     /**
@@ -110,10 +116,17 @@ public class UserRemovalService {
             removedUser.setAddress(customer.getAddress());
             removedUser.setLocationLat(customer.getLocationLat());
             removedUser.setLocationLon(customer.getLocationLon());
+            removedUser.setDistanceFromBusinessKm(customer.getDistanceFromBusinessKm());
+            removedUser.setIsPincodeValid(customer.getIsPincodeValid());
             removedUser.setJoinedAt(customer.getJoinedAt());
             removedUser.setRemovedAt(Instant.now());
             removedUser.setReasonForRemoval(safeReason);
             removedUser.setOrderHistoryId(summary.getId());
+
+            if (customer.getZone() != null) {
+                removedUser.setZoneId(customer.getZone().getId());
+                removedUser.setZoneName(customer.getZone().getZoneName());
+            }
 
             // Capture session data
             try {
@@ -127,6 +140,7 @@ public class UserRemovalService {
 
             // 3. Link Transfer - BULK UPDATE
             customerOrderRepository.unlinkCustomer(customer.getId(), removedUser.getId());
+            returnedOrderRepository.unlinkCustomer(customer.getId(), removedUser.getId());
 
             // 4. Delete Shopping Cart
             shoppingCartRepository.findByCustomerId(customer.getId()).ifPresent(shoppingCartRepository::delete);
@@ -198,6 +212,11 @@ public class UserRemovalService {
         removedUser.setReasonForRemoval(reason);
         removedUser.setOrderHistoryId(summary.getId());
 
+        if (member.getZone() != null) {
+            removedUser.setZoneId(member.getZone().getId());
+            removedUser.setZoneName(member.getZone().getZoneName());
+        }
+
         removedUser = removedUserRepository.save(removedUser);
 
         // 3. Link Transfer - BULK UPDATE
@@ -260,9 +279,14 @@ public class UserRemovalService {
             newCustomer.setLocationLat(removedUser.getLocationLat());
             newCustomer.setLocationLon(removedUser.getLocationLon());
             newCustomer.setRole(com.aps.domain.enumeration.UserRole.CUSTOMER);
+            newCustomer.setDistanceFromBusinessKm(removedUser.getDistanceFromBusinessKm());
             newCustomer.setIsPincodeValid(true);
             newCustomer.setJoinedAt(removedUser.getJoinedAt());
             newCustomer.setLastInteractionAt(Instant.now());
+
+            if (removedUser.getZoneId() != null) {
+                deliveryZoneRepository.findById(removedUser.getZoneId()).ifPresent(newCustomer::setZone);
+            }
 
             newCustomer = customerRepository.save(newCustomer);
             newId = newCustomer.getId();
@@ -273,6 +297,15 @@ public class UserRemovalService {
                 order.setCustomer(newCustomer);
                 order.setRemovedCustomerId(null);
                 customerOrderRepository.save(order);
+            }
+
+            // Re-link Returned Orders
+            List<com.aps.domain.ReturnedOrder> returnedOrders = returnedOrderRepository
+                    .findAllByRemovedCustomerId(removedUserId);
+            for (com.aps.domain.ReturnedOrder order : returnedOrders) {
+                order.setCustomer(newCustomer);
+                order.setRemovedCustomerId(null);
+                returnedOrderRepository.save(order);
             }
 
             // Restore session data
@@ -295,6 +328,10 @@ public class UserRemovalService {
             newMember.setWaPhoneNumber(removedUser.getWhatsappNumber());
             newMember.setPhoneNumber(removedUser.getPhoneNumber());
             newMember.setIsActive(true);
+
+            if (removedUser.getZoneId() != null) {
+                deliveryZoneRepository.findById(removedUser.getZoneId()).ifPresent(newMember::setZone);
+            }
 
             newMember = deliveryPersonRepository.save(newMember);
             newId = newMember.getId();

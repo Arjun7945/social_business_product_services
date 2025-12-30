@@ -80,8 +80,43 @@ public class RemovedUser implements Serializable {
     /**
      * NEW: Stored for Customer audit
      */
+    /**
+     * NEW: Stored for Customer audit
+     */
     @Column(name = "is_pincode_valid")
     private Boolean isPincodeValid;
+
+    @Column(name = "zone_name")
+    private String zoneName;
+
+    @Column(name = "zone_id")
+    private Long zoneId;
+
+    public String getZoneName() {
+        return this.zoneName;
+    }
+
+    public RemovedUser zoneName(String zoneName) {
+        this.setZoneName(zoneName);
+        return this;
+    }
+
+    public void setZoneName(String zoneName) {
+        this.zoneName = zoneName;
+    }
+
+    public Long getZoneId() {
+        return this.zoneId;
+    }
+
+    public RemovedUser zoneId(Long zoneId) {
+        this.setZoneId(zoneId);
+        return this;
+    }
+
+    public void setZoneId(Long zoneId) {
+        this.zoneId = zoneId;
+    }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -306,7 +341,8 @@ public class RemovedUser implements Serializable {
         this.isPincodeValid = isPincodeValid;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 
     @Override
     public boolean equals(Object o) {
@@ -321,7 +357,8 @@ public class RemovedUser implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -329,23 +366,25 @@ public class RemovedUser implements Serializable {
     @Override
     public String toString() {
         return "RemovedUser{" +
-            "id=" + getId() +
-            ", originalId=" + getOriginalId() +
-            ", name='" + getName() + "'" +
-            ", role='" + getRole() + "'" +
-            ", whatsappNumber='" + getWhatsappNumber() + "'" +
-            ", phoneNumber='" + getPhoneNumber() + "'" +
-            ", address='" + getAddress() + "'" +
-            ", locationLat=" + getLocationLat() +
-            ", locationLon=" + getLocationLon() +
-            ", joinedAt='" + getJoinedAt() + "'" +
-            ", removedAt='" + getRemovedAt() + "'" +
-            ", reasonForRemoval='" + getReasonForRemoval() + "'" +
-            ", lastSessionData='" + getLastSessionData() + "'" +
-            ", status='" + getStatus() + "'" +
-            ", orderHistoryId=" + getOrderHistoryId() +
-            ", distanceFromBusinessKm=" + getDistanceFromBusinessKm() +
-            ", isPincodeValid='" + getIsPincodeValid() + "'" +
-            "}";
+                "id=" + getId() +
+                ", originalId=" + getOriginalId() +
+                ", name='" + getName() + "'" +
+                ", role='" + getRole() + "'" +
+                ", whatsappNumber='" + getWhatsappNumber() + "'" +
+                ", phoneNumber='" + getPhoneNumber() + "'" +
+                ", address='" + getAddress() + "'" +
+                ", locationLat=" + getLocationLat() +
+                ", locationLon=" + getLocationLon() +
+                ", joinedAt='" + getJoinedAt() + "'" +
+                ", removedAt='" + getRemovedAt() + "'" +
+                ", reasonForRemoval='" + getReasonForRemoval() + "'" +
+                ", lastSessionData='" + getLastSessionData() + "'" +
+                ", status='" + getStatus() + "'" +
+                ", orderHistoryId=" + getOrderHistoryId() +
+                ", distanceFromBusinessKm=" + getDistanceFromBusinessKm() +
+                ", isPincodeValid='" + getIsPincodeValid() + "'" +
+                ", zoneName='" + getZoneName() + "'" +
+                ", zoneId=" + getZoneId() +
+                "}";
     }
 }

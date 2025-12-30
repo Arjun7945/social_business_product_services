@@ -47,11 +47,13 @@ export const CartItemDetail = () => {
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.cartItem.product">Product</Translate>
           </dt>
-          <dd>{cartItemEntity.product ? cartItemEntity.product.name : ''}</dd>
+          <dd>
+            {cartItemEntity.product ? <Link to={`/fish-product/${cartItemEntity.product.id}`}>{cartItemEntity.product.name}</Link> : ''}
+          </dd>
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.cartItem.cart">Cart</Translate>
           </dt>
-          <dd>{cartItemEntity.cart ? cartItemEntity.cart.id : ''}</dd>
+          <dd>{cartItemEntity.cart ? <Link to={`/shopping-cart/${cartItemEntity.cart.id}`}>{cartItemEntity.cart.id}</Link> : ''}</dd>
         </dl>
         <Button tag={Link} to="/cart-item" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

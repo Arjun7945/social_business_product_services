@@ -51,7 +51,13 @@ export const ShoppingCartDetail = () => {
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.shoppingCart.customer">Customer</Translate>
           </dt>
-          <dd>{shoppingCartEntity.customer ? shoppingCartEntity.customer.name : ''}</dd>
+          <dd>
+            {shoppingCartEntity.customer ? (
+              <Link to={`/customer/${shoppingCartEntity.customer.id}`}>{shoppingCartEntity.customer.name}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
         </dl>
         <Button tag={Link} to="/shopping-cart" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

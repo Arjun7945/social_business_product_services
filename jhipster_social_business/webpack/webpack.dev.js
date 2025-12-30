@@ -2,7 +2,7 @@ const webpackMerge = require('webpack-merge').merge;
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
 // const WebpackNotifierPlugin = require('webpack-notifier');
-const path = require('path');
+
 const sass = require('sass');
 const postcssRTLCSS = require('postcss-rtlcss');
 
@@ -71,8 +71,8 @@ module.exports = async options =>
       process.env.JHI_DISABLE_WEBPACK_LOGS
         ? null
         : new SimpleProgressWebpackPlugin({
-            format: options.stats === 'minimal' ? 'compact' : 'expanded',
-          }),
+          format: options.stats === 'minimal' ? 'compact' : 'expanded',
+        }),
       new BrowserSyncPlugin(
         {
           https: options.tls,

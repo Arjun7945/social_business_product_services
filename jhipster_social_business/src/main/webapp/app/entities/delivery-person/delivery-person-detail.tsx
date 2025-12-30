@@ -78,11 +78,23 @@ export const DeliveryPersonDetail = () => {
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.deliveryPerson.addedBy">Added By</Translate>
           </dt>
-          <dd>{deliveryPersonEntity.addedBy ? deliveryPersonEntity.addedBy.name : ''}</dd>
+          <dd>
+            {deliveryPersonEntity.addedBy ? (
+              <Link to={`/team-member/${deliveryPersonEntity.addedBy.id}`}>{deliveryPersonEntity.addedBy.name}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.deliveryPerson.zone">Zone</Translate>
           </dt>
-          <dd>{deliveryPersonEntity.zone ? deliveryPersonEntity.zone.zoneName : ''}</dd>
+          <dd>
+            {deliveryPersonEntity.zone ? (
+              <Link to={`/delivery-zone/${deliveryPersonEntity.zone.id}`}>{deliveryPersonEntity.zone.zoneName}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
         </dl>
         <Button tag={Link} to="/delivery-person" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

@@ -29,6 +29,8 @@
     <include file="config/liquibase/changelog/20251228084020_added_entity_ReturnStatusHistory.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251228084021_added_entity_RemovedOrderSummary.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251228084022_added_entity_RemovedUser.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251230154500_added_removed_customer_id_to_returned_order.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251230234500_add_zone_to_removed_user.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251215200000_add_image_data_to_product_image.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20251228084005_added_entity_constraints_Customer.xml" relativeToChangelogFile="false"/>

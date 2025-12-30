@@ -244,6 +244,7 @@ public class ProductManagementService {
             newProduct.setPricePerKg(java.math.BigDecimal.valueOf(price));
             newProduct.setDescription(desc);
             newProduct.setIsAvailable(isAvailable);
+            newProduct.setCreatedAt(java.time.Instant.now());
 
             fishProductRepository.saveAndFlush(newProduct);
 

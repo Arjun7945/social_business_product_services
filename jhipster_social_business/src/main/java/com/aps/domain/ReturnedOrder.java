@@ -80,6 +80,9 @@ public class ReturnedOrder implements Serializable {
     @JsonIgnoreProperties(value = { "orders", "carts", "returns", "addedBy", "zone" }, allowSetters = true)
     private Customer customer;
 
+    @Column(name = "removed_customer_id")
+    private Long removedCustomerId;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -248,7 +251,21 @@ public class ReturnedOrder implements Serializable {
         return this;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    public Long getRemovedCustomerId() {
+        return this.removedCustomerId;
+    }
+
+    public ReturnedOrder removedCustomerId(Long removedCustomerId) {
+        this.setRemovedCustomerId(removedCustomerId);
+        return this;
+    }
+
+    public void setRemovedCustomerId(Long removedCustomerId) {
+        this.removedCustomerId = removedCustomerId;
+    }
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 
     @Override
     public boolean equals(Object o) {
@@ -263,7 +280,8 @@ public class ReturnedOrder implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -271,12 +289,12 @@ public class ReturnedOrder implements Serializable {
     @Override
     public String toString() {
         return "ReturnedOrder{" +
-            "id=" + getId() +
-            ", returnDate='" + getReturnDate() + "'" +
-            ", paymentReceivedMode='" + getPaymentReceivedMode() + "'" +
-            ", paymentReturnedMode='" + getPaymentReturnedMode() + "'" +
-            ", productClaimStatus='" + getProductClaimStatus() + "'" +
-            ", refundAmount=" + getRefundAmount() +
-            "}";
+                "id=" + getId() +
+                ", returnDate='" + getReturnDate() + "'" +
+                ", paymentReceivedMode='" + getPaymentReceivedMode() + "'" +
+                ", paymentReturnedMode='" + getPaymentReturnedMode() + "'" +
+                ", productClaimStatus='" + getProductClaimStatus() + "'" +
+                ", refundAmount=" + getRefundAmount() +
+                "}";
     }
 }

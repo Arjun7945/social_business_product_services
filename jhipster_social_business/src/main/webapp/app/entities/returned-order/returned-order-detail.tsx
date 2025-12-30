@@ -69,11 +69,35 @@ export const ReturnedOrderDetail = () => {
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.returnedOrder.order">Order</Translate>
           </dt>
-          <dd>{returnedOrderEntity.order ? returnedOrderEntity.order.id : ''}</dd>
+          <dd>
+            {returnedOrderEntity.order ? (
+              <Link to={`/customer-order/${returnedOrderEntity.order.id}`}>{returnedOrderEntity.order.id}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.returnedOrder.customer">Customer</Translate>
           </dt>
-          <dd>{returnedOrderEntity.customer ? returnedOrderEntity.customer.name : ''}</dd>
+          <dd>
+            {returnedOrderEntity.customer ? (
+              <Link to={`/customer/${returnedOrderEntity.customer.id}`}>{returnedOrderEntity.customer.name}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
+          <dt>
+            <span id="removedCustomerId">
+              <Translate contentKey="whatsappProductServiceProApp.returnedOrder.removedCustomerId">Removed Customer Id</Translate>
+            </span>
+          </dt>
+          <dd>
+            {returnedOrderEntity.removedCustomerId ? (
+              <Link to={`/removed-user/${returnedOrderEntity.removedCustomerId}`}>{returnedOrderEntity.removedCustomerId}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
         </dl>
         <Button tag={Link} to="/returned-order" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

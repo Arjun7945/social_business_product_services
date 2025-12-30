@@ -46,11 +46,23 @@ export const ReturnedOrderItemDetail = () => {
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.returnedOrderItem.product">Product</Translate>
           </dt>
-          <dd>{returnedOrderItemEntity.product ? returnedOrderItemEntity.product.name : ''}</dd>
+          <dd>
+            {returnedOrderItemEntity.product ? (
+              <Link to={`/fish-product/${returnedOrderItemEntity.product.id}`}>{returnedOrderItemEntity.product.name}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.returnedOrderItem.returnedOrder">Returned Order</Translate>
           </dt>
-          <dd>{returnedOrderItemEntity.returnedOrder ? returnedOrderItemEntity.returnedOrder.id : ''}</dd>
+          <dd>
+            {returnedOrderItemEntity.returnedOrder ? (
+              <Link to={`/returned-order/${returnedOrderItemEntity.returnedOrder.id}`}>{returnedOrderItemEntity.returnedOrder.id}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
         </dl>
         <Button tag={Link} to="/returned-order-item" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

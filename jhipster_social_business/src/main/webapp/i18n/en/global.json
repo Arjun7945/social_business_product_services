@@ -114,6 +114,7 @@
       "delete": "Delete",
       "edit": "Edit",
       "open": "Open",
+      "restore": "Restore",
       "save": "Save",
       "view": "View",
       "show": "Show {{otherEntity}}"
@@ -124,6 +125,9 @@
     },
     "delete": {
       "title": "Confirm delete operation"
+    },
+    "restore": {
+      "title": "Confirm restore operation"
     },
     "validation": {
       "required": "This field is required.",

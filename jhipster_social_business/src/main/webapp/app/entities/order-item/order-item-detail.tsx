@@ -46,11 +46,13 @@ export const OrderItemDetail = () => {
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.orderItem.product">Product</Translate>
           </dt>
-          <dd>{orderItemEntity.product ? orderItemEntity.product.name : ''}</dd>
+          <dd>
+            {orderItemEntity.product ? <Link to={`/fish-product/${orderItemEntity.product.id}`}>{orderItemEntity.product.name}</Link> : ''}
+          </dd>
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.orderItem.order">Order</Translate>
           </dt>
-          <dd>{orderItemEntity.order ? orderItemEntity.order.id : ''}</dd>
+          <dd>{orderItemEntity.order ? <Link to={`/customer-order/${orderItemEntity.order.id}`}>{orderItemEntity.order.id}</Link> : ''}</dd>
         </dl>
         <Button tag={Link} to="/order-item" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

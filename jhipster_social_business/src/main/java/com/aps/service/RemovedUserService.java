@@ -23,9 +23,13 @@ public class RemovedUserService {
 
     private final RemovedUserMapper removedUserMapper;
 
-    public RemovedUserService(RemovedUserRepository removedUserRepository, RemovedUserMapper removedUserMapper) {
+    private final UserRemovalService userRemovalService;
+
+    public RemovedUserService(RemovedUserRepository removedUserRepository, RemovedUserMapper removedUserMapper,
+            UserRemovalService userRemovalService) {
         this.removedUserRepository = removedUserRepository;
         this.removedUserMapper = removedUserMapper;
+        this.userRemovalService = userRemovalService;
     }
 
     /**
@@ -64,14 +68,14 @@ public class RemovedUserService {
         LOG.debug("Request to partially update RemovedUser : {}", removedUserDTO);
 
         return removedUserRepository
-            .findById(removedUserDTO.getId())
-            .map(existingRemovedUser -> {
-                removedUserMapper.partialUpdate(existingRemovedUser, removedUserDTO);
+                .findById(removedUserDTO.getId())
+                .map(existingRemovedUser -> {
+                    removedUserMapper.partialUpdate(existingRemovedUser, removedUserDTO);
 
-                return existingRemovedUser;
-            })
-            .map(removedUserRepository::save)
-            .map(removedUserMapper::toDto);
+                    return existingRemovedUser;
+                })
+                .map(removedUserRepository::save)
+                .map(removedUserMapper::toDto);
     }
 
     /**
@@ -94,5 +98,16 @@ public class RemovedUserService {
     public void delete(Long id) {
         LOG.debug("Request to delete RemovedUser : {}", id);
         removedUserRepository.deleteById(id);
+    }
+
+    /**
+     * Restore a removed user.
+     *
+     * @param id the id of the removedUser to restore.
+     * @return the new entity ID.
+     */
+    public Long restoreUser(Long id) {
+        LOG.debug("Request to restore RemovedUser : {}", id);
+        return userRemovalService.restoreUser(id);
     }
 }

@@ -78,7 +78,13 @@ export const CustomerOrderDetail = () => {
               <Translate contentKey="whatsappProductServiceProApp.customerOrder.removedCustomerId">Removed Customer Id</Translate>
             </span>
           </dt>
-          <dd>{customerOrderEntity.removedCustomerId}</dd>
+          <dd>
+            {customerOrderEntity.removedCustomerId ? (
+              <Link to={`/removed-user/${customerOrderEntity.removedCustomerId}`}>{customerOrderEntity.removedCustomerId}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
           <dt>
             <span id="removedDeliveryPersonId">
               <Translate contentKey="whatsappProductServiceProApp.customerOrder.removedDeliveryPersonId">
@@ -86,7 +92,13 @@ export const CustomerOrderDetail = () => {
               </Translate>
             </span>
           </dt>
-          <dd>{customerOrderEntity.removedDeliveryPersonId}</dd>
+          <dd>
+            {customerOrderEntity.removedDeliveryPersonId ? (
+              <Link to={`/removed-user/${customerOrderEntity.removedDeliveryPersonId}`}>{customerOrderEntity.removedDeliveryPersonId}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
           <dt>
             <span id="transactionId">
               <Translate contentKey="whatsappProductServiceProApp.customerOrder.transactionId">Transaction Id</Translate>
@@ -96,15 +108,33 @@ export const CustomerOrderDetail = () => {
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.customerOrder.history">History</Translate>
           </dt>
-          <dd>{customerOrderEntity.history ? customerOrderEntity.history.id : ''}</dd>
+          <dd>
+            {customerOrderEntity.history ? (
+              <Link to={`/order-status-history/${customerOrderEntity.history.id}`}>{customerOrderEntity.history.id}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.customerOrder.customer">Customer</Translate>
           </dt>
-          <dd>{customerOrderEntity.customer ? customerOrderEntity.customer.name : ''}</dd>
+          <dd>
+            {customerOrderEntity.customer ? (
+              <Link to={`/customer/${customerOrderEntity.customer.id}`}>{customerOrderEntity.customer.name}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
           <dt>
             <Translate contentKey="whatsappProductServiceProApp.customerOrder.deliveryPerson">Delivery Person</Translate>
           </dt>
-          <dd>{customerOrderEntity.deliveryPerson ? customerOrderEntity.deliveryPerson.name : ''}</dd>
+          <dd>
+            {customerOrderEntity.deliveryPerson ? (
+              <Link to={`/delivery-person/${customerOrderEntity.deliveryPerson.id}`}>{customerOrderEntity.deliveryPerson.name}</Link>
+            ) : (
+              ''
+            )}
+          </dd>
         </dl>
         <Button tag={Link} to="/customer-order" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

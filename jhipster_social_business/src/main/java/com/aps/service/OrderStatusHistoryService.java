@@ -123,10 +123,13 @@ public class OrderStatusHistoryService {
      * @param order the order to record status for.
      */
     public void addEvent(com.aps.domain.CustomerOrder order) {
-        OrderStatusHistory history = new OrderStatusHistory();
+        OrderStatusHistory history = order.getHistory();
+        if (history == null) {
+            history = new OrderStatusHistory();
+            history.setCustomerOrder(order);
+        }
         history.setStatus(order.getStatus());
         history.setChangeTime(java.time.Instant.now());
-        history.setCustomerOrder(order);
         orderStatusHistoryRepository.save(history);
     }
 }
