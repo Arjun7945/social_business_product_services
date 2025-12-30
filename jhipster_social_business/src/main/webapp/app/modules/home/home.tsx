@@ -13,14 +13,15 @@ export const Home = () => {
   return (
     <Row>
       <Col md="3" className="pad">
-        <span className="hipster rounded" />
+        <img src="content/images/footerlogo.jpg" alt="Product Services Logo" className="img-fluid rounded" />
       </Col>
       <Col md="9">
         <h1 className="display-4">
-          <Translate contentKey="home.title">Welcome, Java Hipster!</Translate>
+          <Translate contentKey="home.title">Welcome, Product Services!</Translate>
+          <Translate contentKey="home.titleSuffix"> (Whatsapp Product Service)</Translate>
         </h1>
         <p className="lead">
-          <Translate contentKey="home.subtitle">This is your homepage</Translate>
+          <Translate contentKey="home.subtitle">This is your product homepage</Translate>
         </p>
         {account?.login ? (
           <div>
@@ -33,20 +34,16 @@ export const Home = () => {
         ) : (
           <div>
             <Alert color="warning">
-              <Translate contentKey="global.messages.info.authenticated.prefix">If you want to </Translate>
+              <Translate contentKey="home.signin.prefix">If you want to </Translate>
 
               <Link to="/login" className="alert-link">
-                <Translate contentKey="global.messages.info.authenticated.link"> sign in</Translate>
+                <Translate contentKey="home.signin.link"> sign in</Translate>
               </Link>
-              <Translate contentKey="global.messages.info.authenticated.suffix">
-                , you can try the default accounts:
-                <br />- Administrator (login=&quot;admin&quot; and password=&quot;admin&quot;)
-                <br />- User (login=&quot;user&quot; and password=&quot;user&quot;).
-              </Translate>
+              <Translate contentKey="home.signin.suffix">, use your registered account.</Translate>
             </Alert>
 
             <Alert color="warning">
-              <Translate contentKey="global.messages.info.register.noaccount">You do not have an account yet?</Translate>&nbsp;
+              <Translate contentKey="global.messages.info.register.noaccount">You don&apos;t have an account yet?</Translate>&nbsp;
               <Link to="/account/register" className="alert-link">
                 <Translate contentKey="global.messages.info.register.link">Register a new account</Translate>
               </Link>
@@ -54,41 +51,31 @@ export const Home = () => {
           </div>
         )}
         <p>
-          <Translate contentKey="home.question">If you have any question on JHipster:</Translate>
+          <Translate contentKey="home.question">If you have any question contact dev:</Translate>
         </p>
 
         <ul>
           <li>
-            <a href="https://www.jhipster.tech/" target="_blank" rel="noopener noreferrer">
-              <Translate contentKey="home.link.homepage">JHipster homepage</Translate>
+            <Link to="/contact-dev">
+              <Translate contentKey="home.link.contact">Contact Dev</Translate>
+            </Link>
+          </li>
+          <li>
+            <a href="https://www.linkedin.com/company/lxisoft" target="_blank" rel="noopener noreferrer">
+              <Translate contentKey="home.link.devsite">Visit Developer Site</Translate>
             </a>
           </li>
           <li>
-            <a href="https://stackoverflow.com/tags/jhipster/info" target="_blank" rel="noopener noreferrer">
-              <Translate contentKey="home.link.stackoverflow">JHipster on Stack Overflow</Translate>
-            </a>
-          </li>
-          <li>
-            <a href="https://github.com/jhipster/generator-jhipster/issues?state=open" target="_blank" rel="noopener noreferrer">
-              <Translate contentKey="home.link.bugtracker">JHipster bug tracker</Translate>
-            </a>
-          </li>
-          <li>
-            <a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer">
-              <Translate contentKey="home.link.chat">JHipster public chat room</Translate>
-            </a>
-          </li>
-          <li>
-            <a href="https://twitter.com/jhipster" target="_blank" rel="noopener noreferrer">
-              <Translate contentKey="home.link.follow">follow @jhipster on Twitter</Translate>
-            </a>
+            <Link to="/raise-ticket">
+              <Translate contentKey="home.link.ticket">Create a Issue Ticket</Translate>
+            </Link>
           </li>
         </ul>
 
         <p>
-          <Translate contentKey="home.like">If you like JHipster, do not forget to give us a star on</Translate>{' '}
-          <a href="https://github.com/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer">
-            GitHub
+          <Translate contentKey="home.like">If you like our Work, don&apos;t forget to give us a star on</Translate>{' '}
+          <a href="https://github.com/lxisoft" target="_blank" rel="noopener noreferrer">
+            <Translate contentKey="home.github">GitHub</Translate>
           </a>
           !
         </p>

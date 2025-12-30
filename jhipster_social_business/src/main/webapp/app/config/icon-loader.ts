@@ -1,3 +1,4 @@
+import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import {
   faArrowLeft,
   faAsterisk,
@@ -7,6 +8,7 @@ import {
   faCloud,
   faCogs,
   faDatabase,
+  faEnvelope,
   faEye,
   faFlag,
   faHeart,
@@ -14,6 +16,7 @@ import {
   faList,
   faLock,
   faPencilAlt,
+  faPhone,
   faPlus,
   faRoad,
   faSave,
@@ -46,6 +49,7 @@ export const loadIcons = () => {
     faCloud,
     faCogs,
     faDatabase,
+    faEnvelope,
     faEye,
     faFlag,
     faHeart,
@@ -53,12 +57,13 @@ export const loadIcons = () => {
     faList,
     faLock,
     faPencilAlt,
+    faPhone,
     faPlus,
     faRoad,
     faSave,
+    faSearch,
     faSignInAlt,
     faSignOutAlt,
-    faSearch,
     faSort,
     faSync,
     faTachometerAlt,
@@ -69,7 +74,9 @@ export const loadIcons = () => {
     faUser,
     faUserPlus,
     faUsers,
-    faUsersCog,
     faWrench,
+    // @ts-expect-error: Brand icon type mismatch
+    faLinkedin,
+    faGithub,
   );
 };
