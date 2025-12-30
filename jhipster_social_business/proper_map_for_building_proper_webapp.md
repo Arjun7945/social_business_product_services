@@ -72,8 +72,7 @@
   - Java Bean Validation
   - Exception handling
   - Rate Limiting / Throttling
-- **Data Handling:**
-  - Request/response DTOs
+- **Data Handling:**  - Request/response DTOs
   - File upload/download
   - Pagination & filtering
   - DTOs

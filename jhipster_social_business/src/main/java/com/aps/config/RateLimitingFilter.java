@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -24,20 +25,36 @@ public class RateLimitingFilter implements Filter {
 
     private final Map<String, Bucket> cache = new ConcurrentHashMap<>();
 
-    // Limit: 20 requests per minute
-    private Bandwidth limit = Bandwidth.classic(20, Refill.greedy(20, Duration.ofMinutes(1)));
+    @Value("${application.rate-limiting.enabled:true}")
+    private boolean enabled;
+
+    @Value("${application.rate-limiting.capacity:20}")
+    private int capacity;
+
+    @Value("${application.rate-limiting.duration-in-minutes:1}")
+    private int durationInMinutes;
+
+    private Bandwidth limit;
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        this.limit = Bandwidth.classic(capacity, Refill.greedy(capacity, Duration.ofMinutes(durationInMinutes)));
+    }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
 
         String path = httpServletRequest.getRequestURI();
 
-        // Apply only to public/auth API paths, skip static assets/actuator if needed
-        if (path.startsWith("/api")) {
+        // Apply only to public/auth API paths if enabled
+        if (enabled && path.startsWith("/api")) {
             String ip = httpServletRequest.getRemoteAddr();
+            // Re-build limit if configuration changes (though init handles startup)
+            // For simplicity in this filter, we assume static config after startup or
+            // simplistic map
             Bucket bucket = cache.computeIfAbsent(ip, k -> Bucket.builder().addLimit(limit).build());
 
             if (bucket.tryConsume(1)) {

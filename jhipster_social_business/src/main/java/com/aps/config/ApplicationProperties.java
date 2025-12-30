@@ -12,11 +12,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ApplicationProperties {
 
     private final Liquibase liquibase = new Liquibase();
+    private final RateLimiting rateLimiting = new RateLimiting();
 
     // jhipster-needle-application-properties-property
 
     public Liquibase getLiquibase() {
         return liquibase;
+    }
+
+    public RateLimiting getRateLimiting() {
+        return rateLimiting;
     }
 
     // jhipster-needle-application-properties-property-getter
@@ -31,6 +36,39 @@ public class ApplicationProperties {
 
         public void setAsyncStart(Boolean asyncStart) {
             this.asyncStart = asyncStart;
+        }
+    }
+
+    public static class RateLimiting {
+
+        private Boolean enabled;
+
+        private Long capacity;
+
+        private Integer durationInMinutes;
+
+        public Boolean getEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public Long getCapacity() {
+            return capacity;
+        }
+
+        public void setCapacity(Long capacity) {
+            this.capacity = capacity;
+        }
+
+        public Integer getDurationInMinutes() {
+            return durationInMinutes;
+        }
+
+        public void setDurationInMinutes(Integer durationInMinutes) {
+            this.durationInMinutes = durationInMinutes;
         }
     }
     // jhipster-needle-application-properties-property-class

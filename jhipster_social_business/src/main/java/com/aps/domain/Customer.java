@@ -8,6 +8,10 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -19,7 +23,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "customer")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Customer implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -73,6 +80,7 @@ public class Customer implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "history", "items", "customer", "deliveryPerson" }, allowSetters = true)
+    @Builder.Default
     private Set<CustomerOrder> orders = new HashSet<>();
 
     /**
@@ -81,6 +89,7 @@ public class Customer implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "items", "customer" }, allowSetters = true)
+    @Builder.Default
     private Set<ShoppingCart> carts = new HashSet<>();
 
     /**
@@ -89,6 +98,7 @@ public class Customer implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "histories", "items", "order", "customer" }, allowSetters = true)
+    @Builder.Default
     private Set<ReturnedOrder> returns = new HashSet<>();
 
     /**
@@ -103,21 +113,9 @@ public class Customer implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() {
-        return this.id;
-    }
-
     public Customer id(Long id) {
         this.setId(id);
         return this;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getWaPhoneNumber() {
-        return this.waPhoneNumber;
     }
 
     public Customer waPhoneNumber(String waPhoneNumber) {
@@ -125,25 +123,9 @@ public class Customer implements Serializable {
         return this;
     }
 
-    public void setWaPhoneNumber(String waPhoneNumber) {
-        this.waPhoneNumber = waPhoneNumber;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
     public Customer name(String name) {
         this.setName(name);
         return this;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPhoneNumber() {
-        return this.phoneNumber;
     }
 
     public Customer phoneNumber(String phoneNumber) {
@@ -151,25 +133,9 @@ public class Customer implements Serializable {
         return this;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public Double getLocationLat() {
-        return this.locationLat;
-    }
-
     public Customer locationLat(Double locationLat) {
         this.setLocationLat(locationLat);
         return this;
-    }
-
-    public void setLocationLat(Double locationLat) {
-        this.locationLat = locationLat;
-    }
-
-    public Double getLocationLon() {
-        return this.locationLon;
     }
 
     public Customer locationLon(Double locationLon) {
@@ -177,25 +143,9 @@ public class Customer implements Serializable {
         return this;
     }
 
-    public void setLocationLon(Double locationLon) {
-        this.locationLon = locationLon;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
-
     public Customer address(String address) {
         this.setAddress(address);
         return this;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Double getDistanceFromBusinessKm() {
-        return this.distanceFromBusinessKm;
     }
 
     public Customer distanceFromBusinessKm(Double distanceFromBusinessKm) {
@@ -203,25 +153,9 @@ public class Customer implements Serializable {
         return this;
     }
 
-    public void setDistanceFromBusinessKm(Double distanceFromBusinessKm) {
-        this.distanceFromBusinessKm = distanceFromBusinessKm;
-    }
-
-    public Boolean getIsPincodeValid() {
-        return this.isPincodeValid;
-    }
-
     public Customer isPincodeValid(Boolean isPincodeValid) {
         this.setIsPincodeValid(isPincodeValid);
         return this;
-    }
-
-    public void setIsPincodeValid(Boolean isPincodeValid) {
-        this.isPincodeValid = isPincodeValid;
-    }
-
-    public UserRole getRole() {
-        return this.role;
     }
 
     public Customer role(UserRole role) {
@@ -229,48 +163,14 @@ public class Customer implements Serializable {
         return this;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
-
-    public Instant getJoinedAt() {
-        return this.joinedAt;
-    }
-
     public Customer joinedAt(Instant joinedAt) {
         this.setJoinedAt(joinedAt);
         return this;
     }
 
-    public void setJoinedAt(Instant joinedAt) {
-        this.joinedAt = joinedAt;
-    }
-
-    public Instant getLastInteractionAt() {
-        return this.lastInteractionAt;
-    }
-
     public Customer lastInteractionAt(Instant lastInteractionAt) {
         this.setLastInteractionAt(lastInteractionAt);
         return this;
-    }
-
-    public void setLastInteractionAt(Instant lastInteractionAt) {
-        this.lastInteractionAt = lastInteractionAt;
-    }
-
-    public Set<CustomerOrder> getOrders() {
-        return this.orders;
-    }
-
-    public void setOrders(Set<CustomerOrder> customerOrders) {
-        if (this.orders != null) {
-            this.orders.forEach(i -> i.setCustomer(null));
-        }
-        if (customerOrders != null) {
-            customerOrders.forEach(i -> i.setCustomer(this));
-        }
-        this.orders = customerOrders;
     }
 
     public Customer orders(Set<CustomerOrder> customerOrders) {
@@ -290,20 +190,6 @@ public class Customer implements Serializable {
         return this;
     }
 
-    public Set<ShoppingCart> getCarts() {
-        return this.carts;
-    }
-
-    public void setCarts(Set<ShoppingCart> shoppingCarts) {
-        if (this.carts != null) {
-            this.carts.forEach(i -> i.setCustomer(null));
-        }
-        if (shoppingCarts != null) {
-            shoppingCarts.forEach(i -> i.setCustomer(this));
-        }
-        this.carts = shoppingCarts;
-    }
-
     public Customer carts(Set<ShoppingCart> shoppingCarts) {
         this.setCarts(shoppingCarts);
         return this;
@@ -319,20 +205,6 @@ public class Customer implements Serializable {
         this.carts.remove(shoppingCart);
         shoppingCart.setCustomer(null);
         return this;
-    }
-
-    public Set<ReturnedOrder> getReturns() {
-        return this.returns;
-    }
-
-    public void setReturns(Set<ReturnedOrder> returnedOrders) {
-        if (this.returns != null) {
-            this.returns.forEach(i -> i.setCustomer(null));
-        }
-        if (returnedOrders != null) {
-            returnedOrders.forEach(i -> i.setCustomer(this));
-        }
-        this.returns = returnedOrders;
     }
 
     public Customer returns(Set<ReturnedOrder> returnedOrders) {
@@ -352,25 +224,9 @@ public class Customer implements Serializable {
         return this;
     }
 
-    public TeamMember getAddedBy() {
-        return this.addedBy;
-    }
-
-    public void setAddedBy(TeamMember teamMember) {
-        this.addedBy = teamMember;
-    }
-
     public Customer addedBy(TeamMember teamMember) {
         this.setAddedBy(teamMember);
         return this;
-    }
-
-    public DeliveryZone getZone() {
-        return this.zone;
-    }
-
-    public void setZone(DeliveryZone deliveryZone) {
-        this.zone = deliveryZone;
     }
 
     public Customer zone(DeliveryZone deliveryZone) {
@@ -378,41 +234,6 @@ public class Customer implements Serializable {
         return this;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Customer)) {
-            return false;
-        }
-        return getId() != null && getId().equals(((Customer) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "Customer{" +
-            "id=" + getId() +
-            ", waPhoneNumber='" + getWaPhoneNumber() + "'" +
-            ", name='" + getName() + "'" +
-            ", phoneNumber='" + getPhoneNumber() + "'" +
-            ", locationLat=" + getLocationLat() +
-            ", locationLon=" + getLocationLon() +
-            ", address='" + getAddress() + "'" +
-            ", distanceFromBusinessKm=" + getDistanceFromBusinessKm() +
-            ", isPincodeValid='" + getIsPincodeValid() + "'" +
-            ", role='" + getRole() + "'" +
-            ", joinedAt='" + getJoinedAt() + "'" +
-            ", lastInteractionAt='" + getLastInteractionAt() + "'" +
-            "}";
-    }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 }

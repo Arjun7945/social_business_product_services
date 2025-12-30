@@ -1,4 +1,4 @@
-package com.aps.service.event;
+package com.aps.service.order_service_event.event;
 
 import com.aps.domain.Customer;
 import com.aps.domain.CustomerOrder;

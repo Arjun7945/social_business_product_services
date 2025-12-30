@@ -22,6 +22,13 @@ In the project root, JHipster generates configuration files for tools like git, 
 
 ## Development
 
+## API Versioning Strategy
+
+This project uses **URI Versioning** for external-facing APIs to ensure backward compatibility and granular control.
+*   **Existing APIs**: JHipster-generated internal APIs (e.g., entity CRUD) remain on `/api/...`.
+*   **External/New APIs**: Must use `/api/v1/...` (e.g., `/api/v1/webhook`).
+*   **Migration**: When introducing breaking changes to an external API, increment the version (e.g., `/api/v2/...`).
+
 ### Doing API-First development using openapi-generator-cli
 
 [OpenAPI-Generator]() is configured for this application. You can generate API code from the `src/main/resources/swagger/api.yml` definition file by running:

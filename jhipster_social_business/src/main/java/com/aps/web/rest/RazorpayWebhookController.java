@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/webhooks")
+@RequestMapping({ "/api/webhooks", "/api/v1/webhooks" })
 public class RazorpayWebhookController {
 
     private final Logger log = LoggerFactory.getLogger(RazorpayWebhookController.class);
@@ -20,9 +20,8 @@ public class RazorpayWebhookController {
 
     @PostMapping("/razorpay")
     public ResponseEntity<String> handleRazorpayWebhook(
-        @RequestBody String payload,
-        @RequestHeader("X-Razorpay-Signature") String signature
-    ) {
+            @RequestBody String payload,
+            @RequestHeader("X-Razorpay-Signature") String signature) {
         log.info("Received Razorpay Webhook");
 
         // 1. Verify Signature

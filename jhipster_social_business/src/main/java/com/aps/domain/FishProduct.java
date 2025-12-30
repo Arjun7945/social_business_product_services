@@ -6,6 +6,10 @@ import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -17,7 +21,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "fish_product")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class FishProduct implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -64,21 +71,9 @@ public class FishProduct implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() {
-        return this.id;
-    }
-
     public FishProduct id(Long id) {
         this.setId(id);
         return this;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return this.name;
     }
 
     public FishProduct name(String name) {
@@ -86,25 +81,9 @@ public class FishProduct implements Serializable {
         return this;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPricePerKg() {
-        return this.pricePerKg;
-    }
-
     public FishProduct pricePerKg(BigDecimal pricePerKg) {
         this.setPricePerKg(pricePerKg);
         return this;
-    }
-
-    public void setPricePerKg(BigDecimal pricePerKg) {
-        this.pricePerKg = pricePerKg;
-    }
-
-    public Double getAvailableQuantity() {
-        return this.availableQuantity;
     }
 
     public FishProduct availableQuantity(Double availableQuantity) {
@@ -112,25 +91,9 @@ public class FishProduct implements Serializable {
         return this;
     }
 
-    public void setAvailableQuantity(Double availableQuantity) {
-        this.availableQuantity = availableQuantity;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
     public FishProduct description(String description) {
         this.setDescription(description);
         return this;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Boolean getIsAvailable() {
-        return this.isAvailable;
     }
 
     public FishProduct isAvailable(Boolean isAvailable) {
@@ -138,29 +101,9 @@ public class FishProduct implements Serializable {
         return this;
     }
 
-    public void setIsAvailable(Boolean isAvailable) {
-        this.isAvailable = isAvailable;
-    }
-
-    public Instant getCreatedAt() {
-        return this.createdAt;
-    }
-
     public FishProduct createdAt(Instant createdAt) {
         this.setCreatedAt(createdAt);
         return this;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public ProductImage getImage() {
-        return this.image;
-    }
-
-    public void setImage(ProductImage productImage) {
-        this.image = productImage;
     }
 
     public FishProduct image(ProductImage productImage) {
@@ -168,36 +111,6 @@ public class FishProduct implements Serializable {
         return this;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof FishProduct)) {
-            return false;
-        }
-        return getId() != null && getId().equals(((FishProduct) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "FishProduct{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", pricePerKg=" + getPricePerKg() +
-            ", availableQuantity=" + getAvailableQuantity() +
-            ", description='" + getDescription() + "'" +
-            ", isAvailable='" + getIsAvailable() + "'" +
-            ", createdAt='" + getCreatedAt() + "'" +
-            "}";
-    }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 }

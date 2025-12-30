@@ -1,7 +1,7 @@
 package com.aps.service.notification;
 
 import com.aps.service.DeliveryFlowService;
-import com.aps.service.event.OrderPlacedEvent;
+import com.aps.service.order_service_event.event.OrderPlacedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
