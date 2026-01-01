@@ -19,15 +19,8 @@ export interface IHeaderProps {
   currentLocale: string;
 }
 
-import { useLocation } from 'react-router-dom';
-
 const Header = (props: IHeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const location = useLocation();
-
-  if (location.pathname.startsWith('/ourCustomers')) {
-    return null;
-  }
 
   const dispatch = useAppDispatch();
 

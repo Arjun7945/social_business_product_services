@@ -18,6 +18,26 @@
     4. take all the neccesary informations from the ReactLegacy code and implement it in the new code.
 * **Prohibition:** **DO NOT make your own decisions or invent new logic.** You must replicate the proven logic from the Legacy codebase.
 
+## 2.1 TASK OF THE DAY
+* **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code. follow the step 3 below
+* **task:**
+    1. Analyze the image uploaded and based on the image and requirements, implement the logic in the new code.
+    2. requirements: so based on the image you can see that how track order page is designed in it nad i need the same ui to be implemented inmy new code ourcustomer section.
+    2.1 you can skip the colors shown in the image and use current suitable coloes in the ourcustomer section
+    2.2 i need animation on the status chart shown in the image where the order recieved to delivered should have animation each time the page is loaded and based on the status of the product the animation should be shown.
+    2.3 estimated time can be removed while updating the track page.
+    2.4 the view on map should be replaced with view purchase order.
+    2.5 order reieved will be replaced with order placed.
+    2.6 order confirmed should be replaced with order onway
+    2.7 order processed will be replaced with payment pending
+    2.8 out for delivery will be replaced with payment successfully recieved or payment failed (based on the payment status)
+    2.9 if the payment was success then show order deliverd successfully.
+    3. also the time should also be shown as description of these status.
+    3.1 time should be calculated based on how many time is taken to move from one status to another.
+    4. once the status had reached the payment pending then we will show the success or failure based on the payment status.and once the payment is success then we will show the order delivered successfully.
+    5. the referrence image is attached along with this .md file
+* **Prohibition:** **DO NOT make your own decisions or invent new logic.** You must replicate the proven logic from the Legacy codebase.
+
 
 ## 3. STRICT Error Resolution Protocol
 * **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code.
