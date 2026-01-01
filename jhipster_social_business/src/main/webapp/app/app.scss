@@ -2,6 +2,7 @@
 @import 'bootstrap-variables';
 // Import Bootstrap source files from node_modules
 @import 'bootstrap/scss/bootstrap';
+
 body {
   background: #fafafa;
   margin: 0;
@@ -15,6 +16,7 @@ a {
 * {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+
   &:after,
   &::before {
     -moz-box-sizing: border-box;
@@ -24,18 +26,22 @@ a {
 
 .app-container {
   box-sizing: border-box;
+
   .view-container {
     width: 100%;
     height: calc(100% - 40px);
     overflow-y: auto;
     overflow-x: hidden;
     padding: 1rem;
+
     .card {
       padding: 1rem;
     }
+
     .view-routes {
       height: 100%;
-      > div {
+
+      >div {
         height: 100%;
       }
     }
@@ -68,15 +74,17 @@ Browser Upgrade Prompt
 Custom button styles
 ========================================================================== */
 
-.icon-button > .btn {
+.icon-button>.btn {
   background-color: transparent;
   border-color: transparent;
   padding: 0.5rem;
   line-height: 1rem;
+
   &:hover {
     background-color: transparent;
     border-color: transparent;
   }
+
   &:focus {
     -webkit-box-shadow: none;
     box-shadow: none;
@@ -133,22 +141,28 @@ Generic styles
 /* padding helpers */
 
 @mixin pad($size, $side) {
-  @if $size== '' {
-    @if $side== '' {
+  @if $size=='' {
+    @if $side=='' {
       .pad {
         padding: 10px !important;
       }
-    } @else {
+    }
+
+    @else {
       .pad {
         padding-#{$side}: 10px !important;
       }
     }
-  } @else {
-    @if $side== '' {
+  }
+
+  @else {
+    @if $side=='' {
       .pad-#{$size} {
         padding: #{$size}px !important;
       }
-    } @else {
+    }
+
+    @else {
       .pad-#{$side}-#{$size} {
         padding-#{$side}: #{$size}px !important;
       }
@@ -203,11 +217,13 @@ Generic styles
 @include pad('100', 'left');
 
 @mixin no-padding($side) {
-  @if $side== 'all' {
+  @if $side=='all' {
     .no-padding {
       padding: 0 !important;
     }
-  } @else {
+  }
+
+  @else {
     .no-padding-#{$side} {
       padding-#{$side}: 0 !important;
     }
@@ -225,12 +241,15 @@ Generic styles
 .no-margin {
   margin: 0px;
 }
+
 @mixin voffset($size) {
-  @if $size== '' {
+  @if $size=='' {
     .voffset {
       margin-top: 2px !important;
     }
-  } @else {
+  }
+
+  @else {
     .voffset-#{$size} {
       margin-top: #{$size}px !important;
     }
@@ -313,3 +332,21 @@ http://stackoverflow.com/questions/23436430/bootstrap-3-input-group-100-width */
 }
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */
+
+.customer-flow-active {
+  .jh-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .app-container .view-container .card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+
+.customer-flow-active .app-container {
+  padding-top: 0 !important;
+}

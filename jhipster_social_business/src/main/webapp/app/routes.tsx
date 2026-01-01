@@ -27,6 +27,11 @@ const Admin = Loadable({
   loader: () => import(/* webpackChunkName: "administration" */ 'app/modules/administration'),
   loading: () => loading,
 });
+
+const OurCustomer = Loadable({
+  loader: () => import(/* webpackChunkName: "our-customer" */ 'app/modules/our-customer/routes'),
+  loading: () => loading,
+});
 const AppRoutes = () => {
   return (
     <div className="view-routes">
@@ -58,6 +63,7 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
+        <Route path="ourCustomers/*" element={<OurCustomer />} />
         <Route
           path="*"
           element={

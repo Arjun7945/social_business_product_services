@@ -84,6 +84,10 @@ module.exports = async options => {
         loader: 'source-map-loader'
       }
       */
+          {
+            test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot)$/i,
+            type: 'asset/resource',
+          },
         ],
       },
       stats: {
