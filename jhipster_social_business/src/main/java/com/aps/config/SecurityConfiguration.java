@@ -77,6 +77,9 @@ public class SecurityConfiguration {
                                                 .requestMatchers(mvc.pattern(HttpMethod.GET,
                                                                 "/api/customer-orders/public/**"))
                                                 .permitAll()
+                                                .requestMatchers(mvc.pattern(HttpMethod.GET,
+                                                                "/api/customer-orders/by-phone/**"))
+                                                .permitAll()
                                                 .requestMatchers(mvc.pattern("/api/register")).permitAll()
                                                 .requestMatchers(mvc.pattern("/api/activate")).permitAll()
                                                 .requestMatchers(mvc.pattern("/api/account/reset-password/init"))
