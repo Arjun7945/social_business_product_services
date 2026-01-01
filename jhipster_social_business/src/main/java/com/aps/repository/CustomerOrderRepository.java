@@ -59,4 +59,6 @@ public interface CustomerOrderRepository
     List<CustomerOrder> findAllByOrderTimeBetween(java.time.Instant start, java.time.Instant end);
 
     List<CustomerOrder> findAllByStatus(OrderStatus status);
+
+    List<CustomerOrder> findAllByCustomerWaPhoneNumber(String waPhoneNumber);
 }

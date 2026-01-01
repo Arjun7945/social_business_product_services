@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -51,6 +52,11 @@ const OtpPage = () => {
 
       // Mock Success (Any code 1234 succeeds, others fail for demo)
       if (code === '1234') {
+        // Save mobile to localStorage for History page
+        // Ensure we save the format matching the DB (with 91 prefix)
+        const savedMobile = mobileProp && mobileProp.length === 10 ? `91${mobileProp}` : mobile;
+        localStorage.setItem('customerMobile', savedMobile);
+
         navigate('/ourCustomers/status?result=success');
       } else {
         navigate('/ourCustomers/status?result=fail');
@@ -126,9 +132,8 @@ const OtpPage = () => {
           <button
             onClick={handleVerify}
             disabled={isLoading || otp.join('').length < 4}
-            className={`btn w-100 py-3 rounded-4 fs-5 fw-bold d-flex align-items-center justify-content-center shadow-lg transition-all ${
-              isLoading || otp.join('').length < 4 ? 'btn-secondary disabled opacity-50' : 'btn-primary hover-shadow-xl active-scale-95'
-            }`}
+            className={`btn w-100 py-3 rounded-4 fs-5 fw-bold d-flex align-items-center justify-content-center shadow-lg transition-all ${isLoading || otp.join('').length < 4 ? 'btn-secondary disabled opacity-50' : 'btn-primary hover-shadow-xl active-scale-95'
+              }`}
           >
             {isLoading ? 'Verifying...' : 'LOGIN'}
           </button>

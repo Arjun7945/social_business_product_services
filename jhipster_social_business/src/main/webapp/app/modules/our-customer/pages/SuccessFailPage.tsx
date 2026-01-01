@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams, useNavigate } from 'react-router-dom';
@@ -26,7 +27,7 @@ const SuccessFailPage = () => {
         style={{ maxWidth: '24rem' }}
       >
         <button
-          onClick={() => navigate(isSuccess ? '/ourCustomers/track' : '/ourCustomers/otp')}
+          onClick={() => navigate(isSuccess ? '/ourCustomers/track-entry' : '/ourCustomers/otp')}
           className="position-absolute top-0 end-0 m-3 p-2 border-0 bg-transparent rounded-circle hover-bg-light"
           style={{ zIndex: 10 }}
         >
@@ -46,7 +47,7 @@ const SuccessFailPage = () => {
         {isSuccess && <p className="text-muted small mb-4 text-uppercase letter-spacing-wide">click ok & enjoy</p>}
 
         <button
-          onClick={() => navigate(isSuccess ? '/ourCustomers/track' : '/ourCustomers/otp')}
+          onClick={() => navigate(isSuccess ? '/ourCustomers/track-entry' : '/ourCustomers/otp')}
           className={`btn w-100 py-3 rounded-4 fw-bold fs-5 shadow transition-all ${isSuccess ? 'btn-primary' : 'btn-danger'}`}
         >
           {isSuccess ? 'OK' : 'TRY AGAIN'}

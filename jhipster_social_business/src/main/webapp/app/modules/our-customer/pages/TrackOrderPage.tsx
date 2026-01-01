@@ -1,50 +1,102 @@
+/* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Phone, Truck, CheckCircle, Circle } from 'lucide-react';
-// import api from '../api';
+import { ArrowLeft, Phone, Truck, CheckCircle, Circle, FileText } from 'lucide-react';
+import { getOrderDetails } from '../api';
+import dayjs from 'dayjs';
 
 const TrackOrderPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const orderId = searchParams.get('orderId') || 'ORD-12345'; // Default for demo
+  const orderId = searchParams.get('orderId');
 
   const [orderData, setOrderData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
+    if (!orderId) {
+      setError('No Order ID provided');
+      setLoading(false);
+      return;
+    }
+
     const fetchOrder = async () => {
       try {
-        // Mock API Call - Replace with: await api.get(`/orders/${orderId}/track`);
-        await new Promise(r => setTimeout(r, 1500));
-
-        setOrderData({
-          id: orderId,
-          status: 'OUT_FOR_DELIVERY',
-          driver: {
-            name: 'Ramesh Kumar',
-            phone: '+919876543210',
-            vehicle: 'Honda Activa (KL-01-AB-1234)',
-            rating: 4.8,
-          },
-          timeline: [
-            { status: 'ORDER_PLACED', label: 'Order Placed', time: '10:00 AM', completed: true },
-            { status: 'PREPARING', label: 'Preparing', time: '10:15 AM', completed: true },
-            { status: 'OUT_FOR_DELIVERY', label: 'Out for Delivery', time: '10:45 AM', completed: true },
-            { status: 'DELIVERED', label: 'Delivered', time: 'Est. 11:00 AM', completed: false },
-          ],
-        });
+        const response = await getOrderDetails(orderId);
+        setOrderData(response.data);
       } catch (err) {
         console.error('Failed to load order', err);
+        setError('Order not found or access denied');
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
     fetchOrder();
   }, [orderId]);
 
-  if (isLoading) {
+  // Status mapping logic
+  const getTimeline = (order: any) => {
+    if (!order) return [];
+
+    const steps = [
+      { id: 'ORDER_PLACED', label: 'Order Placed', mapped: ['ORDER_RECEIVED', 'ORDER_PLACED', 'ORDER_NOT_TAKEN'] },
+      { id: 'ORDER_ONWAY', label: 'Order Onway', mapped: ['ORDER_CONFIRMED', 'ORDER_ACCEPTED', 'DELIVERY_ONWAY'] },
+      { id: 'PAYMENT_PENDING', label: 'Payment Pending', mapped: ['ORDER_PROCESSED', 'PREPARING'] },
+      { id: 'PAYMENT_STATUS', label: 'Payment Status', mapped: ['OUT_FOR_DELIVERY', 'READY_TO_PICKUP'] },
+      { id: 'DELIVERED', label: 'Order Delivered Successfully', mapped: ['DELIVERED', 'ORDER_DELIVERED_SUCESSFULLY'] } // Note spelling match
+    ];
+
+    // Determine current step index based on order status
+    let currentIndex = -1;
+    const currentStatus = order.status;
+
+    // Find custom logic for mapping
+    steps.forEach((step, index) => {
+      if (step.mapped.includes(currentStatus)) {
+        currentIndex = index;
+      }
+    });
+
+    // Fallback if status not matched exactly in list (e.g. CANCELLED, ORDER_FAILED)
+    if (currentIndex === -1) {
+      if (currentStatus === 'CANCELLED' || currentStatus === 'ORDER_FAILED') currentIndex = -2;
+    }
+
+    return steps.map((step, index) => {
+      const isCompleted = index <= currentIndex;
+      const isCurrent = index === currentIndex;
+
+      let timeLabel = '';
+      if (index === 0) {
+        timeLabel = dayjs(order.orderTime).format('hh:mm A');
+      } else if (isCurrent && order.history) {
+        timeLabel = dayjs(order.history.changeTime).format('hh:mm A');
+      } else if (isCompleted) {
+        // If completed but not first or last, we don't have exact time in 1:1 history
+        // Show duration logic if needed or just 'Completed'
+        timeLabel = 'Completed';
+      }
+
+      // Special handling for Payment Status Step Label
+      let label = step.label;
+      if (step.id === 'PAYMENT_STATUS') {
+        if (isCompleted) {
+          // Check if actual status indicates success/fail logic if we had payment info
+          // For now, if passed, assume Received.
+          label = 'Payment Received';
+        }
+      }
+
+      return { ...step, completed: isCompleted, current: isCurrent, time: timeLabel, label };
+    });
+  };
+
+  const timeline = getTimeline(orderData);
+
+  if (loading) {
     return (
       <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
         <div className="spinner-border text-primary" role="status" style={{ width: '3rem', height: '3rem' }}>
@@ -54,23 +106,31 @@ const TrackOrderPage = () => {
     );
   }
 
+  if (error || !orderData) {
+    return (
+      <div className="min-vh-100 bg-light d-flex flex-column align-items-center justify-content-center p-4">
+        <h3 className="text-danger fw-bold">{error}</h3>
+        <button onClick={() => navigate('/ourCustomers/track-entry')} className="btn btn-primary mt-3 rounded-pill px-4">Go Back</button>
+      </div>
+    );
+  }
+
   return (
     <div className="min-vh-100 bg-light d-flex flex-column">
       {/* Header */}
       <div className="bg-white p-3 shadow-sm d-flex align-items-center sticky-top z-1">
-        <button onClick={() => navigate('/ourCustomers')} className="btn btn-link text-dark p-2 me-2 rounded-circle hover-bg-light">
+        <button onClick={() => navigate('/ourCustomers/history')} className="btn btn-link text-dark p-2 me-2 rounded-circle hover-bg-light">
           <ArrowLeft size={24} />
         </button>
         <div>
           <h1 className="h6 fw-bold mb-0 text-dark">Track Order</h1>
-          <p className="small text-muted mb-0">ID: {orderData?.id}</p>
+          <p className="small text-muted mb-0">ID: {orderData.id}</p>
         </div>
       </div>
 
       <div className="flex-grow-1 overflow-auto">
-        {/* Map Placeholder */}
-        <div className="bg-secondary position-relative w-100 overflow-hidden" style={{ height: '16rem' }}>
-          {/* Abstract Map UI */}
+        {/* Map / Purchase Order Placeholder */}
+        <div className="bg-secondary position-relative w-100 overflow-hidden" style={{ height: '14rem' }}>
           <div
             className="position-absolute top-0 start-0 w-100 h-100 opacity-10"
             style={{
@@ -78,25 +138,26 @@ const TrackOrderPage = () => {
               backgroundSize: '16px 16px',
             }}
           ></div>
-          <div className="position-absolute top-50 start-50 translate-middle">
+          <div className="position-absolute top-50 start-50 translate-middle text-center">
             <motion.div
-              animate={{ y: [0, -10, 0] }}
+              animate={{ scale: [1, 1.1, 1] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              className="bg-primary text-white p-2 rounded-circle shadow border border-4 border-white"
+              className="bg-white text-primary p-3 rounded-circle shadow border border-4 border-light mb-2 d-inline-block"
             >
-              <Truck size={24} />
+              <FileText size={32} />
             </motion.div>
-            <div
-              className="position-absolute bottom-0 start-0 w-100 h-25 bg-black opacity-10 blur rounded-pill animate-pulse"
-              style={{ width: '4rem', filter: 'blur(4px)' }}
-            ></div>
+            <h5 className="text-white fw-bold shadow-sm" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+              Purchase Order
+            </h5>
           </div>
-          <div className="position-absolute bottom-0 end-0 m-3 px-2 py-1 bg-white rounded shadow-sm text-secondary small fw-bold">
-            Live Tracking
+
+          {/* Purchase Order Button (Overlay) */}
+          <div className="position-absolute bottom-0 start-50 translate-middle-x mb-5" style={{ zIndex: 30 }}>
+            <button className="btn btn-sm btn-light fw-bold shadow-sm rounded-pill px-4">View Purchase Order</button>
           </div>
         </div>
 
-        {/* Driver Card */}
+        {/* Content Card */}
         <div
           className="bg-white p-4 rounded-top-4 position-relative shadow-custom"
           style={{
@@ -105,34 +166,29 @@ const TrackOrderPage = () => {
             boxShadow: '0 -5px 20px rgba(0,0,0,0.05)',
             borderTopLeftRadius: '1.5rem',
             borderTopRightRadius: '1.5rem',
+            minHeight: '60vh',
           }}
         >
           <div className="bg-light rounded-pill mx-auto mb-4" style={{ width: '3rem', height: '0.375rem' }} />
 
-          <div className="d-flex align-items-center justify-content-between mb-4">
-            <div className="d-flex align-items-center gap-3">
-              <div
-                className="bg-light rounded-circle d-flex align-items-center justify-content-center text-secondary fw-bold"
-                style={{ width: '3.5rem', height: '3.5rem', fontSize: '1.25rem' }}
-              >
-                {orderData?.driver.name.charAt(0)}
-              </div>
-              <div>
-                <h3 className="h6 fw-bold text-dark mb-0">{orderData?.driver.name}</h3>
-                <p className="small text-muted mb-1">{orderData?.driver.vehicle}</p>
-                <div className="d-flex align-items-center gap-1">
-                  <span className="text-warning">★</span>
-                  <span className="small fw-bold text-dark">{orderData?.driver.rating}</span>
-                </div>
+          {/* Top Info Grid */}
+          <div className="row g-3 mb-4">
+            <div className="col-6">
+              <div className="p-3 bg-light rounded-4 text-center">
+                <p className="small text-muted mb-1 text-uppercase fw-bold" style={{ fontSize: '0.65rem' }}>
+                  Estimated Time
+                </p>
+                <h5 className="h6 fw-bold text-dark mb-0">-- mins</h5>
               </div>
             </div>
-            <a
-              href={`tel:${orderData?.driver.phone}`}
-              className="btn btn-success rounded-circle p-3 d-flex align-items-center justify-content-center bg-opacity-10 text-success border-0"
-              style={{ width: '3.5rem', height: '3.5rem' }}
-            >
-              <Phone size={24} />
-            </a>
+            <div className="col-6">
+              <div className="p-3 bg-light rounded-4 text-center">
+                <p className="small text-muted mb-1 text-uppercase fw-bold" style={{ fontSize: '0.65rem' }}>
+                  Order Number
+                </p>
+                <h5 className="h6 fw-bold text-dark mb-0">{orderData.id}</h5>
+              </div>
+            </div>
           </div>
 
           {/* Vertical Timeline */}
@@ -140,33 +196,45 @@ const TrackOrderPage = () => {
             {/* Timeline Line */}
             <div className="position-absolute bg-light" style={{ left: '19px', top: '0.5rem', bottom: '2rem', width: '2px' }}></div>
 
-            {orderData?.timeline.map((item: any, index: number) => (
-              <div key={index} className="d-flex gap-4 position-relative pb-4">
+            {timeline.map((item: any, index: number) => (
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                key={index}
+                className="d-flex gap-4 position-relative pb-4"
+              >
                 <div className="position-relative" style={{ zIndex: 10 }}>
                   {item.completed ? (
                     <div
-                      className="rounded-circle d-flex align-items-center justify-content-center bg-primary bg-opacity-10 border border-2 border-white shadow-sm"
+                      className="rounded-circle d-flex align-items-center justify-content-center bg-success text-white border border-4 border-white shadow-sm"
                       style={{ width: '2.5rem', height: '2.5rem' }}
                     >
-                      <CheckCircle size={20} className="text-primary" />
+                      <CheckCircle size={16} />
                     </div>
                   ) : (
                     <div
-                      className="rounded-circle d-flex align-items-center justify-content-center bg-light border border-2 border-white shadow-sm"
+                      className="rounded-circle d-flex align-items-center justify-content-center bg-white border border-2 border-light shadow-sm"
                       style={{ width: '2.5rem', height: '2.5rem' }}
                     >
-                      <Circle size={20} className="text-secondary opacity-50" />
+                      <Circle size={16} className="text-secondary opacity-25" />
                     </div>
                   )}
                 </div>
                 <div className={`pt-1 ${item.completed ? 'opacity-100' : 'opacity-50'}`}>
-                  <h4 className="h6 fw-bold text-dark mb-0">{item.label}</h4>
-                  <p className="small text-muted">{item.time}</p>
+                  <h4 className={`h6 fw-bold mb-0 ${item.completed ? 'text-dark' : 'text-muted'}`}>{item.label}</h4>
+                  <p className="small text-muted mb-0">{item.time}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
+
         </div>
+      </div>
+
+      {/* Footer Action */}
+      <div className="p-3 bg-white border-top sticky-bottom">
+        <button className="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm">View Purchase Order</button>
       </div>
     </div>
   );

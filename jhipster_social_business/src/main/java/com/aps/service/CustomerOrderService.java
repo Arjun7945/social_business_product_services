@@ -25,7 +25,8 @@ public class CustomerOrderService {
 
     private final CustomerOrderMapper customerOrderMapper;
 
-    public CustomerOrderService(CustomerOrderRepository customerOrderRepository, CustomerOrderMapper customerOrderMapper) {
+    public CustomerOrderService(CustomerOrderRepository customerOrderRepository,
+            CustomerOrderMapper customerOrderMapper) {
         this.customerOrderRepository = customerOrderRepository;
         this.customerOrderMapper = customerOrderMapper;
     }
@@ -66,14 +67,14 @@ public class CustomerOrderService {
         LOG.debug("Request to partially update CustomerOrder : {}", customerOrderDTO);
 
         return customerOrderRepository
-            .findById(customerOrderDTO.getId())
-            .map(existingCustomerOrder -> {
-                customerOrderMapper.partialUpdate(existingCustomerOrder, customerOrderDTO);
+                .findById(customerOrderDTO.getId())
+                .map(existingCustomerOrder -> {
+                    customerOrderMapper.partialUpdate(existingCustomerOrder, customerOrderDTO);
 
-                return existingCustomerOrder;
-            })
-            .map(customerOrderRepository::save)
-            .map(customerOrderMapper::toDto);
+                    return existingCustomerOrder;
+                })
+                .map(customerOrderRepository::save)
+                .map(customerOrderMapper::toDto);
     }
 
     /**
@@ -105,5 +106,20 @@ public class CustomerOrderService {
     public void delete(Long id) {
         LOG.debug("Request to delete CustomerOrder : {}", id);
         customerOrderRepository.deleteById(id);
+    }
+
+    /**
+     * Get all customerOrders by customer phone number.
+     *
+     * @param phone the phone number of the customer.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public java.util.List<CustomerOrderDTO> findAllByCustomerWaPhoneNumber(String phone) {
+        LOG.debug("Request to get CustomerOrders by phone : {}", phone);
+        return customerOrderRepository.findAllByCustomerWaPhoneNumber(phone)
+                .stream()
+                .map(customerOrderMapper::toDto)
+                .collect(java.util.stream.Collectors.toList());
     }
 }
