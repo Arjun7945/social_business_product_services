@@ -29,16 +29,19 @@ public class OrderNotificationListener {
     private final CustomerMessageService customerMessageService;
     private final DeliveryPersonMessageService deliveryPersonMessageService;
     private final CustomerFlowService customerFlowService;
+    private final com.aps.repository.CustomerOrderRepository customerOrderRepository;
 
     public OrderNotificationListener(
             WhatsAppService whatsAppService,
             CustomerMessageService customerMessageService,
             DeliveryPersonMessageService deliveryPersonMessageService,
-            CustomerFlowService customerFlowService) {
+            CustomerFlowService customerFlowService,
+            com.aps.repository.CustomerOrderRepository customerOrderRepository) {
         this.whatsAppService = whatsAppService;
         this.customerMessageService = customerMessageService;
         this.deliveryPersonMessageService = deliveryPersonMessageService;
         this.customerFlowService = customerFlowService;
+        this.customerOrderRepository = customerOrderRepository;
     }
 
     @Async
@@ -55,10 +58,15 @@ public class OrderNotificationListener {
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handlePaymentSuccessEvent(PaymentSuccessEvent event) {
-        CustomerOrder order = event.getOrder();
-        log.info("Handling PaymentSuccessEvent for order {}", order.getId());
+        Long orderId = event.getOrder().getId();
+        log.info("Handling PaymentSuccessEvent for order {}", orderId);
 
         try {
+            // Fetch order with eager relationships to avoid LazyInitializationException in
+            // Async thread
+            CustomerOrder order = customerOrderRepository.findOneWithEagerRelationships(orderId)
+                    .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+
             // Notify Customer
             String custMsg = customerMessageService.getPaymentCapturedMessage(
                     event.getPaymentId(),
@@ -78,17 +86,22 @@ public class OrderNotificationListener {
                 whatsAppService.sendSimpleText(order.getDeliveryPerson().getWaPhoneNumber(), dpMsg);
             }
         } catch (Exception e) {
-            log.error("Failed to send WhatsApp notifications for payment success event, order {}", order.getId(), e);
+            log.error("Failed to send WhatsApp notifications for payment success event, order {}", orderId, e);
         }
     }
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handlePaymentFailureEvent(PaymentFailureEvent event) {
-        CustomerOrder order = event.getOrder();
-        log.info("Handling PaymentFailureEvent for order {}", order.getId());
+        Long orderId = event.getOrder().getId();
+        log.info("Handling PaymentFailureEvent for order {}", orderId);
 
         try {
+            // Fetch order with eager relationships to avoid LazyInitializationException in
+            // Async thread
+            CustomerOrder order = customerOrderRepository.findOneWithEagerRelationships(orderId)
+                    .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+
             // Notify Customer
             String custMsg = customerMessageService.getPaymentFailedMessage(event.getPaymentId(), order.getId());
             whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(), custMsg);
@@ -100,7 +113,7 @@ public class OrderNotificationListener {
                 whatsAppService.sendSimpleText(order.getDeliveryPerson().getWaPhoneNumber(), dpMsg);
             }
         } catch (Exception e) {
-            log.error("Failed to send WhatsApp notifications for payment failure event, order {}", order.getId(), e);
+            log.error("Failed to send WhatsApp notifications for payment failure event, order {}", orderId, e);
         }
     }
 }
