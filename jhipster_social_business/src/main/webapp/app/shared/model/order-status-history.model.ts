@@ -5,6 +5,8 @@ export interface IOrderStatusHistory {
   id?: number;
   status?: keyof typeof OrderStatus;
   changeTime?: dayjs.Dayjs;
+  onWayTime?: dayjs.Dayjs | null;
+  paymentPendingTime?: dayjs.Dayjs | null;
 }
 
 export const defaultValue: Readonly<IOrderStatusHistory> = {};

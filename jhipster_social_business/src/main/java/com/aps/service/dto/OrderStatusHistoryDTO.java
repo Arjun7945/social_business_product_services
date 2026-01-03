@@ -20,7 +20,12 @@ public class OrderStatusHistoryDTO implements Serializable {
     private OrderStatus status;
 
     @NotNull
+    @NotNull
     private Instant changeTime;
+
+    private Instant onWayTime;
+
+    private Instant paymentPendingTime;
 
     public Long getId() {
         return id;
@@ -44,6 +49,22 @@ public class OrderStatusHistoryDTO implements Serializable {
 
     public void setChangeTime(Instant changeTime) {
         this.changeTime = changeTime;
+    }
+
+    public Instant getOnWayTime() {
+        return onWayTime;
+    }
+
+    public void setOnWayTime(Instant onWayTime) {
+        this.onWayTime = onWayTime;
+    }
+
+    public Instant getPaymentPendingTime() {
+        return paymentPendingTime;
+    }
+
+    public void setPaymentPendingTime(Instant paymentPendingTime) {
+        this.paymentPendingTime = paymentPendingTime;
     }
 
     @Override
@@ -71,9 +92,12 @@ public class OrderStatusHistoryDTO implements Serializable {
     @Override
     public String toString() {
         return "OrderStatusHistoryDTO{" +
-            "id=" + getId() +
-            ", status='" + getStatus() + "'" +
-            ", changeTime='" + getChangeTime() + "'" +
-            "}";
+                "id=" + getId() +
+                ", status='" + getStatus() + "'" +
+                ", status='" + getStatus() + "'" +
+                ", changeTime='" + getChangeTime() + "'" +
+                ", onWayTime='" + getOnWayTime() + "'" +
+                ", paymentPendingTime='" + getPaymentPendingTime() + "'" +
+                "}";
     }
 }

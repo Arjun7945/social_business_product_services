@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -81,6 +82,7 @@ public class Customer implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "history", "items", "customer", "deliveryPerson" }, allowSetters = true)
     @Builder.Default
+    @ToString.Exclude
     private Set<CustomerOrder> orders = new HashSet<>();
 
     /**
@@ -90,6 +92,7 @@ public class Customer implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "items", "customer" }, allowSetters = true)
     @Builder.Default
+    @ToString.Exclude
     private Set<ShoppingCart> carts = new HashSet<>();
 
     /**
@@ -99,6 +102,7 @@ public class Customer implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "histories", "items", "order", "customer" }, allowSetters = true)
     @Builder.Default
+    @ToString.Exclude
     private Set<ReturnedOrder> returns = new HashSet<>();
 
     /**

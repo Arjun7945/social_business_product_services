@@ -20,6 +20,8 @@
       "id": "ID",
       "status": "Status",
       "changeTime": "Change Time",
+      "onWayTime": "On Way Time",
+      "paymentPendingTime": "Payment Pending Time",
       "customerOrder": "Customer Order"
     }
   }

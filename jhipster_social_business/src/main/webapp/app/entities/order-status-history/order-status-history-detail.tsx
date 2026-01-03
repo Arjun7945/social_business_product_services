@@ -48,6 +48,26 @@ export const OrderStatusHistoryDetail = () => {
               <TextFormat value={orderStatusHistoryEntity.changeTime} type="date" format={APP_DATE_FORMAT} />
             ) : null}
           </dd>
+          <dt>
+            <span id="onWayTime">
+              <Translate contentKey="whatsappProductServiceProApp.orderStatusHistory.onWayTime">On Way Time</Translate>
+            </span>
+          </dt>
+          <dd>
+            {orderStatusHistoryEntity.onWayTime ? (
+              <TextFormat value={orderStatusHistoryEntity.onWayTime} type="date" format={APP_DATE_FORMAT} />
+            ) : null}
+          </dd>
+          <dt>
+            <span id="paymentPendingTime">
+              <Translate contentKey="whatsappProductServiceProApp.orderStatusHistory.paymentPendingTime">Payment Pending Time</Translate>
+            </span>
+          </dt>
+          <dd>
+            {orderStatusHistoryEntity.paymentPendingTime ? (
+              <TextFormat value={orderStatusHistoryEntity.paymentPendingTime} type="date" format={APP_DATE_FORMAT} />
+            ) : null}
+          </dd>
         </dl>
         <Button tag={Link} to="/order-status-history" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

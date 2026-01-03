@@ -129,6 +129,16 @@ export const OrderStatusHistory = () => {
                   <Translate contentKey="whatsappProductServiceProApp.orderStatusHistory.changeTime">Change Time</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('changeTime')} />
                 </th>
+                <th className="hand" onClick={sort('onWayTime')}>
+                  <Translate contentKey="whatsappProductServiceProApp.orderStatusHistory.onWayTime">On Way Time</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('onWayTime')} />
+                </th>
+                <th className="hand" onClick={sort('paymentPendingTime')}>
+                  <Translate contentKey="whatsappProductServiceProApp.orderStatusHistory.paymentPendingTime">
+                    Payment Pending Time
+                  </Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('paymentPendingTime')} />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -146,6 +156,16 @@ export const OrderStatusHistory = () => {
                   <td>
                     {orderStatusHistory.changeTime ? (
                       <TextFormat type="date" value={orderStatusHistory.changeTime} format={APP_DATE_FORMAT} />
+                    ) : null}
+                  </td>
+                  <td>
+                    {orderStatusHistory.onWayTime ? (
+                      <TextFormat type="date" value={orderStatusHistory.onWayTime} format={APP_DATE_FORMAT} />
+                    ) : null}
+                  </td>
+                  <td>
+                    {orderStatusHistory.paymentPendingTime ? (
+                      <TextFormat type="date" value={orderStatusHistory.paymentPendingTime} format={APP_DATE_FORMAT} />
                     ) : null}
                   </td>
                   <td className="text-end">

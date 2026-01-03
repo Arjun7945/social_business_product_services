@@ -47,6 +47,8 @@ export const OrderStatusHistoryUpdate = () => {
       values.id = Number(values.id);
     }
     values.changeTime = convertDateTimeToServer(values.changeTime);
+    values.onWayTime = convertDateTimeToServer(values.onWayTime);
+    values.paymentPendingTime = convertDateTimeToServer(values.paymentPendingTime);
 
     const entity = {
       ...orderStatusHistoryEntity,
@@ -69,6 +71,8 @@ export const OrderStatusHistoryUpdate = () => {
           status: 'ORDER_NOT_TAKEN',
           ...orderStatusHistoryEntity,
           changeTime: convertDateTimeFromServer(orderStatusHistoryEntity.changeTime),
+          onWayTime: convertDateTimeFromServer(orderStatusHistoryEntity.onWayTime),
+          paymentPendingTime: convertDateTimeFromServer(orderStatusHistoryEntity.paymentPendingTime),
         };
 
   return (
@@ -121,6 +125,22 @@ export const OrderStatusHistoryUpdate = () => {
                 validate={{
                   required: { value: true, message: translate('entity.validation.required') },
                 }}
+              />
+              <ValidatedField
+                label={translate('whatsappProductServiceProApp.orderStatusHistory.onWayTime')}
+                id="order-status-history-onWayTime"
+                name="onWayTime"
+                data-cy="onWayTime"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField
+                label={translate('whatsappProductServiceProApp.orderStatusHistory.paymentPendingTime')}
+                id="order-status-history-paymentPendingTime"
+                name="paymentPendingTime"
+                data-cy="paymentPendingTime"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
               />
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/order-status-history" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />

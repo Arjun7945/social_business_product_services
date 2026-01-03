@@ -2,6 +2,7 @@ package com.aps.service;
 
 import com.aps.domain.OrderStatusHistory;
 import com.aps.repository.OrderStatusHistoryRepository;
+import com.aps.repository.CustomerOrderRepository;
 import com.aps.service.dto.OrderStatusHistoryDTO;
 import com.aps.service.mapper.OrderStatusHistoryMapper;
 import java.util.LinkedList;
@@ -26,12 +27,16 @@ public class OrderStatusHistoryService {
 
     private final OrderStatusHistoryRepository orderStatusHistoryRepository;
 
+    private final CustomerOrderRepository customerOrderRepository;
+
     private final OrderStatusHistoryMapper orderStatusHistoryMapper;
 
     public OrderStatusHistoryService(
             OrderStatusHistoryRepository orderStatusHistoryRepository,
+            CustomerOrderRepository customerOrderRepository,
             OrderStatusHistoryMapper orderStatusHistoryMapper) {
         this.orderStatusHistoryRepository = orderStatusHistoryRepository;
+        this.customerOrderRepository = customerOrderRepository;
         this.orderStatusHistoryMapper = orderStatusHistoryMapper;
     }
 
@@ -130,6 +135,32 @@ public class OrderStatusHistoryService {
         }
         history.setStatus(order.getStatus());
         history.setChangeTime(java.time.Instant.now());
+
+        // Columnar Logic for specific stages
+
+        // Stage 2: On Way (Taken by Delivery Person)
+        if (order.getStatus() == com.aps.domain.enumeration.OrderStatus.DELIVERY_ONWAY) {
+            if (history.getOnWayTime() == null) {
+                history.setOnWayTime(java.time.Instant.now());
+            }
+        }
+
+        // Stage 3: Payment Pending Logic
+        // Triggered when Payment Method is selected (changed from default NOT_SELECTED)
+        if (order.getPaymentMethod() != null && !order.getPaymentMethod().equals("NOT_SELECTED")) {
+            if (history.getPaymentPendingTime() == null) {
+                history.setPaymentPendingTime(java.time.Instant.now());
+            }
+        }
+
+        // Stage 5: Delivered Logic handled via confirmedAt in Order, but we can also
+        // sync if needed.
+        // For strictness, we leave Delievered Time to confirmedAt as per plan.
+
         orderStatusHistoryRepository.save(history);
+
+        // Ensure the order's FK to history is persisted (As CustomerOrder owns the
+        // relationship)
+        customerOrderRepository.save(order);
     }
 }

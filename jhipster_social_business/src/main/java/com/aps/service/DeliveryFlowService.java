@@ -158,7 +158,11 @@ public class DeliveryFlowService {
         if (strategy != null) {
             // Update Payment Mode in DB
             order.setPaymentMethod(mode);
+
+            // Note: History Service will detect payment method change and set timestamp
+
             customerOrderRepository.save(order);
+            orderStatusHistoryService.addEvent(order);
 
             strategy.initiatePayment(order, deliveryPerson);
 
@@ -189,6 +193,10 @@ public class DeliveryFlowService {
         orderStatusHistoryService.addEvent(order);
 
         if (newStatus == OrderStatus.ORDER_DELIVERED_SUCESSFULLY) {
+            // Set ConfirmedAt as Delivered Time
+            order.setConfirmedAt(Instant.now());
+            customerOrderRepository.save(order);
+
             TransactionSynchronizationManager.registerSynchronization(
                     new TransactionSynchronization() {
                         @Override
@@ -304,7 +312,8 @@ public class DeliveryFlowService {
         // 4. Update order with delivery person details
         order.setStatus(OrderStatus.DELIVERY_ONWAY);
         order.setDeliveryPerson(deliveryPerson);
-        order.setConfirmedAt(Instant.now());
+        // order.setConfirmedAt(Instant.now()); // REMOVED: ConfirmedAt is now used for
+        // Delivered Time
         customerOrderRepository.save(order);
         orderStatusHistoryService.addEvent(order);
 

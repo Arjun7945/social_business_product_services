@@ -33,8 +33,15 @@ public class OrderStatusHistory implements Serializable {
     private OrderStatus status;
 
     @NotNull
+    @NotNull
     @Column(name = "change_time", nullable = false)
     private Instant changeTime;
+
+    @Column(name = "on_way_time")
+    private Instant onWayTime;
+
+    @Column(name = "payment_pending_time")
+    private Instant paymentPendingTime;
 
     @JsonIgnoreProperties(value = { "history", "items", "customer", "deliveryPerson" }, allowSetters = true)
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "history")
@@ -81,6 +88,32 @@ public class OrderStatusHistory implements Serializable {
         this.changeTime = changeTime;
     }
 
+    public Instant getOnWayTime() {
+        return this.onWayTime;
+    }
+
+    public OrderStatusHistory onWayTime(Instant onWayTime) {
+        this.setOnWayTime(onWayTime);
+        return this;
+    }
+
+    public void setOnWayTime(Instant onWayTime) {
+        this.onWayTime = onWayTime;
+    }
+
+    public Instant getPaymentPendingTime() {
+        return this.paymentPendingTime;
+    }
+
+    public OrderStatusHistory paymentPendingTime(Instant paymentPendingTime) {
+        this.setPaymentPendingTime(paymentPendingTime);
+        return this;
+    }
+
+    public void setPaymentPendingTime(Instant paymentPendingTime) {
+        this.paymentPendingTime = paymentPendingTime;
+    }
+
     public CustomerOrder getCustomerOrder() {
         return this.customerOrder;
     }
@@ -100,7 +133,8 @@ public class OrderStatusHistory implements Serializable {
         return this;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 
     @Override
     public boolean equals(Object o) {
@@ -115,7 +149,8 @@ public class OrderStatusHistory implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -123,9 +158,12 @@ public class OrderStatusHistory implements Serializable {
     @Override
     public String toString() {
         return "OrderStatusHistory{" +
-            "id=" + getId() +
-            ", status='" + getStatus() + "'" +
-            ", changeTime='" + getChangeTime() + "'" +
-            "}";
+                "id=" + getId() +
+                ", status='" + getStatus() + "'" +
+                ", status='" + getStatus() + "'" +
+                ", changeTime='" + getChangeTime() + "'" +
+                ", onWayTime='" + getOnWayTime() + "'" +
+                ", paymentPendingTime='" + getPaymentPendingTime() + "'" +
+                "}";
     }
 }

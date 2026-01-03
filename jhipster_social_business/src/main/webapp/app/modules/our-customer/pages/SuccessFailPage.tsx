@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams, useNavigate } from 'react-router-dom';

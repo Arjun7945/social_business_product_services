@@ -136,6 +136,7 @@ public class OrderService {
                     // Update Status to DELIVERED as payment on delivery confirms handover
                     order.setStatus(OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
                     order.setTransactionId(paymentId);
+                    order.setConfirmedAt(Instant.now());
                     customerOrderRepository.save(order);
                     orderStatusHistoryService.addEvent(order);
 
