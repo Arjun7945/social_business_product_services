@@ -43,11 +43,9 @@ fi
 echo "▶️ Starting new container..."
 docker run -d \
     --name $CONTAINER_NAME \
+    --env-file .env \
     -p 8081:8081 \
     -e SPRING_PROFILES_ACTIVE=prod \
-    -e LICENSE_SERVER_URL="$LICENSE_SERVER_URL" \
-    -e LICENSE_KEY="$LICENSE_KEY" \
-    -e WHATSAPP_TOKEN="$WHATSAPP_TOKEN" \
     --restart unless-stopped \
     $IMAGE_NAME
 

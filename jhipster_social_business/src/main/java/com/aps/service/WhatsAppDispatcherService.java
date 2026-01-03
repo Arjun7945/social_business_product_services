@@ -8,6 +8,8 @@ import com.aps.domain.enumeration.UserRole;
 import com.aps.repository.CustomerRepository;
 import com.aps.repository.TeamMemberRepository;
 import com.aps.repository.DeliveryPersonRepository;
+import com.aps.config.ApplicationProperties;
+import com.aps.config.WhatsAppConfig;
 import com.aps.service.dto.WhatsAppWebhookDto;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -35,6 +37,7 @@ public class WhatsAppDispatcherService {
     private final BotSessionManager sessionManager;
     private final ButtonActionService buttonActionService;
     private final WhatsAppService whatsAppService;
+    private final LicensingService licensingService;
 
     public WhatsAppDispatcherService(
             TeamMemberRepository teamMemberRepository,
@@ -48,7 +51,10 @@ public class WhatsAppDispatcherService {
             UnknownCustomerFlowService unknownCustomerFlowService,
             BotSessionManager sessionManager,
             ButtonActionService buttonActionService,
-            WhatsAppService whatsAppService) {
+            WhatsAppService whatsAppService,
+            WhatsAppConfig whatsAppConfig,
+            ApplicationProperties applicationProperties,
+            LicensingService licensingService) {
         this.teamMemberRepository = teamMemberRepository;
         this.deliveryPersonRepository = deliveryPersonRepository;
         this.customerRepository = customerRepository;
@@ -61,6 +67,7 @@ public class WhatsAppDispatcherService {
         this.sessionManager = sessionManager;
         this.buttonActionService = buttonActionService;
         this.whatsAppService = whatsAppService;
+        this.licensingService = licensingService;
     }
 
     @Async
@@ -78,13 +85,70 @@ public class WhatsAppDispatcherService {
                                                     .getValue()
                                                     .getMessages()
                                                     .forEach(message -> {
-                                                        handleIncomingMessage(change.getValue(), message);
+                                                        // KILL SWITCH: Check License before processing
+                                                        if (!licensingService.isLicenseValid()) {
+                                                            sendMaintenanceReply(change.getValue(), message);
+                                                        } else {
+                                                            handleIncomingMessage(change.getValue(), message);
+                                                        }
                                                     });
                                         }
                                     });
                         }
                     });
         }
+    }
+
+    private void sendMaintenanceReply(WhatsAppWebhookDto.Value payloadValue, WhatsAppWebhookDto.Message message) {
+        String from = message.getFrom();
+        log.warn("⛔ REFUSING TO PROCESS WEBHOOK for {}: LICENSE IS INVALID/INACTIVE. Sending Maintenance Reply.", from);
+
+        String userName = resolveSenderName(from, payloadValue);
+
+        String maintenanceMessage = String.format(
+                "Hello *%s*,\n\n" +
+                        "We sincerely apologize for the inconvenience. 🛑\n\n" +
+                        "Our services are currently *offline* for scheduled maintenance.\n" +
+                        "We appreciate your patience and kindly request you to check back with us shortly.\n\n" +
+                        "Thank you!",
+                userName);
+
+        whatsAppService.sendSimpleText(from, maintenanceMessage);
+    }
+
+    private String resolveSenderName(String from, WhatsAppWebhookDto.Value payloadValue) {
+        try {
+            // 1. Check TeamMember
+            Optional<TeamMember> tm = teamMemberRepository.findByWaPhoneNumber(from);
+            if (tm.isPresent())
+                return tm.get().getName();
+
+            // 2. DeliveryPerson
+            Optional<DeliveryPerson> dp = deliveryPersonRepository.findByWaPhoneNumber(from);
+            if (dp.isPresent())
+                return dp.get().getName();
+
+            // 3. Customer
+            Optional<Customer> c = customerRepository.findByWaPhoneNumber(from);
+            if (c.isPresent() && c.get().getName() != null)
+                return c.get().getName();
+
+            // 4. WhatsApp Profile Name
+            if (payloadValue != null && payloadValue.getContacts() != null) {
+                Optional<WhatsAppWebhookDto.Contact> contactOpt = payloadValue
+                        .getContacts()
+                        .stream()
+                        .filter(contact -> contact.getWaId().equals(from))
+                        .findFirst();
+                if (contactOpt.isPresent() && contactOpt.get().getProfile() != null
+                        && contactOpt.get().getProfile().getName() != null) {
+                    return contactOpt.get().getProfile().getName();
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error resolving name for maintenance message", e);
+        }
+        return "Valued Customer"; // Fallback
     }
 
     private void handleIncomingMessage(WhatsAppWebhookDto.Value payloadValue, WhatsAppWebhookDto.Message message) {

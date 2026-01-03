@@ -24,6 +24,34 @@ public class ApplicationProperties {
         return rateLimiting;
     }
 
+    private final Licensing licensing = new Licensing();
+
+    public Licensing getLicensing() {
+        return licensing;
+    }
+
+    public static class Licensing {
+
+        private String url;
+        private String cron;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getCron() {
+            return cron;
+        }
+
+        public void setCron(String cron) {
+            this.cron = cron;
+        }
+    }
+
     // jhipster-needle-application-properties-property-getter
 
     public static class Liquibase {
