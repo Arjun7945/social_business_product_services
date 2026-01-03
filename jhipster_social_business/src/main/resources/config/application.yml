@@ -232,5 +232,8 @@ application:
     enabled: true
     capacity: 20
     duration-in-minutes: 1
+  licensing:
+    url: ${LICENSE_SERVER_URL:http://mock-server.com}
+    cron: ${LICENSE_CRON:0 0 12 * * ?}
 
 

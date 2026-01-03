@@ -64,7 +64,30 @@ public class WhatsAppDispatcherService {
     }
 
     @Async
-    public void handleIncomingMessage(WhatsAppWebhookDto.Value payloadValue, WhatsAppWebhookDto.Message message) {
+    public void processWebhookAsync(WhatsAppWebhookDto webhookDto) {
+        if (webhookDto.getEntry() != null) {
+            webhookDto
+                    .getEntry()
+                    .forEach(entry -> {
+                        if (entry.getChanges() != null) {
+                            entry
+                                    .getChanges()
+                                    .forEach(change -> {
+                                        if (change.getValue() != null && change.getValue().getMessages() != null) {
+                                            change
+                                                    .getValue()
+                                                    .getMessages()
+                                                    .forEach(message -> {
+                                                        handleIncomingMessage(change.getValue(), message);
+                                                    });
+                                        }
+                                    });
+                        }
+                    });
+        }
+    }
+
+    private void handleIncomingMessage(WhatsAppWebhookDto.Value payloadValue, WhatsAppWebhookDto.Message message) {
         try {
             String from = message.getFrom();
             log.info("Received message from: {}", from);

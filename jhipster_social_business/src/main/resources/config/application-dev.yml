@@ -35,9 +35,9 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/whatsappProductServicePro
-    username: postgres
-    password: arjun7945
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/whatsappProductServicePro}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD}
     hikari:
       poolName: Hikari
       auto-commit: false
@@ -85,7 +85,7 @@ jhipster:
     authentication:
       jwt:
         # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
-        base64-secret: MjgwOTU1ZGZlZDFhZDVlMzU4NWYyOWU2ZWRkODgzNzcwMWNhMDQ5OWMxZTY3YjYzMmI2MDg3YjBlOWYwYzYwNGVkYjRmOWQzNDdhNDI1ZDZlMzkzZDFiYzcxNWI2ODYyY2ZlMWQ3ZjIxNWUxNzdiMjYzMDNiMmViODdjYWE0Y2M=
+        base64-secret: ${JWT_SECRET}
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
@@ -110,18 +110,18 @@ jhipster:
 
 whatsapp:
   api:
-    token: 'EAAdVasahI1kBQM6BOAw1027RNMt74meyEej8hl8o4k9cXyry3ZCmblniFWTU7XosuDzX9PQZAtxv6NCNdNkNenx9JuZAaYsmTM7VMmaIMWRCPQGNthovYlHLvzdsApmnT7oCUGYFa8iRQndZC7bJc3JchLAfitnE4vzZCd0V1ypsaAkNkXoZAwLXVWfGL04Fr0t9dB6L49leieLgFNAF1Ah3KP4W7V7kRMOaYneN1ZB'
+    token: ${WHATSAPP_API_TOKEN}
     base-url: 'https://graph.facebook.com/v20.0'
-  phone-number-id: '844388422097905'
+  phone-number-id: ${WHATSAPP_PHONE_NUMBER_ID}
   webhook:
-    verify-token: 'fish_seller_secret_123'
-  delivery-group-id: '{YOUR_PERSONAL_PHONE_NUMBER_OR_GROUP_ID}'
+    verify-token: ${WHATSAPP_VERIFY_TOKEN}
+  delivery-group-id: ${WHATSAPP_DELIVERY_GROUP_ID}
 
 app:
   server:
-    url: 'https://trying-demographically-maison.ngrok-free.dev'
+    url: ${APP_SERVER_URL}
 
 razorpay:
-  key-id: rzp_test_RshgtaFKamUyGc
-  key-secret: h61PSTYMvmWgQ1hqfBL3deEZ
-  webhook-secret: social_business_webhook_secret
+  key-id: ${RAZORPAY_KEY_ID}
+  key-secret: ${RAZORPAY_KEY_SECRET}
+  webhook-secret: ${RAZORPAY_WEBHOOK_SECRET}
