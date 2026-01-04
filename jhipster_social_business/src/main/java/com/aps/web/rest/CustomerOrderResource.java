@@ -229,7 +229,8 @@ public class CustomerOrderResource {
     public ResponseEntity<CustomerOrderDTO> getPublicCustomerOrder(@PathVariable("id") Long id) {
         LOG.debug("REST request to get public CustomerOrder : {}", id);
         Optional<CustomerOrderDTO> customerOrderDTO = customerOrderService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(customerOrderDTO);
+        return customerOrderDTO.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     /**

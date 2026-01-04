@@ -5,6 +5,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Phone, Truck, CheckCircle, Circle, FileText, XCircle } from 'lucide-react';
 import { getOrderDetails } from '../api';
 import dayjs from 'dayjs';
+import Lottie from 'lottie-react';
+import noOrderAnimation from 'app/assets/animations/No_order_id_Found.json';
 
 const TrackOrderPage = () => {
   const navigate = useNavigate();
@@ -177,9 +179,31 @@ const TrackOrderPage = () => {
 
   if (error || !orderData) {
     return (
-      <div className="min-vh-100 bg-light d-flex flex-column align-items-center justify-content-center p-4">
-        <h3 className="text-danger fw-bold">{error}</h3>
-        <button onClick={() => navigate('/ourCustomers/track-entry')} className="btn btn-primary mt-3 rounded-pill px-4">Go Back</button>
+      <div className="min-vh-100 bg-white d-flex flex-column align-items-center justify-content-center p-4">
+        <div className="w-100" style={{ maxWidth: '400px' }}>
+
+          {/* Animation */}
+          <div className="d-flex justify-content-center mb-4">
+            <div style={{ width: '200px' }}>
+              <Lottie animationData={noOrderAnimation} loop={true} />
+            </div>
+          </div>
+
+          {/* Text */}
+          <div className="text-center mb-5">
+            <h3 className="h5 fw-bold text-dark mb-2">Order Not Found</h3>
+            <p className="text-muted small">Please ensure the Order ID is correct and try again.</p>
+          </div>
+
+          {/* Action Button */}
+          <button
+            onClick={() => navigate('/ourCustomers/track-entry')}
+            className="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-lg"
+            style={{ background: '#dc2626', borderColor: '#dc2626' }} // Red color for error action
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }

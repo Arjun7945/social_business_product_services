@@ -1,5 +1,3 @@
-import './footer.scss';
-
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Col, Row } from 'reactstrap';
