@@ -31,7 +31,8 @@ public class DailyOrderReportService {
      * Report generation scheduled for 5 PM every day.
      * Cron format: second, minute, hour, day of month, month, day(s) of week
      */
-    @Scheduled(cron = "0 0 17 * * ?")
+    // @Scheduled(cron = "0 0 17 * * ?") 5 PM
+    @Scheduled(cron = "0 50 15 * * ?") // 3:50 PM
     public void generateAndSendDailyReport() {
         log.info("Starting scheduled daily order report generation.");
 

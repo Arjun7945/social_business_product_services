@@ -230,6 +230,7 @@ public class UserRemovalService {
         removedUser.setWhatsappNumber(member.getWaPhoneNumber());
         removedUser.setPhoneNumber(member.getPhoneNumber());
         removedUser.setAddedBy(addedByStr);
+        removedUser.setJoinedAt(member.getJoinedAt());
         removedUser.setRemovedAt(Instant.now());
         removedUser.setReasonForRemoval(reason);
         removedUser.setOrderHistoryId(summary.getId());
@@ -358,6 +359,12 @@ public class UserRemovalService {
             newMember.setWaPhoneNumber(removedUser.getWhatsappNumber());
             newMember.setPhoneNumber(removedUser.getPhoneNumber());
             newMember.setIsActive(true);
+            newMember.setStatus(com.aps.domain.enumeration.DeliveryStatus.FREE);
+            newMember.setJoinedAt(removedUser.getJoinedAt());
+
+            if (removedUser.getAddedBy() != null && !"SELF".equalsIgnoreCase(removedUser.getAddedBy())) {
+                teamMemberRepository.findByName(removedUser.getAddedBy()).ifPresent(newMember::setAddedBy);
+            }
 
             if (removedUser.getZoneId() != null) {
                 deliveryZoneRepository.findById(removedUser.getZoneId()).ifPresent(newMember::setZone);

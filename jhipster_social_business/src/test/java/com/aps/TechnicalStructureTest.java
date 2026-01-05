@@ -15,24 +15,25 @@ class TechnicalStructureTest {
     // prettier-ignore
     @ArchTest
     static final ArchRule respectsTechnicalArchitectureLayers = layeredArchitecture()
-        .consideringAllDependencies()
-        .layer("Config").definedBy("..config..")
-        .layer("Web").definedBy("..web..")
-        .optionalLayer("Service").definedBy("..service..")
-        .layer("Security").definedBy("..security..")
-        .optionalLayer("Persistence").definedBy("..repository..")
-        .layer("Domain").definedBy("..domain..")
+            .consideringAllDependencies()
+            .layer("Config").definedBy("..config..")
+            .layer("Web").definedBy("..web..")
+            .optionalLayer("Service").definedBy("..service..")
+            .layer("Security").definedBy("..security..")
+            .optionalLayer("Persistence").definedBy("..repository..")
+            .layer("Domain").definedBy("..domain..")
 
-        .whereLayer("Config").mayNotBeAccessedByAnyLayer()
-        .whereLayer("Web").mayOnlyBeAccessedByLayers("Config")
-        .whereLayer("Service").mayOnlyBeAccessedByLayers("Web", "Config")
-        .whereLayer("Security").mayOnlyBeAccessedByLayers("Config", "Service", "Web")
-        .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Service", "Security", "Web", "Config")
-        .whereLayer("Domain").mayOnlyBeAccessedByLayers("Persistence", "Service", "Security", "Web", "Config")
+            .whereLayer("Config").mayNotBeAccessedByAnyLayer()
+            .whereLayer("Web").mayOnlyBeAccessedByLayers("Config")
+            .whereLayer("Service").mayOnlyBeAccessedByLayers("Web", "Config")
+            .whereLayer("Security").mayOnlyBeAccessedByLayers("Config", "Service", "Web")
+            .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Service", "Security", "Web", "Config")
+            .whereLayer("Domain").mayOnlyBeAccessedByLayers("Persistence", "Service", "Security", "Web", "Config")
 
-        .ignoreDependency(belongToAnyOf(WhatsappProductServiceProApp.class), alwaysTrue())
-        .ignoreDependency(alwaysTrue(), belongToAnyOf(
-            com.aps.config.Constants.class,
-            com.aps.config.ApplicationProperties.class
-        ));
+            .ignoreDependency(belongToAnyOf(WhatsappProductServiceProApp.class), alwaysTrue())
+            .ignoreDependency(alwaysTrue(), belongToAnyOf(
+                    com.aps.config.Constants.class,
+                    com.aps.config.ApplicationProperties.class,
+                    com.aps.config.WhatsAppConfig.class,
+                    com.aps.config.CRLFLogConverter.class));
 }

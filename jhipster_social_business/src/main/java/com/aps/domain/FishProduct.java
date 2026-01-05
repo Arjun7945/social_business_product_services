@@ -8,8 +8,12 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -21,8 +25,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "fish_product")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
 public class FishProduct implements Serializable {
@@ -113,4 +119,22 @@ public class FishProduct implements Serializable {
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
     // setters here
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof FishProduct)) {
+            return false;
+        }
+        return getId() != null && getId().equals(((FishProduct) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
+    }
 }

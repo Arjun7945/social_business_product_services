@@ -15,4 +15,6 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long>, J
     boolean existsByWaPhoneNumber(String waPhoneNumber);
 
     boolean existsByPhoneNumber(String phoneNumber);
+
+    java.util.Optional<TeamMember> findByName(String name);
 }

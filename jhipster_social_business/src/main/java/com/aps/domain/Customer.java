@@ -10,8 +10,9 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -24,8 +25,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "customer")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Customer implements Serializable {
@@ -177,6 +180,20 @@ public class Customer implements Serializable {
         return this;
     }
 
+    public Set<CustomerOrder> getOrders() {
+        return this.orders;
+    }
+
+    public void setOrders(Set<CustomerOrder> customerOrders) {
+        if (this.orders != null) {
+            this.orders.forEach(i -> i.setCustomer(null));
+        }
+        if (customerOrders != null) {
+            customerOrders.forEach(i -> i.setCustomer(this));
+        }
+        this.orders = customerOrders;
+    }
+
     public Customer orders(Set<CustomerOrder> customerOrders) {
         this.setOrders(customerOrders);
         return this;
@@ -199,6 +216,20 @@ public class Customer implements Serializable {
         return this;
     }
 
+    public Set<ShoppingCart> getCarts() {
+        return this.carts;
+    }
+
+    public void setCarts(Set<ShoppingCart> shoppingCarts) {
+        if (this.carts != null) {
+            this.carts.forEach(i -> i.setCustomer(null));
+        }
+        if (shoppingCarts != null) {
+            shoppingCarts.forEach(i -> i.setCustomer(this));
+        }
+        this.carts = shoppingCarts;
+    }
+
     public Customer addCart(ShoppingCart shoppingCart) {
         this.carts.add(shoppingCart);
         shoppingCart.setCustomer(this);
@@ -214,6 +245,20 @@ public class Customer implements Serializable {
     public Customer returns(Set<ReturnedOrder> returnedOrders) {
         this.setReturns(returnedOrders);
         return this;
+    }
+
+    public Set<ReturnedOrder> getReturns() {
+        return this.returns;
+    }
+
+    public void setReturns(Set<ReturnedOrder> returnedOrders) {
+        if (this.returns != null) {
+            this.returns.forEach(i -> i.setCustomer(null));
+        }
+        if (returnedOrders != null) {
+            returnedOrders.forEach(i -> i.setCustomer(this));
+        }
+        this.returns = returnedOrders;
     }
 
     public Customer addReturns(ReturnedOrder returnedOrder) {
@@ -240,4 +285,22 @@ public class Customer implements Serializable {
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
     // setters here
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Customer)) {
+            return false;
+        }
+        return getId() != null && getId().equals(((Customer) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
+    }
 }

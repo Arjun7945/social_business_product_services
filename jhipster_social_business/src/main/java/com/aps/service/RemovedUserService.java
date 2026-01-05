@@ -1,6 +1,7 @@
 package com.aps.service;
 
 import com.aps.domain.RemovedUser;
+import com.aps.repository.RemovedOrderSummaryRepository;
 import com.aps.repository.RemovedUserRepository;
 import com.aps.service.dto.RemovedUserDTO;
 import com.aps.service.mapper.RemovedUserMapper;
@@ -25,11 +26,14 @@ public class RemovedUserService {
 
     private final UserRemovalService userRemovalService;
 
+    private final RemovedOrderSummaryRepository removedOrderSummaryRepository;
+
     public RemovedUserService(RemovedUserRepository removedUserRepository, RemovedUserMapper removedUserMapper,
-            UserRemovalService userRemovalService) {
+            UserRemovalService userRemovalService, RemovedOrderSummaryRepository removedOrderSummaryRepository) {
         this.removedUserRepository = removedUserRepository;
         this.removedUserMapper = removedUserMapper;
         this.userRemovalService = userRemovalService;
+        this.removedOrderSummaryRepository = removedOrderSummaryRepository;
     }
 
     /**
@@ -97,7 +101,13 @@ public class RemovedUserService {
      */
     public void delete(Long id) {
         LOG.debug("Request to delete RemovedUser : {}", id);
-        removedUserRepository.deleteById(id);
+        removedUserRepository.findById(id).ifPresent(removedUser -> {
+            Long orderHistoryId = removedUser.getOrderHistoryId();
+            removedUserRepository.deleteById(id);
+            if (orderHistoryId != null) {
+                removedOrderSummaryRepository.deleteById(orderHistoryId);
+            }
+        });
     }
 
     /**

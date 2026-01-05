@@ -10,12 +10,8 @@
 ## 2. TASK OF THE DAY
 * **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code. follow the step 3 below
 * **task:**
-1. so when a customer is creating and at the time of creation the customer sends his location which is then taken to lati and longi so is it possible to take the pincode of the location he shared ?
-2. if possible then extract the pincode from the location and save it in address column in the customer table.
-3. if no then dont make any changes and end this task by explaining why its not possible!
-
-* **Prohibition:** **DO NOT make temporary fixes, this is a production grade code.** you should always the path of a senior software engineer.
-
+1. based on the application we aredeveloping i neeed you to make sure all test cases are covered, and no test cases are pending
+2. run test run and finalize each test case are passed and no test cases are pending
 * **Prohibition:** **DO NOT make temporary fixes, this is a production grade code.** you should always the path of a senior software engineer.
 
 ## 3. STRICT Error Resolution Protocol
