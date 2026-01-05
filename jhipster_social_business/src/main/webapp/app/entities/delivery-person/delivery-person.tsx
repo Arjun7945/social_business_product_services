@@ -145,6 +145,14 @@ export const DeliveryPerson = () => {
                 <th>
                   <Translate contentKey="whatsappProductServiceProApp.deliveryPerson.zone">Zone</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('chosenOrderLimit')}>
+                  <Translate contentKey="whatsappProductServiceProApp.deliveryPerson.chosenOrderLimit">Limit</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('chosenOrderLimit')} />
+                </th>
+                <th className="hand" onClick={sort('chosenOrder')}>
+                  <Translate contentKey="whatsappProductServiceProApp.deliveryPerson.chosenOrder">Chosen Orders</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('chosenOrder')} />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -175,6 +183,17 @@ export const DeliveryPerson = () => {
                   </td>
                   <td>
                     {deliveryPerson.zone ? <Link to={`/delivery-zone/${deliveryPerson.zone.id}`}>{deliveryPerson.zone.zoneName}</Link> : ''}
+                  </td>
+                  <td>{deliveryPerson.chosenOrderLimit}</td>
+                  <td>
+                    {deliveryPerson.chosenOrder
+                      ? deliveryPerson.chosenOrder.split(',').map((orderId, idx) => (
+                          <span key={idx}>
+                            <Link to={`/customer-order/${orderId}`}>{orderId}</Link>
+                            {idx < deliveryPerson.chosenOrder.split(',').length - 1 ? ', ' : ''}
+                          </span>
+                        ))
+                      : null}
                   </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

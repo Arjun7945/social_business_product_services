@@ -25,7 +25,8 @@ public class DeliveryPersonService {
 
     private final DeliveryPersonMapper deliveryPersonMapper;
 
-    public DeliveryPersonService(DeliveryPersonRepository deliveryPersonRepository, DeliveryPersonMapper deliveryPersonMapper) {
+    public DeliveryPersonService(DeliveryPersonRepository deliveryPersonRepository,
+            DeliveryPersonMapper deliveryPersonMapper) {
         this.deliveryPersonRepository = deliveryPersonRepository;
         this.deliveryPersonMapper = deliveryPersonMapper;
     }
@@ -66,14 +67,14 @@ public class DeliveryPersonService {
         LOG.debug("Request to partially update DeliveryPerson : {}", deliveryPersonDTO);
 
         return deliveryPersonRepository
-            .findById(deliveryPersonDTO.getId())
-            .map(existingDeliveryPerson -> {
-                deliveryPersonMapper.partialUpdate(existingDeliveryPerson, deliveryPersonDTO);
+                .findById(deliveryPersonDTO.getId())
+                .map(existingDeliveryPerson -> {
+                    deliveryPersonMapper.partialUpdate(existingDeliveryPerson, deliveryPersonDTO);
 
-                return existingDeliveryPerson;
-            })
-            .map(deliveryPersonRepository::save)
-            .map(deliveryPersonMapper::toDto);
+                    return existingDeliveryPerson;
+                })
+                .map(deliveryPersonRepository::save)
+                .map(deliveryPersonMapper::toDto);
     }
 
     /**
@@ -105,5 +106,28 @@ public class DeliveryPersonService {
     public void delete(Long id) {
         LOG.debug("Request to delete DeliveryPerson : {}", id);
         deliveryPersonRepository.deleteById(id);
+    }
+
+    /**
+     * Removes an order ID from the chosen_order CSV string.
+     *
+     * @param deliveryPersonId the id of the delivery person.
+     * @param orderId          the id of the order to remove.
+     */
+    public void removeOrderFromChosenList(Long deliveryPersonId, Long orderId) {
+        LOG.debug("Request to remove order {} from chosen list of DeliveryPerson {}", orderId, deliveryPersonId);
+        deliveryPersonRepository.findById(deliveryPersonId).ifPresent(deliveryPerson -> {
+            String currentChosen = deliveryPerson.getChosenOrder();
+            if (currentChosen != null && !currentChosen.isEmpty()) {
+                java.util.List<String> validOrders = new java.util.ArrayList<>(
+                        java.util.Arrays.asList(currentChosen.split(",")));
+                boolean removed = validOrders.remove(String.valueOf(orderId));
+                if (removed) {
+                    deliveryPerson.setChosenOrder(String.join(",", validOrders));
+                    deliveryPersonRepository.save(deliveryPerson);
+                    LOG.info("Removed Order {} from DeliveryPerson {} chosen list", orderId, deliveryPersonId);
+                }
+            }
+        });
     }
 }

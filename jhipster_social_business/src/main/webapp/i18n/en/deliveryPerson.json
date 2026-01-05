@@ -27,6 +27,8 @@
       "orders": "Orders",
       "addedBy": "Added By",
       "zone": "Zone",
+      "chosenOrderLimit": "Chosen Order Limit",
+      "chosenOrder": "Chosen Order",
       "help": {
         "status": "FREE, BUSY, OFF_DUTY"
       }

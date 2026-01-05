@@ -29,7 +29,8 @@ public class DeliveryPersonMessageService {
     }
 
     public String getOrderFooter(double total, String orderTime) {
-        return String.format("\n💰 *ആകെ:* ₹%.2f\n⏰ *സമയം:* %s\n\n" + "ഈ ഓർഡർ എടുക്കാൻ ആരാണ് തയ്യാറുള്ളത്? 🚀", total, orderTime);
+        return String.format("\n💰 *ആകെ:* ₹%.2f\n⏰ *സമയം:* %s\n\n" + "ഈ ഓർഡർ എടുക്കാൻ ആരാണ് തയ്യാറുള്ളത്? 🚀", total,
+                orderTime);
     }
 
     // ========================================
@@ -38,40 +39,37 @@ public class DeliveryPersonMessageService {
 
     public String getOrderAlreadyTaken(String deliveryPersonName) {
         return String.format(
-            "⚠️ *ഓർഡർ എടുത്തു കഴിഞ്ഞു!*\n\n" + "ഈ ഓർഡർ *%s* ഇതിനകം എടുത്തു കഴിഞ്ഞു. അടുത്ത തവണ ശ്രമിക്കൂ! ⚡",
-            deliveryPersonName
-        );
+                "⚠️ *ഓർഡർ എടുത്തു കഴിഞ്ഞു!*\n\n" + "ഈ ഓർഡർ *%s* ഇതിനകം എടുത്തു കഴിഞ്ഞു. അടുത്ത തവണ ശ്രമിക്കൂ! ⚡",
+                deliveryPersonName);
     }
 
     public String getOrderAlreadyTaken(Long orderId, String status) {
         return String.format(
-            "⚠️ *ഓർഡർ എടുത്തു കഴിഞ്ഞു!*\n\n" +
-            "ഓർഡർ #%d ഇതിനകം *%s* നിലയിലാണ്.\n" +
-            "മറ്റാരോ ഇത് എടുത്തു കഴിഞ്ഞു. അടുത്ത തവണ ശ്രമിക്കൂ! ⚡",
-            orderId,
-            status
-        );
+                "⚠️ *ഓർഡർ എടുത്തു കഴിഞ്ഞു!*\n\n" +
+                        "ഓർഡർ #%d ഇതിനകം *%s* നിലയിലാണ്.\n" +
+                        "മറ്റാരോ ഇത് എടുത്തു കഴിഞ്ഞു. അടുത്ത തവണ ശ്രമിക്കൂ! ⚡",
+                orderId,
+                status);
     }
 
     public String getOrderConfirmationSuccess(Long orderId, String customerName, String customerPhone) {
         return String.format(
-            "✅ *ഓർഡർ സ്ഥിരീകരിച്ചു!* 🎉\n\n" +
-            "നിങ്ങൾ ഓർഡർ #%d വിജയകരമായി എടുത്തു.\n" +
-            "കസ്റ്റമർ: %s\n" +
-            "ഫോൺ: %s\n\n" +
-            "ഡെലിവറിക്ക് ഭാഗ്യം നേരുന്നു! 🚀",
-            orderId,
-            customerName,
-            customerPhone
-        );
+                "✅ *ഓർഡർ സ്ഥിരീകരിച്ചു!* 🎉\n\n" +
+                        "നിങ്ങൾ ഓർഡർ #%d വിജയകരമായി എടുത്തു.\n" +
+                        "കസ്റ്റമർ: %s\n" +
+                        "ഫോൺ: %s\n\n" +
+                        "ഡെലിവറിക്ക് ഭാഗ്യം നേരുന്നു! 🚀",
+                orderId,
+                customerName,
+                customerPhone);
     }
 
     public String getPaymentModeSelectionHeader(Long orderId, double amount) {
         return String.format(
-            "💰 *പേയ്മെന്റ് മോഡ് തിരഞ്ഞെടുക്കുക*\n\n" + "ഓർഡർ #%d\n" + "തുക: ₹%.2f\n\n" + "കസ്റ്റമർ എങ്ങനെ പണമടയ്ക്കും? 👇",
-            orderId,
-            amount
-        );
+                "💰 *പേയ്മെന്റ് മോഡ് തിരഞ്ഞെടുക്കുക*\n\n" + "ഓർഡർ #%d\n" + "തുക: ₹%.2f\n\n"
+                        + "കസ്റ്റമർ എങ്ങനെ പണമടയ്ക്കും? 👇",
+                orderId,
+                amount);
     }
 
     public String getButtonCod() {
@@ -107,12 +105,10 @@ public class DeliveryPersonMessageService {
     // ========================================
 
     public String getUnauthorizedDeliveryMessage() {
-        return (
-            "❌ *അനധികൃത ആക്സസ്*\n\n" +
-            "നിങ്ങൾ ഡെലിവറി വ്യക്തിയായി രജിസ്റ്റർ ചെയ്തിട്ടില്ല. 🚫\n" +
-            "അധികൃത ഡെലിവറി ഉദ്യോഗസ്ഥർക്ക് മാത്രമേ ഓർഡറുകൾ സ്ഥിരീകരിക്കാൻ കഴിയൂ.\n\n" +
-            "ഇത് പിശകാണെന്ന് നിങ്ങൾ വിശ്വസിക്കുന്നുവെങ്കിൽ അഡ്മിനെ ബന്ധപ്പെടുക. 📞"
-        );
+        return ("❌ *അനധികൃത ആക്സസ്*\n\n" +
+                "നിങ്ങൾ ഡെലിവറി വ്യക്തിയായി രജിസ്റ്റർ ചെയ്തിട്ടില്ല. 🚫\n" +
+                "അധികൃത ഡെലിവറി ഉദ്യോഗസ്ഥർക്ക് മാത്രമേ ഓർഡറുകൾ സ്ഥിരീകരിക്കാൻ കഴിയൂ.\n\n" +
+                "ഇത് പിശകാണെന്ന് നിങ്ങൾ വിശ്വസിക്കുന്നുവെങ്കിൽ അഡ്മിനെ ബന്ധപ്പെടുക. 📞");
     }
 
     // ========================================
@@ -120,24 +116,22 @@ public class DeliveryPersonMessageService {
     // ========================================
 
     public String getDeliveryConfirmationToGroup(
-        Long orderId,
-        String deliveryPersonName,
-        String deliveryPersonPhone,
-        String confirmedTime
-    ) {
+            Long orderId,
+            String deliveryPersonName,
+            String deliveryPersonPhone,
+            String confirmedTime) {
         return String.format(
-            "✅ *ഓർഡർ അസൈൻ ചെയ്തു* 🚀\n\n" +
-            "📦 *ഓർഡർ #%d* എടുത്തു കഴിഞ്ഞു!\n\n" +
-            "🚴 *ഡെലിവറി വ്യക്തി:*\n" +
-            "   👤 പേര്: *%s*\n" +
-            "   📞 ഫോൺ: %s\n\n" +
-            "⏰ സ്ഥിരീകരിച്ച സമയം: %s\n\n" +
-            "കസ്റ്റമറെ ഉടൻ അറിയിക്കും. മികച്ച ജോലി! 👏",
-            orderId,
-            deliveryPersonName,
-            deliveryPersonPhone,
-            confirmedTime
-        );
+                "✅ *ഓർഡർ അസൈൻ ചെയ്തു* 🚀\n\n" +
+                        "📦 *ഓർഡർ #%d* എടുത്തു കഴിഞ്ഞു!\n\n" +
+                        "🚴 *ഡെലിവറി വ്യക്തി:*\n" +
+                        "   👤 പേര്: *%s*\n" +
+                        "   📞 ഫോൺ: %s\n\n" +
+                        "⏰ സ്ഥിരീകരിച്ച സമയം: %s\n\n" +
+                        "കസ്റ്റമറെ ഉടൻ അറിയിക്കും. മികച്ച ജോലി! 👏",
+                orderId,
+                deliveryPersonName,
+                deliveryPersonPhone,
+                confirmedTime);
     }
 
     // ========================================
@@ -152,20 +146,20 @@ public class DeliveryPersonMessageService {
     // CATEGORY 6: WELCOME MESSAGES
     // ========================================
 
-    public String getTeamMemberWelcomeMessage(String name, String phone, String role, String addedBy, String addedByPhone) {
+    public String getTeamMemberWelcomeMessage(String name, String phone, String role, String addedBy,
+            String addedByPhone) {
         return String.format(
-            "🎉 *ടീമിലേക്ക് സ്വാഗതം!* 🙌\n\n" +
-            "ഹലോ *%s*! 👋\n" +
-            "ഫോൺ: %s\n\n" +
-            "*%s* (📞 %s) നിങ്ങളെ *%s* ആയി നിയമിച്ചിരിക്കുന്നു.\n\n" +
-            "ജോലി ആരംഭിക്കാൻ തയ്യാറാകൂ! 🚀\n\n" +
-            "ആരംഭിക്കാൻ 'hi' എന്ന് അയക്കുക.",
-            name,
-            phone,
-            addedBy,
-            addedByPhone,
-            role
-        );
+                "🎉 *ടീമിലേക്ക് സ്വാഗതം!* 🙌\n\n" +
+                        "ഹലോ *%s*! 👋\n" +
+                        "ഫോൺ: %s\n\n" +
+                        "*%s* (📞 %s) നിങ്ങളെ *%s* ആയി നിയമിച്ചിരിക്കുന്നു.\n\n" +
+                        "ജോലി ആരംഭിക്കാൻ തയ്യാറാകൂ! 🚀\n\n" +
+                        "ആരംഭിക്കാൻ 'hi' എന്ന് അയക്കുക.",
+                name,
+                phone,
+                addedBy,
+                addedByPhone,
+                role);
     }
 
     public String getDeliveryPersonWelcomeMessage(String name) {
@@ -178,22 +172,21 @@ public class DeliveryPersonMessageService {
 
     public String getPaymentReceivedMessage(String paymentId, double amount, Long orderId) {
         return String.format(
-            "✅ *പേയ്മെന്റ് ലഭിച്ചു!* 💰\n\n" + "ഓർഡർ #%d\n" + "തുക: \u20B9%.2f\n" + "Ref: *%s*\n\n" + "ഇനി ഡെലിവറി തുടരാം! 🚀",
-            orderId,
-            amount,
-            paymentId
-        );
+                "✅ *പേയ്മെന്റ് ലഭിച്ചു!* 💰\n\n" + "ഓർഡർ #%d\n" + "തുക: \u20B9%.2f\n" + "Ref: *%s*\n\n"
+                        + "ഇനി ഡെലിവറി തുടരാം! 🚀",
+                orderId,
+                amount,
+                paymentId);
     }
 
     public String getPaymentFailedMessage(String paymentId, Long orderId) {
         return String.format(
-            "❌ *പേയ്മെന്റ് പരാജയപ്പെട്ടു!* ⚠️\n\n" +
-            "ഓർഡർ #%d\n" +
-            "Ref: *%s*\n\n" +
-            "കസ്റ്റമറോട് പണം നൽകാനോ അല്ലെങ്കിൽ വീണ്ടും ശ്രമിക്കാനോ പറയുക.",
-            orderId,
-            paymentId
-        );
+                "❌ *പേയ്മെന്റ് പരാജയപ്പെട്ടു!* ⚠️\n\n" +
+                        "ഓർഡർ #%d\n" +
+                        "Ref: *%s*\n\n" +
+                        "കസ്റ്റമറോട് പണം നൽകാനോ അല്ലെങ്കിൽ വീണ്ടും ശ്രമിക്കാനോ പറയുക.",
+                orderId,
+                paymentId);
     }
 
     public String getPaymentWaitMessageQr() {
@@ -202,5 +195,84 @@ public class DeliveryPersonMessageService {
 
     public String getPaymentWaitMessageLink() {
         return "പേയ്മെന്റ് ലിങ്ക് ഉപഭോക്താവിന് അയച്ചു. പേയ്മെന്റ് സ്ഥിരീകരണം ലഭിക്കുന്നത് വരെ കാത്തിരിക്കുക. ഉപഭോക്താവിന് ലഭിച്ചില്ലെങ്കിൽ, ദയവായി ഇത് പങ്കിടുക. ⏳";
+    }
+
+    // ========================================
+    // CATEGORY 10: NEW FLOW MESSAGES (TASK 2.1)
+    // ========================================
+
+    public String getMenuGreeting(String name) {
+        return String.format("നമസ്കാരം %s! 👋\nതാഴെ പറയുന്ന ഓപ്ഷനുകളിൽ ഒന്ന് തിരഞ്ഞെടുക്കുക:", name);
+    }
+
+    public String getMenuOptionOrderTaken() {
+        return "📦 Order Taken";
+    }
+
+    public String getMenuOptionProfile() {
+        return "👤 Profile";
+    }
+
+    public String getOrderTakenListHeader() {
+        return "നിങ്ങൾ എടുത്ത ഓർഡറുകൾ താഴെ നൽകുന്നു 👇";
+    }
+
+    public String getOrderAcceptedSimpleSuccess() {
+        return "✅ ഓർഡർ വിജയകരമായി സ്വീകരിച്ചു!";
+    }
+
+    public String getOrderLimitReachedError() {
+        return "⚠️ ക്ഷമിക്കണം! നിങ്ങൾക്ക് അനുവദിച്ചിട്ടുള്ള ഓർഡർ പരിധി കഴിഞ്ഞു. കൂടുതൽ ഓർഡറുകൾ എടുക്കാൻ കഴിയില്ല. 🚫";
+    }
+
+    public String getOrderDetailsOptionsHeader(Long orderId) {
+        return String.format("ഓർഡർ #%d\nഎന്താണ് ചെയ്യേണ്ടത്?", orderId);
+    }
+
+    public String getProfileDetails(String name, String phone, String status, String zone, int orderCount) {
+        return String.format(
+                "👤 *പ്രൊഫൈൽ വിവരങ്ങൾ*\n\n" +
+                        "പേര്: %s\n" +
+                        "ഫോൺ: %s\n" +
+                        "അവസ്ഥ (Status): %s\n" +
+                        "മേഖല (Zone): %s\n" +
+                        "എടുത്ത ഓർഡറുകൾ: %d\n",
+                name, phone, status, zone, orderCount);
+    }
+
+    public String getButtonUpdateStatus() {
+        return "🔄 Update Status";
+    }
+
+    public String getButtonUpdateZone() {
+        return "📍 Update Zone";
+    }
+
+    public String getButtonGoToMenu() {
+        return "🏠 Go to Menu";
+    }
+
+    public String getUpdateStatusHeader() {
+        return "പുതിയ സ്റ്റാറ്റസ് തിരഞ്ഞെടുക്കുക 👇";
+    }
+
+    public String getUpdateZoneHeader() {
+        return "പുതിയ മേഖല (Zone) തിരഞ്ഞെടുക്കുക 👇";
+    }
+
+    public String getUpdateSuccess() {
+        return "✅ അപ്ഡേറ്റ് വിജയിച്ചു!";
+    }
+
+    public String getNoOrdersTaken() {
+        return "നിങ്ങൾ നിലവിൽ ഓർഡറുകൾ ഒന്നും എടുത്തിട്ടില്ല.";
+    }
+
+    public String getStatusUpdateFailedPendingOrders() {
+        return "⚠️ നിങ്ങൾക്ക് ഡെലിവറി ചെയ്യാനുള്ള ഓർഡറുകൾ ബാക്കിയുണ്ട്. സ്റ്റാറ്റസ് മാറ്റുന്നതിന് മുൻപായി അവ പൂർത്തിയാക്കുക.";
+    }
+
+    public String getLimitReachedAndBusyMessage() {
+        return "⚠️ നിങ്ങൾ ഓർഡർ പരിധിയിലെത്തി. പുതിയ ഓർഡറുകൾ എടുക്കാൻ നിലവിലുള്ളവയിൽ ഒരെണ്ണമെങ്കിലും പൂർത്തിയാക്കുക.";
     }
 }

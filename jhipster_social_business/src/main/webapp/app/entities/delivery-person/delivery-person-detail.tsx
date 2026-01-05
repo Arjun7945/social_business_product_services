@@ -76,6 +76,27 @@ export const DeliveryPersonDetail = () => {
           </dt>
           <dd>{deliveryPersonEntity.isActive ? 'true' : 'false'}</dd>
           <dt>
+            <span id="chosenOrderLimit">
+              <Translate contentKey="whatsappProductServiceProApp.deliveryPerson.chosenOrderLimit">Limit</Translate>
+            </span>
+          </dt>
+          <dd>{deliveryPersonEntity.chosenOrderLimit}</dd>
+          <dt>
+            <span id="chosenOrder">
+              <Translate contentKey="whatsappProductServiceProApp.deliveryPerson.chosenOrder">Chosen Orders</Translate>
+            </span>
+          </dt>
+          <dd>
+            {deliveryPersonEntity.chosenOrder
+              ? deliveryPersonEntity.chosenOrder.split(',').map((orderId, idx) => (
+                  <span key={idx}>
+                    <Link to={`/customer-order/${orderId}`}>{orderId}</Link>
+                    {idx < deliveryPersonEntity.chosenOrder.split(',').length - 1 ? ', ' : ''}
+                  </span>
+                ))
+              : null}
+          </dd>
+          <dt>
             <Translate contentKey="whatsappProductServiceProApp.deliveryPerson.addedBy">Added By</Translate>
           </dt>
           <dd>

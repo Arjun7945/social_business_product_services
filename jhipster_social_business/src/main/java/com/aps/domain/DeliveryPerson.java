@@ -13,8 +13,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * DeliveryPerson
- * Separated from TeamMember to handle specific delivery logic and categorization.
- * SPLIT BY: DeliveryZone (A delivery person in Zone A only delivers to Customers in Zone A).
+ * Separated from TeamMember to handle specific delivery logic and
+ * categorization.
+ * SPLIT BY: DeliveryZone (A delivery person in Zone A only delivers to
+ * Customers in Zone A).
  * NEW: Added by Team Member relationship.
  */
 @Entity
@@ -77,6 +79,40 @@ public class DeliveryPerson implements Serializable {
     private DeliveryZone zone;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+    @Column(name = "chosen_order")
+    private String chosenOrder;
+
+    @NotNull
+    @Min(value = 2)
+    @Column(name = "chosen_order_limit", nullable = false)
+    private Integer chosenOrderLimit = 5;
+
+    public String getChosenOrder() {
+        return this.chosenOrder;
+    }
+
+    public DeliveryPerson chosenOrder(String chosenOrder) {
+        this.setChosenOrder(chosenOrder);
+        return this;
+    }
+
+    public void setChosenOrder(String chosenOrder) {
+        this.chosenOrder = chosenOrder;
+    }
+
+    public Integer getChosenOrderLimit() {
+        return this.chosenOrderLimit;
+    }
+
+    public DeliveryPerson chosenOrderLimit(Integer chosenOrderLimit) {
+        this.setChosenOrderLimit(chosenOrderLimit);
+        return this;
+    }
+
+    public void setChosenOrderLimit(Integer chosenOrderLimit) {
+        this.chosenOrderLimit = chosenOrderLimit;
+    }
 
     public Long getId() {
         return this.id;
@@ -226,7 +262,8 @@ public class DeliveryPerson implements Serializable {
         return this;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 
     @Override
     public boolean equals(Object o) {
@@ -241,7 +278,8 @@ public class DeliveryPerson implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -249,13 +287,13 @@ public class DeliveryPerson implements Serializable {
     @Override
     public String toString() {
         return "DeliveryPerson{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", waPhoneNumber='" + getWaPhoneNumber() + "'" +
-            ", phoneNumber='" + getPhoneNumber() + "'" +
-            ", status='" + getStatus() + "'" +
-            ", joinedAt='" + getJoinedAt() + "'" +
-            ", isActive='" + getIsActive() + "'" +
-            "}";
+                "id=" + getId() +
+                ", name='" + getName() + "'" +
+                ", waPhoneNumber='" + getWaPhoneNumber() + "'" +
+                ", phoneNumber='" + getPhoneNumber() + "'" +
+                ", status='" + getStatus() + "'" +
+                ", joinedAt='" + getJoinedAt() + "'" +
+                ", isActive='" + getIsActive() + "'" +
+                "}";
     }
 }

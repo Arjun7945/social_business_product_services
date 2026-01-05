@@ -30,18 +30,24 @@ public class OrderNotificationListener {
     private final DeliveryPersonMessageService deliveryPersonMessageService;
     private final CustomerFlowService customerFlowService;
     private final com.aps.repository.CustomerOrderRepository customerOrderRepository;
+    private final com.aps.repository.DeliveryPersonRepository deliveryPersonRepository;
+    private final com.aps.service.DeliveryPersonService deliveryPersonService;
 
     public OrderNotificationListener(
             WhatsAppService whatsAppService,
             CustomerMessageService customerMessageService,
             DeliveryPersonMessageService deliveryPersonMessageService,
             CustomerFlowService customerFlowService,
-            com.aps.repository.CustomerOrderRepository customerOrderRepository) {
+            com.aps.repository.CustomerOrderRepository customerOrderRepository,
+            com.aps.repository.DeliveryPersonRepository deliveryPersonRepository,
+            com.aps.service.DeliveryPersonService deliveryPersonService) {
         this.whatsAppService = whatsAppService;
         this.customerMessageService = customerMessageService;
         this.deliveryPersonMessageService = deliveryPersonMessageService;
         this.customerFlowService = customerFlowService;
         this.customerOrderRepository = customerOrderRepository;
+        this.deliveryPersonRepository = deliveryPersonRepository;
+        this.deliveryPersonService = deliveryPersonService;
     }
 
     @Async
@@ -77,13 +83,23 @@ public class OrderNotificationListener {
             // Trigger Re-order Flow
             customerFlowService.sendReOrderFlow(order.getCustomer());
 
-            // Notify Delivery Person (if assigned)
-            if (order.getDeliveryPerson() != null && order.getDeliveryPerson().getWaPhoneNumber() != null) {
-                String dpMsg = deliveryPersonMessageService.getPaymentReceivedMessage(
-                        event.getPaymentId(),
-                        event.getAmount(),
-                        order.getId());
-                whatsAppService.sendSimpleText(order.getDeliveryPerson().getWaPhoneNumber(), dpMsg);
+            // Notify Delivery Person (if assigned) and Remove from Chosen List
+            if (order.getDeliveryPerson() != null) {
+                // Remove from Chosen List
+                com.aps.domain.DeliveryPerson deliveryPerson = deliveryPersonRepository
+                        .findById(order.getDeliveryPerson().getId()).orElse(null);
+                if (deliveryPerson != null) {
+                    // Remove from Chosen List
+                    deliveryPersonService.removeOrderFromChosenList(deliveryPerson.getId(), orderId);
+
+                    if (deliveryPerson.getWaPhoneNumber() != null) {
+                        String dpMsg = deliveryPersonMessageService.getPaymentReceivedMessage(
+                                event.getPaymentId(),
+                                event.getAmount(),
+                                order.getId());
+                        whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), dpMsg);
+                    }
+                }
             }
         } catch (Exception e) {
             log.error("Failed to send WhatsApp notifications for payment success event, order {}", orderId, e);

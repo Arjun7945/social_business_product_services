@@ -52,6 +52,7 @@ public class DeliveryZone implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "zone")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "orders", "carts", "returns", "addedBy", "zone" }, allowSetters = true)
+    @ToString.Exclude
     private Set<Customer> customers = new HashSet<>();
 
     /**
@@ -60,6 +61,7 @@ public class DeliveryZone implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "zone")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "orders", "addedBy", "zone" }, allowSetters = true)
+    @ToString.Exclude
     private Set<DeliveryPerson> deliveryPersons = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

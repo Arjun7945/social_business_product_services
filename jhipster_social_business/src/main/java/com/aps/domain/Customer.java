@@ -116,6 +116,7 @@ public class Customer implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "customers", "deliveryPersons" }, allowSetters = true)
+    @ToString.Exclude
     private DeliveryZone zone;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

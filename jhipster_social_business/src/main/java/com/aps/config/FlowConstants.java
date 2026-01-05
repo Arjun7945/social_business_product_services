@@ -5,7 +5,8 @@ package com.aps.config;
  */
 public final class FlowConstants {
 
-    private FlowConstants() {}
+    private FlowConstants() {
+    }
 
     // Button IDs
     public static final String BTN_CONTINUE_SHOPPING = "CONTINUE_SHOPPING";
@@ -42,9 +43,22 @@ public final class FlowConstants {
     public static final String PREFIX_PAY_QR = "PAY_QR_";
     public static final String PREFIX_PAY_LINK = "PAY_LINK_";
 
+    // Delivery Flow Menus
+    public static final String DELIVERY_MENU_ORDER_TAKEN = "DELIVERY_MENU_ORDER_TAKEN";
+    public static final String DELIVERY_MENU_PROFILE = "DELIVERY_MENU_PROFILE";
+
+    // Delivery Profile Flow
+    public static final String DELIVERY_PROFILE_UPDATE_STATUS = "DELIVERY_PROFILE_UPDATE_STATUS";
+    public static final String DELIVERY_PROFILE_UPDATE_ZONE = "DELIVERY_PROFILE_UPDATE_ZONE";
+    public static final String DELIVERY_PROFILE_MENU = "DELIVERY_PROFILE_MENU";
+
+    // Prefixes
+    public static final String PREFIX_DELIVERY_DETAILS = "DELIVERY_DETAILS_";
+    public static final String PREFIX_UPDATE_STATUS = "UPDATE_STATUS_";
+    public static final String PREFIX_UPDATE_ZONE = "UPDATE_ZONE_";
+
     // Fallback Images
-    public static final String WHATSAPP_LOGO_URL =
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/1200px-WhatsApp.svg.png";
+    public static final String WHATSAPP_LOGO_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/1200px-WhatsApp.svg.png";
 
     // Commands
     public static final String CMD_DONE = "DONE";

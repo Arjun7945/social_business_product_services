@@ -162,6 +162,25 @@ export const DeliveryPersonUpdate = () => {
                 placeholder="YYYY-MM-DD HH:mm"
               />
               <ValidatedField
+                label={translate('whatsappProductServiceProApp.deliveryPerson.chosenOrderLimit')}
+                id="delivery-person-chosenOrderLimit"
+                name="chosenOrderLimit"
+                data-cy="chosenOrderLimit"
+                type="number"
+                validate={{
+                  required: { value: true, message: translate('entity.validation.required') },
+                  min: { value: 2, message: translate('entity.validation.min', { min: 2 }) },
+                }}
+              />
+              <ValidatedField
+                label={translate('whatsappProductServiceProApp.deliveryPerson.chosenOrder')}
+                id="delivery-person-chosenOrder"
+                name="chosenOrder"
+                data-cy="chosenOrder"
+                type="text"
+                validate={{}}
+              />
+              <ValidatedField
                 label={translate('whatsappProductServiceProApp.deliveryPerson.isActive')}
                 id="delivery-person-isActive"
                 name="isActive"

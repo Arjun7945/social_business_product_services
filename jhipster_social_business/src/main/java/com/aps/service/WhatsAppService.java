@@ -28,12 +28,11 @@ public class WhatsAppService {
     private final CommonMessageService commonMessageService;
 
     public WhatsAppService(
-        WhatsAppConfig whatsAppConfig,
-        RestClient whatsAppRestClient,
-        CustomerMessageService messageService,
-        DeliveryPersonMessageService deliveryMessageService,
-        CommonMessageService commonMessageService
-    ) {
+            WhatsAppConfig whatsAppConfig,
+            RestClient whatsAppRestClient,
+            CustomerMessageService messageService,
+            DeliveryPersonMessageService deliveryMessageService,
+            CommonMessageService commonMessageService) {
         this.whatsAppConfig = whatsAppConfig;
         this.restClient = whatsAppRestClient;
         this.messageService = messageService;
@@ -43,132 +42,145 @@ public class WhatsAppService {
 
     public boolean sendSimpleText(String toWaId, String text) {
         WhatsAppMessageDto message = WhatsAppMessageDto.builder()
-            .to(toWaId)
-            .type("text")
-            .text(WhatsAppMessageDto.TextDto.builder().body(text).previewUrl(false).build())
-            .build();
+                .to(toWaId)
+                .type("text")
+                .text(WhatsAppMessageDto.TextDto.builder().body(text).previewUrl(false).build())
+                .build();
 
         return sendToMeta(message);
     }
 
     public boolean sendDocument(String toWaId, String mediaId, String filename, String caption) {
         WhatsAppMessageDto message = WhatsAppMessageDto.builder()
-            .to(toWaId)
-            .type("document")
-            .document(WhatsAppMessageDto.DocumentDto.builder().id(mediaId).filename(filename).caption(caption).build())
-            .build();
+                .to(toWaId)
+                .type("document")
+                .document(WhatsAppMessageDto.DocumentDto.builder().id(mediaId).filename(filename).caption(caption)
+                        .build())
+                .build();
 
         return sendToMeta(message);
     }
 
     public boolean sendLocation(String toWaId, double lat, double lon, String name, String address) {
         WhatsAppMessageDto message = WhatsAppMessageDto.builder()
-            .to(toWaId)
-            .type("location")
-            .location(WhatsAppMessageDto.LocationDto.builder().latitude(lat).longitude(lon).name(name).address(address).build())
-            .build();
+                .to(toWaId)
+                .type("location")
+                .location(WhatsAppMessageDto.LocationDto.builder().latitude(lat).longitude(lon).name(name)
+                        .address(address).build())
+                .build();
 
         return sendToMeta(message);
     }
 
     public boolean sendImageMessage(String toWaId, String imageUrl, String caption) {
         WhatsAppMessageDto message = WhatsAppMessageDto.builder()
-            .to(toWaId)
-            .type("image")
-            .image(WhatsAppMessageDto.ImageDto.builder().link(imageUrl).caption(caption).build())
-            .build();
+                .to(toWaId)
+                .type("image")
+                .image(WhatsAppMessageDto.ImageDto.builder().link(imageUrl).caption(caption).build())
+                .build();
 
         return sendToMeta(message);
     }
 
     public boolean sendInteractiveOrderAlert(String toWaId, String bodyText, Long orderId) {
         WhatsAppMessageDto message = WhatsAppMessageDto.builder()
-            .to(toWaId)
-            .type("interactive")
-            .interactive(
-                WhatsAppMessageDto.InteractiveDto.builder()
-                    .type("button")
-                    .body(WhatsAppMessageDto.BodyDto.builder().text(bodyText).build())
-                    .action(
-                        WhatsAppMessageDto.ActionDto.builder()
-                            .buttons(
-                                List.of(
-                                    WhatsAppMessageDto.ButtonDto.builder()
-                                        .type("reply")
-                                        .reply(
-                                            WhatsAppMessageDto.ReplyDto.builder()
-                                                .id("DELIVERY_TAKE_" + orderId)
-                                                .title(messageService.getButtonAcceptOrder())
-                                                .build()
-                                        )
-                                        .build()
-                                )
-                            )
-                            .build()
-                    )
-                    .build()
-            )
-            .build();
+                .to(toWaId)
+                .type("interactive")
+                .interactive(
+                        WhatsAppMessageDto.InteractiveDto.builder()
+                                .type("button")
+                                .body(WhatsAppMessageDto.BodyDto.builder().text(bodyText).build())
+                                .action(
+                                        WhatsAppMessageDto.ActionDto.builder()
+                                                .buttons(
+                                                        List.of(
+                                                                WhatsAppMessageDto.ButtonDto.builder()
+                                                                        .type("reply")
+                                                                        .reply(
+                                                                                WhatsAppMessageDto.ReplyDto.builder()
+                                                                                        .id("DELIVERY_TAKE_" + orderId)
+                                                                                        .title(messageService
+                                                                                                .getButtonAcceptOrder())
+                                                                                        .build())
+                                                                        .build()))
+                                                .build())
+                                .build())
+                .build();
 
         return sendToMeta(message);
     }
 
     public boolean sendInteractiveList(String toWaId, String bodyText, List<WhatsAppMessageDto.RowDto> rows) {
+        return sendInteractiveList(toWaId, bodyText, commonMessageService.getButtonViewOptions(), rows);
+    }
+
+    public boolean sendInteractiveList(String toWaId, String bodyText, String buttonText,
+            List<WhatsAppMessageDto.RowDto> rows) {
         WhatsAppMessageDto message = WhatsAppMessageDto.builder()
-            .to(toWaId)
-            .type("interactive")
-            .interactive(
-                WhatsAppMessageDto.InteractiveDto.builder()
-                    .type("list")
-                    .body(WhatsAppMessageDto.BodyDto.builder().text(bodyText).build())
-                    .action(
-                        WhatsAppMessageDto.ActionDto.builder()
-                            .button(commonMessageService.getButtonViewOptions())
-                            .sections(
-                                List.of(
-                                    WhatsAppMessageDto.SectionDto.builder()
-                                        .title(messageService.getSectionTitleAvailableFish())
-                                        .rows(rows)
-                                        .build()
-                                )
-                            )
-                            .build()
-                    )
-                    .build()
-            )
-            .build();
+                .to(toWaId)
+                .type("interactive")
+                .interactive(
+                        WhatsAppMessageDto.InteractiveDto.builder()
+                                .type("list")
+                                .body(WhatsAppMessageDto.BodyDto.builder().text(bodyText).build())
+                                .action(
+                                        WhatsAppMessageDto.ActionDto.builder()
+                                                .button(buttonText)
+                                                .sections(
+                                                        List.of(
+                                                                WhatsAppMessageDto.SectionDto.builder()
+                                                                        .title(messageService
+                                                                                .getSectionTitleAvailableFish())
+                                                                        .rows(rows)
+                                                                        .build()))
+                                                .build())
+                                .build())
+                .build();
+
+        return sendToMeta(message);
+    }
+
+    public boolean sendInteractiveButtons(String toWaId, String bodyText, List<WhatsAppMessageDto.ButtonDto> buttons) {
+        WhatsAppMessageDto message = WhatsAppMessageDto.builder()
+                .to(toWaId)
+                .type("interactive")
+                .interactive(
+                        WhatsAppMessageDto.InteractiveDto.builder()
+                                .type("button")
+                                .body(WhatsAppMessageDto.BodyDto.builder().text(bodyText).build())
+                                .action(WhatsAppMessageDto.ActionDto.builder().buttons(buttons).build())
+                                .build())
+                .build();
 
         return sendToMeta(message);
     }
 
     public boolean sendCartActionButtons(String toWaId, String bodyText, List<WhatsAppMessageDto.ButtonDto> buttons) {
         WhatsAppMessageDto message = WhatsAppMessageDto.builder()
-            .to(toWaId)
-            .type("interactive")
-            .interactive(
-                WhatsAppMessageDto.InteractiveDto.builder()
-                    .type("button")
-                    .body(WhatsAppMessageDto.BodyDto.builder().text(bodyText).build())
-                    .action(WhatsAppMessageDto.ActionDto.builder().buttons(buttons).build())
-                    .build()
-            )
-            .build();
+                .to(toWaId)
+                .type("interactive")
+                .interactive(
+                        WhatsAppMessageDto.InteractiveDto.builder()
+                                .type("button")
+                                .body(WhatsAppMessageDto.BodyDto.builder().text(bodyText).build())
+                                .action(WhatsAppMessageDto.ActionDto.builder().buttons(buttons).build())
+                                .build())
+                .build();
 
         return sendToMeta(message);
     }
 
     public boolean sendCarouselMessage(String to, String bodyText, List<WhatsAppMessageDto.CarouselCardDto> cards) {
         WhatsAppMessageDto message = WhatsAppMessageDto.builder()
-            .to(to)
-            .type("interactive")
-            .interactive(
-                WhatsAppMessageDto.InteractiveDto.builder()
-                    .type("carousel")
-                    .body(WhatsAppMessageDto.BodyDto.builder().text(bodyText).build())
-                    .action(WhatsAppMessageDto.ActionDto.builder().cards(cards).build())
-                    .build()
-            )
-            .build();
+                .to(to)
+                .type("interactive")
+                .interactive(
+                        WhatsAppMessageDto.InteractiveDto.builder()
+                                .type("carousel")
+                                .body(WhatsAppMessageDto.BodyDto.builder().text(bodyText).build())
+                                .action(WhatsAppMessageDto.ActionDto.builder().cards(cards).build())
+                                .build())
+                .build();
 
         return sendToMeta(message);
     }
@@ -185,37 +197,36 @@ public class WhatsAppService {
         return sendSimpleText(toWaId, message);
     }
 
-    public boolean sendDeliveryAssignmentNotification(String customerWaId, String deliveryPersonName, String deliveryPersonWaPhone) {
+    public boolean sendDeliveryAssignmentNotification(String customerWaId, String deliveryPersonName,
+            String deliveryPersonWaPhone) {
         String message = messageService.getDeliveryAssignmentNotification(deliveryPersonName, deliveryPersonWaPhone);
         return sendSimpleText(customerWaId, message);
     }
 
     public boolean sendCustomerWelcomeMessage(
-        String customerWaId,
-        String customerName,
-        String customerPhone,
-        String executiveName,
-        String executiveWaPhone
-    ) {
-        String message = messageService.getCustomerWelcomeByExecutive(customerName, customerPhone, executiveName, executiveWaPhone);
+            String customerWaId,
+            String customerName,
+            String customerPhone,
+            String executiveName,
+            String executiveWaPhone) {
+        String message = messageService.getCustomerWelcomeByExecutive(customerName, customerPhone, executiveName,
+                executiveWaPhone);
         return sendSimpleText(customerWaId, message);
     }
 
     public boolean sendTeamMemberWelcomeMessage(
-        String teamMemberWaId,
-        String teamMemberName,
-        String teamMemberPhone,
-        String roleName,
-        String addedByName,
-        String addedByWaPhone
-    ) {
+            String teamMemberWaId,
+            String teamMemberName,
+            String teamMemberPhone,
+            String roleName,
+            String addedByName,
+            String addedByWaPhone) {
         String message = deliveryMessageService.getTeamMemberWelcomeMessage(
-            teamMemberName,
-            teamMemberPhone,
-            roleName,
-            addedByName,
-            addedByWaPhone
-        );
+                teamMemberName,
+                teamMemberPhone,
+                roleName,
+                addedByName,
+                addedByWaPhone);
 
         return sendSimpleText(teamMemberWaId, message);
     }
@@ -226,19 +237,17 @@ public class WhatsAppService {
     }
 
     public boolean sendDeliveryConfirmationToGroup(
-        String groupId,
-        Long orderId,
-        String deliveryPersonName,
-        String deliveryPersonPhone,
-        LocalDateTime confirmedAt
-    ) {
+            String groupId,
+            Long orderId,
+            String deliveryPersonName,
+            String deliveryPersonPhone,
+            LocalDateTime confirmedAt) {
         String formattedTime = confirmedAt.format(DateTimeFormatter.ofPattern("hh:mm a"));
         String message = deliveryMessageService.getDeliveryConfirmationToGroup(
-            orderId,
-            deliveryPersonName,
-            deliveryPersonPhone,
-            formattedTime
-        );
+                orderId,
+                deliveryPersonName,
+                deliveryPersonPhone,
+                formattedTime);
 
         return sendSimpleText(groupId, message);
     }
@@ -251,14 +260,14 @@ public class WhatsAppService {
             // log.debug("Sending message payload: {}", jsonPreview);
 
             restClient
-                .post()
-                .uri("/" + whatsAppConfig.getPhoneNumberId() + "/messages")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(message)
-                // .retrieve() // JHipster/Spring 6.1 RestClient syntax
-                // .toBodilessEntity();
-                .retrieve()
-                .toBodilessEntity();
+                    .post()
+                    .uri("/" + whatsAppConfig.getPhoneNumberId() + "/messages")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(message)
+                    // .retrieve() // JHipster/Spring 6.1 RestClient syntax
+                    // .toBodilessEntity();
+                    .retrieve()
+                    .toBodilessEntity();
 
             log.info("Message sent to {}", message.getTo());
             return true;

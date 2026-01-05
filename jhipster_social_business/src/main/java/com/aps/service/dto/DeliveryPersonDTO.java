@@ -10,9 +10,7 @@ import java.util.Objects;
 /**
  * A DTO for the {@link com.aps.domain.DeliveryPerson} entity.
  */
-@Schema(
-    description = "DeliveryPerson\nSeparated from TeamMember to handle specific delivery logic and categorization.\nSPLIT BY: DeliveryZone (A delivery person in Zone A only delivers to Customers in Zone A).\nNEW: Added by Team Member relationship."
-)
+@Schema(description = "DeliveryPerson\nSeparated from TeamMember to handle specific delivery logic and categorization.\nSPLIT BY: DeliveryZone (A delivery person in Zone A only delivers to Customers in Zone A).\nNEW: Added by Team Member relationship.")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class DeliveryPersonDTO implements Serializable {
 
@@ -40,6 +38,28 @@ public class DeliveryPersonDTO implements Serializable {
 
     @NotNull
     private DeliveryZoneDTO zone;
+
+    private String chosenOrder;
+
+    @NotNull
+    @Min(value = 2)
+    private Integer chosenOrderLimit = 5;
+
+    public String getChosenOrder() {
+        return chosenOrder;
+    }
+
+    public void setChosenOrder(String chosenOrder) {
+        this.chosenOrder = chosenOrder;
+    }
+
+    public Integer getChosenOrderLimit() {
+        return chosenOrderLimit;
+    }
+
+    public void setChosenOrderLimit(Integer chosenOrderLimit) {
+        this.chosenOrderLimit = chosenOrderLimit;
+    }
 
     public Long getId() {
         return id;
@@ -138,15 +158,15 @@ public class DeliveryPersonDTO implements Serializable {
     @Override
     public String toString() {
         return "DeliveryPersonDTO{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", waPhoneNumber='" + getWaPhoneNumber() + "'" +
-            ", phoneNumber='" + getPhoneNumber() + "'" +
-            ", status='" + getStatus() + "'" +
-            ", joinedAt='" + getJoinedAt() + "'" +
-            ", isActive='" + getIsActive() + "'" +
-            ", addedBy=" + getAddedBy() +
-            ", zone=" + getZone() +
-            "}";
+                "id=" + getId() +
+                ", name='" + getName() + "'" +
+                ", waPhoneNumber='" + getWaPhoneNumber() + "'" +
+                ", phoneNumber='" + getPhoneNumber() + "'" +
+                ", status='" + getStatus() + "'" +
+                ", joinedAt='" + getJoinedAt() + "'" +
+                ", isActive='" + getIsActive() + "'" +
+                ", addedBy=" + getAddedBy() +
+                ", zone=" + getZone() +
+                "}";
     }
 }
