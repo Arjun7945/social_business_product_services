@@ -105,8 +105,19 @@ public class UserRemovalService {
                     ? reason.substring(0, MAX_REASON_LENGTH)
                     : reason;
 
+            // Logic for 'addedBy'
+            String addedByStr = "SELF";
+            if (customer.getAddedBy() != null) {
+                addedByStr = customer.getAddedBy().getName();
+            }
+
+            // Update Summary addedBy
+            summary.setAddedBy(addedByStr);
+            removedOrderSummaryRepository.save(summary);
+
             RemovedUser removedUser = new RemovedUser()
                     .name(customer.getName())
+                    .addedBy(addedByStr)
                     .role(com.aps.domain.enumeration.UserRole.CUSTOMER)
                     .status(AccountStatus.ACCOUNT_REMOVED);
 

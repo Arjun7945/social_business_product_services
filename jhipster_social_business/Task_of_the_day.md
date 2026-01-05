@@ -10,22 +10,20 @@
 ## 2. TASK OF THE DAY
 * **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code. follow the step 3 below
 * **task:**
-    1. Analyze the ourCustomers page and find how the track order page is designed in it and make sure the time logic is added properly.
-    2. time logic means the time should be calculated based on how many time is taken to move from one status to another.
-    3. check if its implemented properly in the code.
-    4. i have attached 2 images of the track order page, so that you can see where the error is facing 
-    5. in the first uploaded image you can see that after order is completed the estimated time which should be changes to total time taken  after a order is completed.and it should be estimated time untill the order is completed.
-    6. so while the order is not completed then each stage should be tracked with time , how much time was taken to move from one stage to another.
-    7. untill the order is completed the estimated time will show how much time it had taken from the start to the current stage.
-    8. and when the order is completed the estimated time changes to total time taken and the value for it will the the sum of total time taken from the stage 1 to the last stage.
-    9. the last stage means success stage and fail stage
-    10. in the second uploaded image you can see that the estimated time is not updated properly.
-    11. also you can see that the order onway is showing invalid date , it should show the current date and the time.
-    12. like wise all the stages should show the date and time when it was updated.
-    13. most importantlty the stages are placed in the left hand side, it should be in the center of the page.
+1. have changed the ESTIMATED TIME text to OVERALL TIME TAKEN in the track order page.
+2. so now we are currentlly calculating the time taken but after 24 hrs it should also add day and time consumed in the overall time taken.
 
 * **Prohibition:** **DO NOT make temporary fixes, this is a production grade code.** you should always the path of a senior software engineer.
 
+## 2.1. TASK OF THE DAY
+* **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code. follow the step 3 below
+* **task:**
+1. now in the unknown customer flow after a customer is successfully added then in the added by column he should be marked as SELF.
+2. also this update should be updated in the client , removed users and history 
+3. in the removed user and its history we havnt added the added by column so now add the column and insert the value accordingly.
+4. in the removed user table we have the order history id column ,but it is not in link format so now add the link format, so that by clicking the id it takes user to the view page of that oder history
+
+* **Prohibition:** **DO NOT make temporary fixes, this is a production grade code.** you should always the path of a senior software engineer.
 
 ## 3. STRICT Error Resolution Protocol
 * **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code.

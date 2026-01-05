@@ -38,6 +38,7 @@
       "distanceFromBusinessKm": "Distance From Business Km",
       "isPincodeValid": "Is Pincode Valid",
       "zoneName": "Zone",
+      "addedBy": "Added By",
       "help": {
         "distanceFromBusinessKm": "NEW: Stored for Customer audit",
         "isPincodeValid": "NEW: Stored for Customer audit"

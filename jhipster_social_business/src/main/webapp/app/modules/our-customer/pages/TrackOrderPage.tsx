@@ -39,7 +39,8 @@ const TrackOrderPage = () => {
     fetchOrder();
   }, [orderId]);
 
-  // Logic to determine Estimated Time / Total Time
+  // Logic to determine OVERALL TIME TAKEN / Total Time
+  // Logic to determine OVERALL TIME TAKEN / Total Time
   const getEstimatedTime = (order: any) => {
     if (!order) return '-- mins';
 
@@ -54,7 +55,21 @@ const TrackOrderPage = () => {
     }
 
     const diffMins = end.diff(start, 'minute');
-    return `${diffMins} mins`;
+
+    if (diffMins < 60) {
+      return `${diffMins} mins`;
+    }
+
+    const days = Math.floor(diffMins / (24 * 60));
+    const hours = Math.floor((diffMins % (24 * 60)) / 60);
+    const mins = diffMins % 60;
+
+    let timeString = '';
+    if (days > 0) timeString += `${days} days `;
+    if (hours > 0) timeString += `${hours} hrs `;
+    timeString += `${mins} mins`;
+
+    return timeString.trim();
   };
 
   // Status mapping logic
@@ -270,7 +285,7 @@ const TrackOrderPage = () => {
             <div className="col-6">
               <div className="p-3 bg-light rounded-4 text-center">
                 <p className="small text-muted mb-1 text-uppercase fw-bold" style={{ fontSize: '0.65rem' }}>
-                  {orderData.status === 'DELIVERED' || orderData.status === 'ORDER_DELIVERED_SUCESSFULLY' ? 'Total Time' : 'Estimated Time'}
+                  {orderData.status === 'DELIVERED' || orderData.status === 'ORDER_DELIVERED_SUCESSFULLY' ? 'OVERALL TIME TAKEN' : 'OVERALL TIME TAKEN'}
                 </p>
                 <h5 className="h6 fw-bold text-dark mb-0">{estimatedTime}</h5>
               </div>

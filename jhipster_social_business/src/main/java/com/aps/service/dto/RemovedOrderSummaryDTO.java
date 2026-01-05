@@ -31,6 +31,16 @@ public class RemovedOrderSummaryDTO implements Serializable {
 
     private Instant removedAt;
 
+    private String addedBy;
+
+    public String getAddedBy() {
+        return addedBy;
+    }
+
+    public void setAddedBy(String addedBy) {
+        this.addedBy = addedBy;
+    }
+
     public Long getId() {
         return id;
     }
@@ -128,15 +138,15 @@ public class RemovedOrderSummaryDTO implements Serializable {
     @Override
     public String toString() {
         return "RemovedOrderSummaryDTO{" +
-            "id=" + getId() +
-            ", userOriginalId=" + getUserOriginalId() +
-            ", userName='" + getUserName() + "'" +
-            ", userRole='" + getUserRole() + "'" +
-            ", totalOrders=" + getTotalOrders() +
-            ", totalAmount=" + getTotalAmount() +
-            ", firstInteractionAt='" + getFirstInteractionAt() + "'" +
-            ", lastInteractionAt='" + getLastInteractionAt() + "'" +
-            ", removedAt='" + getRemovedAt() + "'" +
-            "}";
+                "id=" + getId() +
+                ", userOriginalId=" + getUserOriginalId() +
+                ", userName='" + getUserName() + "'" +
+                ", userRole='" + getUserRole() + "'" +
+                ", totalOrders=" + getTotalOrders() +
+                ", totalAmount=" + getTotalAmount() +
+                ", firstInteractionAt='" + getFirstInteractionAt() + "'" +
+                ", lastInteractionAt='" + getLastInteractionAt() + "'" +
+                ", removedAt='" + getRemovedAt() + "'" +
+                "}";
     }
 }

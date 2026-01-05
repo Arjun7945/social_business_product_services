@@ -92,6 +92,22 @@ public class RemovedUser implements Serializable {
     @Column(name = "zone_id")
     private Long zoneId;
 
+    @Column(name = "added_by")
+    private String addedBy;
+
+    public String getAddedBy() {
+        return this.addedBy;
+    }
+
+    public RemovedUser addedBy(String addedBy) {
+        this.setAddedBy(addedBy);
+        return this;
+    }
+
+    public void setAddedBy(String addedBy) {
+        this.addedBy = addedBy;
+    }
+
     public String getZoneName() {
         return this.zoneName;
     }

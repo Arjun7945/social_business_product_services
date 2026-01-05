@@ -184,6 +184,10 @@ export const RemovedUser = () => {
                   <Translate contentKey="whatsappProductServiceProApp.removedUser.zoneName">Zone</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('zoneName')} />
                 </th>
+                <th className="hand" onClick={sort('addedBy')}>
+                  <Translate contentKey="whatsappProductServiceProApp.removedUser.addedBy">Added By</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('addedBy')} />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -214,10 +218,17 @@ export const RemovedUser = () => {
                   <td>
                     <Translate contentKey={`whatsappProductServiceProApp.AccountStatus.${removedUser.status}`} />
                   </td>
-                  <td>{removedUser.orderHistoryId}</td>
+                  <td>
+                    {removedUser.orderHistoryId ? (
+                      <Link to={`/removed-order-summary/${removedUser.orderHistoryId}`}>{removedUser.orderHistoryId}</Link>
+                    ) : (
+                      ''
+                    )}
+                  </td>
                   <td>{removedUser.distanceFromBusinessKm}</td>
                   <td>{removedUser.isPincodeValid ? 'true' : 'false'}</td>
                   <td>{removedUser.zoneName}</td>
+                  <td>{removedUser.addedBy}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button

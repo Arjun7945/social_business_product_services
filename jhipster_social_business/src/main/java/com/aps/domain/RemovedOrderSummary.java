@@ -49,6 +49,22 @@ public class RemovedOrderSummary implements Serializable {
     @Column(name = "removed_at")
     private Instant removedAt;
 
+    @Column(name = "added_by")
+    private String addedBy;
+
+    public String getAddedBy() {
+        return this.addedBy;
+    }
+
+    public RemovedOrderSummary addedBy(String addedBy) {
+        this.setAddedBy(addedBy);
+        return this;
+    }
+
+    public void setAddedBy(String addedBy) {
+        this.addedBy = addedBy;
+    }
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -168,7 +184,8 @@ public class RemovedOrderSummary implements Serializable {
         this.removedAt = removedAt;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 
     @Override
     public boolean equals(Object o) {
@@ -183,7 +200,8 @@ public class RemovedOrderSummary implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -191,15 +209,15 @@ public class RemovedOrderSummary implements Serializable {
     @Override
     public String toString() {
         return "RemovedOrderSummary{" +
-            "id=" + getId() +
-            ", userOriginalId=" + getUserOriginalId() +
-            ", userName='" + getUserName() + "'" +
-            ", userRole='" + getUserRole() + "'" +
-            ", totalOrders=" + getTotalOrders() +
-            ", totalAmount=" + getTotalAmount() +
-            ", firstInteractionAt='" + getFirstInteractionAt() + "'" +
-            ", lastInteractionAt='" + getLastInteractionAt() + "'" +
-            ", removedAt='" + getRemovedAt() + "'" +
-            "}";
+                "id=" + getId() +
+                ", userOriginalId=" + getUserOriginalId() +
+                ", userName='" + getUserName() + "'" +
+                ", userRole='" + getUserRole() + "'" +
+                ", totalOrders=" + getTotalOrders() +
+                ", totalAmount=" + getTotalAmount() +
+                ", firstInteractionAt='" + getFirstInteractionAt() + "'" +
+                ", lastInteractionAt='" + getLastInteractionAt() + "'" +
+                ", removedAt='" + getRemovedAt() + "'" +
+                "}";
     }
 }

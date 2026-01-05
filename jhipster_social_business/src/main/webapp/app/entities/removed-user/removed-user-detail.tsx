@@ -150,6 +150,12 @@ export const RemovedUserDetail = () => {
             </span>
           </dt>
           <dd>{removedUserEntity.zoneName}</dd>
+          <dt>
+            <span id="addedBy">
+              <Translate contentKey="whatsappProductServiceProApp.removedUser.addedBy">Added By</Translate>
+            </span>
+          </dt>
+          <dd>{removedUserEntity.addedBy}</dd>
         </dl>
         <Button tag={Link} to="/removed-user" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

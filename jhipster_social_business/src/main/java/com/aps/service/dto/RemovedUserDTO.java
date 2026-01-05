@@ -56,6 +56,16 @@ public class RemovedUserDTO implements Serializable {
 
     private Long zoneId;
 
+    private String addedBy;
+
+    public String getAddedBy() {
+        return addedBy;
+    }
+
+    public void setAddedBy(String addedBy) {
+        this.addedBy = addedBy;
+    }
+
     public String getZoneName() {
         return zoneName;
     }

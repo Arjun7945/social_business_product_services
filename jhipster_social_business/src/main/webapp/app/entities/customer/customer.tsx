@@ -192,7 +192,7 @@ export const Customer = () => {
                       <TextFormat type="date" value={customer.lastInteractionAt} format={APP_DATE_FORMAT} />
                     ) : null}
                   </td>
-                  <td>{customer.addedBy ? <Link to={`/team-member/${customer.addedBy.id}`}>{customer.addedBy.name}</Link> : ''}</td>
+                  <td>{customer.addedBy ? <Link to={`/team-member/${customer.addedBy.id}`}>{customer.addedBy.name}</Link> : 'SELF'}</td>
                   <td>{customer.zone ? <Link to={`/delivery-zone/${customer.zone.id}`}>{customer.zone.zoneName}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
