@@ -74,9 +74,7 @@ public class OrderService {
         order.setTotalAmount(total);
         order.setStatus(OrderStatus.ORDER_NOT_TAKEN);
         order.setPaymentMethod(paymentMethodName.toUpperCase());
-
-        // 4. Set Initial Status
-        order.setStatus(OrderStatus.ORDER_NOT_TAKEN);
+        order.setConfirmedAt(Instant.now()); // Set confirmedAt for initial status
 
         // 5. Save Order
         order = customerOrderRepository.save(order);
@@ -124,6 +122,20 @@ public class OrderService {
     }
 
     /**
+     * Updates order status and correctly sets confirmedAt timestamp.
+     * Use this method for ALL status changes to ensure consistency.
+     */
+    public void updateOrderStatus(CustomerOrder order, OrderStatus newStatus) {
+        if (order.getStatus() != newStatus) {
+            log.info("Updating status for Order {}: {} -> {}", order.getId(), order.getStatus(), newStatus);
+            order.setStatus(newStatus);
+            order.setConfirmedAt(Instant.now());
+            customerOrderRepository.save(order);
+            orderStatusHistoryService.addEvent(order);
+        }
+    }
+
+    /**
      * Processes a successful payment notification.
      */
     @Transactional
@@ -133,12 +145,10 @@ public class OrderService {
                 .ifPresent(order -> {
                     log.info("Processing Payment Success for Order: {}", orderId);
 
-                    // Update Status to DELIVERED as payment on delivery confirms handover
-                    order.setStatus(OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
+                    updateOrderStatus(order, OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
+
                     order.setTransactionId(paymentId);
-                    order.setConfirmedAt(Instant.now());
                     customerOrderRepository.save(order);
-                    orderStatusHistoryService.addEvent(order);
 
                     // Publish Event instead of direct calls
                     eventPublisher.publishEvent(new PaymentSuccessEvent(this, order, paymentId, amount));
@@ -155,11 +165,10 @@ public class OrderService {
                 .ifPresent(order -> {
                     log.warn("Processing Payment Failure for Order: {}", orderId);
 
-                    // Update status to FAILED
-                    order.setStatus(OrderStatus.ORDER_FAILED);
+                    updateOrderStatus(order, OrderStatus.ORDER_FAILED);
+
                     order.setTransactionId(paymentId);
                     customerOrderRepository.save(order);
-                    orderStatusHistoryService.addEvent(order);
 
                     // Publish Event instead of direct calls
                     eventPublisher.publishEvent(new PaymentFailureEvent(this, order, paymentId));

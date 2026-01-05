@@ -53,8 +53,27 @@ public class CustomerOrderService {
     public CustomerOrderDTO update(CustomerOrderDTO customerOrderDTO) {
         LOG.debug("Request to update CustomerOrder : {}", customerOrderDTO);
         CustomerOrder customerOrder = customerOrderMapper.toEntity(customerOrderDTO);
-        customerOrder = customerOrderRepository.save(customerOrder);
-        return customerOrderMapper.toDto(customerOrder);
+
+        // Check if status changed
+        if (customerOrder.getId() != null) {
+            customerOrderRepository.findById(customerOrder.getId()).ifPresent(existing -> {
+                if (existing.getStatus() != customerOrder.getStatus()) {
+                    customerOrder.setConfirmedAt(java.time.Instant.now());
+                } else {
+                    // Start: Preserve existing confirmedAt if status didn't change (and dto didn't
+                    // provide different one)
+                    // If DTO has null confirmedAt but existing has one, and status is same, keep
+                    // existing
+                    if (customerOrder.getConfirmedAt() == null) {
+                        customerOrder.setConfirmedAt(existing.getConfirmedAt());
+                    }
+                    // End: Preservation logic
+                }
+            });
+        }
+
+        CustomerOrder savedCustomerOrder = customerOrderRepository.save(customerOrder);
+        return customerOrderMapper.toDto(savedCustomerOrder);
     }
 
     /**
@@ -69,7 +88,13 @@ public class CustomerOrderService {
         return customerOrderRepository
                 .findById(customerOrderDTO.getId())
                 .map(existingCustomerOrder -> {
+                    com.aps.domain.enumeration.OrderStatus oldStatus = existingCustomerOrder.getStatus();
+
                     customerOrderMapper.partialUpdate(existingCustomerOrder, customerOrderDTO);
+
+                    if (existingCustomerOrder.getStatus() != oldStatus) {
+                        existingCustomerOrder.setConfirmedAt(java.time.Instant.now());
+                    }
 
                     return existingCustomerOrder;
                 })

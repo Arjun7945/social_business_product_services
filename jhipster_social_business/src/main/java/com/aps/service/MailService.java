@@ -40,11 +40,10 @@ public class MailService {
     private final SpringTemplateEngine templateEngine;
 
     public MailService(
-        JHipsterProperties jHipsterProperties,
-        JavaMailSender javaMailSender,
-        MessageSource messageSource,
-        SpringTemplateEngine templateEngine
-    ) {
+            JHipsterProperties jHipsterProperties,
+            JavaMailSender javaMailSender,
+            MessageSource messageSource,
+            SpringTemplateEngine templateEngine) {
         this.jHipsterProperties = jHipsterProperties;
         this.javaMailSender = javaMailSender;
         this.messageSource = messageSource;
@@ -58,13 +57,12 @@ public class MailService {
 
     private void sendEmailSync(String to, String subject, String content, boolean isMultipart, boolean isHtml) {
         LOG.debug(
-            "Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
-            isMultipart,
-            isHtml,
-            to,
-            subject,
-            content
-        );
+                "Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
+                isMultipart,
+                isHtml,
+                to,
+                subject,
+                content);
 
         // Prepare message using a Spring helper
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -116,5 +114,30 @@ public class MailService {
     public void sendPasswordResetMail(User user) {
         LOG.debug("Sending password reset email to '{}'", user.getEmail());
         sendEmailFromTemplateSync(user, "mail/passwordResetEmail", "email.reset.title");
+    }
+
+    @Async
+    public void sendEmailWithAttachment(String to, String subject, String content, boolean isHtml,
+            String attachmentName, byte[] attachmentData, String mimeType) {
+        sendEmailWithAttachmentSync(to, subject, content, isHtml, attachmentName, attachmentData, mimeType);
+    }
+
+    private void sendEmailWithAttachmentSync(String to, String subject, String content, boolean isHtml,
+            String attachmentName, byte[] attachmentData, String mimeType) {
+        LOG.debug("Send email with attachment '{}' to '{}' with subject '{}'", attachmentName, to, subject);
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, StandardCharsets.UTF_8.name());
+            message.setTo(to);
+            message.setFrom(jHipsterProperties.getMail().getFrom());
+            message.setSubject(subject);
+            message.setText(content, isHtml);
+            message.addAttachment(attachmentName, new jakarta.mail.util.ByteArrayDataSource(attachmentData, mimeType));
+            javaMailSender.send(mimeMessage);
+            LOG.debug("Sent email with attachment to User '{}'", to);
+        } catch (MailException | MessagingException e) {
+            LOG.warn("Email with attachment could not be sent to user '{}'", to, e);
+        }
     }
 }

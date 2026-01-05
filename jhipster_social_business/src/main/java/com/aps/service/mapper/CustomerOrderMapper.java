@@ -11,7 +11,8 @@ import com.aps.service.dto.OrderStatusHistoryDTO;
 import org.mapstruct.*;
 
 /**
- * Mapper for the entity {@link CustomerOrder} and its DTO {@link CustomerOrderDTO}.
+ * Mapper for the entity {@link CustomerOrder} and its DTO
+ * {@link CustomerOrderDTO}.
  */
 @Mapper(componentModel = "spring")
 public interface CustomerOrderMapper extends EntityMapper<CustomerOrderDTO, CustomerOrder> {
@@ -23,6 +24,10 @@ public interface CustomerOrderMapper extends EntityMapper<CustomerOrderDTO, Cust
     @Named("orderStatusHistoryId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "status", source = "status")
+    @Mapping(target = "changeTime", source = "changeTime")
+    @Mapping(target = "onWayTime", source = "onWayTime")
+    @Mapping(target = "paymentPendingTime", source = "paymentPendingTime")
     OrderStatusHistoryDTO toDtoOrderStatusHistoryId(OrderStatusHistory orderStatusHistory);
 
     @Named("customerName")

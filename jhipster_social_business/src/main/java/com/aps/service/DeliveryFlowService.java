@@ -188,15 +188,15 @@ public class DeliveryFlowService {
             return;
         }
 
-        order.setStatus(newStatus);
-        customerOrderRepository.save(order);
-        orderStatusHistoryService.addEvent(order);
-
-        if (newStatus == OrderStatus.ORDER_DELIVERED_SUCESSFULLY) {
-            // Set ConfirmedAt as Delivered Time
+        if (order.getStatus() != newStatus) {
+            order.setStatus(newStatus);
+            // Always update confirmedAt on status change
             order.setConfirmedAt(Instant.now());
             customerOrderRepository.save(order);
+            orderStatusHistoryService.addEvent(order);
+        }
 
+        if (newStatus == OrderStatus.ORDER_DELIVERED_SUCESSFULLY) {
             TransactionSynchronizationManager.registerSynchronization(
                     new TransactionSynchronization() {
                         @Override
@@ -312,8 +312,8 @@ public class DeliveryFlowService {
         // 4. Update order with delivery person details
         order.setStatus(OrderStatus.DELIVERY_ONWAY);
         order.setDeliveryPerson(deliveryPerson);
-        // order.setConfirmedAt(Instant.now()); // REMOVED: ConfirmedAt is now used for
-        // Delivered Time
+        // Always update confirmedAt on status change
+        order.setConfirmedAt(Instant.now());
         customerOrderRepository.save(order);
         orderStatusHistoryService.addEvent(order);
 
