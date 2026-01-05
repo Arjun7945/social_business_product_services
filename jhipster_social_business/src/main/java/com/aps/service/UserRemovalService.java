@@ -213,12 +213,23 @@ public class UserRemovalService {
 
         summary = removedOrderSummaryRepository.save(summary);
 
+        // Logic for 'addedBy'
+        String addedByStr = "SELF";
+        if (member.getAddedBy() != null) {
+            addedByStr = member.getAddedBy().getName();
+        }
+
+        // Update Summary addedBy
+        summary.setAddedBy(addedByStr);
+        removedOrderSummaryRepository.save(summary);
+
         RemovedUser removedUser = new RemovedUser().name(member.getName())
                 .role(com.aps.domain.enumeration.UserRole.DELIVERY_PERSON).status(AccountStatus.ACCOUNT_REMOVED);
 
         removedUser.setOriginalId(member.getId());
         removedUser.setWhatsappNumber(member.getWaPhoneNumber());
         removedUser.setPhoneNumber(member.getPhoneNumber());
+        removedUser.setAddedBy(addedByStr);
         removedUser.setRemovedAt(Instant.now());
         removedUser.setReasonForRemoval(reason);
         removedUser.setOrderHistoryId(summary.getId());
@@ -226,6 +237,14 @@ public class UserRemovalService {
         if (member.getZone() != null) {
             removedUser.setZoneId(member.getZone().getId());
             removedUser.setZoneName(member.getZone().getZoneName());
+        }
+
+        // Capture session data
+        try {
+            String sessionData = customerFlowService.getSessionDataForArchival(member.getWaPhoneNumber());
+            removedUser.setLastSessionData(sessionData);
+        } catch (Exception e) {
+            log.warn("Failed to archive session data for delivery person {}", id, e);
         }
 
         removedUser = removedUserRepository.save(removedUser);

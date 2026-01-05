@@ -43,11 +43,24 @@ public class InputValidator {
         // Remove "kg", "grams", spaces, etc.
         // Replace comma with dot for international formats if needed (keeping simple
         // for now)
-        String cleaned = input.toLowerCase().replace("kg", "").replace("kgs", "").replace("kilograms", "").replace("kilo", "").trim();
+        String cleaned = input.toLowerCase().replace("kg", "").replace("kgs", "").replace("kilograms", "")
+                .replace("kilo", "").trim();
         try {
             return Double.parseDouble(cleaned);
         } catch (NumberFormatException e) {
             return null; // Return null to indicate invalid format
         }
+    }
+
+    public String extractPincode(String address) {
+        if (address == null) {
+            return null;
+        }
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("\\b\\d{6}\\b");
+        java.util.regex.Matcher matcher = pattern.matcher(address);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
     }
 }

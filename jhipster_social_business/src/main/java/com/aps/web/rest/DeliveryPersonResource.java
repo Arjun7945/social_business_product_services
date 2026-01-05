@@ -46,51 +46,62 @@ public class DeliveryPersonResource {
 
     private final DeliveryPersonQueryService deliveryPersonQueryService;
 
+    // Antigravity: Inject UserRemovalService
+    private final com.aps.service.UserRemovalService userRemovalService;
+
     public DeliveryPersonResource(
-        DeliveryPersonService deliveryPersonService,
-        DeliveryPersonRepository deliveryPersonRepository,
-        DeliveryPersonQueryService deliveryPersonQueryService
-    ) {
+            DeliveryPersonService deliveryPersonService,
+            DeliveryPersonRepository deliveryPersonRepository,
+            DeliveryPersonQueryService deliveryPersonQueryService,
+            com.aps.service.UserRemovalService userRemovalService) {
         this.deliveryPersonService = deliveryPersonService;
         this.deliveryPersonRepository = deliveryPersonRepository;
         this.deliveryPersonQueryService = deliveryPersonQueryService;
+        this.userRemovalService = userRemovalService;
     }
 
     /**
      * {@code POST  /delivery-people} : Create a new deliveryPerson.
      *
      * @param deliveryPersonDTO the deliveryPersonDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new deliveryPersonDTO, or with status {@code 400 (Bad Request)} if the deliveryPerson has already an ID.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with
+     *         body the new deliveryPersonDTO, or with status
+     *         {@code 400 (Bad Request)} if the deliveryPerson has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public ResponseEntity<DeliveryPersonDTO> createDeliveryPerson(@Valid @RequestBody DeliveryPersonDTO deliveryPersonDTO)
-        throws URISyntaxException {
+    public ResponseEntity<DeliveryPersonDTO> createDeliveryPerson(
+            @Valid @RequestBody DeliveryPersonDTO deliveryPersonDTO)
+            throws URISyntaxException {
         LOG.debug("REST request to save DeliveryPerson : {}", deliveryPersonDTO);
         if (deliveryPersonDTO.getId() != null) {
-            throw new BadRequestAlertException("A new deliveryPerson cannot already have an ID", ENTITY_NAME, "idexists");
+            throw new BadRequestAlertException("A new deliveryPerson cannot already have an ID", ENTITY_NAME,
+                    "idexists");
         }
         deliveryPersonDTO = deliveryPersonService.save(deliveryPersonDTO);
         return ResponseEntity.created(new URI("/api/delivery-people/" + deliveryPersonDTO.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, deliveryPersonDTO.getId().toString()))
-            .body(deliveryPersonDTO);
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME,
+                        deliveryPersonDTO.getId().toString()))
+                .body(deliveryPersonDTO);
     }
 
     /**
      * {@code PUT  /delivery-people/:id} : Updates an existing deliveryPerson.
      *
-     * @param id the id of the deliveryPersonDTO to save.
+     * @param id                the id of the deliveryPersonDTO to save.
      * @param deliveryPersonDTO the deliveryPersonDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated deliveryPersonDTO,
-     * or with status {@code 400 (Bad Request)} if the deliveryPersonDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the deliveryPersonDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the updated deliveryPersonDTO,
+     *         or with status {@code 400 (Bad Request)} if the deliveryPersonDTO is
+     *         not valid,
+     *         or with status {@code 500 (Internal Server Error)} if the
+     *         deliveryPersonDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
     public ResponseEntity<DeliveryPersonDTO> updateDeliveryPerson(
-        @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody DeliveryPersonDTO deliveryPersonDTO
-    ) throws URISyntaxException {
+            @PathVariable(value = "id", required = false) final Long id,
+            @Valid @RequestBody DeliveryPersonDTO deliveryPersonDTO) throws URISyntaxException {
         LOG.debug("REST request to update DeliveryPerson : {}, {}", id, deliveryPersonDTO);
         if (deliveryPersonDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -105,26 +116,31 @@ public class DeliveryPersonResource {
 
         deliveryPersonDTO = deliveryPersonService.update(deliveryPersonDTO);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, deliveryPersonDTO.getId().toString()))
-            .body(deliveryPersonDTO);
+                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME,
+                        deliveryPersonDTO.getId().toString()))
+                .body(deliveryPersonDTO);
     }
 
     /**
-     * {@code PATCH  /delivery-people/:id} : Partial updates given fields of an existing deliveryPerson, field will ignore if it is null
+     * {@code PATCH  /delivery-people/:id} : Partial updates given fields of an
+     * existing deliveryPerson, field will ignore if it is null
      *
-     * @param id the id of the deliveryPersonDTO to save.
+     * @param id                the id of the deliveryPersonDTO to save.
      * @param deliveryPersonDTO the deliveryPersonDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated deliveryPersonDTO,
-     * or with status {@code 400 (Bad Request)} if the deliveryPersonDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the deliveryPersonDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the deliveryPersonDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the updated deliveryPersonDTO,
+     *         or with status {@code 400 (Bad Request)} if the deliveryPersonDTO is
+     *         not valid,
+     *         or with status {@code 404 (Not Found)} if the deliveryPersonDTO is
+     *         not found,
+     *         or with status {@code 500 (Internal Server Error)} if the
+     *         deliveryPersonDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<DeliveryPersonDTO> partialUpdateDeliveryPerson(
-        @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody DeliveryPersonDTO deliveryPersonDTO
-    ) throws URISyntaxException {
+            @PathVariable(value = "id", required = false) final Long id,
+            @NotNull @RequestBody DeliveryPersonDTO deliveryPersonDTO) throws URISyntaxException {
         LOG.debug("REST request to partial update DeliveryPerson partially : {}, {}", id, deliveryPersonDTO);
         if (deliveryPersonDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -140,9 +156,9 @@ public class DeliveryPersonResource {
         Optional<DeliveryPersonDTO> result = deliveryPersonService.partialUpdate(deliveryPersonDTO);
 
         return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, deliveryPersonDTO.getId().toString())
-        );
+                result,
+                HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME,
+                        deliveryPersonDTO.getId().toString()));
     }
 
     /**
@@ -150,17 +166,18 @@ public class DeliveryPersonResource {
      *
      * @param pageable the pagination information.
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of deliveryPeople in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list
+     *         of deliveryPeople in body.
      */
     @GetMapping("")
     public ResponseEntity<List<DeliveryPersonDTO>> getAllDeliveryPeople(
-        DeliveryPersonCriteria criteria,
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable
-    ) {
+            DeliveryPersonCriteria criteria,
+            @org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         LOG.debug("REST request to get DeliveryPeople by criteria: {}", criteria);
 
         Page<DeliveryPersonDTO> page = deliveryPersonQueryService.findByCriteria(criteria, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        HttpHeaders headers = PaginationUtil
+                .generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
@@ -168,7 +185,8 @@ public class DeliveryPersonResource {
      * {@code GET  /delivery-people/count} : count all the deliveryPeople.
      *
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count
+     *         in body.
      */
     @GetMapping("/count")
     public ResponseEntity<Long> countDeliveryPeople(DeliveryPersonCriteria criteria) {
@@ -180,7 +198,8 @@ public class DeliveryPersonResource {
      * {@code GET  /delivery-people/:id} : get the "id" deliveryPerson.
      *
      * @param id the id of the deliveryPersonDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the deliveryPersonDTO, or with status {@code 404 (Not Found)}.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the deliveryPersonDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
     public ResponseEntity<DeliveryPersonDTO> getDeliveryPerson(@PathVariable("id") Long id) {
@@ -198,9 +217,10 @@ public class DeliveryPersonResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDeliveryPerson(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete DeliveryPerson : {}", id);
-        deliveryPersonService.delete(id);
+        // Antigravity: Use UserRemovalService to safe delete/archive
+        userRemovalService.removeDeliveryPerson(id, "Deleted by Admin");
         return ResponseEntity.noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-            .build();
+                .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+                .build();
     }
 }

@@ -23,21 +23,23 @@ public class UnknownCustomerFlowService {
     private final BotSessionManager sessionManager;
     private final InputValidator inputValidator;
     private final LocationValidationService locationValidationService;
+    private final GeocodingService geocodingService;
     private final CustomerRepository customerRepository;
     private final CustomerFlowService customerFlowService; // To transition to registered flow
 
     public UnknownCustomerFlowService(
-        WhatsAppService whatsAppService,
-        BotSessionManager sessionManager,
-        InputValidator inputValidator,
-        LocationValidationService locationValidationService,
-        CustomerRepository customerRepository,
-        CustomerFlowService customerFlowService
-    ) {
+            WhatsAppService whatsAppService,
+            BotSessionManager sessionManager,
+            InputValidator inputValidator,
+            LocationValidationService locationValidationService,
+            GeocodingService geocodingService,
+            CustomerRepository customerRepository,
+            CustomerFlowService customerFlowService) {
         this.whatsAppService = whatsAppService;
         this.sessionManager = sessionManager;
         this.inputValidator = inputValidator;
         this.locationValidationService = locationValidationService;
+        this.geocodingService = geocodingService;
         this.customerRepository = customerRepository;
         this.customerFlowService = customerFlowService;
     }
@@ -51,18 +53,16 @@ public class UnknownCustomerFlowService {
 
         // Send Greeting & Name Confirmation
         String message = String.format(
-            "നമസ്കാരം %s! 🌟✨\n" +
-            "ഞങ്ങളുടെ ബിസിനസ്സിലേക്ക് സ്വാഗതം! 🙏\n" +
-            "നിങ്ങൾക്ക് ഓർഡർ ചെയ്യുന്നതിന് മുൻപായി ചില വിവരങ്ങൾ നൽകേണ്ടതുണ്ട്.\n\n" +
-            "നിങ്ങളുടെ പേര് *%s* എന്നാണോ? 🤔",
-            nameToConfirm,
-            nameToConfirm
-        );
+                "നമസ്കാരം %s! 🌟✨\n" +
+                        "ഞങ്ങളുടെ ബിസിനസ്സിലേക്ക് സ്വാഗതം! 🙏\n" +
+                        "നിങ്ങൾക്ക് ഓർഡർ ചെയ്യുന്നതിന് മുൻപായി ചില വിവരങ്ങൾ നൽകേണ്ടതുണ്ട്.\n\n" +
+                        "നിങ്ങളുടെ പേര് *%s* എന്നാണോ? 🤔",
+                nameToConfirm,
+                nameToConfirm);
 
         List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
-            createButton("CONFIRM_NAME_YES", "അതെ (Yes)"),
-            createButton("CONFIRM_NAME_NO", "അല്ല (No)")
-        );
+                createButton("CONFIRM_NAME_YES", "അതെ (Yes)"),
+                createButton("CONFIRM_NAME_NO", "അല്ല (No)"));
 
         whatsAppService.sendCartActionButtons(waPhoneNumber, message, buttons);
         updateStage(session, CustomerFlowStage.UNKNOWN_NAME_CONFIRM);
@@ -84,11 +84,10 @@ public class UnknownCustomerFlowService {
     }
 
     private void handleButtonReply(
-        String waPhoneNumber,
-        BotSession session,
-        CustomerFlowStage stage,
-        WhatsAppWebhookDto.ButtonReply buttonReply
-    ) {
+            String waPhoneNumber,
+            BotSession session,
+            CustomerFlowStage stage,
+            WhatsAppWebhookDto.ButtonReply buttonReply) {
         String id = buttonReply.getId();
 
         if (stage == CustomerFlowStage.UNKNOWN_NAME_CONFIRM) {
@@ -106,7 +105,8 @@ public class UnknownCustomerFlowService {
                 sessionManager.setSessionData(session, "tempPhone", waPhoneNumber);
                 askLocation(waPhoneNumber, session);
             } else if ("PHONE_CHANGE".equals(id)) {
-                whatsAppService.sendSimpleText(waPhoneNumber, "ദയവായി നിങ്ങളുടെ മൊബൈൽ നമ്പർ ടൈപ്പ് ചെയ്യുക (Eg: 9876543210): 🔢");
+                whatsAppService.sendSimpleText(waPhoneNumber,
+                        "ദയവായി നിങ്ങളുടെ മൊബൈൽ നമ്പർ ടൈപ്പ് ചെയ്യുക (Eg: 9876543210): 🔢");
                 updateStage(session, CustomerFlowStage.UNKNOWN_PHONE_INPUT);
             }
         }
@@ -116,7 +116,8 @@ public class UnknownCustomerFlowService {
         if (stage == CustomerFlowStage.UNKNOWN_NAME_INPUT) {
             String name = text.trim();
             if (!inputValidator.isValidName(name)) {
-                whatsAppService.sendSimpleText(waPhoneNumber, "ദയവായി ശരിയായ പേര് നൽകുക. (അക്ഷരങ്ങൾ മാത്രം ഉപയോഗിക്കുക)");
+                whatsAppService.sendSimpleText(waPhoneNumber,
+                        "ദയവായി ശരിയായ പേര് നൽകുക. (അക്ഷരങ്ങൾ മാത്രം ഉപയോഗിക്കുക)");
                 return;
             }
             sessionManager.setSessionData(session, "tempName", name);
@@ -134,11 +135,10 @@ public class UnknownCustomerFlowService {
     }
 
     private void handleLocationMessage(
-        String waPhoneNumber,
-        BotSession session,
-        CustomerFlowStage stage,
-        WhatsAppWebhookDto.Location location
-    ) {
+            String waPhoneNumber,
+            BotSession session,
+            CustomerFlowStage stage,
+            WhatsAppWebhookDto.Location location) {
         if (stage == CustomerFlowStage.UNKNOWN_LOCATION) {
             // FINALIZE REGISTRATION
             String name = sessionManager.getSessionDataString(session, "tempName");
@@ -155,36 +155,45 @@ public class UnknownCustomerFlowService {
             newCustomer.setLocationLat(location.getLatitude());
             newCustomer.setLocationLon(location.getLongitude());
 
-            double distance = locationValidationService.getDistanceFromBusiness(location.getLatitude(), location.getLongitude());
+            double distance = locationValidationService.getDistanceFromBusiness(location.getLatitude(),
+                    location.getLongitude());
             newCustomer.setDistanceFromBusinessKm(distance);
             newCustomer.setIsPincodeValid(
-                locationValidationService.isWithinDeliveryRadius(location.getLatitude(), location.getLongitude())
-            );
+                    locationValidationService.isWithinDeliveryRadius(location.getLatitude(), location.getLongitude()));
 
             customerRepository.save(newCustomer);
+
+            // Extract pincode from address if available
+            String pincode = inputValidator.extractPincode(location.getAddress());
+            if (pincode == null) {
+                pincode = geocodingService.getPincode(location.getLatitude(), location.getLongitude());
+            }
+
+            if (pincode != null) {
+                newCustomer.setAddress(pincode);
+                customerRepository.save(newCustomer);
+            }
 
             // Clear temp session data? Optional.
 
             // Send Success Message
             // Send Success Message
             TransactionSynchronizationManager.registerSynchronization(
-                new TransactionSynchronization() {
-                    @Override
-                    public void afterCommit() {
-                        whatsAppService.sendSimpleText(
-                            waPhoneNumber,
-                            String.format(
-                                "നന്ദി! നിങ്ങളുടെ രജിസ്‌ട്രേഷൻ പൂർത്തിയായി. 🎉\n" + "ഇനി നിങ്ങൾക്ക് സാധനങ്ങൾ ഓർഡർ ചെയ്യാാം! 🐟🦐\n\n",
-                                name
-                            )
-                        );
+                    new TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                            whatsAppService.sendSimpleText(
+                                    waPhoneNumber,
+                                    String.format(
+                                            "നന്ദി! നിങ്ങളുടെ രജിസ്‌ട്രേഷൻ പൂർത്തിയായി. 🎉\n"
+                                                    + "ഇനി നിങ്ങൾക്ക് സാധനങ്ങൾ ഓർഡർ ചെയ്യാാം! 🐟🦐\n\n",
+                                            name));
 
-                        // Optional: Automatically show catalog? - Moved inside afterCommit to ensure
-                        // data is ready
-                        customerFlowService.handleCustomerMessage(newCustomer, createDummyTextMessage("start"));
-                    }
-                }
-            );
+                            // Optional: Automatically show catalog? - Moved inside afterCommit to ensure
+                            // data is ready
+                            customerFlowService.handleCustomerMessage(newCustomer, createDummyTextMessage("start"));
+                        }
+                    });
 
             // Transition to Registered Flow
             updateStage(session, CustomerFlowStage.REGISTERED);
@@ -195,25 +204,23 @@ public class UnknownCustomerFlowService {
 
     private void askPhoneCheck(String waPhoneNumber, BotSession session) {
         String message = String.format(
-            "നന്ദി! ✅\n" + "വാട്സ്ആപ്പ് ഉപയോഗിക്കുന്ന *%s* തന്നെയാണോ വിളിക്കാനും ഉപയോഗിക്കേണ്ടത്? അതോ വേറെ നമ്പർ ഉണ്ടോ? 📱",
-            waPhoneNumber
-        );
+                "നന്ദി! ✅\n"
+                        + "വാട്സ്ആപ്പ് ഉപയോഗിക്കുന്ന *%s* തന്നെയാണോ വിളിക്കാനും ഉപയോഗിക്കേണ്ടത്? അതോ വേറെ നമ്പർ ഉണ്ടോ? 📱",
+                waPhoneNumber);
 
         List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
-            createButton("PHONE_SAME", "ഇത് മതി (Same)"),
-            createButton("PHONE_CHANGE", "വേറെ നമ്പർ (Change)")
-        );
+                createButton("PHONE_SAME", "ഇത് മതി (Same)"),
+                createButton("PHONE_CHANGE", "വേറെ നമ്പർ (Change)"));
         whatsAppService.sendCartActionButtons(waPhoneNumber, message, buttons);
         updateStage(session, CustomerFlowStage.UNKNOWN_PHONE_CHECK);
     }
 
     private void askLocation(String waPhoneNumber, BotSession session) {
         whatsAppService.sendSimpleText(
-            waPhoneNumber,
-            "ശരി! 👍\n" +
-            "അവസാനമായി, സാധനങ്ങൾ എത്തിക്കുന്നതിനായി നിങ്ങളുടെ *Location* അയക്കുക. 📍\n" +
-            "_(Paperclip 📎 -> Location -> Send Your Current Location അമർത്തുക)_"
-        );
+                waPhoneNumber,
+                "ശരി! 👍\n" +
+                        "അവസാനമായി, സാധനങ്ങൾ എത്തിക്കുന്നതിനായി നിങ്ങളുടെ *Location* അയക്കുക. 📍\n" +
+                        "_(Paperclip 📎 -> Location -> Send Your Current Location അമർത്തുക)_");
         updateStage(session, CustomerFlowStage.UNKNOWN_LOCATION);
     }
 
@@ -231,9 +238,9 @@ public class UnknownCustomerFlowService {
 
     private WhatsAppMessageDto.ButtonDto createButton(String id, String title) {
         return WhatsAppMessageDto.ButtonDto.builder()
-            .type("reply")
-            .reply(WhatsAppMessageDto.ReplyDto.builder().id(id).title(title).build())
-            .build();
+                .type("reply")
+                .reply(WhatsAppMessageDto.ReplyDto.builder().id(id).title(title).build())
+                .build();
     }
 
     // Helper to trigger start flow

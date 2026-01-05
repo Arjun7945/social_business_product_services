@@ -9,6 +9,7 @@ import com.aps.service.LocationValidationService;
 import com.aps.service.WhatsAppService;
 import com.aps.service.dto.WhatsAppWebhookDto;
 import com.aps.service.util.InputValidator;
+import com.aps.service.GeocodingService;
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ public class CustomerInputHandler {
     private final CustomerMessageService messageService;
     private final InputValidator inputValidator;
     private final LocationValidationService locationValidationService;
+    private final GeocodingService geocodingService;
     private final FlowStateService flowStateService;
 
     public CustomerInputHandler(
@@ -36,12 +38,14 @@ public class CustomerInputHandler {
             CustomerMessageService messageService,
             InputValidator inputValidator,
             LocationValidationService locationValidationService,
+            GeocodingService geocodingService,
             FlowStateService flowStateService) {
         this.customerRepository = customerRepository;
         this.whatsAppService = whatsAppService;
         this.messageService = messageService;
         this.inputValidator = inputValidator;
         this.locationValidationService = locationValidationService;
+        this.geocodingService = geocodingService;
         this.flowStateService = flowStateService;
     }
 
@@ -84,6 +88,16 @@ public class CustomerInputHandler {
 
         customer.setLocationLat(customerLat);
         customer.setLocationLon(customerLon);
+
+        // Extract pincode from address if available
+        String pincode = inputValidator.extractPincode(location.getAddress());
+        if (pincode == null) {
+            pincode = geocodingService.getPincode(customerLat, customerLon);
+        }
+
+        if (pincode != null) {
+            customer.setAddress(pincode);
+        }
 
         double distance = locationValidationService.getDistanceFromBusiness(customerLat, customerLon);
         customer.setDistanceFromBusinessKm(distance);
