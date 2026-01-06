@@ -14,7 +14,7 @@ public class CustomerMessageService {
 
     public String getPaymentQrCaption(double amount) {
         return String.format(
-            "📱 *Scan & Pay* \n\n" + "\u20B9%.2f\n\n" + "താങ്കളുടെ ഓർഡറിനുള്ള പേയ്മെൻ്റ് ചെയ്യാൻ ഈ QR Code സ്കാൻ ചെയ്യുക. 🤝",
+            "📱 *സ്കാൻ ചെയ്ത് പണമടയ്ക്കുക* \n\n" + "\u20B9%.2f\n\n" + "താങ്കളുടെ ഓർഡറിനുള്ള പേയ്മെൻ്റ് ചെയ്യാൻ ഈ QR Code സ്കാൻ ചെയ്യുക. 🤝",
             amount
         );
     }

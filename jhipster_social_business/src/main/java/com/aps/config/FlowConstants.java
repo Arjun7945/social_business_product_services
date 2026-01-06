@@ -37,6 +37,7 @@ public final class FlowConstants {
     public static final String PREFIX_DELIVERY_TAKE = "DELIVERY_TAKE_";
     public static final String PREFIX_SHIPPED = "shipped_";
     public static final String PREFIX_DELIVERED = "delivered_";
+    public static final String PREFIX_MAIN_MENU = "MAIN_MENU";
 
     // Payment Mode Prefixes
     public static final String PREFIX_PAY_COD = "PAY_COD_";

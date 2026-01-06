@@ -166,6 +166,8 @@ public class DeliveryFlowService {
         } else if (id.startsWith(FlowConstants.PREFIX_UPDATE_ZONE)) {
             Long zoneId = Long.parseLong(id.replace(FlowConstants.PREFIX_UPDATE_ZONE, ""));
             updateDeliveryPersonZone(deliveryPerson, zoneId);
+        } else if (id.equals(FlowConstants.PREFIX_MAIN_MENU)) {
+            sendMainMenu(deliveryPerson);
         }
     }
 
@@ -191,8 +193,13 @@ public class DeliveryFlowService {
                 continue;
             rows.add(WhatsAppMessageDto.RowDto.builder()
                     .id(FlowConstants.PREFIX_DELIVERY_DETAILS + idStr.trim())
-                    .title("Order #" + idStr.trim())
-                    .description("View Details")
+                    .title(deliveryPersonMessageService.getTitleOfOrderNumber() + idStr.trim())
+                    .description(deliveryPersonMessageService.getViewDetailsOfOrders())
+                    .build());
+            rows.add(WhatsAppMessageDto.RowDto.builder()
+                    .id(FlowConstants.PREFIX_MAIN_MENU)
+                    .title(deliveryPersonMessageService.getTitleOfOGoBack())
+                    .description(deliveryPersonMessageService.getBackToTheMainMenu())
                     .build());
         }
 
@@ -203,7 +210,8 @@ public class DeliveryFlowService {
         }
 
         whatsAppService.sendInteractiveList(deliveryPerson.getWaPhoneNumber(),
-                deliveryPersonMessageService.getOrderTakenListHeader(), "View Order", rows);
+                deliveryPersonMessageService.getOrderTakenListHeader(),
+                deliveryPersonMessageService.getOrderViewButtonLabal(), rows);
     }
 
     private void sendOrderInteractionOptions(DeliveryPerson deliveryPerson, Long orderId) {
@@ -289,8 +297,8 @@ public class DeliveryFlowService {
                     handleOrderTakenList(deliveryPerson);
 
                     // Send Main Menu (as requested)
-                    sendMainMenu(deliveryPerson);
-                    return;
+                    // sendMainMenu(deliveryPerson);
+                    // return;
                 }
             }
 

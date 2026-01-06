@@ -77,11 +77,11 @@ public class DeliveryPersonMessageService {
     }
 
     public String getButtonQr() {
-        return "📷 QR Scan";
+        return "📷 കോഡ് സ്കൈൻ";
     }
 
     public String getButtonLink() {
-        return "🔗 Payment Link";
+        return "🔗 പേയ്‌മെന്റ് ലിങ്ക്";
     }
 
     public String getPaymentModeCodSelected() {
@@ -206,11 +206,11 @@ public class DeliveryPersonMessageService {
     }
 
     public String getMenuOptionOrderTaken() {
-        return "📦 Order Taken";
+        return "📦 തിരഞ്ഞെടുത്ത ഓർഡറുകൾ";
     }
 
     public String getMenuOptionProfile() {
-        return "👤 Profile";
+        return "👤 പ്രൊഫൈൽ";
     }
 
     public String getOrderTakenListHeader() {
@@ -241,15 +241,15 @@ public class DeliveryPersonMessageService {
     }
 
     public String getButtonUpdateStatus() {
-        return "🔄 Update Status";
+        return "🔄 സ്റ്റാറ്റസ് അപ്ഡേറ്റ് ചെയ്യുക";
     }
 
     public String getButtonUpdateZone() {
-        return "📍 Update Zone";
+        return "📍 സോൺ അപ്ഡേറ്റ് ചെയ്യുക";
     }
 
     public String getButtonGoToMenu() {
-        return "🏠 Go to Menu";
+        return "🏠 മെനുവിലേക്ക് മടങ്ങുക";
     }
 
     public String getUpdateStatusHeader() {
@@ -274,5 +274,25 @@ public class DeliveryPersonMessageService {
 
     public String getLimitReachedAndBusyMessage() {
         return "⚠️ നിങ്ങൾ ഓർഡർ പരിധിയിലെത്തി. പുതിയ ഓർഡറുകൾ എടുക്കാൻ നിലവിലുള്ളവയിൽ ഒരെണ്ണമെങ്കിലും പൂർത്തിയാക്കുക.";
+    }
+
+    public String getOrderViewButtonLabal() {
+        return "ഓർഡറുകൾ കാണുക";
+    }
+
+    public String getBackToTheMainMenu() {
+        return "പ്രധാന മെനുവിലേക്ക് മടങ്ങുക";
+    }
+
+    public String getViewDetailsOfOrders() {
+        return "തിരഞ്ഞെടുത്ത ഓർഡറിന്റെ വിവരങ്ങൾ കാണുക";
+    }
+
+    public String getTitleOfOrderNumber() {
+        return "ഓർഡർ നമ്പർ: #";
+    }
+
+    public String getTitleOfOGoBack() {
+        return "മടങ്ങിപ്പോവുക";
     }
 }
