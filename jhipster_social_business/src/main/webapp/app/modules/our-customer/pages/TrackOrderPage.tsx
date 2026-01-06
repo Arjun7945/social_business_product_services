@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import Lottie from 'lottie-react';
 import noOrderAnimation from 'app/assets/animations/No_order_id_Found.json';
 import brandLogo from '../../../../content/images/brandlogo.png';
+import backgroundAnimation from 'app/assets/animations/background_logo_tackpage.json';
 
 const TrackOrderPage = () => {
   const navigate = useNavigate();
@@ -239,26 +240,23 @@ const TrackOrderPage = () => {
 
       <div className="flex-grow-1 overflow-auto">
         {/* Map / Purchase Order Placeholder */}
-        <div className="bg-secondary position-relative w-100 overflow-hidden" style={{ height: '14rem' }}>
-          <div
-            className="position-absolute top-0 start-0 w-100 h-100 opacity-10"
-            style={{
-              background: 'radial-gradient(#00CFA5 1px, transparent 1px)',
-              backgroundSize: '16px 16px',
-            }}
-          ></div>
+        <div className="position-relative w-100 overflow-hidden" style={{ height: '14rem' }}>
+          <div className="position-absolute top-0 start-0 w-100 h-100">
+            <Lottie animationData={backgroundAnimation} loop={true} className="w-100 h-100 object-fit-cover" />
+          </div>
           <div className="position-absolute top-50 start-50 translate-middle text-center">
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="bg-white p-2 rounded-circle shadow-lg mb-3 d-inline-block"
-              style={{ width: '120px', height: '120px' }}
+              className="mb-3 d-inline-block"
+              style={{ width: '280px', height: 'auto' }}
             >
               <img
                 src={brandLogo}
                 alt="Brand Logo"
-                className="w-100 h-100 rounded-circle object-fit-cover"
+                className="w-100 h-auto"
+                style={{ objectFit: 'contain' }}
               />
             </motion.div>
           </div>
