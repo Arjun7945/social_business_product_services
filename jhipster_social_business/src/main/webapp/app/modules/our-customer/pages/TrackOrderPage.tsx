@@ -7,6 +7,7 @@ import { getOrderDetails } from '../api';
 import dayjs from 'dayjs';
 import Lottie from 'lottie-react';
 import noOrderAnimation from 'app/assets/animations/No_order_id_Found.json';
+import brandLogo from '../../../../content/images/brandlogo.png';
 
 const TrackOrderPage = () => {
   const navigate = useNavigate();
@@ -248,20 +249,23 @@ const TrackOrderPage = () => {
           ></div>
           <div className="position-absolute top-50 start-50 translate-middle text-center">
             <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className="bg-white text-primary p-3 rounded-circle shadow border border-4 border-light mb-2 d-inline-block"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="bg-white p-2 rounded-circle shadow-lg mb-3 d-inline-block"
+              style={{ width: '120px', height: '120px' }}
             >
-              <FileText size={32} />
+              <img
+                src={brandLogo}
+                alt="Brand Logo"
+                className="w-100 h-100 rounded-circle object-fit-cover"
+              />
             </motion.div>
-            <h5 className="text-white fw-bold shadow-sm" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-              Purchase Order
-            </h5>
           </div>
 
-          {/* Purchase Order Button (Overlay) */}
+          {/* Store Details Button (Overlay) */}
           <div className="position-absolute bottom-0 start-50 translate-middle-x mb-5" style={{ zIndex: 30 }}>
-            <button className="btn btn-sm btn-light fw-bold shadow-sm rounded-pill px-4">View Purchase Order</button>
+            <button className="btn btn-sm btn-light fw-bold shadow-sm rounded-pill px-4">Show Store Details</button>
           </div>
         </div>
 
@@ -350,7 +354,12 @@ const TrackOrderPage = () => {
 
       {/* Footer Action */}
       <div className="p-3 bg-white border-top sticky-bottom">
-        <button className="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm">View Purchase Order</button>
+        <button
+          onClick={() => navigate('/ourCustomers/my-orders?orderId=' + orderData.id)}
+          className="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm"
+        >
+          View Purchase Order
+        </button>
       </div>
     </div>
   );

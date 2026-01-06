@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
-// @ts-expect-error: Importing image without type definition
 import brandLogo from '../../../../content/images/brandlogo.png';
 
 const LandingPage = () => {

@@ -46,13 +46,17 @@ public class CustomerOrderResource {
 
     private final CustomerOrderQueryService customerOrderQueryService;
 
+    private final com.aps.service.OrderItemQueryService orderItemQueryService;
+
     public CustomerOrderResource(
             CustomerOrderService customerOrderService,
             CustomerOrderRepository customerOrderRepository,
-            CustomerOrderQueryService customerOrderQueryService) {
+            CustomerOrderQueryService customerOrderQueryService,
+            com.aps.service.OrderItemQueryService orderItemQueryService) {
         this.customerOrderService = customerOrderService;
         this.customerOrderRepository = customerOrderRepository;
         this.customerOrderQueryService = customerOrderQueryService;
+        this.orderItemQueryService = orderItemQueryService;
     }
 
     /**
@@ -231,6 +235,28 @@ public class CustomerOrderResource {
         Optional<CustomerOrderDTO> customerOrderDTO = customerOrderService.findOne(id);
         return customerOrderDTO.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * {@code GET  /customer-orders/public/:id/items} : get the orderItems for a
+     * public order.
+     *
+     * @param id the id of the customerOrderDTO.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list
+     *         of orderItems in body.
+     */
+    @GetMapping("/public/{id}/items")
+    public ResponseEntity<List<com.aps.service.dto.OrderItemDTO>> getPublicCustomerOrderItems(
+            @PathVariable("id") Long id) {
+        LOG.debug("REST request to get public CustomerOrder Items : {}", id);
+        com.aps.service.criteria.OrderItemCriteria criteria = new com.aps.service.criteria.OrderItemCriteria();
+        tech.jhipster.service.filter.LongFilter orderIdFilter = new tech.jhipster.service.filter.LongFilter();
+        orderIdFilter.setEquals(id);
+        criteria.setOrderId(orderIdFilter);
+
+        List<com.aps.service.dto.OrderItemDTO> items = orderItemQueryService
+                .findByCriteria(criteria, Pageable.unpaged()).getContent();
+        return ResponseEntity.ok().body(items);
     }
 
     /**

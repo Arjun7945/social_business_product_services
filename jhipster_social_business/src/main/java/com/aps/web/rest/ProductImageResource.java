@@ -47,10 +47,9 @@ public class ProductImageResource {
     private final ProductImageQueryService productImageQueryService;
 
     public ProductImageResource(
-        ProductImageService productImageService,
-        ProductImageRepository productImageRepository,
-        ProductImageQueryService productImageQueryService
-    ) {
+            ProductImageService productImageService,
+            ProductImageRepository productImageRepository,
+            ProductImageQueryService productImageQueryService) {
         this.productImageService = productImageService;
         this.productImageRepository = productImageRepository;
         this.productImageQueryService = productImageQueryService;
@@ -60,37 +59,42 @@ public class ProductImageResource {
      * {@code POST  /product-images} : Create a new productImage.
      *
      * @param productImageDTO the productImageDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new productImageDTO, or with status {@code 400 (Bad Request)} if the productImage has already an ID.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with
+     *         body the new productImageDTO, or with status
+     *         {@code 400 (Bad Request)} if the productImage has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
     public ResponseEntity<ProductImageDTO> createProductImage(@Valid @RequestBody ProductImageDTO productImageDTO)
-        throws URISyntaxException {
+            throws URISyntaxException {
         LOG.debug("REST request to save ProductImage : {}", productImageDTO);
         if (productImageDTO.getId() != null) {
             throw new BadRequestAlertException("A new productImage cannot already have an ID", ENTITY_NAME, "idexists");
         }
         productImageDTO = productImageService.save(productImageDTO);
         return ResponseEntity.created(new URI("/api/product-images/" + productImageDTO.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, productImageDTO.getId().toString()))
-            .body(productImageDTO);
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME,
+                        productImageDTO.getId().toString()))
+                .body(productImageDTO);
     }
 
     /**
      * {@code PUT  /product-images/:id} : Updates an existing productImage.
      *
-     * @param id the id of the productImageDTO to save.
+     * @param id              the id of the productImageDTO to save.
      * @param productImageDTO the productImageDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated productImageDTO,
-     * or with status {@code 400 (Bad Request)} if the productImageDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the productImageDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the updated productImageDTO,
+     *         or with status {@code 400 (Bad Request)} if the productImageDTO is
+     *         not valid,
+     *         or with status {@code 500 (Internal Server Error)} if the
+     *         productImageDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
     public ResponseEntity<ProductImageDTO> updateProductImage(
-        @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody ProductImageDTO productImageDTO
-    ) throws URISyntaxException {
+            @PathVariable(value = "id", required = false) final Long id,
+            @Valid @RequestBody ProductImageDTO productImageDTO) throws URISyntaxException {
         LOG.debug("REST request to update ProductImage : {}, {}", id, productImageDTO);
         if (productImageDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -105,26 +109,31 @@ public class ProductImageResource {
 
         productImageDTO = productImageService.update(productImageDTO);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, productImageDTO.getId().toString()))
-            .body(productImageDTO);
+                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME,
+                        productImageDTO.getId().toString()))
+                .body(productImageDTO);
     }
 
     /**
-     * {@code PATCH  /product-images/:id} : Partial updates given fields of an existing productImage, field will ignore if it is null
+     * {@code PATCH  /product-images/:id} : Partial updates given fields of an
+     * existing productImage, field will ignore if it is null
      *
-     * @param id the id of the productImageDTO to save.
+     * @param id              the id of the productImageDTO to save.
      * @param productImageDTO the productImageDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated productImageDTO,
-     * or with status {@code 400 (Bad Request)} if the productImageDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the productImageDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the productImageDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the updated productImageDTO,
+     *         or with status {@code 400 (Bad Request)} if the productImageDTO is
+     *         not valid,
+     *         or with status {@code 404 (Not Found)} if the productImageDTO is not
+     *         found,
+     *         or with status {@code 500 (Internal Server Error)} if the
+     *         productImageDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<ProductImageDTO> partialUpdateProductImage(
-        @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody ProductImageDTO productImageDTO
-    ) throws URISyntaxException {
+            @PathVariable(value = "id", required = false) final Long id,
+            @NotNull @RequestBody ProductImageDTO productImageDTO) throws URISyntaxException {
         LOG.debug("REST request to partial update ProductImage partially : {}, {}", id, productImageDTO);
         if (productImageDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -140,9 +149,9 @@ public class ProductImageResource {
         Optional<ProductImageDTO> result = productImageService.partialUpdate(productImageDTO);
 
         return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, productImageDTO.getId().toString())
-        );
+                result,
+                HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME,
+                        productImageDTO.getId().toString()));
     }
 
     /**
@@ -150,17 +159,18 @@ public class ProductImageResource {
      *
      * @param pageable the pagination information.
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of productImages in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list
+     *         of productImages in body.
      */
     @GetMapping("")
     public ResponseEntity<List<ProductImageDTO>> getAllProductImages(
-        ProductImageCriteria criteria,
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable
-    ) {
+            ProductImageCriteria criteria,
+            @org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         LOG.debug("REST request to get ProductImages by criteria: {}", criteria);
 
         Page<ProductImageDTO> page = productImageQueryService.findByCriteria(criteria, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        HttpHeaders headers = PaginationUtil
+                .generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
@@ -168,7 +178,8 @@ public class ProductImageResource {
      * {@code GET  /product-images/count} : count all the productImages.
      *
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count
+     *         in body.
      */
     @GetMapping("/count")
     public ResponseEntity<Long> countProductImages(ProductImageCriteria criteria) {
@@ -180,7 +191,8 @@ public class ProductImageResource {
      * {@code GET  /product-images/:id} : get the "id" productImage.
      *
      * @param id the id of the productImageDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the productImageDTO, or with status {@code 404 (Not Found)}.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the productImageDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
     public ResponseEntity<ProductImageDTO> getProductImage(@PathVariable("id") Long id) {
@@ -200,7 +212,8 @@ public class ProductImageResource {
         LOG.debug("REST request to delete ProductImage : {}", id);
         productImageService.delete(id);
         return ResponseEntity.noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-            .build();
+                .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+                .build();
     }
+
 }

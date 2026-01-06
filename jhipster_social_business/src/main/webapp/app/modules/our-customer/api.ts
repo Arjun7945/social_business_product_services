@@ -20,5 +20,6 @@ export const checkUserExistence = (mobile: string) => api.get(`/customers?waPhon
 // Add new order endpoints
 export const getCustomerOrders = (mobile: string) => api.get(`/customer-orders/by-phone/${encodeURIComponent(mobile)}`);
 export const getOrderDetails = (id: string | number) => api.get(`/customer-orders/public/${id}`);
+export const getOrderItemsByOrderId = (id: string | number) => api.get(`/customer-orders/public/${id}/items`);
 
 export default api;

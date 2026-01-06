@@ -11,7 +11,7 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link OrderItem} and its DTO {@link OrderItemDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { ProductImageMapper.class })
 public interface OrderItemMapper extends EntityMapper<OrderItemDTO, OrderItem> {
     @Mapping(target = "product", source = "product", qualifiedByName = "fishProductName")
     @Mapping(target = "order", source = "order", qualifiedByName = "customerOrderId")
@@ -21,6 +21,9 @@ public interface OrderItemMapper extends EntityMapper<OrderItemDTO, OrderItem> {
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
     @Mapping(target = "name", source = "name")
+    @Mapping(target = "description", source = "description")
+    @Mapping(target = "pricePerKg", source = "pricePerKg")
+    @Mapping(target = "image", source = "image")
     FishProductDTO toDtoFishProductName(FishProduct fishProduct);
 
     @Named("customerOrderId")

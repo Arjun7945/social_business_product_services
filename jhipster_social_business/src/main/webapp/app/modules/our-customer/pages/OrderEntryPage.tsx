@@ -8,7 +8,7 @@ import GlobalBackground from '../components/GlobalBackground';
 
 const OrderEntryPage = () => {
     const navigate = useNavigate();
-    const [otp, setOtp] = useState(['', '', '', '']); // 4 digit input
+    const [otp, setOtp] = useState(['', '', '', '', '']); // 5 digit input
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     useEffect(() => {
@@ -26,7 +26,7 @@ const OrderEntryPage = () => {
         setOtp(newOtp);
 
         // Focus next input
-        if (element.value !== '' && index < 3) {
+        if (element.value !== '' && index < 4) {
             inputRefs.current[index + 1]?.focus();
         }
     };
@@ -41,17 +41,17 @@ const OrderEntryPage = () => {
 
     const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
         e.preventDefault();
-        const pastedData = e.clipboardData.getData('text').slice(0, 4).replace(/[^0-9]/g, '');
+        const pastedData = e.clipboardData.getData('text').slice(0, 5).replace(/[^0-9]/g, '');
 
         if (pastedData) {
             const newOtp = [...otp];
             pastedData.split('').forEach((char, i) => {
-                if (i < 4) newOtp[i] = char;
+                if (i < 5) newOtp[i] = char;
             });
             setOtp(newOtp);
 
             // Focus the box after the last pasted character
-            const nextFocusIndex = Math.min(pastedData.length, 3);
+            const nextFocusIndex = Math.min(pastedData.length, 4);
             inputRefs.current[nextFocusIndex]?.focus();
         }
     };
@@ -125,7 +125,6 @@ const OrderEntryPage = () => {
             <div className="p-4 bg-white sticky-bottom border-top">
                 <button
                     onClick={handleSubmit}
-                    disabled={otp.join('').length === 0}
                     className="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-lg mb-3"
                     style={{ background: '#6366f1', borderColor: '#6366f1' }} // Indigo color from image
                 >

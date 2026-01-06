@@ -10,44 +10,27 @@
 ## 2. TASK OF THE DAY
 * **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code. follow the step 3 below
 * **task:**
-1. now i need you to create a new column in the delivery person table, name it chosen_order
-2. in this chosen_order column i want to store the order or orders id of the order that the delivery person has chosen to deliver
-3. yes, you heard it right, the delivery person can choose multiple orders to deliver
-4. and the chosen_order column should be of type array
-5. also the array limit should be configurable, which means the admin can CRUD the array limit
-6. a new column should be added to the delivery person table, name it chosen_order_limit
-7. this chosen_order_limit column should be of type integer
-8. this chosen_order_limit column should have a default value of 5
-9. this chosen_order_limit column should not not be null and if its less than 2, validation should be shown with a message in the client react side and also in the admin managemnt flow section.
-10. while creating the delivery person, the chosen_order_limit should be set to 5 by default
-11. if a delivery person has chosen more than the chosen_order_limit orders, then the delivery person should not be able to choose more orders and validation should be shown in the delivery person flow in malayalam
-12. all the messages that will be send from server to the whatsapp number of the delivery persons should be in malayalam
+1. today we need to make some real changes in the ourCustomers section.
+2. i have attached a image of the section where we want to update .
+3. in the image i have you can see that in the above we have view purchase order button in the top which should be changed to show store details and in theat blank image area show the brand logo(brandlogo.png)
+4. at the below bottom we have another view purchase order button, now this button should navigate us to a page where we should:
+    1. display the image of the selected product,name ,description,how many Quantity he had purchased, and total amount of that particular product.
+    2. like wise if a order have more than one then show the above mentioned details to these new too
+    3. i have attached an image on how the page should look like:
+        1. in the image you can see that the my cart should changed to my orders
+        2. those images in the attached image should be changes to the image of that purchased product (which is already availabel in the db)
+        3. the  {- 1 +}  should be removed from all the grids that are generated for each product card
+        4. for each prodcut, if there are 4 products purchased in a single order then we need 4 cards for each like shown in the image
+        5. remove the promo code and the apply button ,which is not required.
+        6. at the botton we have subtotal section on here we should show total amount after calculating the amount of each product and show the total in the subtotal.
+        7. in the shipping keep it as rupees 20 as default and add a new field as Discounts applied and give -20 as default.
+        8. the in the total price section show the total of subtotal + shipping - discounts applied. 
+        9. all the amounts are calculated in Indian rupees so use the symbol of rupees before the amount.
+        10. finally, in the image at botton we have next button now change it to a rating section where we should show the rating starts in the form so that customer can rate the product. keep 5 stars as default. 
+        11. at the top along with the my order title add a back arrow to go back to the previous page
+        12. the reference image is also attached with the message.
 * **Prohibition:** **DO NOT make temporary fixes, this is a production grade code.** you should always the path of a senior software engineer.
 
-## 2.1 TASK OF THE DAY
-* **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code. follow the step 3 below
-* **task:**
-1. after completing the task 2, now the delivery person can take more than  1 order,so now we have to update the delivery person flow, from the current flow we are adding more features to the delivery person flow.
-2. when a delivery person send any msg like 'hi' or 'start' etc now we will send him a menu button saying:
-    1. greet the delivery person in malayalam along with mentioning his name and say the belwo are the menu chose options and continue.
-    2. now the option are :
-        1. order taken
-        2. profile
-    3. when the delivery person chose order taken option then we will send him a list of orders that he had taken 
-    4. you may be confused about the 'taken orders' ? . so let me explain you :
-        1. currently when a order is placed the delivery person will get a notification and he will accept the order and he will get the 3 options which are details, location of the customer and the mode of payment msg , so these message will be recieved by the delivery person when he accepts the order. so here we will break the logic and when a order is accepted the order id will be added to the delivery person table in the chosen_order column.
-        2. so when a order is accepted by delivery person then it will be assigned to him and that order cannot be taken by other delivery persons (this logic is already there in the code).
-    5. so after choosing the order taken option we will send the list of orders that he had taken and list should be in list view buttons format and the button names should be order id and when deliery person clicks the order id then server will send the 3 options we mentioned above.
-        1. so this is where the 3 options are sent to the delivery person. 
-        2. based on the old logic as soon as the order is accepted the delivery person will get the 3 options and and he continues with the order, but now with he new logic the options are send only when the delivery person clicks the order id.
-    6. so after he acccepts the order the order id will be added to the delivery person table in the chosen_order column and he will get a message saying order accepted, also if failed then will send him failed message too.
-    7. the customer flow that connects based on the delivery persons msg will stay as it is, as soon as the order is accepted the customer will get the order taken meessage (which is already in the code).
-    8. comming to the profile button when its clicked then we will send the delivery person details along with the messsage a 3 buttons will be send: update status,update zone , go to menu
-    9. when the update status button is clicked he should get the update status flow where he can update the status of the delivery person.
-        1. the status column in the delivery person table has 3 enum option so send then as buttons and based in that chosen option update the status like vise the zone update flow too where if its choosen then send the available zones to the delivery person in the list view button and based on selection update the zome of that delivery perosn
-    10. after each upadte is completed so back to the update status,update zone , go to menu option.
-    11. each and every text message, button name etceach and everything send from the server to the delivery person should be in malayalam
-* **Prohibition:** **DO NOT make temporary fixes, this is a production grade code.** you should always the path of a senior software engineer.
 
 ## 3. STRICT Error Resolution Protocol
 * **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code.

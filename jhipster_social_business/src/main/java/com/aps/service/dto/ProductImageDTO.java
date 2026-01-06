@@ -69,9 +69,9 @@ public class ProductImageDTO implements Serializable {
     @Override
     public String toString() {
         return "ProductImageDTO{" +
-            "id=" + getId() +
-            ", imageUrl='" + getImageUrl() + "'" +
-            ", displayOrder=" + getDisplayOrder() +
-            "}";
+                "id=" + getId() +
+                ", imageUrl='" + getImageUrl() + "'" +
+                ", displayOrder=" + getDisplayOrder() +
+                "}";
     }
 }

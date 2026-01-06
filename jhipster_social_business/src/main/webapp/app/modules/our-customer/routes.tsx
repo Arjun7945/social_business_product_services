@@ -9,6 +9,7 @@ import TrackOrderPage from './pages/TrackOrderPage';
 import ReturnOrderPage from './pages/ReturnOrderPage';
 import OrderEntryPage from './pages/OrderEntryPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
+import MyOrdersPage from './pages/MyOrdersPage';
 
 const CustomerRoutes = () => {
   return (
@@ -21,6 +22,7 @@ const CustomerRoutes = () => {
         <Route path="track-entry" element={<OrderEntryPage />} />
         <Route path="history" element={<OrderHistoryPage />} />
         <Route path="track" element={<TrackOrderPage />} />
+        <Route path="my-orders" element={<MyOrdersPage />} />
         <Route path="return" element={<ReturnOrderPage />} />
       </Route>
     </Routes>
