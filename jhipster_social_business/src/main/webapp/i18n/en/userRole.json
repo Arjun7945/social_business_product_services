@@ -3,6 +3,7 @@
     "UserRole": {
       "null": "",
       "CUSTOMER": "CUSTOMER",
+      "CREDIT_CUSTOMER": "CREDIT_CUSTOMER",
       "EXECUTIVE": "EXECUTIVE",
       "ASSISTANT_ADMIN": "ASSISTANT_ADMIN",
       "ADMIN": "ADMIN",

@@ -165,7 +165,7 @@ export const CustomerOrder = () => {
             </thead>
             <tbody>
               {customerOrderList.map((customerOrder, i) => (
-                <tr key={`entity-${i}`} data-cy="entityTable">
+                <tr key={customerOrder.id} data-cy="entityTable">
                   <td>
                     <Button tag={Link} to={`/customer-order/${customerOrder.id}`} color="link" size="sm">
                       {customerOrder.id}

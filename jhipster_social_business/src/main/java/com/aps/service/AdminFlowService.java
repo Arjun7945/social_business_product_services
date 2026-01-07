@@ -34,17 +34,18 @@ public class AdminFlowService {
     private final ExecutiveManagementService executiveManagementService;
     private final AssistantAdminManagementService assistantAdminManagementService;
     private final AccountsManagementService accountsManagementService;
+    private final CreditCustomerFlowService creditCustomerFlowService;
 
     public AdminFlowService(
-        @Lazy WhatsAppService whatsAppService,
-        BotSessionManager sessionManager,
-        CustomerManagementService customerManagementService,
-        ProductManagementService productManagementService,
-        DeliveryPersonManagementService deliveryPersonManagementService,
-        ExecutiveManagementService executiveManagementService,
-        AssistantAdminManagementService assistantAdminManagementService,
-        AccountsManagementService accountsManagementService
-    ) {
+            @Lazy WhatsAppService whatsAppService,
+            BotSessionManager sessionManager,
+            CustomerManagementService customerManagementService,
+            ProductManagementService productManagementService,
+            DeliveryPersonManagementService deliveryPersonManagementService,
+            ExecutiveManagementService executiveManagementService,
+            AssistantAdminManagementService assistantAdminManagementService,
+            AccountsManagementService accountsManagementService,
+            CreditCustomerFlowService creditCustomerFlowService) {
         this.whatsAppService = whatsAppService;
         this.sessionManager = sessionManager;
         this.customerManagementService = customerManagementService;
@@ -53,6 +54,7 @@ public class AdminFlowService {
         this.executiveManagementService = executiveManagementService;
         this.assistantAdminManagementService = assistantAdminManagementService;
         this.accountsManagementService = accountsManagementService;
+        this.creditCustomerFlowService = creditCustomerFlowService;
     }
 
     public void handleAdminMessage(TeamMember admin, WhatsAppWebhookDto.Message message) {
@@ -121,6 +123,12 @@ public class AdminFlowService {
                 break;
             case AWAITING_DELETE_CUST_ID:
                 customerManagementService.handleDeleteCustomerInput(admin, session, text);
+                break;
+            case AWAITING_UPDATE_CUST_SEARCH:
+                customerManagementService.handleUpdateCustomerSearch(admin, session, text);
+                break;
+            case AWAITING_UPDATE_CUST_NEW_VALUE:
+                customerManagementService.handleUpdateValueInput(admin, session, text);
                 break;
             // Product Management
             case AWAITING_PRODUCT_NAME:
@@ -203,7 +211,8 @@ public class AdminFlowService {
     }
 
     private void handleIdleState(TeamMember admin, BotSession session, String text) {
-        if (text.trim().equalsIgnoreCase(FlowConstants.CMD_HI) || text.trim().equalsIgnoreCase(FlowConstants.CMD_HELLO)) {
+        if (text.trim().equalsIgnoreCase(FlowConstants.CMD_HI)
+                || text.trim().equalsIgnoreCase(FlowConstants.CMD_HELLO)) {
             showMainMenu(admin, session);
         } else {
             whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "Send 'hi' to see the admin menu.");
@@ -212,24 +221,30 @@ public class AdminFlowService {
 
     private void showMainMenu(TeamMember admin, BotSession session) {
         List<WhatsAppMessageDto.RowDto> rows = List.of(
-            WhatsAppMessageDto.RowDto.builder().id("CUSTOMER_SECTION").title("👥 Customers").description("Manage Customers").build(),
-            WhatsAppMessageDto.RowDto.builder().id("DELIVERY_SECTION").title("🚚 Delivery").description("Manage Delivery Staff").build(),
-            WhatsAppMessageDto.RowDto.builder().id("PRODUCT_SECTION").title("🐟 Products").description("Manage Inventory").build(),
-            WhatsAppMessageDto.RowDto.builder().id("EXECUTIVE_SECTION").title("💼 Executives").description("Manage Executives").build(),
-            WhatsAppMessageDto.RowDto.builder().id("ASSISTANT_SECTION").title("�️ Assistants").description("Manage Assistants").build(),
-            WhatsAppMessageDto.RowDto.builder().id("ACCOUNTS_SECTION").title("� Accounts").description("Manage Accounts Team").build(),
-            WhatsAppMessageDto.RowDto.builder()
-                .id("CONTACT_DEVELOPER")
-                .title("👨‍� Contact Dev")
-                .description("Get Technical Support")
-                .build()
-        );
+                WhatsAppMessageDto.RowDto.builder().id("CUSTOMER_SECTION").title("👥 Customers")
+                        .description("Manage Customers").build(),
+                WhatsAppMessageDto.RowDto.builder().id("DELIVERY_SECTION").title("🚚 Delivery")
+                        .description("Manage Delivery Staff").build(),
+                WhatsAppMessageDto.RowDto.builder().id("PRODUCT_SECTION").title("🐟 Products")
+                        .description("Manage Inventory").build(),
+                WhatsAppMessageDto.RowDto.builder().id("EXECUTIVE_SECTION").title("💼 Executives")
+                        .description("Manage Executives").build(),
+                WhatsAppMessageDto.RowDto.builder().id("ASSISTANT_SECTION").title("�️ Assistants")
+                        .description("Manage Assistants").build(),
+                WhatsAppMessageDto.RowDto.builder().id("ACCOUNTS_SECTION").title("� Accounts")
+                        .description("Manage Accounts Team").build(),
+                WhatsAppMessageDto.RowDto.builder().id("CREDIT_CUSTOMER_SECTION").title("💳 Credit Customers")
+                        .description("Manage Credit Flow").build(),
+                WhatsAppMessageDto.RowDto.builder()
+                        .id("CONTACT_DEVELOPER")
+                        .title("👨‍� Contact Dev")
+                        .description("Get Technical Support")
+                        .build());
 
         String greeting = String.format(
-            "🎉 *Welcome, %s!* 👑\n\n" + "You are logged in as: *%s*\n\n" + "Please select a section to manage:",
-            admin.getName(),
-            admin.getRole()
-        );
+                "🎉 *Welcome, %s!* 👑\n\n" + "You are logged in as: *%s*\n\n" + "Please select a section to manage:",
+                admin.getName(),
+                admin.getRole());
 
         whatsAppService.sendInteractiveList(admin.getWaPhoneNumber(), greeting, rows);
         sessionManager.updateState(session, AdminFlowStage.IDLE.name());
@@ -260,15 +275,17 @@ public class AdminFlowService {
                 break;
             case "CONTACT_DEVELOPER":
                 whatsAppService.sendSimpleText(
-                    admin.getWaPhoneNumber(),
-                    "📞 *Contact Developer*\n\nFor technical support, please contact:\n[Developer Contact Info]"
-                );
+                        admin.getWaPhoneNumber(),
+                        "📞 *Contact Developer*\n\nFor technical support, please contact:\n[Developer Contact Info]");
                 break;
             case "ADD_CUSTOMER":
                 customerManagementService.startAddCustomer(admin, session);
                 break;
             case "SHOW_ALL_CUSTOMERS":
                 customerManagementService.showAllCustomers(admin);
+                break;
+            case "UPDATE_CUSTOMER_MENU":
+                customerManagementService.startUpdateCustomer(admin, session);
                 break;
             case "ADD_DELIVERY":
                 deliveryPersonManagementService.startAddDeliveryPerson(admin, session);
@@ -343,8 +360,42 @@ public class AdminFlowService {
             case "BACK_TO_MAIN":
                 showMainMenu(admin, session);
                 break;
+            case "CREDIT_CUSTOMER_SECTION":
+                creditCustomerFlowService.showCreditCustomerMenu(admin);
+                break;
+            case CreditCustomerFlowService.MENU_CREDIT_OC:
+                creditCustomerFlowService.showCreditCustomerOrders(admin);
+                break;
+            case CreditCustomerFlowService.MENU_CREDIT_CRUD:
+                creditCustomerFlowService.showCreditCrudMenu(admin);
+                break;
+            case "SHOW_ALL_CREDIT_CUSTOMERS":
+                customerManagementService.showAllCreditCustomers(admin);
+                break;
+            case "UPDATE_CREDIT_CUSTOMER":
+                customerManagementService.startUpdateCustomer(admin, session);
+                break;
             default:
-                showMainMenu(admin, session);
+                if (buttonId.startsWith(CreditCustomerFlowService.PREFIX_ADMIN_CREDIT_ALLOW) ||
+                        buttonId.startsWith(CreditCustomerFlowService.PREFIX_ADMIN_CREDIT_GRANT) ||
+                        buttonId.startsWith(CreditCustomerFlowService.PREFIX_ADMIN_CREDIT_DENY)) {
+                    creditCustomerFlowService.handleAdminDecision(admin, buttonId);
+                } else if (buttonId.startsWith(CreditCustomerFlowService.PREFIX_CREDIT_ORDER_DTL)) {
+                    Long orderId = Long
+                            .parseLong(buttonId.replace(CreditCustomerFlowService.PREFIX_CREDIT_ORDER_DTL, ""));
+                    creditCustomerFlowService.handleCreditOrderSelection(admin, orderId);
+                } else if (buttonId.startsWith(CreditCustomerFlowService.PREFIX_CREDIT_PAY_LINK) ||
+                        buttonId.startsWith(CreditCustomerFlowService.PREFIX_CREDIT_COD)) {
+                    creditCustomerFlowService.handleCreditOrderAction(admin, buttonId);
+                } else if (buttonId.startsWith("UPD_CUST_SEL_")) {
+                    customerManagementService.handleUpdateCustSelect(admin, session, buttonId);
+                } else if (buttonId.startsWith("UPD_FIELD_") || buttonId.equals("CANCEL_UPDATE")) {
+                    customerManagementService.handleUpdateFieldSelect(admin, session, buttonId);
+                } else if (buttonId.startsWith("ROLE_") || buttonId.startsWith("ZONE_")) {
+                    customerManagementService.handleUpdateOptionSelection(admin, session, buttonId);
+                } else {
+                    showMainMenu(admin, session);
+                }
         }
     }
 
@@ -355,7 +406,8 @@ public class AdminFlowService {
             sessionManager.updateState(session, AdminFlowStage.PROCESSING.name());
             customerManagementService.finalizeCustomerAdd(admin, session);
         } else if (AdminFlowStage.CONFIRMING_DELIVERY_ADD.name().equals(currentState)) {
-            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "⏳ Processing delivery person addition... please wait.");
+            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                    "⏳ Processing delivery person addition... please wait.");
             sessionManager.updateState(session, AdminFlowStage.PROCESSING.name());
             deliveryPersonManagementService.finalizeDeliveryPersonAdd(admin, session);
         } else if (AdminFlowStage.CONFIRMING_EXEC_ADD.name().equals(currentState)) {
@@ -367,7 +419,8 @@ public class AdminFlowService {
             sessionManager.updateState(session, AdminFlowStage.PROCESSING.name());
             assistantAdminManagementService.finalizeAssistantAdminAdd(admin, session);
         } else if (AdminFlowStage.CONFIRMING_ACC_ADD.name().equals(currentState)) {
-            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "⏳ Processing accounts member addition... please wait.");
+            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                    "⏳ Processing accounts member addition... please wait.");
             sessionManager.updateState(session, AdminFlowStage.PROCESSING.name());
             accountsManagementService.finalizeAccountsMemberAdd(admin, session);
         }
@@ -384,7 +437,8 @@ public class AdminFlowService {
     private void handleAbortCommand(TeamMember admin, BotSession session) {
         session.setSessionData("{}"); // Clear data
         sessionManager.updateState(session, AdminFlowStage.IDLE.name());
-        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "❌ *Operation Cancelled*\n\nReturning to main menu...");
+        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                "❌ *Operation Cancelled*\n\nReturning to main menu...");
         showMainMenu(admin, session);
     }
 }

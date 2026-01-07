@@ -1,5 +1,6 @@
 export enum UserRole {
   CUSTOMER = 'CUSTOMER',
+  CREDIT_CUSTOMER = 'CREDIT_CUSTOMER',
 
   EXECUTIVE = 'EXECUTIVE',
 

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.aps.service.CommonMessageService;
 
 @Service
 @Transactional
@@ -38,6 +39,7 @@ public class WhatsAppDispatcherService {
     private final ButtonActionService buttonActionService;
     private final WhatsAppService whatsAppService;
     private final LicensingService licensingService;
+    private final CommonMessageService commonMessageService;
 
     public WhatsAppDispatcherService(
             TeamMemberRepository teamMemberRepository,
@@ -54,6 +56,7 @@ public class WhatsAppDispatcherService {
             WhatsAppService whatsAppService,
             WhatsAppConfig whatsAppConfig,
             ApplicationProperties applicationProperties,
+            CommonMessageService commonMessageService,
             LicensingService licensingService) {
         this.teamMemberRepository = teamMemberRepository;
         this.deliveryPersonRepository = deliveryPersonRepository;
@@ -68,6 +71,7 @@ public class WhatsAppDispatcherService {
         this.buttonActionService = buttonActionService;
         this.whatsAppService = whatsAppService;
         this.licensingService = licensingService;
+        this.commonMessageService = commonMessageService;
     }
 
     @Async
@@ -265,7 +269,7 @@ public class WhatsAppDispatcherService {
 
     private void handleStaleButton(String from, WhatsAppWebhookDto.Message message) {
         log.warn("Ignored stale button click from {} (Msg ID: {})", from, message.getContext().getId());
-        whatsAppService.sendSimpleText(from, "⚠️ This option has expired. Please use the latest menu.");
+        whatsAppService.sendSimpleText(from, commonMessageService.getMessageForHandleStaleButton());
 
         // Attempt recovery for Customers
         Optional<Customer> customerOpt = customerRepository.findByWaPhoneNumber(from);

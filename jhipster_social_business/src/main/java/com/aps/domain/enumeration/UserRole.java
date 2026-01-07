@@ -11,4 +11,5 @@ public enum UserRole {
     DEVELOPER,
     DELIVERY_PERSON,
     ACCOUNTS_TEAM,
+    CREDIT_CUSTOMER,
 }

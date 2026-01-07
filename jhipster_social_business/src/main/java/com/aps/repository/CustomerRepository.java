@@ -48,4 +48,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSp
     Optional<Customer> findByIdForUpdate(@Param("id") Long id);
 
     boolean existsByPhoneNumber(String phoneNumber);
+
+    List<Customer> findByNameContainingIgnoreCaseOrPhoneNumberContaining(String name, String phone);
+
+    List<Customer> findAllByRole(com.aps.domain.enumeration.UserRole role);
 }

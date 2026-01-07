@@ -1,6 +1,8 @@
 package com.aps.repository;
 
 import com.aps.domain.TeamMember;
+import com.aps.domain.enumeration.UserRole;
+import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +19,6 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long>, J
     boolean existsByPhoneNumber(String phoneNumber);
 
     java.util.Optional<TeamMember> findByName(String name);
+
+    List<TeamMember> findAllByRole(UserRole role);
 }

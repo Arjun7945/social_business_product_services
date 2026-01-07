@@ -1,41 +1,95 @@
 # JHipster Migration & Architecture Rules
 
 ## 1. Project Context
-* **Role:** You are a Senior software engineer adding new features to the codebase, fixing existing bugs, and refactoring the codebase with 15 years of experience in the java and reactsoftware engineer.
-* **Working directory (Active Workspace):** `D:\MERGECODE\newcode\social_business_product_services\jhipster_social_business`
-* **license directory (Active Workspace):** `D:\MERGECODE\newcode\social_business_product_services\central-license-server`
-* **Reminder:** There should not be any temporary fixes. The solutions implemented should be solid, production-grade changes, in the view of a senior software engineer.
-
+* **Role:** You are a Senior Software Engineer with 15 years of experience in Java and React. You are responsible for adding new features, fixing bugs, and refactoring the codebase.
+* **Working Directory (Active Workspace):** `D:\MERGECODE\newcode\social_business_product_services\jhipster_social_business`
+* **License Directory:** `D:\MERGECODE\newcode\social_business_product_services\central-license-server`
+* **Architecture Note:** The `DeliveryPerson` entity is now a **separate table**. It is no longer part of the Team Member table. If issues arise regarding delivery personnel, refer to the new `DeliveryPerson` table structure.
+* **Standard:** No temporary fixes. All solutions must be solid, production-grade changes.
 
 ## 2. TASK OF THE DAY
-* **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code. follow the step 3 below
-* **task:**
-1. today we need to make some real changes in the ourCustomers section.
-2. i have attached a image of the section where we want to update .
-3. in the image i have you can see that in the above we have view purchase order button in the top which should be changed to show store details and in theat blank image area show the brand logo(brandlogo.png)
-4. at the below bottom we have another view purchase order button, now this button should navigate us to a page where we should:
-    1. display the image of the selected product,name ,description,how many Quantity he had purchased, and total amount of that particular product.
-    2. like wise if a order have more than one then show the above mentioned details to these new too
-    3. i have attached an image on how the page should look like:
-        1. in the image you can see that the my cart should changed to my orders
-        2. those images in the attached image should be changes to the image of that purchased product (which is already availabel in the db)
-        3. the  {- 1 +}  should be removed from all the grids that are generated for each product card
-        4. for each prodcut, if there are 4 products purchased in a single order then we need 4 cards for each like shown in the image
-        5. remove the promo code and the apply button ,which is not required.
-        6. at the botton we have subtotal section on here we should show total amount after calculating the amount of each product and show the total in the subtotal.
-        7. in the shipping keep it as rupees 20 as default and add a new field as Discounts applied and give -20 as default.
-        8. the in the total price section show the total of subtotal + shipping - discounts applied. 
-        9. all the amounts are calculated in Indian rupees so use the symbol of rupees before the amount.
-        10. finally, in the image at botton we have next button now change it to a rating section where we should show the rating starts in the form so that customer can rate the product. keep 5 stars as default. 
-        11. at the top along with the my order title add a back arrow to go back to the previous page
-        12. the reference image is also attached with the message.
-* **Prohibition:** **DO NOT make temporary fixes, this is a production grade code.** you should always the path of a senior software engineer.
+* **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code, follow the "Strict Error Resolution Protocol" (Section 3).
 
+### A. Role & Status Configuration
+1.  **New Role:** Add a new role `CREDIT_CUSTOMER` to `UserRole.java`.
+    * This role functions identically to `CUSTOMER` but allows purchasing products without immediate payment (Pay Later).
+2.  **New Order Status:** Add `ON_CREDIT_PURCHASE` to the `OrderStatus.java` enum.
+
+### B. Delivery Person Flow Enhancements
+1.  **Payment Mode Selection:**
+    * In `getPaymentModeSelectionHeader`, change the interface to a **List View**.
+    * Add a new button option: `'Payment Resisted'` (Description: "The customer is not paying right now").
+2.  **"Payment Resisted" Logic:**
+    * If selected, send a message to all users with role **ADMIN**:
+        > "Hello {admin_name}, this message is from {delivery_person_name}. I am delivering an order to {customer_name} and they are not willing to pay the amount now and are asking for credit purchase. {customer_name} is a {customer_role}. Total amount: {total_amount}. Order details: {order_details}."
+    * Attach 3 buttons to this Admin message:
+        1.  `Allow credit for this purchase`
+        2.  `Always Grant credit purchase`
+        3.  `Deny credit purchase`
+
+### C. Admin Decision Logic (Response to Delivery Person)
+1.  **If Admin clicks 'Always Grant credit purchase':**
+    * Update Customer Order status to `ON_CREDIT_PURCHASE`.
+    * Update Customer Role to `CREDIT_CUSTOMER`.
+    * Notify Delivery Person: "Hello {dp_name}, our customer {customer_name} has been upgraded to credit customer privileges. You can deliver order {order_id} and return to warehouse or continue."
+2.  **If Admin clicks 'Allow credit for this purchase':**
+    * Update Customer Order status to `ON_CREDIT_PURCHASE`.
+    * Notify Delivery Person: "Hello {dp_name}, customer {customer_name} has been approved for a credit purchase for order {order_id}. Hand over the product and return/continue."
+3.  **If Admin clicks 'Deny credit purchase':**
+    * **Do not** update the database.
+    * Notify Delivery Person: "Hello {dp_name}, order {order_id} for {customer_name} has been denied for credit. Please collect the amount."
+
+### D. Admin Dashboard - Credit Customer Management
+1.  **Main Menu:** Add a new list button `'Credit Customer'` (Description: "Customer with privilege on purchases").
+2.  **Sub-Menu:** If clicked, show options:
+    * `'Credit Customer Orders'`
+    * `'CRUD of Credit Customers'`
+3.  **Credit Customer Orders (Pay Later Flow):**
+    * Display list of orders where status is `ON_CREDIT_PURCHASE`.
+    * Button Description: "{Customer Name} - {WhatsApp Number}".
+    * If list is empty, show: "No credit customer orders found till now".
+    * **Order Action:** If an order is selected, show full order details (ID, Name, Amount, Status, Products) with 3 buttons:
+        1.  `Send payment link`: Generate Razorpay link (existing logic) and WhatsApp it to the customer: "Hi {name}, payment link for order {id} from {admin_name}: {link}".
+        2.  `COD`: Mark status directly as `ORDER_DELIVERED_SUCCESSFULLY` (use existing COD logic).
+        3.  `Go back to menu`.
+4.  **CRUD of Credit Customers:**
+    * **Reuse** the existing Customer CRUD. Do not create a new one.
+    * **Filter Logic:**
+        * "Show all Customers" must **only** show role `CUSTOMER`.
+        * "Show all Credit Customers" must **only** show role `CREDIT_CUSTOMER`.
+
+### E. Admin Dashboard - Customer Update Feature
+1.  **Menu Addition:** In the Customer Management menu (Add, Show, Delete), add a new option: `'Update'`.
+2.  **Search & Validation Step:**
+    * When 'Update' is selected, prompt the Admin: "Please enter the ID or Name of the customer you wish to update."
+    * **Validation:** Check the database for the provided ID or Name.
+    * **Error Handling:** If the ID/Name is invalid or the customer does not exist, send a specific validation error message to the Admin (e.g., "Customer not found, please try again") and halt the flow until valid input is received.
+3.  **Update Sub-Menu (List View):**
+    * Once a valid customer is identified, show the update options.
+    * **Format:** Use a **List View Button** message (since there are >3 options).
+    * **Options:** Update Name, WhatsApp Number, Number, Location, Role, Zone.
+4.  **Specific Field Logic:**
+    * **Name/Number/Location:** Ask for input -> Update DB.
+    * **WhatsApp Number:** Ask for input -> Update DB -> Send existing "Welcome" message logic to new number.
+    * **Zone:** Show available zones as List View -> Select -> Update DB.
+    * **Role:** Show buttons: `CUSTOMER` and `CREDIT_CUSTOMER`. Toggle role based on selection.
+
+### F. Localization
+* **Requirement:** All server messages sent to the **Delivery Person** and **Credit Customer** must be in **Malayalam**.
+
+### G. Code Organization & Refactoring
+* **Separation of Concerns:** Do **not** write the new `CreditCustomer` logic directly inside the existing Admin or Delivery flow files.
+* **Action:** Create a separate class/file named `CreditCustomerFlow`.
+* **Implementation:** Delegate all credit customer operations that connect to Admin or Delivery flows to this new file. This is mandatory to reduce code bloat and maintain maintainability.
 
 ## 3. STRICT Error Resolution Protocol
 * **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code.
 * **Action:**
-    1. Analyze the error in the New Code.
-    2. IMMEDIATELY fix them first before moving to the next step.
-    3. always make sure to run the test cases and make sure all test cases are passed and no test cases are pending.
-    4. for added new features make sure to add test cases for the new features.
+    1.  **Legacy Code Analysis:** Always check the **Legacy Files** first if errors or issues are faced. Analyze the error in the new code, but retrieve the solution logic from the legacy code.
+    2.  **No Assumptions:** Do not make your own decisions regarding business logic; strictly follow the legacy implementation.
+    3.  **Fix:** Apply the fix immediately to the new code.
+    4.  **Testing:** Run all test cases. Ensure all pass and no test cases are pending.
+    5.  **New Features:** Ensure valid test cases are added for any new features implemented.
+
+---
+**IMPORTANT:** Make sure the rules mentioned in the `@RULES.md` are properly followed while refactoring.

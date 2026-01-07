@@ -8,4 +8,5 @@ public enum OrderStatus {
     DELIVERY_ONWAY,
     ORDER_DELIVERED_SUCESSFULLY,
     ORDER_FAILED,
+    ON_CREDIT_PURCHASE,
 }

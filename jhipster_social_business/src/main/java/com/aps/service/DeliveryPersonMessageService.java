@@ -72,16 +72,32 @@ public class DeliveryPersonMessageService {
                 amount);
     }
 
+    public String getButtonName() {
+        return "ഓപ്ഷനുകൾ";
+    }
+
     public String getButtonCod() {
-        return "💵 COD (കൈപ്പറ്റുമ്പോൾ)";
+        return "💵 COD (പണം)";
+    }
+
+    public String getButtonCodDescription() {
+        return "പേയ്‌മെന്റ് പണമായി ശേഖരിക്കുക";
     }
 
     public String getButtonQr() {
-        return "📷 കോഡ് സ്കൈൻ";
+        return "📷 QR സ്കാൻ";
+    }
+
+    public String getButtonQrDescription() {
+        return "QR കോഡ് വഴി പേയ്‌മെന്റ് ശേഖരിക്കുക";
     }
 
     public String getButtonLink() {
-        return "🔗 പേയ്‌മെന്റ് ലിങ്ക്";
+        return "🔗 ലിങ്ക്";
+    }
+
+    public String getButtonLinkDescription() {
+        return "Link വഴി പേയ്‌മെന്റ് ശേഖരിക്കുക";
     }
 
     public String getPaymentModeCodSelected() {
@@ -100,6 +116,9 @@ public class DeliveryPersonMessageService {
         return "⚠️ നിങ്ങൾ ഈ ഓർഡർക്കായി നിയോഗിക്കപ്പെട്ടിട്ടില്ല.";
     }
 
+    public String getInvalidModeSelectedWarningMessage() {
+        return "⚠️ അസാധുവായ പേയ്‌മെന്റ് മോഡ് തിരഞ്ഞെടുത്തു.";
+    }
     // ========================================
     // CATEGORY 3: ERROR MESSAGES
     // ========================================
@@ -294,5 +313,74 @@ public class DeliveryPersonMessageService {
 
     public String getTitleOfOGoBack() {
         return "മടങ്ങിപ്പോവുക";
+    }
+
+    // ========================================
+    // CATEGORY 11: CREDIT CUSTOMER MESSAGES
+    // ========================================
+
+    public String getButtonPaymentResisted() {
+        return "❌ കടം (Credit)";
+    }
+
+    public String getDescriptionPaymentResisted() {
+        return "ഉപഭോക്താവ് ഇപ്പോൾ പണം നൽകുന്നില്ല";
+    }
+
+    public String getPaymentResistedAdminInfo(String dpName, String customerName, String customerRole, double amount,
+            Long orderId) {
+        return String.format(
+                "⚠️ *ക്രെഡിറ്റ് അഭ്യർത്ഥന* ⚠️\n\n" +
+                        "ഡെലിവറി പേഴ്സൺ: *%s*\n" +
+                        "കസ്റ്റമർ: *%s* (%s)\n" +
+                        "ഓർഡർ: #%d\n" +
+                        "തുക: ₹%.2f\n\n" +
+                        "ഈ കസ്റ്റമർ ഇപ്പോൾ പണം നൽകാൻ വിസമ്മതിക്കുന്നു. എന്താണ് ചെയ്യേണ്ടത്? 👇",
+                dpName, customerName, customerRole, orderId, amount);
+    }
+
+    public String getButtonAllowCreditOnce() {
+        return "ഈ തവണ മാത്രം";
+    }
+
+    public String getButtonGrantAlways() {
+        return "എപ്പോഴും അനുവദിക്കുക";
+    }
+
+    public String getButtonDenyCredit() {
+        return "നിരസിക്കുക";
+    }
+
+    public String getCreditGrantedAlwaysMessage(String customerName, Long orderId) {
+        return String.format(
+                "✅ *ക്രെഡിറ്റ് അനുവദിച്ചു!* (Always)\n\n" +
+                        "കസ്റ്റമർ %s ഇനി മുതൽ 'Credit Customer' ആണ്.\n" +
+                        "ഓർഡർ #%d ഡെലിവറി ചെയ്യാം.\n" +
+                        "തുടരുക! 🚀",
+                customerName, orderId);
+    }
+
+    public String getCreditApprovedOnceMessage(String customerName, Long orderId) {
+        return String.format(
+                "✅ *ക്രെഡിറ്റ് അനുവദിച്ചു!* (Once)\n\n" +
+                        "കസ്റ്റമർ %s -ന് ഈ ഓർഡർ (#%d) ക്രെഡിറ്റിൽ നൽകാം.\n" +
+                        "തുടരുക! 🚀",
+                customerName, orderId);
+    }
+
+    public String getCreditDeniedMessage(String customerName, Long orderId) {
+        return String.format(
+                "❌ *ക്രെഡിറ്റ് നിരസിച്ചു!*\n\n" +
+                        "കസ്റ്റമർ %s -ന് ക്രെഡിറ്റ് നൽകാൻ കഴിയില്ല.\n" +
+                        "ഓർഡർ #%d -നുള്ള പണം വാങ്ങുക.",
+                customerName, orderId);
+    }
+
+    // ========================================
+    // CATEGORY 9: CREDIT CUSTOMER MESSAGES
+    // ========================================
+
+    public String getAdminNotification() {
+        return "⏳ അഡ്മിനെ അറിയിച്ചു. അംഗീകാരത്തിനായി കാത്തിരിക്കുക.";
     }
 }
