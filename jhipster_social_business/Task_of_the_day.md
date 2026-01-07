@@ -82,7 +82,30 @@
 * **Action:** Create a separate class/file named `CreditCustomerFlow`.
 * **Implementation:** Delegate all credit customer operations that connect to Admin or Delivery flows to this new file. This is mandatory to reduce code bloat and maintain maintainability.
 
-## 3. STRICT Error Resolution Protocol
+### Task 3: Admin Flow Optimization & Navigation
+**Goal:** Streamline the "Credit Customer Management" menu and fix post-operation navigation.
+
+1.  **Menu Flattening (Credit Management):**
+    * **Change:** When Admin clicks `'Credit Customers Manage Credit Flow'`, do **not** show nested "CRUD" options.
+    * **New Structure:** Show a single **List View** with these direct buttons:
+        1.  `'Credit Orders'`
+        2.  `'Create Credit Customer'`
+        3.  `'Show All Credit Customers'` (Filter: Role = CREDIT_CUSTOMER only)
+        4.  `'Update Credit Customer'`
+        5.  `'Delete Credit Customer'`
+        6.  `'Back'`
+    * **Note:** Reuse existing Customer CRUD logic for these buttons.
+
+2.  **Post-Operation Navigation (Redirect):**
+    * **Scenario:** When **any** CRUD operation (Create, Update, Delete) is completed (regardless of **Success** or **Failure**).
+    * **Action:** Do **not** remain on the customer info screen or sub-menu.
+    * **Result:** Automatically redirect/send the user back to the **Main Menu** message.
+
+### General Requirements
+* **Localization:** All server messages to **Delivery Person** and **Credit Customer** must be in **Malayalam**.
+* **Code Architecture:** Create a separate file `CreditCustomerFlow.class`. Delegate all credit customer operations connected to Admin/Delivery flows here. Do not clutter existing files.
+
+## 4. STRICT Error Resolution Protocol
 * **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code.
 * **Action:**
     1.  **Legacy Code Analysis:** Always check the **Legacy Files** first if errors or issues are faced. Analyze the error in the new code, but retrieve the solution logic from the legacy code.

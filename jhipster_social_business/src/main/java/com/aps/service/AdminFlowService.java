@@ -220,26 +220,7 @@ public class AdminFlowService {
     }
 
     private void showMainMenu(TeamMember admin, BotSession session) {
-        List<WhatsAppMessageDto.RowDto> rows = List.of(
-                WhatsAppMessageDto.RowDto.builder().id("CUSTOMER_SECTION").title("👥 Customers")
-                        .description("Manage Customers").build(),
-                WhatsAppMessageDto.RowDto.builder().id("DELIVERY_SECTION").title("🚚 Delivery")
-                        .description("Manage Delivery Staff").build(),
-                WhatsAppMessageDto.RowDto.builder().id("PRODUCT_SECTION").title("🐟 Products")
-                        .description("Manage Inventory").build(),
-                WhatsAppMessageDto.RowDto.builder().id("EXECUTIVE_SECTION").title("💼 Executives")
-                        .description("Manage Executives").build(),
-                WhatsAppMessageDto.RowDto.builder().id("ASSISTANT_SECTION").title("�️ Assistants")
-                        .description("Manage Assistants").build(),
-                WhatsAppMessageDto.RowDto.builder().id("ACCOUNTS_SECTION").title("� Accounts")
-                        .description("Manage Accounts Team").build(),
-                WhatsAppMessageDto.RowDto.builder().id("CREDIT_CUSTOMER_SECTION").title("💳 Credit Customers")
-                        .description("Manage Credit Flow").build(),
-                WhatsAppMessageDto.RowDto.builder()
-                        .id("CONTACT_DEVELOPER")
-                        .title("👨‍� Contact Dev")
-                        .description("Get Technical Support")
-                        .build());
+        List<WhatsAppMessageDto.RowDto> rows = com.aps.service.util.AdminMenuHelper.getMainMenuRows();
 
         String greeting = String.format(
                 "🎉 *Welcome, %s!* 👑\n\n" + "You are logged in as: *%s*\n\n" + "Please select a section to manage:",
@@ -367,13 +348,19 @@ public class AdminFlowService {
                 creditCustomerFlowService.showCreditCustomerOrders(admin);
                 break;
             case CreditCustomerFlowService.MENU_CREDIT_CRUD:
-                creditCustomerFlowService.showCreditCrudMenu(admin);
+                creditCustomerFlowService.showCreditCustomerMenu(admin);
                 break;
             case "SHOW_ALL_CREDIT_CUSTOMERS":
                 customerManagementService.showAllCreditCustomers(admin);
                 break;
+            case "ADD_CREDIT_CUSTOMER":
+                customerManagementService.startAddCreditCustomer(admin, session);
+                break;
             case "UPDATE_CREDIT_CUSTOMER":
                 customerManagementService.startUpdateCustomer(admin, session);
+                break;
+            case "DELETE_CUSTOMER_MENU":
+                customerManagementService.startDeleteCustomer(admin, session);
                 break;
             default:
                 if (buttonId.startsWith(CreditCustomerFlowService.PREFIX_ADMIN_CREDIT_ALLOW) ||

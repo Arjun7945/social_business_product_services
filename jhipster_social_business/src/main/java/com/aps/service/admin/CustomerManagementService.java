@@ -59,25 +59,7 @@ public class CustomerManagementService {
 
     public void showCustomerMenu(TeamMember admin) {
         // Use List Message instead of Buttons because we have > 3 options
-        List<WhatsAppMessageDto.RowDto> rows = List.of(
-                WhatsAppMessageDto.RowDto.builder().id("ADD_CUSTOMER").title("➕ Add Customer")
-                        .description("Register a new customer").build(),
-                WhatsAppMessageDto.RowDto.builder()
-                        .id("SHOW_ALL_CUSTOMERS")
-                        .title("📋 Show All")
-                        .description("List all registered customers")
-                        .build(),
-                WhatsAppMessageDto.RowDto.builder()
-                        .id("UPDATE_CUSTOMER_MENU")
-                        .title("📝 Update Customer")
-                        .description("Edit Details").build(),
-                WhatsAppMessageDto.RowDto.builder()
-                        .id("DELETE_CUSTOMER_MENU")
-                        .title("🗑️ Delete Customer")
-                        .description("Remove a customer")
-                        .build(),
-                WhatsAppMessageDto.RowDto.builder().id("BACK_TO_MAIN").title("⬅️ Back")
-                        .description("Return to main menu").build());
+        List<WhatsAppMessageDto.RowDto> rows = com.aps.service.util.CustomerMenuHelper.getCustomerMenuRows();
 
         whatsAppService.sendInteractiveList(admin.getWaPhoneNumber(), "👥 *Customer Management*\n\nSelect an option:",
                 rows);
@@ -90,8 +72,17 @@ public class CustomerManagementService {
 
     public void startAddCustomer(TeamMember admin, BotSession session) {
         sessionManager.setSessionData(session, "tempEntityType", "CUSTOMER");
+        sessionManager.setSessionData(session, "targetRole", UserRole.CUSTOMER.name());
         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                 "➕ *Add New Customer*\n\n📝 Please provide the customer's name:");
+        sessionManager.updateState(session, AdminFlowStage.AWAITING_CUST_NAME.name());
+    }
+
+    public void startAddCreditCustomer(TeamMember admin, BotSession session) {
+        sessionManager.setSessionData(session, "tempEntityType", "CUSTOMER");
+        sessionManager.setSessionData(session, "targetRole", UserRole.CREDIT_CUSTOMER.name());
+        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                "➕ *Add New Credit Customer*\n\n📝 Please provide the customer's name:");
         sessionManager.updateState(session, AdminFlowStage.AWAITING_CUST_NAME.name());
     }
 
@@ -226,6 +217,14 @@ public class CustomerManagementService {
             newCustomer.setLocationLon(lon);
             newCustomer.setDistanceFromBusinessKm(distance);
             newCustomer.setRole(UserRole.CUSTOMER);
+            String targetRole = sessionManager.getSessionDataString(session, "targetRole");
+            if (targetRole != null) {
+                try {
+                    newCustomer.setRole(UserRole.valueOf(targetRole));
+                } catch (IllegalArgumentException e) {
+                    // default to CUSTOMER
+                }
+            }
             newCustomer.setJoinedAt(Instant.now());
 
             boolean isWithinRadius = locationValidationService.isWithinDeliveryRadius(lat, lon);
@@ -268,11 +267,20 @@ public class CustomerManagementService {
                                                 +
                                                 "ഞങ്ങളെ തിരഞ്ഞെടുത്തതിന് നന്ദി!");
                             }
-                            showCustomerMenu(admin);
+                            // Redirect to Main Menu or Specific Menu based on role?
+                            // For now, standard customer flow goes to Customer Menu.
+                            // If it was Credit Customer, we should ideally go there.
+                            // But here we don't easily know strictly which flow started it without checking
+                            // role again.
+                            if (finalNewCustomer.getRole() == UserRole.CREDIT_CUSTOMER) {
+                                creditCustomerFlowService.showCreditCustomerMenu(admin);
+                            } else {
+                                showCustomerMenu(admin);
+                            }
                         }
                     });
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error adding customer", e);
             whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "❌ Error adding customer: " + e.getMessage());
             showCustomerMenu(admin);
         }
@@ -296,7 +304,7 @@ public class CustomerManagementService {
                     "📋 *No " + role + "s found.*");
             // Also redirect back to appropriate menu
             if (role == UserRole.CREDIT_CUSTOMER) {
-                creditCustomerFlowService.showCreditCrudMenu(admin);
+                creditCustomerFlowService.showCreditCustomerMenu(admin);
             } else {
                 showCustomerMenu(admin);
             }
@@ -320,7 +328,7 @@ public class CustomerManagementService {
 
         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), message.toString());
         if (role == UserRole.CREDIT_CUSTOMER) {
-            creditCustomerFlowService.showCreditCrudMenu(admin);
+            creditCustomerFlowService.showCreditCustomerMenu(admin);
         } else {
             showCustomerMenu(admin);
         }
@@ -509,16 +517,16 @@ public class CustomerManagementService {
             // here?
             // Or handle them in handleUpdateValueInput if passed as text?
             // Button replies come as text? NO. They come as interactive/button_reply.
-            // But AdminFlowService handles button reply.
-            // So we need handleUpdateOptionSelection separate from text input?
-            // "handleUpdateValueInput" handles text.
-            // For buttons: "ROLE_CUSTOMER", "ZONE_123" -> these are button/list IDs.
-            // We need a method `handleUpdateOptionSelection(admin, session, id)` called
-            // from AdminFlowService button handler.
+            // Delegate updates to appropriate logic
 
             customerRepository.save(c);
             whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "✅ Updated!");
-            startUpdateSelection(admin, session, c);
+            // Redirect to Main Menu
+            if (c.getRole() == UserRole.CREDIT_CUSTOMER) {
+                creditCustomerFlowService.showCreditCustomerMenu(admin);
+            } else {
+                showCustomerMenu(admin);
+            }
         } catch (Exception e) {
             log.error("Update error", e);
             whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "❌ Error: " + e.getMessage());
@@ -546,7 +554,12 @@ public class CustomerManagementService {
 
             customerRepository.save(c);
             whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "✅ Updated!");
-            startUpdateSelection(admin, session, c);
+            // Redirect to Main Menu
+            if (c.getRole() == UserRole.CREDIT_CUSTOMER) {
+                creditCustomerFlowService.showCreditCustomerMenu(admin);
+            } else {
+                showCustomerMenu(admin);
+            }
 
         } catch (Exception e) {
             log.error("Update option error", e);
@@ -603,25 +616,6 @@ public class CustomerManagementService {
                             customerId),
                     buttons);
 
-            // Using Generic PROCESSING or just wait for Button Reply which routes via ID
-            // Actually, we don't need a specific CONFIRMING state if button ID carries
-            // payload,
-            // but AdminFlowService handles button clicks.
-            // We need to handle "CONFIRM_DELETE_..." in AdminFlowService?
-            // Wait, AdminFlowService.handleButtonReply has a switch case.
-            // We should add a case there or use a generic Confirm handler.
-            // Let's settle on using ID parsing in AdminFlowService or keep state.
-            // AdminFlowService uses `handleConfirmAdd` which checks state.
-            // Let's follow that pattern.
-
-            sessionManager.updateState(session, "CONFIRMING_CUST_DELETE"); // Need to add to Enum or use
-            // generic?
-            // To avoid modifying Enum again just for this, I'll rely on the Button ID
-            // carrying logic
-            // OR reuse PROCESSING state conceptually? No.
-            // I'll add the logic to AdminFlowService.handleButtonReply to catch
-            // startsWith("CONFIRM_DELETE_")
-
         } catch (NumberFormatException e) {
             whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "❌ Invalid ID format. Please enter a number:");
         }
@@ -637,4 +631,5 @@ public class CustomerManagementService {
         }
         showCustomerMenu(admin);
     }
+
 }

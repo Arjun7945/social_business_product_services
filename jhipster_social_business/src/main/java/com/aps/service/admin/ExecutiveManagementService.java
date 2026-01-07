@@ -25,11 +25,10 @@ public class ExecutiveManagementService {
     private final InputValidator inputValidator;
 
     public ExecutiveManagementService(
-        TeamMemberRepository teamMemberRepository,
-        WhatsAppService whatsAppService,
-        BotSessionManager sessionManager,
-        InputValidator inputValidator
-    ) {
+            TeamMemberRepository teamMemberRepository,
+            WhatsAppService whatsAppService,
+            BotSessionManager sessionManager,
+            InputValidator inputValidator) {
         this.teamMemberRepository = teamMemberRepository;
         this.whatsAppService = whatsAppService;
         this.sessionManager = sessionManager;
@@ -39,42 +38,31 @@ public class ExecutiveManagementService {
     public void showExecutiveMenu(TeamMember admin) {
         BotSession session = sessionManager.getSession(admin.getWaPhoneNumber());
 
-        List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
-            WhatsAppMessageDto.ButtonDto.builder()
-                .type("reply")
-                .reply(WhatsAppMessageDto.ReplyDto.builder().id("ADD_EXECUTIVE").title("➕ Add Executive").build())
-                .build(),
-            WhatsAppMessageDto.ButtonDto.builder()
-                .type("reply")
-                .reply(WhatsAppMessageDto.ReplyDto.builder().id("SHOW_ALL_EXECUTIVE").title("📋 Show All").build())
-                .build(),
-            WhatsAppMessageDto.ButtonDto.builder()
-                .type("reply")
-                .reply(WhatsAppMessageDto.ReplyDto.builder().id("BACK_TO_MAIN").title("⬅️ Back").build())
-                .build()
-        );
+        List<WhatsAppMessageDto.ButtonDto> buttons = com.aps.service.util.ExecutiveMenuHelper.getExecutiveMenuButtons();
 
-        whatsAppService.sendCartActionButtons(admin.getWaPhoneNumber(), "💼 *Executive Management*\n\nWhat would you like to do?", buttons);
+        whatsAppService.sendCartActionButtons(admin.getWaPhoneNumber(),
+                "💼 *Executive Management*\n\nWhat would you like to do?", buttons);
 
         sessionManager.updateState(session, AdminFlowStage.EXECUTIVE_MENU.name());
     }
 
     public void startAddExecutive(TeamMember admin, BotSession session) {
         sessionManager.setSessionData(session, "tempEntityType", "EXECUTIVE");
-        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "➕ *Add New Executive*\n\n📝 Please provide the executive's name:");
+        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                "➕ *Add New Executive*\n\n📝 Please provide the executive's name:");
         sessionManager.updateState(session, AdminFlowStage.AWAITING_EXEC_NAME.name());
     }
 
     public void handleExecutiveNameInput(TeamMember admin, BotSession session, String name) {
         if (!inputValidator.isValidName(name)) {
             whatsAppService.sendSimpleText(
-                admin.getWaPhoneNumber(),
-                "❌ Invalid name. Use letters/spaces/dots only (min 2 chars). Try again:"
-            );
+                    admin.getWaPhoneNumber(),
+                    "❌ Invalid name. Use letters/spaces/dots only (min 2 chars). Try again:");
             return;
         }
         sessionManager.setSessionData(session, "tempTeamMemberName", name.trim());
-        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "✅ Name: " + name.trim() + "\n\n📞 Please provide the phone number:");
+        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                "✅ Name: " + name.trim() + "\n\n📞 Please provide the phone number:");
         sessionManager.updateState(session, AdminFlowStage.AWAITING_EXEC_PHONE.name());
     }
 
@@ -85,9 +73,8 @@ public class ExecutiveManagementService {
         }
         sessionManager.setSessionData(session, "tempTeamMemberPhone", phone.trim());
         whatsAppService.sendSimpleText(
-            admin.getWaPhoneNumber(),
-            "✅ Phone: " + phone.trim() + "\n\n📱 Please provide the WhatsApp number (with country code):"
-        );
+                admin.getWaPhoneNumber(),
+                "✅ Phone: " + phone.trim() + "\n\n📱 Please provide the WhatsApp number (with country code):");
         sessionManager.updateState(session, AdminFlowStage.AWAITING_EXEC_WAPHONE.name());
     }
 
@@ -98,21 +85,19 @@ public class ExecutiveManagementService {
         }
         sessionManager.setSessionData(session, "tempTeamMemberWaPhone", waPhone.trim());
         List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
-            WhatsAppMessageDto.ButtonDto.builder()
-                .type("reply")
-                .reply(WhatsAppMessageDto.ReplyDto.builder().id("EXEC_ACTIVE_YES").title("Yes").build())
-                .build(),
-            WhatsAppMessageDto.ButtonDto.builder()
-                .type("reply")
-                .reply(WhatsAppMessageDto.ReplyDto.builder().id("EXEC_ACTIVE_NO").title("No").build())
-                .build()
-        );
+                WhatsAppMessageDto.ButtonDto.builder()
+                        .type("reply")
+                        .reply(WhatsAppMessageDto.ReplyDto.builder().id("EXEC_ACTIVE_YES").title("Yes").build())
+                        .build(),
+                WhatsAppMessageDto.ButtonDto.builder()
+                        .type("reply")
+                        .reply(WhatsAppMessageDto.ReplyDto.builder().id("EXEC_ACTIVE_NO").title("No").build())
+                        .build());
 
         whatsAppService.sendCartActionButtons(
-            admin.getWaPhoneNumber(),
-            "✅ WhatsApp: " + waPhone.trim() + "\n\n🔄 Is this executive active?",
-            buttons
-        );
+                admin.getWaPhoneNumber(),
+                "✅ WhatsApp: " + waPhone.trim() + "\n\n🔄 Is this executive active?",
+                buttons);
         sessionManager.updateState(session, AdminFlowStage.AWAITING_EXEC_STATUS.name());
     }
 
@@ -125,28 +110,26 @@ public class ExecutiveManagementService {
         String tempWaPhone = sessionManager.getSessionDataString(session, "tempTeamMemberWaPhone");
 
         String summary = String.format(
-            "✅ *Executive Details Summary:*\n\n" +
-            "👤 Name: %s\n" +
-            "📞 Phone: %s\n" +
-            "📱 WhatsApp: %s\n" +
-            "🔄 Status: %s\n\n" +
-            "Confirm to add this executive?",
-            tempName,
-            tempPhone,
-            tempWaPhone,
-            isActive ? "Active" : "Inactive"
-        );
+                "✅ *Executive Details Summary:*\n\n" +
+                        "👤 Name: %s\n" +
+                        "📞 Phone: %s\n" +
+                        "📱 WhatsApp: %s\n" +
+                        "🔄 Status: %s\n\n" +
+                        "Confirm to add this executive?",
+                tempName,
+                tempPhone,
+                tempWaPhone,
+                isActive ? "Active" : "Inactive");
 
         List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
-            WhatsAppMessageDto.ButtonDto.builder()
-                .type("reply")
-                .reply(WhatsAppMessageDto.ReplyDto.builder().id("CONFIRM_ADD").title("✅ Confirm & Add").build())
-                .build(),
-            WhatsAppMessageDto.ButtonDto.builder()
-                .type("reply")
-                .reply(WhatsAppMessageDto.ReplyDto.builder().id("CANCEL_OPERATION").title("❌ Cancel").build())
-                .build()
-        );
+                WhatsAppMessageDto.ButtonDto.builder()
+                        .type("reply")
+                        .reply(WhatsAppMessageDto.ReplyDto.builder().id("CONFIRM_ADD").title("✅ Confirm & Add").build())
+                        .build(),
+                WhatsAppMessageDto.ButtonDto.builder()
+                        .type("reply")
+                        .reply(WhatsAppMessageDto.ReplyDto.builder().id("CANCEL_OPERATION").title("❌ Cancel").build())
+                        .build());
 
         whatsAppService.sendCartActionButtons(admin.getWaPhoneNumber(), summary, buttons);
         sessionManager.updateState(session, AdminFlowStage.CONFIRMING_EXEC_ADD.name());
@@ -172,39 +155,37 @@ public class ExecutiveManagementService {
             teamMemberRepository.saveAndFlush(newExecutive);
 
             TransactionSynchronizationManager.registerSynchronization(
-                new TransactionSynchronization() {
-                    @Override
-                    public void afterCommit() {
-                        whatsAppService.sendTeamMemberWelcomeMessage(
-                            newExecutive.getWaPhoneNumber(),
-                            newExecutive.getName(),
-                            newExecutive.getPhoneNumber(),
-                            "Executive",
-                            admin.getName(),
-                            admin.getWaPhoneNumber()
-                        );
+                    new TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                            whatsAppService.sendTeamMemberWelcomeMessage(
+                                    newExecutive.getWaPhoneNumber(),
+                                    newExecutive.getName(),
+                                    newExecutive.getPhoneNumber(),
+                                    "Executive",
+                                    admin.getName(),
+                                    admin.getWaPhoneNumber());
 
-                        whatsAppService.sendSimpleText(
-                            admin.getWaPhoneNumber(),
-                            "✅ *Executive Added Successfully!*\n\n" +
-                            "👤 " +
-                            newExecutive.getName() +
-                            " has been added to the system.\n\n" +
-                            "A welcome message has been sent to the new executive. 📲"
-                        );
-                        showExecutiveMenu(admin);
-                    }
-                }
-            );
+                            whatsAppService.sendSimpleText(
+                                    admin.getWaPhoneNumber(),
+                                    "✅ *Executive Added Successfully!*\n\n" +
+                                            "👤 " +
+                                            newExecutive.getName() +
+                                            " has been added to the system.\n\n" +
+                                            "A welcome message has been sent to the new executive. 📲");
+                            showExecutiveMenu(admin);
+                        }
+                    });
         } catch (Exception e) {
-            e.printStackTrace();
+            org.slf4j.LoggerFactory.getLogger(ExecutiveManagementService.class).error("Error adding executive", e);
             whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "❌ Error adding executive: " + e.getMessage());
             showExecutiveMenu(admin);
         }
     }
 
     public void showAllExecutives(TeamMember admin) {
-        List<TeamMember> executives = teamMemberRepository.findAll().stream().filter(tm -> tm.getRole() == UserRole.EXECUTIVE).toList();
+        List<TeamMember> executives = teamMemberRepository.findAll().stream()
+                .filter(tm -> tm.getRole() == UserRole.EXECUTIVE).toList();
 
         if (executives.isEmpty()) {
             whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "📋 *No executives found.*");
@@ -212,19 +193,18 @@ public class ExecutiveManagementService {
             return;
         }
 
-        StringBuilder message = new StringBuilder(String.format("📋 *All Executives* (Total: %d)\n\n", executives.size()));
+        StringBuilder message = new StringBuilder(
+                String.format("📋 *All Executives* (Total: %d)\n\n", executives.size()));
         int count = 1;
         for (TeamMember exec : executives) {
             message.append(
-                String.format(
-                    "%d. *%s*\n   📞 %s\n   📱 %s\n   🔄 %s\n\n",
-                    count++,
-                    exec.getName(),
-                    exec.getPhoneNumber(),
-                    exec.getWaPhoneNumber(),
-                    exec.getIsActive() != null && exec.getIsActive() ? "Active" : "Inactive"
-                )
-            );
+                    String.format(
+                            "%d. *%s*\n   📞 %s\n   📱 %s\n   🔄 %s\n\n",
+                            count++,
+                            exec.getName(),
+                            exec.getPhoneNumber(),
+                            exec.getWaPhoneNumber(),
+                            exec.getIsActive() != null && exec.getIsActive() ? "Active" : "Inactive"));
         }
 
         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), message.toString());
@@ -232,12 +212,14 @@ public class ExecutiveManagementService {
     }
 
     public void startUpdateExecutive(TeamMember admin, BotSession session) {
-        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "🚧 *Update Executive*\n\nThis feature is coming soon!");
+        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                "🚧 *Update Executive*\n\nThis feature is coming soon!");
         showExecutiveMenu(admin);
     }
 
     public void startDeleteExecutive(TeamMember admin, BotSession session) {
-        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "🚧 *Delete Executive*\n\nThis feature is coming soon!");
+        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                "🚧 *Delete Executive*\n\nThis feature is coming soon!");
         showExecutiveMenu(admin);
     }
 }

@@ -126,21 +126,9 @@ public class DeliveryFlowService {
             Long orderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_DELIVERY_TAKE, ""));
             handleDeliveryConfirmation(deliveryPerson.getWaPhoneNumber(), orderId);
         } else if (buttonId.startsWith(FlowConstants.PREFIX_DELIVERY_DETAILS)) {
-            // Viewed details (3 options) -> Show options again or just the list?
-            // Task says: "when order id clicked... send 3 options".
-            // Implementation: List Reply ID -> handleListReply -> Show Details Options
-            // But if they are buttons (e.g. from Order Taken list if implemented as
-            // buttons), handles here.
-            // Task says: "list should be in list view buttons format". If > 3 items, must
-            // use List Message. If <= 3, Buttons.
-            // I'll assume List Message for robustness.
-            // Wait, "button names should be order id". If List Reply, it comes as
-            // handleListReply.
-            // If Button Reply, here.
-
-            // Re-use logic for showing order details (Payment, Location, etc)
-            Long orderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_DELIVERY_DETAILS, ""));
-            sendOrderInteractionOptions(deliveryPerson, orderId);
+            // Viewed details (3 options)
+            Long detailOrderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_DELIVERY_DETAILS, ""));
+            sendOrderInteractionOptions(deliveryPerson, detailOrderId);
         } else if (buttonId.startsWith(FlowConstants.PREFIX_UPDATE_STATUS)) {
             String status = buttonId.replace(FlowConstants.PREFIX_UPDATE_STATUS, "");
             updateDeliveryPersonStatus(deliveryPerson, status);
@@ -187,11 +175,6 @@ public class DeliveryFlowService {
 
         String[] ids = chosenOrders.split(",");
         // Send List Message
-        // "list view buttons format" -> WhatsApp List Message if > 3 options or
-        // buttons.
-        // Task says "button names should be order id".
-        // I will use Interactive List Message for scalability.
-
         List<WhatsAppMessageDto.RowDto> rows = new java.util.ArrayList<>();
         for (String idStr : ids) {
             if (idStr.trim().isEmpty())
@@ -304,10 +287,7 @@ public class DeliveryFlowService {
 
                     // Show Available Orders
                     handleOrderTakenList(deliveryPerson);
-
-                    // Send Main Menu (as requested)
-                    // sendMainMenu(deliveryPerson);
-                    // return;
+                    return;
                 }
             }
 

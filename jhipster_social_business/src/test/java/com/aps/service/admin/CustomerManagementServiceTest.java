@@ -1,7 +1,6 @@
 package com.aps.service.admin;
 
 import static org.mockito.Mockito.*;
-import static org.assertj.core.api.Assertions.*;
 
 import com.aps.domain.Customer;
 import com.aps.domain.TeamMember;
@@ -41,6 +40,7 @@ class CustomerManagementServiceTest {
     private UserRemovalService userRemovalService;
     @Mock
     private DeliveryZoneRepository deliveryZoneRepository;
+
     @Mock
     private CreditCustomerFlowService creditCustomerFlowService;
 
@@ -75,7 +75,7 @@ class CustomerManagementServiceTest {
         verify(whatsAppService).sendSimpleText(eq(admin.getWaPhoneNumber()), contains("(Total: 1)")); // Expecting
                                                                                                       // message
                                                                                                       // call
-        verify(creditCustomerFlowService).showCreditCrudMenu(admin); // Crucial check
+        verify(creditCustomerFlowService).showCreditCustomerMenu(admin);
     }
 
     @Test
@@ -88,8 +88,7 @@ class CustomerManagementServiceTest {
 
         // Assert
         verify(whatsAppService).sendSimpleText(eq(admin.getWaPhoneNumber()), contains("No CREDIT_CUSTOMERs found"));
-        verify(creditCustomerFlowService).showCreditCrudMenu(admin); // Crucial check: should return to credit menu even
-                                                                     // if empty
+        verify(creditCustomerFlowService).showCreditCustomerMenu(admin);
     }
 
     @Test
@@ -107,7 +106,8 @@ class CustomerManagementServiceTest {
 
         // Assert
         verify(customerRepository).findAllByRole(UserRole.CUSTOMER);
-        // Should NOT call credit menu
-        verify(creditCustomerFlowService, never()).showCreditCrudMenu(any());
+        // Should Call Customer Menu
+        verify(whatsAppService).sendInteractiveList(eq(admin.getWaPhoneNumber()), contains("Customer Management"),
+                anyList());
     }
 }
