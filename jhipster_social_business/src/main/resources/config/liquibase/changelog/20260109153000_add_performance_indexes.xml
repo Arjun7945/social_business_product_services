@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20260109153000-1" author="antigravity">
+        <!-- customer_order indexes -->
+        <createIndex indexName="idx_customer_order_customer_id" tableName="customer_order">
+            <column name="customer_id" type="bigint"/>
+        </createIndex>
+        <createIndex indexName="idx_customer_order_delivery_person_id" tableName="customer_order">
+            <column name="delivery_person_id" type="bigint"/>
+        </createIndex>
+        <createIndex indexName="idx_customer_order_status" tableName="customer_order">
+            <column name="status" type="varchar(255)"/>
+        </createIndex>
+        <createIndex indexName="idx_customer_order_order_time" tableName="customer_order">
+            <column name="order_time" type="${datetimeType}"/>
+        </createIndex>
+
+        <!-- customer indexes -->
+        <createIndex indexName="idx_customer_phone_number" tableName="customer">
+            <column name="phone_number" type="varchar(255)"/>
+        </createIndex>
+        <createIndex indexName="idx_customer_added_by_id" tableName="customer">
+            <column name="added_by_id" type="bigint"/>
+        </createIndex>
+        <createIndex indexName="idx_customer_zone_id" tableName="customer">
+            <column name="zone_id" type="bigint"/>
+        </createIndex>
+
+        <!-- delivery_person indexes -->
+        <createIndex indexName="idx_delivery_person_zone_id" tableName="delivery_person">
+            <column name="zone_id" type="bigint"/>
+        </createIndex>
+        <createIndex indexName="idx_delivery_person_status" tableName="delivery_person">
+            <column name="status" type="varchar(255)"/>
+        </createIndex>
+
+        <!-- additional tables -->
+        <createIndex indexName="idx_returned_order_customer_id" tableName="returned_order">
+            <column name="customer_id" type="bigint"/>
+        </createIndex>
+         <createIndex indexName="idx_shopping_cart_customer_id" tableName="shopping_cart">
+            <column name="customer_id" type="bigint"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

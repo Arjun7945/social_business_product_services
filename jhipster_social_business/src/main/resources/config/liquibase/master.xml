@@ -35,6 +35,8 @@
     <include file="config/liquibase/changelog/20260104000000_add_timeline_columns.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260105000000_added_addedBy_to_removed_user.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260105205000_add_delivery_person_columns.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260109153000_add_performance_indexes.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260109154500_refactor_fishproduct_image_fk.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20251228084005_added_entity_constraints_Customer.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251228084007_added_entity_constraints_DeliveryPerson.xml" relativeToChangelogFile="false"/>
