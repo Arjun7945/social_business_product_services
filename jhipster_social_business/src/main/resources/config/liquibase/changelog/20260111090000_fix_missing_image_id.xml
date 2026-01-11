@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="20260111090000-1" author="antigravity">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="fish_product" columnName="image_id"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="fish_product">
+            <column name="image_id" type="bigint">
+                <constraints nullable="true" unique="true" uniqueConstraintName="ux_fish_product__image_id" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="image_id"
+                                 baseTableName="fish_product"
+                                 constraintName="fk_fish_product__image_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="product_image"/>
+    </changeSet>
+</databaseChangeLog>
