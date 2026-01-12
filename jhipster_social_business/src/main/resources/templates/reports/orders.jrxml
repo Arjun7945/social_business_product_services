@@ -17,7 +17,7 @@
 
     <style name="TransactionIdStyle" forecolor="#0000FF"> <!-- Default Blue -->
         <conditionalStyle>
-            <conditionExpression><![CDATA[$F{status}.toString().equals("ORDER_DELIVERED_SUCESSFULLY") || "COD".equals($F{paymentMethod})]]></conditionExpression>
+            <conditionExpression><![CDATA[$F{status}.toString().equals("ORDER_DELIVERED_SUCESSFULLY") || "COD".equals($F{paymentMethod}.toString())]]></conditionExpression>
             <style forecolor="#008000"/> <!-- Green -->
         </conditionalStyle>
         <conditionalStyle>
@@ -40,12 +40,11 @@
     <field name="status" class="java.lang.Object"/>
     <field name="customer.name" class="java.lang.String"/>
     <field name="customer.phoneNumber" class="java.lang.String"/>
-    <field name="paymentMethod" class="java.lang.String"/>
+    <field name="paymentMethod" class="java.lang.Object"/>
     <field name="transactionId" class="java.lang.String"/>
     <field name="customer.role" class="java.lang.Object"/>
     <field name="orderTime" class="java.time.Instant"/>
     
-
 
     <background>
         <band splitType="Stretch"/>
@@ -194,9 +193,9 @@
                  <textElement textAlignment="Center">
                      <font size="9"/>
                  </textElement>
-                <textFieldExpression><![CDATA[($F{paymentMethod} == null || $F{paymentMethod}.equals("NOT_SELECTED")) ? "NOT SELECTED" : 
-($F{paymentMethod}.equals("PAYMENT_QR") ? "QR" : 
-($F{paymentMethod}.equals("PAYMENT_LINK") ? "LINK" : $F{paymentMethod}))]]></textFieldExpression>
+                <textFieldExpression><![CDATA[($F{paymentMethod} == null || $F{paymentMethod}.toString().equals("NOT_SELECTED")) ? "NOT SELECTED" : 
+($F{paymentMethod}.toString().equals("PAYMENT_QR") ? "QR" : 
+($F{paymentMethod}.toString().equals("PAYMENT_LINK") ? "LINK" : $F{paymentMethod}.toString()))]]></textFieldExpression>
             </textField>
             
             <!-- Transaction ID -->
@@ -207,11 +206,11 @@
                 </textElement>
                 <textFieldExpression><![CDATA[(
     ($F{customer.role}.toString().equals("CREDIT_CUSTOMER")) && 
-    ($F{paymentMethod} == null || $F{paymentMethod}.equals("NOT_SELECTED"))
-) ? "CREDIT CUST-NOT PAID" :
+    ($F{paymentMethod} == null || $F{paymentMethod}.toString().equals("NOT_SELECTED"))
+) ? "CUST-NOT-PAID" :
 (
-    ($F{paymentMethod} == null || $F{paymentMethod}.equals("NOT_SELECTED")) ? "WAITING" :
-    ($F{paymentMethod}.equals("COD") ? "COD" : 
+    ($F{paymentMethod} == null || $F{paymentMethod}.toString().equals("NOT_SELECTED")) ? "WAITING" :
+    ($F{paymentMethod}.toString().equals("COD") ? "COD" : 
         ($F{transactionId} == null || $F{transactionId}.trim().isEmpty() ? "NO ID FOUND" : $F{transactionId})
     )
 )]]></textFieldExpression>

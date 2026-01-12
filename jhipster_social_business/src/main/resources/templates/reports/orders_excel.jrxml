@@ -34,7 +34,7 @@
     <field name="status" class="java.lang.Object"/>
     <field name="customer.name" class="java.lang.String"/>
     <field name="customer.phoneNumber" class="java.lang.String"/>
-    <field name="paymentMethod" class="java.lang.String"/>
+    <field name="paymentMethod" class="java.lang.Object"/>
     <field name="transactionId" class="java.lang.String"/>
     <field name="customer.role" class="java.lang.Object"/>
     <field name="orderTime" class="java.time.Instant"/>
@@ -195,9 +195,9 @@
                 <reportElement x="340" y="0" width="90" height="20" stretchType="RelativeToTallestObject" uuid="34567890-3456-6543-3456-3456789012bc"/>
                  <box><pen lineWidth="0.5" lineColor="#000000"/></box>
                  <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
-                <textFieldExpression><![CDATA[($F{paymentMethod} == null || $F{paymentMethod}.equals("NOT_SELECTED")) ? "NOT SELECTED" : 
-($F{paymentMethod}.equals("PAYMENT_QR") ? "QR" : 
-($F{paymentMethod}.equals("PAYMENT_LINK") ? "LINK" : $F{paymentMethod}))]]></textFieldExpression>
+                <textFieldExpression><![CDATA[($F{paymentMethod} == null || $F{paymentMethod}.toString().equals("NOT_SELECTED")) ? "NOT SELECTED" : 
+($F{paymentMethod}.toString().equals("PAYMENT_QR") ? "QR" : 
+($F{paymentMethod}.toString().equals("PAYMENT_LINK") ? "LINK" : $F{paymentMethod}))]]></textFieldExpression>
             </textField>
             
             <!-- Transaction ID -->
@@ -207,11 +207,11 @@
                 <textElement textAlignment="Center" verticalAlignment="Middle"><font size="10"/></textElement>
                 <textFieldExpression><![CDATA[(
     ($F{customer.role}.toString().equals("CREDIT_CUSTOMER")) && 
-    ($F{paymentMethod} == null || $F{paymentMethod}.equals("NOT_SELECTED"))
-) ? "CREDIT" :
+    ($F{paymentMethod} == null || $F{paymentMethod}.toString().equals("NOT_SELECTED"))
+) ? "CUST-NOT-PAID" :
 (
-    ($F{paymentMethod} == null || $F{paymentMethod}.equals("NOT_SELECTED")) ? "PENDING" :
-    ($F{paymentMethod}.equals("COD") ? "COD" : 
+    ($F{paymentMethod} == null || $F{paymentMethod}.toString().equals("NOT_SELECTED")) ? "PENDING" :
+    ($F{paymentMethod}.toString().equals("COD") ? "COD" : 
         ($F{transactionId} == null || $F{transactionId}.trim().isEmpty() ? "---" : $F{transactionId})
     )
 )]]></textFieldExpression>

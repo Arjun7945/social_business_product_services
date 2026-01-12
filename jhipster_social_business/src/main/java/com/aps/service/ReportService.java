@@ -4,8 +4,8 @@ import com.aps.domain.CustomerOrder;
 import com.aps.domain.enumeration.OrderStatus;
 import com.aps.repository.CustomerOrderRepository;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
 
 @Service
 @Transactional(readOnly = true)
@@ -69,10 +68,8 @@ public class ReportService {
     public byte[] generateUnpaidOrdersReport(String issueToName, String format) {
         log.info("Generating Unpaid Orders Report ({})", format);
         try {
-            // Assuming DELIVERY_ONWAY + ORDER_NOT_TAKEN acts as proxy for unpaid/active
-            // orders for now
-            List<CustomerOrder> orders = orderRepository.findAllByStatus(OrderStatus.ORDER_FAILED);
-            return generateReport(orders, "Unpaid Orders (Failed)", issueToName, format);
+            List<CustomerOrder> orders = orderRepository.findAllByStatusNot(OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
+            return generateReport(orders, "Unpaid Orders", issueToName, format);
         } catch (Exception e) {
             log.error("Failed to generate Unpaid Orders report", e);
             throw new RuntimeException("Report generation failed", e);
@@ -80,7 +77,7 @@ public class ReportService {
     }
 
     private byte[] generateReport(List<CustomerOrder> orders, String title, String issueToName, String format)
-        throws JRException, FileNotFoundException {
+            throws JRException, FileNotFoundException {
         if (orders == null || orders.isEmpty()) {
             return null;
         }
@@ -104,8 +101,11 @@ public class ReportService {
         }
 
         // Load .jrxml template
-        File file = ResourceUtils.getFile("classpath:templates/reports/" + templateName);
-        JasperDesign design = JRXmlLoader.load(file);
+        InputStream inputStream = this.getClass().getResourceAsStream("/templates/reports/" + templateName);
+        if (inputStream == null) {
+            throw new FileNotFoundException("Report template not found: " + templateName);
+        }
+        JasperDesign design = JRXmlLoader.load(inputStream);
         JasperReport report = JasperCompileManager.compileReport(design);
 
         // Parameters

@@ -60,5 +60,7 @@ public interface CustomerOrderRepository
 
     List<CustomerOrder> findAllByStatus(OrderStatus status);
 
+    List<CustomerOrder> findAllByStatusNot(OrderStatus status);
+
     List<CustomerOrder> findAllByCustomerWaPhoneNumber(String waPhoneNumber);
 }
