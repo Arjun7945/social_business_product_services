@@ -50,6 +50,8 @@ class CreditCustomerFlowServiceTest {
         private RazorpayService razorpayService;
         @Mock
         private AdminMessageService adminMessageService;
+        @Mock
+        private DeliveryPersonService deliveryPersonService;
 
         private CreditCustomerFlowService creditCustomerFlowService;
 
@@ -65,7 +67,8 @@ class CreditCustomerFlowServiceTest {
                                 orderStatusHistoryService,
                                 customerMessageService,
                                 razorpayService,
-                                adminMessageService);
+                                adminMessageService,
+                                deliveryPersonService);
         }
 
         @Test

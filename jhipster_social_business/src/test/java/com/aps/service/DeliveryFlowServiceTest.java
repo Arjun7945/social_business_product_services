@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
 import com.aps.config.FlowConstants;
 import com.aps.domain.Customer;
@@ -28,6 +29,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import com.aps.domain.enumeration.OrderStatus;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryFlowServiceTest {
@@ -81,12 +83,6 @@ class DeliveryFlowServiceTest {
         when(deliveryPersonMessageService.getOrderTakenListHeader()).thenReturn("Header");
         when(deliveryPersonMessageService.getOrderViewButtonLabal()).thenReturn("View");
 
-        // Act
-        // We need to access private method handleOrderTakenList?
-        // No, we can invoke handleDeliveryMessage with the specific button ID that
-        // triggers it.
-        // Button ID: FlowConstants.DELIVERY_MENU_ORDER_TAKEN
-
         // Mock Session
         com.aps.domain.BotSession session = new com.aps.domain.BotSession();
         session.setWaPhoneNumber("91999");
@@ -110,8 +106,6 @@ class DeliveryFlowServiceTest {
 
         List<WhatsAppMessageDto.RowDto> rows = listCaptor.getValue();
         // 3 orders -> 3 rows + 1 Back row = 4 rows
-        // Before Fix: 3 items * 2 = 6 rows (with 3 duplicates of Back)
-
         long backCount = rows.stream().filter(r -> r.getId().equals(FlowConstants.PREFIX_MAIN_MENU)).count();
 
         if (rows.size() != 4 || backCount != 1) {
@@ -148,8 +142,6 @@ class DeliveryFlowServiceTest {
         when(deliveryPersonMessageService.getButtonPaymentResisted()).thenReturn("Resist");
         when(deliveryPersonMessageService.getDescriptionPaymentResisted()).thenReturn("Desc");
         when(deliveryPersonMessageService.getPaymentModeSelectionHeader(any(), anyDouble())).thenReturn("Header");
-
-        // Mock new Localization methods
         when(deliveryPersonMessageService.getButtonName()).thenReturn("SectionTitle");
         when(deliveryPersonMessageService.getButtonCodDescription()).thenReturn("COD Desc");
         when(deliveryPersonMessageService.getButtonQrDescription()).thenReturn("QR Desc");
@@ -178,12 +170,10 @@ class DeliveryFlowServiceTest {
         verify(whatsAppService).sendInteractiveList(eq("91999"), anyString(), anyString(), listCaptor.capture());
 
         List<WhatsAppMessageDto.RowDto> rows = listCaptor.getValue();
-        // Should have 4 rows: COD, QR, Link, Resisted
         if (rows.size() != 4) {
             throw new AssertionError("Expected 4 Payment Mode rows, found " + rows.size());
         }
 
-        // Verify IDs
         long codCount = rows.stream().filter(r -> r.getId().equals(FlowConstants.PREFIX_PAY_COD + "100")).count();
         long resistedCount = rows.stream()
                 .filter(r -> r.getId().equals(CreditCustomerFlowService.PREFIX_PAY_RESISTED + "100")).count();
@@ -191,5 +181,130 @@ class DeliveryFlowServiceTest {
         if (codCount != 1 || resistedCount != 1) {
             throw new AssertionError("Missing or duplicate payment IDs");
         }
+    }
+
+    @Test
+    void handlePaymentModeSelection_COD_ShouldTriggerVerification() {
+        // Arrange
+        DeliveryPerson dp = new DeliveryPerson();
+        dp.setWaPhoneNumber("91999");
+        dp.setName("DP1");
+
+        CustomerOrder order = new CustomerOrder();
+        order.setId(200L);
+        order.setTotalAmount(BigDecimal.valueOf(150.0));
+
+        when(customerOrderRepository.findById(200L)).thenReturn(Optional.of(order));
+        when(deliveryPersonMessageService.getCodCollectionVerificationQuestion(anyString(), anyDouble()))
+                .thenReturn("Verify?");
+        when(deliveryPersonMessageService.getButtonIdsCollected()).thenReturn("Yes");
+        when(deliveryPersonMessageService.getButtonIdsNotCollected()).thenReturn("No");
+
+        // Mock Session
+        com.aps.domain.BotSession session = new com.aps.domain.BotSession();
+        when(sessionManager.getSession("91999")).thenReturn(session);
+
+        // Mock Webhook Message
+        com.aps.service.dto.WhatsAppWebhookDto.Message message = new com.aps.service.dto.WhatsAppWebhookDto.Message();
+        message.setType("interactive");
+        com.aps.service.dto.WhatsAppWebhookDto.Interactive interactive = new com.aps.service.dto.WhatsAppWebhookDto.Interactive();
+        interactive.setType("list_reply");
+        com.aps.service.dto.WhatsAppWebhookDto.ListReply reply = new com.aps.service.dto.WhatsAppWebhookDto.ListReply();
+        reply.setId(FlowConstants.PREFIX_PAY_COD + "200");
+        interactive.setListReply(reply);
+        message.setInteractive(interactive);
+
+        // Act
+        deliveryFlowService.handleDeliveryMessage(dp, message);
+
+        // Assert
+        // Should verify that Interactive Buttons (Yes/No) are sent
+        verify(whatsAppService).sendInteractiveButtons(eq("91999"), eq("Verify?"), any());
+
+        // Should NOT update order status yet
+        verify(orderStatusHistoryService, never()).addEvent(any());
+    }
+
+    @Test
+    void handleButtonReply_CodVerifyYes_ShouldCompleteTransaction() {
+        // Arrange
+        DeliveryPerson dp = new DeliveryPerson();
+        dp.setId(1L);
+        dp.setWaPhoneNumber("91999");
+        dp.setName("DP1");
+
+        Customer c = new Customer();
+        c.setWaPhoneNumber("8888");
+
+        CustomerOrder order = new CustomerOrder();
+        order.setId(300L);
+        order.setCustomer(c);
+        order.setDeliveryPerson(dp);
+        order.setTotalAmount(BigDecimal.valueOf(50.0));
+        order.setStatus(OrderStatus.DELIVERY_ONWAY);
+
+        when(customerOrderRepository.findById(300L)).thenReturn(Optional.of(order));
+
+        // Mock Messages
+        when(deliveryPersonMessageService.getOrderDeliveredSuccess()).thenReturn("Success");
+        when(customerMessageService.getOrderDeliveredMessage(any(), anyDouble(), anyString())).thenReturn("Receipt");
+
+        // Mock Session
+        com.aps.domain.BotSession session = new com.aps.domain.BotSession();
+        when(sessionManager.getSession("91999")).thenReturn(session);
+
+        // Mock Button Reply (YES)
+        com.aps.service.dto.WhatsAppWebhookDto.Message message = new com.aps.service.dto.WhatsAppWebhookDto.Message();
+        message.setType("interactive");
+        com.aps.service.dto.WhatsAppWebhookDto.Interactive interactive = new com.aps.service.dto.WhatsAppWebhookDto.Interactive();
+        interactive.setType("button_reply");
+        com.aps.service.dto.WhatsAppWebhookDto.ButtonReply reply = new com.aps.service.dto.WhatsAppWebhookDto.ButtonReply();
+        reply.setId(FlowConstants.PREFIX_COD_VERIFY_YES + "300");
+        interactive.setButtonReply(reply);
+        message.setInteractive(interactive);
+
+        // Act
+        deliveryFlowService.handleDeliveryMessage(dp, message);
+
+        // Assert
+        // 1. Order status should change to DELIVERED_SUCCESSFULLY
+        // Note: updateOrderStatus saves the order
+        verify(customerOrderRepository, org.mockito.Mockito.times(2)).save(order);
+
+        // 2. Should send success messages
+        verify(whatsAppService).sendSimpleText(eq("91999"), eq("Success")); // DP
+        verify(whatsAppService).sendSimpleText(eq("8888"), eq("Receipt")); // Customer
+    }
+
+    @Test
+    void handleButtonReply_CodVerifyNo_ShouldSendWarning() {
+        // Arrange
+        DeliveryPerson dp = new DeliveryPerson();
+        dp.setWaPhoneNumber("91999");
+
+        when(deliveryPersonMessageService.getCodCollectionWarning()).thenReturn("Warning");
+
+        // Mock Session
+        com.aps.domain.BotSession session = new com.aps.domain.BotSession();
+        when(sessionManager.getSession("91999")).thenReturn(session);
+
+        // Mock Button Reply (NO)
+        com.aps.service.dto.WhatsAppWebhookDto.Message message = new com.aps.service.dto.WhatsAppWebhookDto.Message();
+        message.setType("interactive");
+        com.aps.service.dto.WhatsAppWebhookDto.Interactive interactive = new com.aps.service.dto.WhatsAppWebhookDto.Interactive();
+        interactive.setType("button_reply");
+        com.aps.service.dto.WhatsAppWebhookDto.ButtonReply reply = new com.aps.service.dto.WhatsAppWebhookDto.ButtonReply();
+        reply.setId(FlowConstants.PREFIX_COD_VERIFY_NO + "400");
+        interactive.setButtonReply(reply);
+        message.setInteractive(interactive);
+
+        // Act
+        deliveryFlowService.handleDeliveryMessage(dp, message);
+
+        // Assert
+        verify(whatsAppService).sendSimpleText(eq("91999"), eq("Warning"));
+        // Ensure status update is NOT called (indirectly by ensuring repo save is not
+        // called for status or order)
+        verify(customerOrderRepository, never()).save(any());
     }
 }

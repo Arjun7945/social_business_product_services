@@ -108,6 +108,36 @@ public class DeliveryPersonMessageService {
         return "✅ ഓർഡർ ഡെലിവർ ചെയ്തതായി അടയാളപ്പെടുത്തി! മികച്ച ജോലി! 👏";
     }
 
+    public String getCodDeliveryConfirmationMessage(Long orderId, Double amount, String collectorName) {
+        return String.format(
+                "✅ *COD പേയ്മെന്റ് സ്ഥിരീകരിച്ചു*\n\n" +
+                        "ഓർഡർ: #%d\n" +
+                        "ശേഖരിച്ച തുക: ₹%.2f\n" +
+                        "ശേഖരിച്ചത്: %s\n\n" +
+                        "നന്ദി! മികച്ച സേവനം! 🌟",
+                orderId, amount, collectorName);
+    }
+
+    public String getCodCollectionVerificationQuestion(String dpName, Double amount) {
+        return String.format(
+                "നമസ്കാരം %s! 👋\n\n" +
+                        "നമ്മൾ ഈ ഓർഡർ പൂർത്തിയാക്കുന്നതിന് മുമ്പ് ഒരു കാര്യം ചോദിക്കട്ടെ...\n\n" +
+                        "നിങ്ങൾ ഉപഭോക്താവിൽ നിന്ന് കൃത്യമായി *₹%.2f* രൂപ തന്നെ അല്ലേ മേടിച്ചത്?\" ഇത് ശരിയാണോ? 🤔",
+                dpName, amount);
+    }
+
+    public String getCodCollectionWarning() {
+        return "⚠️ *ശ്രദ്ധിക്കുക!*\n\nദയവായി മുഴുവൻ തുകയും ശേഖരിക്കുക. എന്തെങ്കിലും പ്രശ്നമുണ്ടെങ്കിൽ അഡ്മിനുമായി ബന്ധപ്പെടുക.";
+    }
+
+    public String getButtonIdsCollected() {
+        return "അതെ, വാങ്ങി ✅";
+    }
+
+    public String getButtonIdsNotCollected() {
+        return "ഇല്ല ❌";
+    }
+
     public String getOrderShippedSuccess() {
         return "✅ കസ്റ്റമറെ അറിയിച്ചു: ഓർഡർ വഴിയിലാണ്! 🚚";
     }

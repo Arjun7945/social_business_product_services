@@ -291,6 +291,16 @@ public class CustomerMessageService {
                 + "നിങ്ങളുടെ ഓർഡർ ഡെലിവർ ചെയ്തു. ഞങ്ങളോടൊപ്പം ഷോപ്പിംഗ് നടത്തിയതിന് നന്ദി! 🐟";
     }
 
+    public String getOrderDeliveredMessage(Long orderId, Double amount, String collectorName) {
+        return String.format(
+                "✅ *ഓർഡർ ഡെലിവർ ചെയ്തു!*\n\n" +
+                        "ഓർഡർ: #%d\n" +
+                        "തുക: ₹%.2f\n" +
+                        "ശേഖരിച്ചത്: %s\n\n" +
+                        "ഞങ്ങളെ തിരഞ്ഞെടുത്തതിന് നന്ദി! 🐟",
+                orderId, amount, collectorName);
+    }
+
     public String getOrderAgainPrompt() {
         return "🔄 *വീണ്ടും ഓർഡർ ചെയ്യണോ?*\n\n" + "പുതിയ സാധനങ്ങൾ ഓർഡർ ചെയ്യണമെങ്കിൽ, താഴെ നിന്ന് തിരഞ്ഞെടുക്കൂ... 👇";
     }

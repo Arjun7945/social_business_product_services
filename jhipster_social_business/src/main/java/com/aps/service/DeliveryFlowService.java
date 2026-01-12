@@ -145,6 +145,18 @@ public class DeliveryFlowService {
         } else if (buttonId.startsWith(FlowConstants.PREFIX_DELIVERED)) {
             Long orderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_DELIVERED, ""));
             updateOrderStatus(deliveryPerson, orderId, OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
+        } else if (buttonId.startsWith(FlowConstants.PREFIX_COD_VERIFY_YES)) {
+            Long orderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_COD_VERIFY_YES, ""));
+            completeCodTransaction(deliveryPerson, orderId);
+        } else if (buttonId.startsWith(FlowConstants.PREFIX_COD_VERIFY_NO)) {
+            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
+                    deliveryPersonMessageService.getCodCollectionWarning());
+        } else if (buttonId.startsWith(FlowConstants.PREFIX_COD_VERIFY_YES)) {
+            Long orderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_COD_VERIFY_YES, ""));
+            completeCodTransaction(deliveryPerson, orderId);
+        } else if (buttonId.startsWith(FlowConstants.PREFIX_COD_VERIFY_NO)) {
+            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
+                    deliveryPersonMessageService.getCodCollectionWarning());
         }
     }
 
@@ -331,7 +343,12 @@ public class DeliveryFlowService {
 
         if (buttonId.startsWith(FlowConstants.PREFIX_PAY_COD)) {
             orderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_PAY_COD, ""));
-            mode = com.aps.domain.enumeration.PaymentMode.COD;
+            // Verify Logic - Intercept
+            CustomerOrder order = customerOrderRepository.findById(orderId).orElse(null);
+            if (order != null) {
+                sendCodVerification(deliveryPerson, order);
+            }
+            return; // STOP HERE, wait for Verification
         } else if (buttonId.startsWith(FlowConstants.PREFIX_PAY_QR)) {
             orderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_PAY_QR, ""));
             mode = com.aps.domain.enumeration.PaymentMode.QR;
@@ -413,20 +430,44 @@ public class DeliveryFlowService {
         if (newStatus == OrderStatus.ORDER_DELIVERED_SUCESSFULLY) {
             deliveryPersonService.removeOrderFromChosenList(deliveryPerson.getId(), orderId);
 
-            TransactionSynchronizationManager.registerSynchronization(
-                    new TransactionSynchronization() {
-                        @Override
-                        public void afterCommit() {
-                            whatsAppService.sendSimpleText(
-                                    deliveryPerson.getWaPhoneNumber(),
-                                    deliveryPersonMessageService.getOrderDeliveredSuccess());
-                            whatsAppService.sendSimpleText(
-                                    order.getCustomer().getWaPhoneNumber(),
-                                    customerMessageService.getOrderDeliveredMessage());
-                            customerFlowService.sendReOrderFlow(order.getCustomer());
-                        }
-                    });
+            if (org.springframework.transaction.support.TransactionSynchronizationManager.isSynchronizationActive()) {
+                org.springframework.transaction.support.TransactionSynchronizationManager
+                        .registerSynchronization(
+                                new org.springframework.transaction.support.TransactionSynchronization() {
+                                    @Override
+                                    public void afterCommit() {
+                                        executeDeliverySuccessActions(deliveryPerson, order);
+                                    }
+                                });
+            } else {
+                executeDeliverySuccessActions(deliveryPerson, order);
+            }
         }
+    }
+
+    private void executeDeliverySuccessActions(DeliveryPerson deliveryPerson, CustomerOrder order) {
+        if (order.getPaymentMethod() == com.aps.domain.enumeration.PaymentMode.COD) {
+            // Detailed COD Messages -> Only for Customer
+            whatsAppService.sendSimpleText(
+                    deliveryPerson.getWaPhoneNumber(),
+                    deliveryPersonMessageService.getOrderDeliveredSuccess()); // Generic for DP
+
+            whatsAppService.sendSimpleText(
+                    order.getCustomer().getWaPhoneNumber(),
+                    customerMessageService.getOrderDeliveredMessage(
+                            order.getId(),
+                            order.getTotalAmount() != null ? order.getTotalAmount().doubleValue() : 0.0,
+                            deliveryPerson.getName()));
+        } else {
+            // Generic Messages (Prepaid/Others)
+            whatsAppService.sendSimpleText(
+                    deliveryPerson.getWaPhoneNumber(),
+                    deliveryPersonMessageService.getOrderDeliveredSuccess());
+            whatsAppService.sendSimpleText(
+                    order.getCustomer().getWaPhoneNumber(),
+                    customerMessageService.getOrderDeliveredMessage());
+        }
+        customerFlowService.sendReOrderFlow(order.getCustomer());
     }
 
     public void handleDeliveryConfirmation(String deliveryPersonWaId, Long orderId) {
@@ -482,6 +523,7 @@ public class DeliveryFlowService {
         deliveryPersonRepository.save(deliveryPerson);
 
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+
             @Override
             public void afterCommit() {
                 Customer customer = customerRepository.findById(order.getCustomer().getId()).orElseThrow();
@@ -493,6 +535,7 @@ public class DeliveryFlowService {
 
                 sendMainMenu(deliveryPerson);
             }
+
         });
     }
 
@@ -526,6 +569,35 @@ public class DeliveryFlowService {
         for (DeliveryPerson deliveryPerson : deliveryPersons) {
             whatsAppService.sendInteractiveOrderAlert(deliveryPerson.getWaPhoneNumber(), orderDetails.toString(),
                     order.getId());
+        }
+    }
+
+    private void sendCodVerification(DeliveryPerson deliveryPerson, CustomerOrder order) {
+        String msg = deliveryPersonMessageService.getCodCollectionVerificationQuestion(
+                deliveryPerson.getName(),
+                order.getTotalAmount() != null ? order.getTotalAmount().doubleValue() : 0.0);
+
+        List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
+                WhatsAppMessageDto.ButtonDto.builder().type("reply")
+                        .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                .id(FlowConstants.PREFIX_COD_VERIFY_YES + order.getId())
+                                .title(deliveryPersonMessageService.getButtonIdsCollected()).build())
+                        .build(),
+                WhatsAppMessageDto.ButtonDto.builder().type("reply")
+                        .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                .id(FlowConstants.PREFIX_COD_VERIFY_NO + order.getId())
+                                .title(deliveryPersonMessageService.getButtonIdsNotCollected()).build())
+                        .build());
+        whatsAppService.sendInteractiveButtons(deliveryPerson.getWaPhoneNumber(), msg, buttons);
+    }
+
+    private void completeCodTransaction(DeliveryPerson deliveryPerson, Long orderId) {
+        CustomerOrder order = customerOrderRepository.findById(orderId).orElse(null);
+        if (order != null) {
+            order.setPaymentMethod(com.aps.domain.enumeration.PaymentMode.COD);
+            customerOrderRepository.save(order);
+            orderStatusHistoryService.addEvent(order);
+            updateOrderStatus(deliveryPerson, orderId, OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
         }
     }
 }

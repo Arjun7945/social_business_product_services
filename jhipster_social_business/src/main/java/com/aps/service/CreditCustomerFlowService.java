@@ -36,6 +36,7 @@ public class CreditCustomerFlowService {
         private final CustomerMessageService customerMessageService;
         private final com.aps.service.payment.RazorpayService razorpayService;
         private final AdminMessageService adminMessageService;
+        private final DeliveryPersonService deliveryPersonService;
 
         // Constants for Credit Flow
         public static final String PREFIX_PAY_RESISTED = "PAY_RESISTED_";
@@ -61,7 +62,8 @@ public class CreditCustomerFlowService {
                         OrderStatusHistoryService orderStatusHistoryService,
                         CustomerMessageService customerMessageService,
                         com.aps.service.payment.RazorpayService razorpayService,
-                        AdminMessageService adminMessageService) {
+                        AdminMessageService adminMessageService,
+                        DeliveryPersonService deliveryPersonService) {
                 this.whatsAppService = whatsAppService;
                 this.customerOrderRepository = customerOrderRepository;
                 this.customerRepository = customerRepository;
@@ -72,6 +74,7 @@ public class CreditCustomerFlowService {
                 this.customerMessageService = customerMessageService;
                 this.razorpayService = razorpayService;
                 this.adminMessageService = adminMessageService;
+                this.deliveryPersonService = deliveryPersonService;
         }
 
         // ==========================================
@@ -246,6 +249,12 @@ public class CreditCustomerFlowService {
                 order.setStatus(OrderStatus.ON_CREDIT_PURCHASE);
                 customerOrderRepository.save(order);
                 orderStatusHistoryService.addEvent(order);
+
+                // Remove from DP's chosen order list to free up their slot
+                if (order.getDeliveryPerson() != null) {
+                        deliveryPersonService.removeOrderFromChosenList(order.getDeliveryPerson().getId(),
+                                        order.getId());
+                }
         }
 
         // ==========================================
@@ -398,6 +407,14 @@ public class CreditCustomerFlowService {
                                 orderStatusHistoryService.addEvent(order);
                                 whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                                                 adminMessageService.getMarkedAsCodSuccess());
+
+                                // Notify Customer
+                                whatsAppService.sendSimpleText(
+                                                order.getCustomer().getWaPhoneNumber(),
+                                                customerMessageService.getOrderDeliveredMessage(
+                                                                order.getId(),
+                                                                order.getTotalAmount().doubleValue(),
+                                                                admin.getName())); // "Collected By: AdminName"
                         }
                 }
         }

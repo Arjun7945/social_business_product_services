@@ -43,6 +43,8 @@ public final class FlowConstants {
     public static final String PREFIX_PAY_COD = "PAY_COD_";
     public static final String PREFIX_PAY_QR = "PAY_QR_";
     public static final String PREFIX_PAY_LINK = "PAY_LINK_";
+    public static final String PREFIX_COD_VERIFY_YES = "COD_YES_";
+    public static final String PREFIX_COD_VERIFY_NO = "COD_NO_";
 
     // Delivery Flow Menus
     public static final String DELIVERY_MENU_ORDER_TAKEN = "DELIVERY_MENU_ORDER_TAKEN";
