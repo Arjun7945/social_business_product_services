@@ -327,17 +327,17 @@ public class DeliveryFlowService {
 
     private void handlePaymentModeSelection(DeliveryPerson deliveryPerson, BotSession session, String buttonId) {
         Long orderId = null;
-        String mode = null;
+        com.aps.domain.enumeration.PaymentMode mode = null;
 
         if (buttonId.startsWith(FlowConstants.PREFIX_PAY_COD)) {
             orderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_PAY_COD, ""));
-            mode = "COD";
+            mode = com.aps.domain.enumeration.PaymentMode.COD;
         } else if (buttonId.startsWith(FlowConstants.PREFIX_PAY_QR)) {
             orderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_PAY_QR, ""));
-            mode = "QR";
+            mode = com.aps.domain.enumeration.PaymentMode.QR;
         } else if (buttonId.startsWith(FlowConstants.PREFIX_PAY_LINK)) {
             orderId = Long.parseLong(buttonId.replace(FlowConstants.PREFIX_PAY_LINK, ""));
-            mode = "LINK";
+            mode = com.aps.domain.enumeration.PaymentMode.LINK;
         } else if (buttonId.startsWith(CreditCustomerFlowService.PREFIX_PAY_RESISTED)) {
             orderId = Long.parseLong(buttonId.replace(CreditCustomerFlowService.PREFIX_PAY_RESISTED, ""));
             // Delegate to CreditCustomerFlowService
@@ -359,7 +359,7 @@ public class DeliveryFlowService {
             customerOrderRepository.save(order);
             orderStatusHistoryService.addEvent(order);
             strategy.initiatePayment(order, deliveryPerson);
-            if ("COD".equals(mode)) {
+            if (com.aps.domain.enumeration.PaymentMode.COD == mode) {
                 updateOrderStatus(deliveryPerson, orderId, OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
             }
         } else {

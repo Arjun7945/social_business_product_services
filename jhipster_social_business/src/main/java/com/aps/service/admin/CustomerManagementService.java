@@ -37,6 +37,7 @@ public class CustomerManagementService {
     private final UserRemovalService userRemovalService;
     private final com.aps.repository.DeliveryZoneRepository deliveryZoneRepository;
     private final com.aps.service.CreditCustomerFlowService creditCustomerFlowService;
+    private final com.aps.service.ExecutiveFlowService executiveFlowService;
 
     public CustomerManagementService(
             CustomerRepository customerRepository,
@@ -46,7 +47,8 @@ public class CustomerManagementService {
             InputValidator inputValidator,
             UserRemovalService userRemovalService,
             com.aps.repository.DeliveryZoneRepository deliveryZoneRepository,
-            @org.springframework.context.annotation.Lazy com.aps.service.CreditCustomerFlowService creditCustomerFlowService) {
+            @org.springframework.context.annotation.Lazy com.aps.service.CreditCustomerFlowService creditCustomerFlowService,
+            @org.springframework.context.annotation.Lazy com.aps.service.ExecutiveFlowService executiveFlowService) {
         this.customerRepository = customerRepository;
         this.whatsAppService = whatsAppService;
         this.locationValidationService = locationValidationService;
@@ -55,6 +57,7 @@ public class CustomerManagementService {
         this.userRemovalService = userRemovalService;
         this.deliveryZoneRepository = deliveryZoneRepository;
         this.creditCustomerFlowService = creditCustomerFlowService;
+        this.executiveFlowService = executiveFlowService;
     }
 
     public void showCustomerMenu(TeamMember admin) {
@@ -272,8 +275,12 @@ public class CustomerManagementService {
                             // If it was Credit Customer, we should ideally go there.
                             // But here we don't easily know strictly which flow started it without checking
                             // role again.
+                            // Redirect to Main Menu or Specific Menu based on role
                             if (finalNewCustomer.getRole() == UserRole.CREDIT_CUSTOMER) {
                                 creditCustomerFlowService.showCreditCustomerMenu(admin);
+                            } else if (UserRole.EXECUTIVE.equals(admin.getRole())) {
+                                BotSession refreshedSession = sessionManager.getSession(admin.getWaPhoneNumber());
+                                executiveFlowService.showMainMenu(admin, refreshedSession);
                             } else {
                                 showCustomerMenu(admin);
                             }
@@ -340,7 +347,13 @@ public class CustomerManagementService {
         if (customers.isEmpty()) {
             whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                     "📋 *No customers found.*\n\nYou haven't added any customers yet.");
-            showCustomerMenu(admin);
+
+            if (UserRole.EXECUTIVE.equals(admin.getRole())) {
+                BotSession session = sessionManager.getSession(admin.getWaPhoneNumber());
+                executiveFlowService.showMainMenu(admin, session);
+            } else {
+                showCustomerMenu(admin);
+            }
             return;
         }
 
@@ -359,6 +372,13 @@ public class CustomerManagementService {
         }
 
         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), message.toString());
+
+        if (UserRole.EXECUTIVE.equals(admin.getRole())) {
+            BotSession session = sessionManager.getSession(admin.getWaPhoneNumber());
+            executiveFlowService.showMainMenu(admin, session);
+        } else {
+            showCustomerMenu(admin);
+        }
     }
 
     public void startUpdateCustomer(TeamMember admin, BotSession session) {

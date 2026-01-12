@@ -36,7 +36,7 @@ public class CodPaymentStrategy implements PaymentStrategy {
     }
 
     @Override
-    public String getPaymentMethodName() {
-        return "COD";
+    public com.aps.domain.enumeration.PaymentMode getPaymentMode() {
+        return com.aps.domain.enumeration.PaymentMode.COD;
     }
 }

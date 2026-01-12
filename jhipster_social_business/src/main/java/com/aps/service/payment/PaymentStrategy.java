@@ -17,7 +17,7 @@ public interface PaymentStrategy {
     /**
      * Get the name of the payment method this strategy handles.
      *
-     * @return Payment method name (e.g., "COD", "UPI").
+     * @return PaymentMode enum.
      */
-    String getPaymentMethodName();
+    com.aps.domain.enumeration.PaymentMode getPaymentMode();
 }

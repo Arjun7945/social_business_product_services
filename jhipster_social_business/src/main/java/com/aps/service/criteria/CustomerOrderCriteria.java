@@ -9,12 +9,15 @@ import tech.jhipster.service.Criteria;
 import tech.jhipster.service.filter.*;
 
 /**
- * Criteria class for the {@link com.aps.domain.CustomerOrder} entity. This class is used
- * in {@link com.aps.web.rest.CustomerOrderResource} to receive all the possible filtering options from
+ * Criteria class for the {@link com.aps.domain.CustomerOrder} entity. This
+ * class is used
+ * in {@link com.aps.web.rest.CustomerOrderResource} to receive all the possible
+ * filtering options from
  * the Http GET request parameters.
  * For example the following could be a valid request:
  * {@code /customer-orders?id.greaterThan=5&attr1.contains=something&attr2.specified=false}
- * As Spring is unable to properly convert the types, unless specific {@link Filter} class are used, we need to use
+ * As Spring is unable to properly convert the types, unless specific
+ * {@link Filter} class are used, we need to use
  * fix type specific filters.
  */
 @ParameterObject
@@ -26,7 +29,8 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
      */
     public static class OrderStatusFilter extends Filter<OrderStatus> {
 
-        public OrderStatusFilter() {}
+        public OrderStatusFilter() {
+        }
 
         public OrderStatusFilter(OrderStatusFilter filter) {
             super(filter);
@@ -35,6 +39,20 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
         @Override
         public OrderStatusFilter copy() {
             return new OrderStatusFilter(this);
+        }
+    }
+
+    public static class PaymentModeFilter extends Filter<com.aps.domain.enumeration.PaymentMode> {
+        public PaymentModeFilter() {
+        }
+
+        public PaymentModeFilter(PaymentModeFilter filter) {
+            super(filter);
+        }
+
+        @Override
+        public PaymentModeFilter copy() {
+            return new PaymentModeFilter(this);
         }
     }
 
@@ -48,7 +66,7 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
 
     private OrderStatusFilter status;
 
-    private StringFilter paymentMethod;
+    private PaymentModeFilter paymentMethod;
 
     private InstantFilter confirmedAt;
 
@@ -68,14 +86,15 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
 
     private Boolean distinct;
 
-    public CustomerOrderCriteria() {}
+    public CustomerOrderCriteria() {
+    }
 
     public CustomerOrderCriteria(CustomerOrderCriteria other) {
         this.id = other.optionalId().map(LongFilter::copy).orElse(null);
         this.orderTime = other.optionalOrderTime().map(InstantFilter::copy).orElse(null);
         this.totalAmount = other.optionalTotalAmount().map(BigDecimalFilter::copy).orElse(null);
         this.status = other.optionalStatus().map(OrderStatusFilter::copy).orElse(null);
-        this.paymentMethod = other.optionalPaymentMethod().map(StringFilter::copy).orElse(null);
+        this.paymentMethod = other.optionalPaymentMethod().map(PaymentModeFilter::copy).orElse(null);
         this.confirmedAt = other.optionalConfirmedAt().map(InstantFilter::copy).orElse(null);
         this.removedCustomerId = other.optionalRemovedCustomerId().map(LongFilter::copy).orElse(null);
         this.removedDeliveryPersonId = other.optionalRemovedDeliveryPersonId().map(LongFilter::copy).orElse(null);
@@ -168,22 +187,22 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
         this.status = status;
     }
 
-    public StringFilter getPaymentMethod() {
+    public PaymentModeFilter getPaymentMethod() {
         return paymentMethod;
     }
 
-    public Optional<StringFilter> optionalPaymentMethod() {
+    public Optional<PaymentModeFilter> optionalPaymentMethod() {
         return Optional.ofNullable(paymentMethod);
     }
 
-    public StringFilter paymentMethod() {
+    public PaymentModeFilter paymentMethod() {
         if (paymentMethod == null) {
-            setPaymentMethod(new StringFilter());
+            setPaymentMethod(new PaymentModeFilter());
         }
         return paymentMethod;
     }
 
-    public void setPaymentMethod(StringFilter paymentMethod) {
+    public void setPaymentMethod(PaymentModeFilter paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
@@ -367,62 +386,59 @@ public class CustomerOrderCriteria implements Serializable, Criteria {
             return false;
         }
         final CustomerOrderCriteria that = (CustomerOrderCriteria) o;
-        return (
-            Objects.equals(id, that.id) &&
-            Objects.equals(orderTime, that.orderTime) &&
-            Objects.equals(totalAmount, that.totalAmount) &&
-            Objects.equals(status, that.status) &&
-            Objects.equals(paymentMethod, that.paymentMethod) &&
-            Objects.equals(confirmedAt, that.confirmedAt) &&
-            Objects.equals(removedCustomerId, that.removedCustomerId) &&
-            Objects.equals(removedDeliveryPersonId, that.removedDeliveryPersonId) &&
-            Objects.equals(transactionId, that.transactionId) &&
-            Objects.equals(historyId, that.historyId) &&
-            Objects.equals(itemsId, that.itemsId) &&
-            Objects.equals(customerId, that.customerId) &&
-            Objects.equals(deliveryPersonId, that.deliveryPersonId) &&
-            Objects.equals(distinct, that.distinct)
-        );
+        return (Objects.equals(id, that.id) &&
+                Objects.equals(orderTime, that.orderTime) &&
+                Objects.equals(totalAmount, that.totalAmount) &&
+                Objects.equals(status, that.status) &&
+                Objects.equals(paymentMethod, that.paymentMethod) &&
+                Objects.equals(confirmedAt, that.confirmedAt) &&
+                Objects.equals(removedCustomerId, that.removedCustomerId) &&
+                Objects.equals(removedDeliveryPersonId, that.removedDeliveryPersonId) &&
+                Objects.equals(transactionId, that.transactionId) &&
+                Objects.equals(historyId, that.historyId) &&
+                Objects.equals(itemsId, that.itemsId) &&
+                Objects.equals(customerId, that.customerId) &&
+                Objects.equals(deliveryPersonId, that.deliveryPersonId) &&
+                Objects.equals(distinct, that.distinct));
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(
-            id,
-            orderTime,
-            totalAmount,
-            status,
-            paymentMethod,
-            confirmedAt,
-            removedCustomerId,
-            removedDeliveryPersonId,
-            transactionId,
-            historyId,
-            itemsId,
-            customerId,
-            deliveryPersonId,
-            distinct
-        );
+                id,
+                orderTime,
+                totalAmount,
+                status,
+                paymentMethod,
+                confirmedAt,
+                removedCustomerId,
+                removedDeliveryPersonId,
+                transactionId,
+                historyId,
+                itemsId,
+                customerId,
+                deliveryPersonId,
+                distinct);
     }
 
     // prettier-ignore
     @Override
     public String toString() {
         return "CustomerOrderCriteria{" +
-            optionalId().map(f -> "id=" + f + ", ").orElse("") +
-            optionalOrderTime().map(f -> "orderTime=" + f + ", ").orElse("") +
-            optionalTotalAmount().map(f -> "totalAmount=" + f + ", ").orElse("") +
-            optionalStatus().map(f -> "status=" + f + ", ").orElse("") +
-            optionalPaymentMethod().map(f -> "paymentMethod=" + f + ", ").orElse("") +
-            optionalConfirmedAt().map(f -> "confirmedAt=" + f + ", ").orElse("") +
-            optionalRemovedCustomerId().map(f -> "removedCustomerId=" + f + ", ").orElse("") +
-            optionalRemovedDeliveryPersonId().map(f -> "removedDeliveryPersonId=" + f + ", ").orElse("") +
-            optionalTransactionId().map(f -> "transactionId=" + f + ", ").orElse("") +
-            optionalHistoryId().map(f -> "historyId=" + f + ", ").orElse("") +
-            optionalItemsId().map(f -> "itemsId=" + f + ", ").orElse("") +
-            optionalCustomerId().map(f -> "customerId=" + f + ", ").orElse("") +
-            optionalDeliveryPersonId().map(f -> "deliveryPersonId=" + f + ", ").orElse("") +
-            optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
-        "}";
+                optionalId().map(f -> "id=" + f + ", ").orElse("") +
+                optionalOrderTime().map(f -> "orderTime=" + f + ", ").orElse("") +
+                optionalTotalAmount().map(f -> "totalAmount=" + f + ", ").orElse("") +
+                optionalStatus().map(f -> "status=" + f + ", ").orElse("") +
+                optionalPaymentMethod().map(f -> "paymentMethod=" + f + ", ").orElse("") +
+                optionalConfirmedAt().map(f -> "confirmedAt=" + f + ", ").orElse("") +
+                optionalRemovedCustomerId().map(f -> "removedCustomerId=" + f + ", ").orElse("") +
+                optionalRemovedDeliveryPersonId().map(f -> "removedDeliveryPersonId=" + f + ", ").orElse("") +
+                optionalTransactionId().map(f -> "transactionId=" + f + ", ").orElse("") +
+                optionalHistoryId().map(f -> "historyId=" + f + ", ").orElse("") +
+                optionalItemsId().map(f -> "itemsId=" + f + ", ").orElse("") +
+                optionalCustomerId().map(f -> "customerId=" + f + ", ").orElse("") +
+                optionalDeliveryPersonId().map(f -> "deliveryPersonId=" + f + ", ").orElse("") +
+                optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
+                "}";
     }
 }

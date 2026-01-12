@@ -60,7 +60,7 @@ public class RazorpayQrStrategy implements PaymentStrategy {
     }
 
     @Override
-    public String getPaymentMethodName() {
-        return "QR";
+    public com.aps.domain.enumeration.PaymentMode getPaymentMode() {
+        return com.aps.domain.enumeration.PaymentMode.QR;
     }
 }

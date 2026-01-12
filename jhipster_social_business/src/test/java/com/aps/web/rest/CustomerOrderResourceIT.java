@@ -61,8 +61,8 @@ class CustomerOrderResourceIT {
     private static final OrderStatus DEFAULT_STATUS = OrderStatus.ORDER_NOT_TAKEN;
     private static final OrderStatus UPDATED_STATUS = OrderStatus.DELIVERY_ONWAY;
 
-    private static final String DEFAULT_PAYMENT_METHOD = "AAAAAAAAAA";
-    private static final String UPDATED_PAYMENT_METHOD = "BBBBBBBBBB";
+    private static final com.aps.domain.enumeration.PaymentMode DEFAULT_PAYMENT_METHOD = com.aps.domain.enumeration.PaymentMode.COD;
+    private static final com.aps.domain.enumeration.PaymentMode UPDATED_PAYMENT_METHOD = com.aps.domain.enumeration.PaymentMode.LINK;
 
     private static final Instant DEFAULT_CONFIRMED_AT = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_CONFIRMED_AT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
@@ -320,7 +320,7 @@ class CustomerOrderResourceIT {
                 .andExpect(jsonPath("$.[*].orderTime").value(hasItem(DEFAULT_ORDER_TIME.toString())))
                 .andExpect(jsonPath("$.[*].totalAmount").value(hasItem(sameNumber(DEFAULT_TOTAL_AMOUNT))))
                 .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
-                .andExpect(jsonPath("$.[*].paymentMethod").value(hasItem(DEFAULT_PAYMENT_METHOD)))
+                .andExpect(jsonPath("$.[*].paymentMethod").value(hasItem(DEFAULT_PAYMENT_METHOD.toString())))
                 .andExpect(jsonPath("$.[*].confirmedAt").value(hasItem(DEFAULT_CONFIRMED_AT.toString())))
                 .andExpect(jsonPath("$.[*].removedCustomerId").value(hasItem(DEFAULT_REMOVED_CUSTOMER_ID.intValue())))
                 .andExpect(jsonPath("$.[*].removedDeliveryPersonId")
@@ -360,7 +360,7 @@ class CustomerOrderResourceIT {
                 .andExpect(jsonPath("$.orderTime").value(DEFAULT_ORDER_TIME.toString()))
                 .andExpect(jsonPath("$.totalAmount").value(sameNumber(DEFAULT_TOTAL_AMOUNT)))
                 .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
-                .andExpect(jsonPath("$.paymentMethod").value(DEFAULT_PAYMENT_METHOD))
+                .andExpect(jsonPath("$.paymentMethod").value(DEFAULT_PAYMENT_METHOD.toString()))
                 .andExpect(jsonPath("$.confirmedAt").value(DEFAULT_CONFIRMED_AT.toString()))
                 .andExpect(jsonPath("$.removedCustomerId").value(DEFAULT_REMOVED_CUSTOMER_ID.intValue()))
                 .andExpect(jsonPath("$.removedDeliveryPersonId").value(DEFAULT_REMOVED_DELIVERY_PERSON_ID.intValue()))

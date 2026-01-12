@@ -47,8 +47,10 @@ public class CustomerOrder implements Serializable {
     private OrderStatus status;
 
     @NotNull
+    @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
-    private String paymentMethod;
+    private com.aps.domain.enumeration.PaymentMode paymentMethod;
 
     @Column(name = "confirmed_at")
     private Instant confirmedAt;
@@ -140,16 +142,16 @@ public class CustomerOrder implements Serializable {
         this.status = status;
     }
 
-    public String getPaymentMethod() {
+    public com.aps.domain.enumeration.PaymentMode getPaymentMethod() {
         return this.paymentMethod;
     }
 
-    public CustomerOrder paymentMethod(String paymentMethod) {
+    public CustomerOrder paymentMethod(com.aps.domain.enumeration.PaymentMode paymentMethod) {
         this.setPaymentMethod(paymentMethod);
         return this;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
+    public void setPaymentMethod(com.aps.domain.enumeration.PaymentMode paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
@@ -275,7 +277,8 @@ public class CustomerOrder implements Serializable {
         return this;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 
     @Override
     public boolean equals(Object o) {
@@ -290,7 +293,8 @@ public class CustomerOrder implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -298,15 +302,15 @@ public class CustomerOrder implements Serializable {
     @Override
     public String toString() {
         return "CustomerOrder{" +
-            "id=" + getId() +
-            ", orderTime='" + getOrderTime() + "'" +
-            ", totalAmount=" + getTotalAmount() +
-            ", status='" + getStatus() + "'" +
-            ", paymentMethod='" + getPaymentMethod() + "'" +
-            ", confirmedAt='" + getConfirmedAt() + "'" +
-            ", removedCustomerId=" + getRemovedCustomerId() +
-            ", removedDeliveryPersonId=" + getRemovedDeliveryPersonId() +
-            ", transactionId='" + getTransactionId() + "'" +
-            "}";
+                "id=" + getId() +
+                ", orderTime='" + getOrderTime() + "'" +
+                ", totalAmount=" + getTotalAmount() +
+                ", status='" + getStatus() + "'" +
+                ", paymentMethod='" + getPaymentMethod() + "'" +
+                ", confirmedAt='" + getConfirmedAt() + "'" +
+                ", removedCustomerId=" + getRemovedCustomerId() +
+                ", removedDeliveryPersonId=" + getRemovedDeliveryPersonId() +
+                ", transactionId='" + getTransactionId() + "'" +
+                "}";
     }
 }

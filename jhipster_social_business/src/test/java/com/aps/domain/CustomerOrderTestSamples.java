@@ -11,28 +11,28 @@ public class CustomerOrderTestSamples {
 
     public static CustomerOrder getCustomerOrderSample1() {
         return new CustomerOrder()
-            .id(1L)
-            .paymentMethod("paymentMethod1")
-            .removedCustomerId(1L)
-            .removedDeliveryPersonId(1L)
-            .transactionId("transactionId1");
+                .id(1L)
+                .paymentMethod(com.aps.domain.enumeration.PaymentMode.COD)
+                .removedCustomerId(1L)
+                .removedDeliveryPersonId(1L)
+                .transactionId("transactionId1");
     }
 
     public static CustomerOrder getCustomerOrderSample2() {
         return new CustomerOrder()
-            .id(2L)
-            .paymentMethod("paymentMethod2")
-            .removedCustomerId(2L)
-            .removedDeliveryPersonId(2L)
-            .transactionId("transactionId2");
+                .id(2L)
+                .paymentMethod(com.aps.domain.enumeration.PaymentMode.LINK)
+                .removedCustomerId(2L)
+                .removedDeliveryPersonId(2L)
+                .transactionId("transactionId2");
     }
 
     public static CustomerOrder getCustomerOrderRandomSampleGenerator() {
         return new CustomerOrder()
-            .id(longCount.incrementAndGet())
-            .paymentMethod(UUID.randomUUID().toString())
-            .removedCustomerId(longCount.incrementAndGet())
-            .removedDeliveryPersonId(longCount.incrementAndGet())
-            .transactionId(UUID.randomUUID().toString());
+                .id(longCount.incrementAndGet())
+                .paymentMethod(com.aps.domain.enumeration.PaymentMode.QR)
+                .removedCustomerId(longCount.incrementAndGet())
+                .removedDeliveryPersonId(longCount.incrementAndGet())
+                .transactionId(UUID.randomUUID().toString());
     }
 }

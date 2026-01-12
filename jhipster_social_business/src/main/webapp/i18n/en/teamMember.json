@@ -10,9 +10,9 @@
       },
       "created": "A new Team Member is created with identifier {{ param }}",
       "updated": "A Team Member is updated with identifier {{ param }}",
-      "deleted": "A Team Member is deleted with identifier {{ param }}",
+      "deleted": "A Team Member is removed from Team Member list and added to the removed users list with identifier {{ param }}",
       "delete": {
-        "question": "Are you sure you want to delete Team Member {{ id }}?"
+        "question": "Are you sure you want to remove Team Member {{ id }} from Team Member list and add to the removed users list?"
       },
       "detail": {
         "title": "Team Member"

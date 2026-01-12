@@ -1,14 +1,15 @@
 {
   "whatsappProductServiceProApp": {
     "UserRole": {
-      "null": "",
+      "null": "EMPTY",
       "CUSTOMER": "CUSTOMER",
       "CREDIT_CUSTOMER": "CREDIT_CUSTOMER",
       "EXECUTIVE": "EXECUTIVE",
       "ASSISTANT_ADMIN": "ASSISTANT_ADMIN",
       "ADMIN": "ADMIN",
       "DEVELOPER": "DEVELOPER",
-      "DELIVERY_PERSON": "DELIVERY_PERSON"
+      "DELIVERY_PERSON": "DELIVERY_PERSON",
+      "ACCOUNTS_TEAM": "ACCOUNTS_TEAM"
     }
   }
 }

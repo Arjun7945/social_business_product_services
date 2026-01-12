@@ -29,7 +29,7 @@ public class CustomerOrderDTO implements Serializable {
     private OrderStatus status;
 
     @NotNull
-    private String paymentMethod;
+    private com.aps.domain.enumeration.PaymentMode paymentMethod;
 
     private Instant confirmedAt;
 
@@ -78,11 +78,11 @@ public class CustomerOrderDTO implements Serializable {
         this.status = status;
     }
 
-    public String getPaymentMethod() {
+    public com.aps.domain.enumeration.PaymentMode getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
+    public void setPaymentMethod(com.aps.domain.enumeration.PaymentMode paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
@@ -167,18 +167,18 @@ public class CustomerOrderDTO implements Serializable {
     @Override
     public String toString() {
         return "CustomerOrderDTO{" +
-            "id=" + getId() +
-            ", orderTime='" + getOrderTime() + "'" +
-            ", totalAmount=" + getTotalAmount() +
-            ", status='" + getStatus() + "'" +
-            ", paymentMethod='" + getPaymentMethod() + "'" +
-            ", confirmedAt='" + getConfirmedAt() + "'" +
-            ", removedCustomerId=" + getRemovedCustomerId() +
-            ", removedDeliveryPersonId=" + getRemovedDeliveryPersonId() +
-            ", transactionId='" + getTransactionId() + "'" +
-            ", history=" + getHistory() +
-            ", customer=" + getCustomer() +
-            ", deliveryPerson=" + getDeliveryPerson() +
-            "}";
+                "id=" + getId() +
+                ", orderTime='" + getOrderTime() + "'" +
+                ", totalAmount=" + getTotalAmount() +
+                ", status='" + getStatus() + "'" +
+                ", paymentMethod='" + getPaymentMethod() + "'" +
+                ", confirmedAt='" + getConfirmedAt() + "'" +
+                ", removedCustomerId=" + getRemovedCustomerId() +
+                ", removedDeliveryPersonId=" + getRemovedDeliveryPersonId() +
+                ", transactionId='" + getTransactionId() + "'" +
+                ", history=" + getHistory() +
+                ", customer=" + getCustomer() +
+                ", deliveryPerson=" + getDeliveryPerson() +
+                "}";
     }
 }

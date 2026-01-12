@@ -10,9 +10,9 @@
       },
       "created": "A new Customer is created with identifier {{ param }}",
       "updated": "A Customer is updated with identifier {{ param }}",
-      "deleted": "A Customer is deleted with identifier {{ param }}",
+      "deleted": "A Customer is removed from Customer list and added to the removed users list with identifier {{ param }}",
       "delete": {
-        "question": "Are you sure you want to delete Customer {{ id }}?"
+        "question": "Are you sure you want to remove Customer {{ id }} from Customer list and add to the removed users list?"
       },
       "detail": {
         "title": "Customer"

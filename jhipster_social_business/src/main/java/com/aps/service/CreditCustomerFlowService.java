@@ -47,6 +47,7 @@ public class CreditCustomerFlowService {
 
         public static final String PREFIX_CREDIT_ORDER_DTL = "CREDIT_ORD_DTL_";
         public static final String PREFIX_CREDIT_PAY_LINK = "CREDIT_PAY_LINK_";
+        public static final String PREFIX_CREDIT_PAY_QR = "CREDIT_PAY_QR_";
         public static final String PREFIX_CREDIT_COD = "CREDIT_COD_";
 
         public CreditCustomerFlowService(
@@ -282,6 +283,11 @@ public class CreditCustomerFlowService {
                                                 .build(),
                                 WhatsAppMessageDto.ButtonDto.builder().type("reply")
                                                 .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                                                .id(PREFIX_CREDIT_PAY_QR + orderId)
+                                                                .title("📷 Send QR").build())
+                                                .build(),
+                                WhatsAppMessageDto.ButtonDto.builder().type("reply")
+                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
                                                                 .id(PREFIX_CREDIT_COD + orderId)
                                                                 .title("💵 Marked COD").build())
                                                 .build(),
@@ -308,20 +314,58 @@ public class CreditCustomerFlowService {
                                         return;
                                 }
 
+                                // SYNC PAYMENT MODE
+                                order.setPaymentMethod(com.aps.domain.enumeration.PaymentMode.LINK);
+                                customerOrderRepository.save(order);
+                                orderStatusHistoryService.addEvent(order);
+
                                 whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                                                 "✅ Payment link generated and sent.");
 
                                 whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(),
-                                                String.format("Hi %s, payment link for order %d from %s: %s",
-                                                                order.getCustomer().getName(), orderId, admin.getName(),
-                                                                link));
+                                                customerMessageService.getPaymentLinkMessage(link,
+                                                                order.getTotalAmount().doubleValue()));
+                        }
+                } else if (buttonId.startsWith(PREFIX_CREDIT_PAY_QR)) {
+                        Long orderId = Long.parseLong(buttonId.replace(PREFIX_CREDIT_PAY_QR, ""));
+                        CustomerOrder order = customerOrderRepository.findById(orderId).orElse(null);
+                        if (order != null) {
+                                Customer customer = order.getCustomer();
+
+                                // Create Razorpay Customer if needed (reusing logic or just passing null if svc
+                                // handles it)
+                                String razorpayCustId = razorpayService.createCustomer(customer.getName(),
+                                                customer.getPhoneNumber());
+
+                                String qrUrl = razorpayService.createQrCode(order.getId(),
+                                                order.getTotalAmount().doubleValue(),
+                                                razorpayCustId);
+
+                                if (qrUrl == null) {
+                                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                                        "❌ Error: Failed to generate QR Code.");
+                                        return;
+                                }
+
+                                // SYNC PAYMENT MODE
+                                order.setPaymentMethod(com.aps.domain.enumeration.PaymentMode.QR);
+                                customerOrderRepository.save(order);
+                                orderStatusHistoryService.addEvent(order);
+
+                                whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                                "✅ QR Code generated and sent.");
+
+                                // Send to Customer
+                                String caption = customerMessageService
+                                                .getPaymentQrCaption(order.getTotalAmount().doubleValue());
+                                whatsAppService.sendImageMessage(customer.getWaPhoneNumber(), qrUrl, caption);
                         }
                 } else if (buttonId.startsWith(PREFIX_CREDIT_COD)) {
                         Long orderId = Long.parseLong(buttonId.replace(PREFIX_CREDIT_COD, ""));
                         CustomerOrder order = customerOrderRepository.findById(orderId).orElse(null);
                         if (order != null) {
                                 order.setStatus(OrderStatus.ORDER_DELIVERED_SUCESSFULLY);
-                                order.setPaymentMethod("COD");
+                                order.setPaymentMethod(com.aps.domain.enumeration.PaymentMode.COD);
                                 customerOrderRepository.save(order);
                                 orderStatusHistoryService.addEvent(order);
                                 whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "✅ Marked as COD Delivered.");

@@ -73,7 +73,7 @@ public class OrderService {
         order.setOrderTime(Instant.now());
         order.setTotalAmount(total);
         order.setStatus(OrderStatus.ORDER_NOT_TAKEN);
-        order.setPaymentMethod(paymentMethodName.toUpperCase());
+        order.setPaymentMethod(com.aps.domain.enumeration.PaymentMode.valueOf(paymentMethodName.toUpperCase()));
         order.setConfirmedAt(Instant.now()); // Set confirmedAt for initial status
 
         // 5. Save Order

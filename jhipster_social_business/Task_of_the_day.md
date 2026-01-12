@@ -7,99 +7,12 @@
 * **Architecture Note:** The `DeliveryPerson` entity is now a **separate table**. It is no longer part of the Team Member table. If issues arise regarding delivery personnel, refer to the new `DeliveryPerson` table structure.
 * **Standard:** No temporary fixes. All solutions must be solid, production-grade changes.
 
-## 2. TASK OF THE DAY
-* **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code, follow the "Strict Error Resolution Protocol" (Section 3).
+## 2. TASK OF THE DAY (Current Feature Requirements)
+* **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code, follow the "Strict Error Resolution Protocol".
 
-### A. Role & Status Configuration
-1.  **New Role:** Add a new role `CREDIT_CUSTOMER` to `UserRole.java`.
-    * This role functions identically to `CUSTOMER` but allows purchasing products without immediate payment (Pay Later).
-2.  **New Order Status:** Add `ON_CREDIT_PURCHASE` to the `OrderStatus.java` enum.
-
-### B. Delivery Person Flow Enhancements
-1.  **Payment Mode Selection:**
-    * In `getPaymentModeSelectionHeader`, change the interface to a **List View**.
-    * Add a new button option: `'Payment Resisted'` (Description: "The customer is not paying right now").
-2.  **"Payment Resisted" Logic:**
-    * If selected, send a message to all users with role **ADMIN**:
-        > "Hello {admin_name}, this message is from {delivery_person_name}. I am delivering an order to {customer_name} and they are not willing to pay the amount now and are asking for credit purchase. {customer_name} is a {customer_role}. Total amount: {total_amount}. Order details: {order_details}."
-    * Attach 3 buttons to this Admin message:
-        1.  `Allow credit for this purchase`
-        2.  `Always Grant credit purchase`
-        3.  `Deny credit purchase`
-
-### C. Admin Decision Logic (Response to Delivery Person)
-1.  **If Admin clicks 'Always Grant credit purchase':**
-    * Update Customer Order status to `ON_CREDIT_PURCHASE`.
-    * Update Customer Role to `CREDIT_CUSTOMER`.
-    * Notify Delivery Person: "Hello {dp_name}, our customer {customer_name} has been upgraded to credit customer privileges. You can deliver order {order_id} and return to warehouse or continue."
-2.  **If Admin clicks 'Allow credit for this purchase':**
-    * Update Customer Order status to `ON_CREDIT_PURCHASE`.
-    * Notify Delivery Person: "Hello {dp_name}, customer {customer_name} has been approved for a credit purchase for order {order_id}. Hand over the product and return/continue."
-3.  **If Admin clicks 'Deny credit purchase':**
-    * **Do not** update the database.
-    * Notify Delivery Person: "Hello {dp_name}, order {order_id} for {customer_name} has been denied for credit. Please collect the amount."
-
-### D. Admin Dashboard - Credit Customer Management
-1.  **Main Menu:** Add a new list button `'Credit Customer'` (Description: "Customer with privilege on purchases").
-2.  **Sub-Menu:** If clicked, show options:
-    * `'Credit Customer Orders'`
-    * `'CRUD of Credit Customers'`
-3.  **Credit Customer Orders (Pay Later Flow):**
-    * Display list of orders where status is `ON_CREDIT_PURCHASE`.
-    * Button Description: "{Customer Name} - {WhatsApp Number}".
-    * If list is empty, show: "No credit customer orders found till now".
-    * **Order Action:** If an order is selected, show full order details (ID, Name, Amount, Status, Products) with 3 buttons:
-        1.  `Send payment link`: Generate Razorpay link (existing logic) and WhatsApp it to the customer: "Hi {name}, payment link for order {id} from {admin_name}: {link}".
-        2.  `COD`: Mark status directly as `ORDER_DELIVERED_SUCCESSFULLY` (use existing COD logic).
-        3.  `Go back to menu`.
-4.  **CRUD of Credit Customers:**
-    * **Reuse** the existing Customer CRUD. Do not create a new one.
-    * **Filter Logic:**
-        * "Show all Customers" must **only** show role `CUSTOMER`.
-        * "Show all Credit Customers" must **only** show role `CREDIT_CUSTOMER`.
-
-### E. Admin Dashboard - Customer Update Feature
-1.  **Menu Addition:** In the Customer Management menu (Add, Show, Delete), add a new option: `'Update'`.
-2.  **Search & Validation Step:**
-    * When 'Update' is selected, prompt the Admin: "Please enter the ID or Name of the customer you wish to update."
-    * **Validation:** Check the database for the provided ID or Name.
-    * **Error Handling:** If the ID/Name is invalid or the customer does not exist, send a specific validation error message to the Admin (e.g., "Customer not found, please try again") and halt the flow until valid input is received.
-3.  **Update Sub-Menu (List View):**
-    * Once a valid customer is identified, show the update options.
-    * **Format:** Use a **List View Button** message (since there are >3 options).
-    * **Options:** Update Name, WhatsApp Number, Number, Location, Role, Zone.
-4.  **Specific Field Logic:**
-    * **Name/Number/Location:** Ask for input -> Update DB.
-    * **WhatsApp Number:** Ask for input -> Update DB -> Send existing "Welcome" message logic to new number.
-    * **Zone:** Show available zones as List View -> Select -> Update DB.
-    * **Role:** Show buttons: `CUSTOMER` and `CREDIT_CUSTOMER`. Toggle role based on selection.
-
-### F. Localization
-* **Requirement:** All server messages sent to the **Delivery Person** and **Credit Customer** must be in **Malayalam**.
-
-### G. Code Organization & Refactoring
-* **Separation of Concerns:** Do **not** write the new `CreditCustomer` logic directly inside the existing Admin or Delivery flow files.
-* **Action:** Create a separate class/file named `CreditCustomerFlow`.
-* **Implementation:** Delegate all credit customer operations that connect to Admin or Delivery flows to this new file. This is mandatory to reduce code bloat and maintain maintainability.
-
-### Task 3: Admin Flow Optimization & Navigation
-**Goal:** Streamline the "Credit Customer Management" menu and fix post-operation navigation.
-
-1.  **Menu Flattening (Credit Management):**
-    * **Change:** When Admin clicks `'Credit Customers Manage Credit Flow'`, do **not** show nested "CRUD" options.
-    * **New Structure:** Show a single **List View** with these direct buttons:
-        1.  `'Credit Orders'`
-        2.  `'Create Credit Customer'`
-        3.  `'Show All Credit Customers'` (Filter: Role = CREDIT_CUSTOMER only)
-        4.  `'Update Credit Customer'`
-        5.  `'Delete Credit Customer'`
-        6.  `'Back'`
-    * **Note:** Reuse existing Customer CRUD logic for these buttons.
-
-2.  **Post-Operation Navigation (Redirect):**
-    * **Scenario:** When **any** CRUD operation (Create, Update, Delete) is completed (regardless of **Success** or **Failure**).
-    * **Action:** Do **not** remain on the customer info screen or sub-menu.
-    * **Result:** Automatically redirect/send the user back to the **Main Menu** message.
+### Admin & Customer Order Flow Updates
+* **Payment Mode Synchronization:** When an Admin sends a Link or QR code to a `credit_customer`, you must systematically update the `payment_mode` column in the `customer_order` table.
+* **Execution Timing:** The `payment_mode` update must occur **immediately** and **synchronously** at the exact moment the link is successfully sent to the `credit_customer`.
 
 ### General Requirements
 * **Localization:** All server messages to **Delivery Person** and **Credit Customer** must be in **Malayalam**.

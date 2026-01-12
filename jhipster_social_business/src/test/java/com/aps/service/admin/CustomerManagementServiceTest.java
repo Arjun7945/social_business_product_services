@@ -43,6 +43,8 @@ class CustomerManagementServiceTest {
 
     @Mock
     private CreditCustomerFlowService creditCustomerFlowService;
+    @Mock
+    private com.aps.service.ExecutiveFlowService executiveFlowService;
 
     @InjectMocks
     private CustomerManagementService customerManagementService;
@@ -109,5 +111,35 @@ class CustomerManagementServiceTest {
         // Should Call Customer Menu
         verify(whatsAppService).sendInteractiveList(eq(admin.getWaPhoneNumber()), contains("Customer Management"),
                 anyList());
+    }
+
+    @Test
+    void showMyCustomers_Executive_ShouldRedirectToExecutiveMenu() {
+        // Arrange
+        admin.setRole(UserRole.EXECUTIVE);
+        when(customerRepository.findByAddedBy(admin)).thenReturn(new ArrayList<>());
+        when(sessionManager.getSession(anyString())).thenReturn(mock(com.aps.domain.BotSession.class));
+
+        // Act
+        customerManagementService.showMyCustomers(admin);
+
+        // Assert
+        verify(executiveFlowService).showMainMenu(eq(admin), any(com.aps.domain.BotSession.class));
+        verify(whatsAppService, never()).sendInteractiveList(anyString(), contains("Customer Management"), anyList());
+    }
+
+    @Test
+    void showMyCustomers_Admin_ShouldShowCustomerMenu() {
+        // Arrange
+        admin.setRole(UserRole.ADMIN);
+        when(customerRepository.findByAddedBy(admin)).thenReturn(new ArrayList<>());
+
+        // Act
+        customerManagementService.showMyCustomers(admin);
+
+        // Assert
+        verify(whatsAppService).sendInteractiveList(eq(admin.getWaPhoneNumber()), contains("Customer Management"),
+                anyList());
+        verifyNoInteractions(executiveFlowService);
     }
 }

@@ -55,7 +55,7 @@ public class RazorpayLinkStrategy implements PaymentStrategy {
     }
 
     @Override
-    public String getPaymentMethodName() {
-        return "LINK";
+    public com.aps.domain.enumeration.PaymentMode getPaymentMode() {
+        return com.aps.domain.enumeration.PaymentMode.LINK;
     }
 }
