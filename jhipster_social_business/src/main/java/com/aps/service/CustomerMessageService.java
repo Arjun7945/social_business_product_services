@@ -461,7 +461,7 @@ public class CustomerMessageService {
     }
 
     public String getButtonViewFish() {
-        return ""; // change to view the menu in malayalam
+        return "മീൻ കാണുക"; // View Fish
     }
 
     public String getSectionTitleAvailableFish() {
@@ -476,7 +476,6 @@ public class CustomerMessageService {
         return "വാങ്ങൂ";
     }
 
-
     // ========================================
     // CATEGORY 9: CREDIT CUSTOMER MESSAGES
     // ========================================
@@ -490,5 +489,4 @@ public class CustomerMessageService {
                 customerName);
     }
 
-    
 }

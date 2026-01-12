@@ -42,11 +42,11 @@ public class WhatsAppMediaService {
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
             ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                entity,
-                new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {}
-            );
+                    url,
+                    HttpMethod.GET,
+                    entity,
+                    new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {
+                    });
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 String mediaUrl = (String) response.getBody().get("url");
@@ -54,7 +54,8 @@ public class WhatsAppMediaService {
                 // first
 
                 // 2. Download Media
-                ResponseEntity<byte[]> mediaResponse = restTemplate.exchange(mediaUrl, HttpMethod.GET, entity, byte[].class);
+                ResponseEntity<byte[]> mediaResponse = restTemplate.exchange(mediaUrl, HttpMethod.GET, entity,
+                        byte[].class);
                 if (mediaResponse.getStatusCode() == HttpStatus.OK) {
                     byte[] data = mediaResponse.getBody();
                     String finalMimeType = mimeTypeFromMeta;
@@ -110,7 +111,8 @@ public class WhatsAppMediaService {
             // Create a file part with headers
             HttpHeaders fileHeaders = new HttpHeaders();
             fileHeaders.setContentType(MediaType.parseMediaType(mimeType));
-            HttpEntity<FileSystemResource> fileEntity = new HttpEntity<>(new FileSystemResource(tempFile.toFile()), fileHeaders);
+            HttpEntity<FileSystemResource> fileEntity = new HttpEntity<>(new FileSystemResource(tempFile.toFile()),
+                    fileHeaders);
 
             body.add("file", fileEntity);
             body.add("messaging_product", "whatsapp");
@@ -119,11 +121,11 @@ public class WhatsAppMediaService {
             HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
 
             ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                entity,
-                new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {}
-            );
+                    url,
+                    HttpMethod.POST,
+                    entity,
+                    new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {
+                    });
 
             // Clean up temp file
             Files.deleteIfExists(tempFile);
@@ -153,6 +155,9 @@ public class WhatsAppMediaService {
             Resource resource = new ClassPathResource("images/placeholder.webp");
             if (!resource.exists()) {
                 resource = new ClassPathResource("images/placeholder.png");
+            }
+            if (!resource.exists()) {
+                resource = new ClassPathResource("images/dummylogo.png");
             }
 
             if (resource.exists()) {

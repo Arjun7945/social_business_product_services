@@ -35,6 +35,7 @@ public class CreditCustomerFlowService {
         private final OrderStatusHistoryService orderStatusHistoryService;
         private final CustomerMessageService customerMessageService;
         private final com.aps.service.payment.RazorpayService razorpayService;
+        private final AdminMessageService adminMessageService;
 
         // Constants for Credit Flow
         public static final String PREFIX_PAY_RESISTED = "PAY_RESISTED_";
@@ -59,7 +60,8 @@ public class CreditCustomerFlowService {
                         DeliveryPersonMessageService deliveryPersonMessageService,
                         OrderStatusHistoryService orderStatusHistoryService,
                         CustomerMessageService customerMessageService,
-                        com.aps.service.payment.RazorpayService razorpayService) {
+                        com.aps.service.payment.RazorpayService razorpayService,
+                        AdminMessageService adminMessageService) {
                 this.whatsAppService = whatsAppService;
                 this.customerOrderRepository = customerOrderRepository;
                 this.customerRepository = customerRepository;
@@ -69,6 +71,7 @@ public class CreditCustomerFlowService {
                 this.orderStatusHistoryService = orderStatusHistoryService;
                 this.customerMessageService = customerMessageService;
                 this.razorpayService = razorpayService;
+                this.adminMessageService = adminMessageService;
         }
 
         // ==========================================
@@ -89,7 +92,7 @@ public class CreditCustomerFlowService {
                 List<TeamMember> admins = teamMemberRepository.findAllByRole(UserRole.ADMIN);
                 log.info("handlePaymentResisted: Found {} admins to notify", admins.size());
 
-                String adminMsg = deliveryPersonMessageService.getPaymentResistedAdminInfo(
+                String adminMsg = adminMessageService.getPaymentResistedAdminInfo(
                                 deliveryPerson.getName(),
                                 customer.getName(),
                                 customer.getRole().name(),
@@ -101,7 +104,7 @@ public class CreditCustomerFlowService {
                                                 .reply(WhatsAppMessageDto.ReplyDto.builder()
                                                                 .id(PREFIX_ADMIN_CREDIT_ALLOW + orderId + "_"
                                                                                 + deliveryPerson.getId())
-                                                                .title(deliveryPersonMessageService
+                                                                .title(adminMessageService
                                                                                 .getButtonAllowCreditOnce())
                                                                 .build())
                                                 .build(),
@@ -109,7 +112,7 @@ public class CreditCustomerFlowService {
                                                 .reply(WhatsAppMessageDto.ReplyDto.builder()
                                                                 .id(PREFIX_ADMIN_CREDIT_GRANT + orderId + "_"
                                                                                 + deliveryPerson.getId())
-                                                                .title(deliveryPersonMessageService
+                                                                .title(adminMessageService
                                                                                 .getButtonGrantAlways())
                                                                 .build())
                                                 .build(),
@@ -117,7 +120,7 @@ public class CreditCustomerFlowService {
                                                 .reply(WhatsAppMessageDto.ReplyDto.builder()
                                                                 .id(PREFIX_ADMIN_CREDIT_DENY + orderId + "_"
                                                                                 + deliveryPerson.getId())
-                                                                .title(deliveryPersonMessageService
+                                                                .title(adminMessageService
                                                                                 .getButtonDenyCredit())
                                                                 .build())
                                                 .build());
@@ -161,7 +164,7 @@ public class CreditCustomerFlowService {
 
                 if (order == null || dp == null) {
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                        "❌ Error: Order or Delivery Person not found.");
+                                        adminMessageService.getOrderOrDpNotFoundError());
                         return;
                 }
 
@@ -181,7 +184,8 @@ public class CreditCustomerFlowService {
 
                         // Notify Admin
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                        "✅ Approved: Always Grant for " + customer.getName());
+                                        adminMessageService.getCreditGrantedAlwaysMessage(customer.getName(),
+                                                        orderId));
 
                         // Notify Customer
                         try {
@@ -203,7 +207,7 @@ public class CreditCustomerFlowService {
 
                         // Notify Admin
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                        "✅ Approved: Only for this Order" + orderId);
+                                        adminMessageService.getCreditOneTimeApprovedMessage(orderId));
 
                 } else {
                         // DENY
@@ -214,7 +218,7 @@ public class CreditCustomerFlowService {
 
                         // Notify Admin
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                        "❌ Denied Credit for Order " + orderId);
+                                        adminMessageService.getCreditDeniedMessage(orderId));
                 }
         }
 
@@ -232,7 +236,8 @@ public class CreditCustomerFlowService {
                 // Flattened Menu: No more nested CRUD menu
                 List<WhatsAppMessageDto.RowDto> rows = com.aps.service.util.CreditCustomerMenuHelper
                                 .getCreditCustomerMenuRows();
-                whatsAppService.sendInteractiveList(admin.getWaPhoneNumber(), "💳 *Credit Customer Management*", rows);
+                whatsAppService.sendInteractiveList(admin.getWaPhoneNumber(),
+                                adminMessageService.getMenuTitle(), rows);
         }
 
         public void showCreditCustomerOrders(TeamMember admin) {
@@ -241,7 +246,7 @@ public class CreditCustomerFlowService {
 
                 if (orders.isEmpty()) {
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                        "No credit customer orders found till now.");
+                                        adminMessageService.getNoCreditOrdersFound());
                         return;
                 }
 
@@ -254,11 +259,13 @@ public class CreditCustomerFlowService {
                                         .build());
                 }
 
-                rows.add(WhatsAppMessageDto.RowDto.builder().id("CREDIT_MENU").title("⬅️ Back")
-                                .description("Credit Menu")
+                rows.add(WhatsAppMessageDto.RowDto.builder().id("CREDIT_MENU")
+                                .title(adminMessageService.getBackToCreditMenuTitle())
+                                .description(adminMessageService.getBackToCreditMenuDesc())
                                 .build());
 
-                whatsAppService.sendInteractiveList(admin.getWaPhoneNumber(), "📦 *Credit Customer Orders*", rows);
+                whatsAppService.sendInteractiveList(admin.getWaPhoneNumber(),
+                                adminMessageService.getOrderListTitle(), rows);
         }
 
         public void handleCreditOrderSelection(TeamMember admin, Long orderId) {
@@ -266,34 +273,37 @@ public class CreditCustomerFlowService {
                 if (order == null)
                         return;
 
-                String details = String.format(
-                                "📦 *Order Details*\n" +
-                                                "ID: %d\n" +
-                                                "Name: %s\n" +
-                                                "Amount: ₹%.2f\n" +
-                                                "Status: %s\n",
-                                order.getId(), order.getCustomer().getName(), order.getTotalAmount(),
-                                order.getStatus());
+                String details = adminMessageService.getOrderDetails(
+                                order.getId(),
+                                order.getCustomer().getName(),
+                                order.getTotalAmount().doubleValue(),
+                                order.getStatus().name());
 
                 List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
                                 WhatsAppMessageDto.ButtonDto.builder().type("reply")
                                                 .reply(WhatsAppMessageDto.ReplyDto.builder()
                                                                 .id(PREFIX_CREDIT_PAY_LINK + orderId)
-                                                                .title("🔗 Send Link").build())
+                                                                .title(adminMessageService
+                                                                                .getLinkButtonTitle())
+                                                                .build())
                                                 .build(),
                                 WhatsAppMessageDto.ButtonDto.builder().type("reply")
                                                 .reply(WhatsAppMessageDto.ReplyDto.builder()
                                                                 .id(PREFIX_CREDIT_PAY_QR + orderId)
-                                                                .title("📷 Send QR").build())
+                                                                .title(adminMessageService.getQrButtonTitle())
+                                                                .build())
                                                 .build(),
                                 WhatsAppMessageDto.ButtonDto.builder().type("reply")
                                                 .reply(WhatsAppMessageDto.ReplyDto.builder()
                                                                 .id(PREFIX_CREDIT_COD + orderId)
-                                                                .title("💵 Marked COD").build())
+                                                                .title(adminMessageService.getCodButtonTitle())
+                                                                .build())
                                                 .build(),
                                 WhatsAppMessageDto.ButtonDto.builder().type("reply")
                                                 .reply(WhatsAppMessageDto.ReplyDto.builder().id(MENU_CREDIT_OC)
-                                                                .title("⬅️ Back").build())
+                                                                .title(adminMessageService
+                                                                                .getBackToCreditMenuTitle())
+                                                                .build())
                                                 .build());
 
                 whatsAppService.sendInteractiveButtons(admin.getWaPhoneNumber(), details, buttons);
@@ -310,7 +320,7 @@ public class CreditCustomerFlowService {
                                                 order.getCustomer());
                                 if (link == null) {
                                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                                        "❌ Error: Failed to generate Razorpay link.");
+                                                        adminMessageService.getRazorpayLinkError());
                                         return;
                                 }
 
@@ -320,7 +330,7 @@ public class CreditCustomerFlowService {
                                 orderStatusHistoryService.addEvent(order);
 
                                 whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                                "✅ Payment link generated and sent.");
+                                                adminMessageService.getPaymentLinkGeneratedSuccess());
 
                                 whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(),
                                                 customerMessageService.getPaymentLinkMessage(link,
@@ -343,7 +353,7 @@ public class CreditCustomerFlowService {
 
                                 if (qrUrl == null) {
                                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                                        "❌ Error: Failed to generate QR Code.");
+                                                        adminMessageService.getQrCodeError());
                                         return;
                                 }
 
@@ -353,7 +363,7 @@ public class CreditCustomerFlowService {
                                 orderStatusHistoryService.addEvent(order);
 
                                 whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                                "✅ QR Code generated and sent.");
+                                                adminMessageService.getQrCodeGeneratedSuccess());
 
                                 // Send to Customer
                                 String caption = customerMessageService
@@ -368,7 +378,8 @@ public class CreditCustomerFlowService {
                                 order.setPaymentMethod(com.aps.domain.enumeration.PaymentMode.COD);
                                 customerOrderRepository.save(order);
                                 orderStatusHistoryService.addEvent(order);
-                                whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "✅ Marked as COD Delivered.");
+                                whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                                adminMessageService.getMarkedAsCodSuccess());
                         }
                 }
         }

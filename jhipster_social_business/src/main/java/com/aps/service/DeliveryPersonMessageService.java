@@ -327,29 +327,10 @@ public class DeliveryPersonMessageService {
         return "ഉപഭോക്താവ് ഇപ്പോൾ പണം നൽകുന്നില്ല";
     }
 
-    public String getPaymentResistedAdminInfo(String dpName, String customerName, String customerRole, double amount,
-            Long orderId) {
-        return String.format(
-                "⚠️ *ക്രെഡിറ്റ് അഭ്യർത്ഥന* ⚠️\n\n" +
-                        "ഡെലിവറി പേഴ്സൺ: *%s*\n" +
-                        "കസ്റ്റമർ: *%s* (%s)\n" +
-                        "ഓർഡർ: #%d\n" +
-                        "തുക: ₹%.2f\n\n" +
-                        "ഈ കസ്റ്റമർ ഇപ്പോൾ പണം നൽകാൻ വിസമ്മതിക്കുന്നു. എന്താണ് ചെയ്യേണ്ടത്? 👇",
-                dpName, customerName, customerRole, orderId, amount);
-    }
 
-    public String getButtonAllowCreditOnce() {
-        return "ഈ തവണ മാത്രം";
-    }
-
-    public String getButtonGrantAlways() {
-        return "എപ്പോഴും അനുവദിക്കുക";
-    }
-
-    public String getButtonDenyCredit() {
-        return "നിരസിക്കുക";
-    }
+    // ===========================================================
+    // CATEGORY 13: DELIVERY PERSON RECIEVING MESSAGE
+    // ===========================================================
 
     public String getCreditGrantedAlwaysMessage(String customerName, Long orderId) {
         return String.format(
@@ -375,10 +356,6 @@ public class DeliveryPersonMessageService {
                         "ഓർഡർ #%d -നുള്ള പണം വാങ്ങുക.",
                 customerName, orderId);
     }
-
-    // ========================================
-    // CATEGORY 9: CREDIT CUSTOMER MESSAGES
-    // ========================================
 
     public String getAdminNotification() {
         return "⏳ അഡ്മിനെ അറിയിച്ചു. അംഗീകാരത്തിനായി കാത്തിരിക്കുക.";

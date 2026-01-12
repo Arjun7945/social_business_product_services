@@ -8,14 +8,14 @@ import com.aps.domain.enumeration.UserRole;
 import com.aps.repository.CustomerRepository;
 import com.aps.service.BotSessionManager;
 import com.aps.service.LocationValidationService;
-import com.aps.service.UserRemovalService; // Added
+import com.aps.service.UserRemovalService;
 import com.aps.service.WhatsAppService;
 import com.aps.service.dto.WhatsAppMessageDto;
 import com.aps.service.dto.WhatsAppWebhookDto;
 import com.aps.service.util.InputValidator;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional; // Added
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -583,6 +583,7 @@ public class CustomerManagementService {
 
         } catch (Exception e) {
             log.error("Update option error", e);
+            whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "❌ Error updating option: " + e.getMessage());
         }
     }
 
