@@ -129,6 +129,7 @@ class CreditCustomerFlowServiceTest {
         void testHandleCreditOrderAction_SendLink() {
                 TeamMember admin = new TeamMember();
                 admin.setWaPhoneNumber("918888888888");
+                admin.setName("Super Admin");
                 String buttonId = CreditCustomerFlowService.PREFIX_CREDIT_PAY_LINK + "1";
 
                 Customer cust = new Customer();
@@ -143,12 +144,56 @@ class CreditCustomerFlowServiceTest {
                 when(razorpayService.createPaymentLink(anyLong(), anyDouble(), any(Customer.class)))
                                 .thenReturn("http://link");
                 when(adminMessageService.getPaymentLinkGeneratedSuccess()).thenReturn("Link Sent");
-                when(customerMessageService.getPaymentLinkMessage(anyString(), anyDouble())).thenReturn("Please pay");
+                when(customerMessageService.getPaymentLinkMessage(anyString(), anyDouble(), anyString()))
+                                .thenReturn("Please pay");
 
                 creditCustomerFlowService.handleCreditOrderAction(admin, buttonId);
 
                 verify(razorpayService).createPaymentLink(1L, 500.0, cust);
                 verify(whatsAppService).sendSimpleText("918888888888", "Link Sent");
                 verify(whatsAppService).sendSimpleText("917777777777", "Please pay");
+        }
+
+        @Test
+        void testHandleCreditOrderSelection() {
+                TeamMember admin = new TeamMember();
+                admin.setWaPhoneNumber("918888888888");
+                Long orderId = 123L;
+
+                Customer cust = new Customer();
+                cust.setName("Bob");
+                CustomerOrder order = new CustomerOrder();
+                order.setId(orderId);
+                order.setCustomer(cust);
+                order.setTotalAmount(BigDecimal.valueOf(150.0));
+                order.setStatus(OrderStatus.ON_CREDIT_PURCHASE);
+
+                when(customerOrderRepository.findById(orderId)).thenReturn(Optional.of(order));
+                when(adminMessageService.getOrderDetails(anyLong(), anyString(), anyDouble(), anyString()))
+                                .thenReturn("Order Details");
+                // Mock title getters
+                when(adminMessageService.getLinkButtonTitle()).thenReturn("Link");
+                when(adminMessageService.getQrButtonTitle()).thenReturn("QR");
+                when(adminMessageService.getCodButtonTitle()).thenReturn("COD");
+                when(adminMessageService.getBackToCreditMenuTitle()).thenReturn("Back");
+                when(adminMessageService.getBackToCreditMenuDesc()).thenReturn("Go Back");
+
+                // New Mocks
+                when(adminMessageService.getLinkButtonDesc()).thenReturn("Link Desc");
+                when(adminMessageService.getQrButtonDesc()).thenReturn("QR Desc");
+                when(adminMessageService.getCodButtonDesc()).thenReturn("COD Desc");
+                when(adminMessageService.getListOptionsButtonText()).thenReturn("Options");
+                when(adminMessageService.getListActionSectionTitle()).thenReturn("Actions");
+
+                creditCustomerFlowService.handleCreditOrderSelection(admin, orderId);
+
+                // Verify that sendInteractiveList is called with our new signature
+                // sendInteractiveList(toWaId, bodyText, buttonText, sectionTitle, rows)
+                verify(whatsAppService).sendInteractiveList(
+                                eq("918888888888"),
+                                eq("Order Details"),
+                                eq("Options"),
+                                eq("Actions"),
+                                anyList());
         }
 }

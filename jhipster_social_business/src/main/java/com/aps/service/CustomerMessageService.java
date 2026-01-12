@@ -12,6 +12,7 @@ public class CustomerMessageService {
     // CATEGORY 9: PAYMENT MESSAGES
     // ========================================
 
+    
     public String getPaymentQrCaption(double amount) {
         return String.format(
                 "📱 *സ്കാൻ ചെയ്ത് പണമടയ്ക്കുക* \n\n" + "\u20B9%.2f\n\n"
@@ -19,10 +20,13 @@ public class CustomerMessageService {
                 amount);
     }
 
-    public String getPaymentLinkMessage(String link, double amount) {
+    public String getPaymentLinkMessage(String link, double amount, String senderName) {
         return String.format(
-                "🔗 *പേയ്മെന്റ് ലിങ്ക്* \n\n" + "തുക: \u20B9%.2f\n\n"
+                "🔗 *പേയ്മെന്റ് ലിങ്ക്* \n\n" +
+                        "അയച്ചത്: *%s*\n" +
+                        "തുക: \u20B9%.2f\n\n"
                         + "പേയ്മെൻ്റ് ചെയ്യാൻ താഴെ കാണുന്ന ലിങ്കിൽ ക്ലിക്ക് ചെയ്യുക: 👇\n%s",
+                senderName,
                 amount,
                 link);
     }

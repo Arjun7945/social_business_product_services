@@ -279,34 +279,31 @@ public class CreditCustomerFlowService {
                                 order.getTotalAmount().doubleValue(),
                                 order.getStatus().name());
 
-                List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
-                                WhatsAppMessageDto.ButtonDto.builder().type("reply")
-                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                                                .id(PREFIX_CREDIT_PAY_LINK + orderId)
-                                                                .title(adminMessageService
-                                                                                .getLinkButtonTitle())
-                                                                .build())
+                List<WhatsAppMessageDto.RowDto> rows = List.of(
+                                WhatsAppMessageDto.RowDto.builder()
+                                                .id(PREFIX_CREDIT_PAY_LINK + orderId)
+                                                .title(adminMessageService.getLinkButtonTitle())
+                                                .description(adminMessageService.getLinkButtonDesc())
                                                 .build(),
-                                WhatsAppMessageDto.ButtonDto.builder().type("reply")
-                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                                                .id(PREFIX_CREDIT_PAY_QR + orderId)
-                                                                .title(adminMessageService.getQrButtonTitle())
-                                                                .build())
+                                WhatsAppMessageDto.RowDto.builder()
+                                                .id(PREFIX_CREDIT_PAY_QR + orderId)
+                                                .title(adminMessageService.getQrButtonTitle())
+                                                .description(adminMessageService.getQrButtonDesc())
                                                 .build(),
-                                WhatsAppMessageDto.ButtonDto.builder().type("reply")
-                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                                                .id(PREFIX_CREDIT_COD + orderId)
-                                                                .title(adminMessageService.getCodButtonTitle())
-                                                                .build())
+                                WhatsAppMessageDto.RowDto.builder()
+                                                .id(PREFIX_CREDIT_COD + orderId)
+                                                .title(adminMessageService.getCodButtonTitle())
+                                                .description(adminMessageService.getCodButtonDesc())
                                                 .build(),
-                                WhatsAppMessageDto.ButtonDto.builder().type("reply")
-                                                .reply(WhatsAppMessageDto.ReplyDto.builder().id(MENU_CREDIT_OC)
-                                                                .title(adminMessageService
-                                                                                .getBackToCreditMenuTitle())
-                                                                .build())
+                                WhatsAppMessageDto.RowDto.builder()
+                                                .id(MENU_CREDIT_OC)
+                                                .title(adminMessageService.getBackToCreditMenuTitle())
+                                                .description(adminMessageService.getBackToCreditMenuDesc())
                                                 .build());
 
-                whatsAppService.sendInteractiveButtons(admin.getWaPhoneNumber(), details, buttons);
+                whatsAppService.sendInteractiveList(admin.getWaPhoneNumber(), details,
+                                adminMessageService.getListOptionsButtonText(),
+                                adminMessageService.getListActionSectionTitle(), rows);
         }
 
         public void handleCreditOrderAction(TeamMember admin, String buttonId) {
@@ -334,7 +331,7 @@ public class CreditCustomerFlowService {
 
                                 whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(),
                                                 customerMessageService.getPaymentLinkMessage(link,
-                                                                order.getTotalAmount().doubleValue()));
+                                                                order.getTotalAmount().doubleValue(), admin.getName()));
                         }
                 } else if (buttonId.startsWith(PREFIX_CREDIT_PAY_QR)) {
                         Long orderId = Long.parseLong(buttonId.replace(PREFIX_CREDIT_PAY_QR, ""));

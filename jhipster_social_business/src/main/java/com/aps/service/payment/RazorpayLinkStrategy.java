@@ -43,7 +43,8 @@ public class RazorpayLinkStrategy implements PaymentStrategy {
             whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), "🔗 *Payment Link:*\n" + link);
 
             // Send to Customer
-            String message = customerMessageService.getPaymentLinkMessage(link, order.getTotalAmount().doubleValue());
+            String message = customerMessageService.getPaymentLinkMessage(link, order.getTotalAmount().doubleValue(),
+                    deliveryPerson.getName());
             whatsAppService.sendSimpleText(customer.getWaPhoneNumber(), message);
 
             // Send Wait Message to Delivery Person

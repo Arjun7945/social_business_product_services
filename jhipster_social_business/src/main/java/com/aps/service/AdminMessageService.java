@@ -97,17 +97,39 @@ public class AdminMessageService {
         return "💵 Marked COD";
     }
 
+    public String getLinkButtonDesc() {
+        return "Send Razorpay Link";
+    }
+
+    public String getQrButtonDesc() {
+        return "Send QR Code";
+    }
+
+    public String getCodButtonDesc() {
+        return "Mark as Paid (COD)";
+    }
+
+    public String getListOptionsButtonText() {
+        return "Options";
+    }
+
+    public String getListActionSectionTitle() {
+        return "Actions";
+    }
+
     // ===========================================================
     // CATEGORY 12: ADMIN RECIEVING MESSAGES FROM DELIVERY PERSON
     // ===========================================================
 
-public String getPaymentResistedAdminInfo(String dpName, String customerName, String customerRole, double amount,
-        Long orderId) {
-    return String.format(
-            "Hello Admin, this is *%s*. I am currently attempting to deliver Order *#%d* to *%s* (%s). " +
-            "The customer is requesting to pay the bill amount of *₹%.2f* later rather than right now.\n\n" +
-            "How would you like me to proceed? 👇",
-            dpName, orderId, customerName, customerRole, amount);}
+    public String getPaymentResistedAdminInfo(String dpName, String customerName, String customerRole, double amount,
+            Long orderId) {
+        return String.format(
+                "Hello Admin, this is *%s*. I am currently attempting to deliver Order *#%d* to *%s* (%s). " +
+                        "The customer is requesting to pay the bill amount of *₹%.2f* later rather than right now.\n\n"
+                        +
+                        "How would you like me to proceed? 👇",
+                dpName, orderId, customerName, customerRole, amount);
+    }
 
     public String getButtonAllowCreditOnce() {
         return "Allow for this Order";
