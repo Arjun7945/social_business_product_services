@@ -216,6 +216,32 @@ public class DeliveryPersonMessageService {
         return "പേയ്മെന്റ് ലിങ്ക് ഉപഭോക്താവിന് അയച്ചു. പേയ്മെന്റ് സ്ഥിരീകരണം ലഭിക്കുന്നത് വരെ കാത്തിരിക്കുക. ഉപഭോക്താവിന് ലഭിച്ചില്ലെങ്കിൽ, ദയവായി ഇത് പങ്കിടുക. ⏳";
     }
 
+    public String getPaymentLinkMessageForDp(String link, Long orderId, double amount) {
+        return String.format(
+                "🔗 *പേയ്മെന്റ് ലിങ്ക് തയ്യാറാണ്!* 🚀\n\n" +
+                        "ഓർഡർ #%d\n" +
+                        "തുക: \u20B9%.2f\n\n" +
+                        "ഈ ലിങ്ക് ഉപഭോക്താവിന് അയച്ചു. ആവശ്യമെങ്കിൽ നിങ്ങൾക്ക് ഇത് നേരിട്ട് പങ്കിടാം: 👇\n%s",
+                orderId, amount, link);
+    }
+
+    public String getPaymentQrCaptionForDp(Long orderId, double amount) {
+        return String.format(
+                "📷 *QR കോഡ് സ്കാൻ ചെയ്യുക* 💳\n\n" +
+                        "ഓർഡർ #%d\n" +
+                        "തുക: \u20B9%.2f\n\n" +
+                        "പേയ്മെന്റ് ലഭിക്കാൻ സ്കാൻ ചെയ്യുക!",
+                orderId, amount);
+    }
+
+    public String getPaymentLinkGenerationFailedMessage() {
+        return "⚠️ *ലിങ്ക് ജനറേഷൻ പരാജയപ്പെട്ടു!*\nദയവായി അഡ്മിനെ അറിയിക്കുക അല്ലെങ്കിൽ മറ്റൊരു പേയ്മെന്റ് രീതി തിരഞ്ഞെടുക്കുക.";
+    }
+
+    public String getQrGenerationFailedMessage() {
+        return "⚠️ *QR ജനറേഷൻ പരാജയപ്പെട്ടു!*\nക്രമീകരണം പരിശോധിക്കുക അല്ലെങ്കിൽ മറ്റൊരു പേയ്മെന്റ് രീതി തിരഞ്ഞെടുക്കുക.";
+    }
+
     // ========================================
     // CATEGORY 10: NEW FLOW MESSAGES (TASK 2.1)
     // ========================================
@@ -326,7 +352,6 @@ public class DeliveryPersonMessageService {
     public String getDescriptionPaymentResisted() {
         return "ഉപഭോക്താവ് ഇപ്പോൾ പണം നൽകുന്നില്ല";
     }
-
 
     // ===========================================================
     // CATEGORY 13: DELIVERY PERSON RECIEVING MESSAGE

@@ -40,18 +40,21 @@ public class RazorpayLinkStrategy implements PaymentStrategy {
 
         if (link != null) {
             // Send to Delivery Person
-            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), "🔗 *Payment Link:*\n" + link);
+            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
+                    deliveryPersonMessageService.getPaymentLinkMessageForDp(link, order.getId(),
+                            order.getTotalAmount().doubleValue()));
 
             // Send to Customer
             String message = customerMessageService.getPaymentLinkMessage(link, order.getTotalAmount().doubleValue(),
-                    deliveryPerson.getName());
+                    deliveryPerson.getName(), order.getId());
             whatsAppService.sendSimpleText(customer.getWaPhoneNumber(), message);
 
             // Send Wait Message to Delivery Person
             String waitMsg = deliveryPersonMessageService.getPaymentWaitMessageLink();
             whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), waitMsg);
         } else {
-            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), "⚠️ Failed to generate Payment Link.");
+            whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
+                    deliveryPersonMessageService.getPaymentLinkGenerationFailedMessage());
         }
     }
 

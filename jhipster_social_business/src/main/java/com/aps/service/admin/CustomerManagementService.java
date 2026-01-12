@@ -218,6 +218,7 @@ public class CustomerManagementService {
             newCustomer.setWaPhoneNumber(tempWaPhone);
             newCustomer.setLocationLat(lat);
             newCustomer.setLocationLon(lon);
+            newCustomer.setAddress(String.format("Location shared via WhatsApp: %.6f, %.6f", lat, lon));
             newCustomer.setDistanceFromBusinessKm(distance);
             newCustomer.setRole(UserRole.CUSTOMER);
             String targetRole = sessionManager.getSessionDataString(session, "targetRole");
@@ -232,6 +233,14 @@ public class CustomerManagementService {
 
             boolean isWithinRadius = locationValidationService.isWithinDeliveryRadius(lat, lon);
             newCustomer.setIsPincodeValid(isWithinRadius);
+
+            // Default Zone assignment if none selected (logic for manual add usually
+            // doesn't select zone)
+            List<com.aps.domain.DeliveryZone> allZones = deliveryZoneRepository.findAll();
+            if (!allZones.isEmpty()) {
+                newCustomer.setZone(allZones.get(0));
+            }
+
             newCustomer.setAddedBy(admin);
 
             // 2. Save AND Flush to force DB constraint check immediately

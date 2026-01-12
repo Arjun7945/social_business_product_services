@@ -4,7 +4,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { EntityState, IQueryParams, createEntitySlice, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { IRemovedUser, defaultValue } from 'app/shared/model/removed-user.model';
 
-const initialState: EntityState<IRemovedUser> = {
+const initialState: EntityState<IRemovedUser> & { restoreResult: any } = {
   loading: false,
   errorMessage: null,
   entities: [],
@@ -12,6 +12,7 @@ const initialState: EntityState<IRemovedUser> = {
   updating: false,
   totalItems: 0,
   updateSuccess: false,
+  restoreResult: null,
 };
 
 const apiUrl = 'api/removed-users';
@@ -92,7 +93,7 @@ export const restoreEntity = createAsyncThunk(
 
 export const RemovedUserSlice = createEntitySlice({
   name: 'removedUser',
-  initialState,
+  initialState: initialState as any,
   extraReducers(builder) {
     builder
       .addCase(getEntity.fulfilled, (state, action) => {
@@ -104,10 +105,11 @@ export const RemovedUserSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
-      .addCase(restoreEntity.fulfilled, state => {
+      .addCase(restoreEntity.fulfilled, (state, action) => {
         state.updating = false;
         state.updateSuccess = true;
         state.entity = {};
+        (state as any).restoreResult = action.payload.data;
       })
       .addMatcher(isFulfilled(getEntities), (state, action) => {
         const { data, headers } = action.payload;

@@ -177,6 +177,35 @@ public class UserRemovalService {
                 .findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("DeliveryPerson not found with id: " + id));
 
+        // 0. Safeguard: Check for Active Orders
+        List<com.aps.domain.enumeration.OrderStatus> activeStatuses = java.util.Arrays
+                .stream(com.aps.domain.enumeration.OrderStatus.values())
+                .filter(s -> s != com.aps.domain.enumeration.OrderStatus.ORDER_DELIVERED_SUCESSFULLY
+                        && s != com.aps.domain.enumeration.OrderStatus.ORDER_FAILED
+                        && s != com.aps.domain.enumeration.OrderStatus.ORDER_NOT_TAKEN)
+                .collect(java.util.stream.Collectors.toList());
+
+        List<Object[]> activeStats = customerOrderRepository.findStatsByDeliveryPersonIdAndStatus(
+                id,
+                activeStatuses);
+
+        long activeCount = 0;
+        double activeAmount = 0.0;
+
+        if (!activeStats.isEmpty()) {
+            Object[] row = activeStats.get(0);
+            if (row[0] != null)
+                activeCount = (Long) row[0];
+            if (row[1] != null)
+                activeAmount = ((java.math.BigDecimal) row[1]).doubleValue();
+        }
+
+        if (activeCount > 0) {
+            throw new IllegalStateException(String.format(
+                    "Cannot remove %s. %d pending orders. Total Amount: \u20B9%.2f.",
+                    member.getName(), activeCount, activeAmount));
+        }
+
         // 1. Calculate Stats & Archive User - optimized DB stats
         // DB Aggregation for performance
         List<Object[]> stats = customerOrderRepository.findStatsByDeliveryPersonIdAndStatus(

@@ -44,7 +44,9 @@ public class RazorpayQrStrategy implements PaymentStrategy {
 
         if (qrUrl != null) {
             // Send to Delivery Person
-            whatsAppService.sendImageMessage(deliveryPerson.getWaPhoneNumber(), qrUrl, "📷 Scan to Pay");
+            String dpCaption = deliveryPersonMessageService.getPaymentQrCaptionForDp(order.getId(),
+                    order.getTotalAmount().doubleValue());
+            whatsAppService.sendImageMessage(deliveryPerson.getWaPhoneNumber(), qrUrl, dpCaption);
 
             // Send to Customer
             String caption = customerMessageService.getPaymentQrCaption(order.getTotalAmount().doubleValue());
@@ -55,7 +57,7 @@ public class RazorpayQrStrategy implements PaymentStrategy {
             whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(), waitMsg);
         } else {
             whatsAppService.sendSimpleText(deliveryPerson.getWaPhoneNumber(),
-                    "⚠️ Failed to generate QR Code. (Check Settings)");
+                    deliveryPersonMessageService.getQrGenerationFailedMessage());
         }
     }
 

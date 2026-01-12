@@ -209,6 +209,16 @@ public class CreditCustomerFlowService {
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                                         adminMessageService.getCreditOneTimeApprovedMessage(orderId));
 
+                        // Notify Customer
+                        try {
+                                whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                                                customerMessageService.getCreditApprovedOnceMessageCustomer(
+                                                                customer.getName(),
+                                                                orderId));
+                        } catch (Exception e) {
+                                log.error("Failed to notify customer about credit one-time", e);
+                        }
+
                 } else {
                         // DENY
                         // Notify DP
@@ -219,6 +229,16 @@ public class CreditCustomerFlowService {
                         // Notify Admin
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
                                         adminMessageService.getCreditDeniedMessage(orderId));
+
+                        // Notify Customer
+                        try {
+                                whatsAppService.sendSimpleText(customer.getWaPhoneNumber(),
+                                                customerMessageService.getCreditDeniedMessageCustomer(
+                                                                customer.getName(),
+                                                                orderId));
+                        } catch (Exception e) {
+                                log.error("Failed to notify customer about credit denial", e);
+                        }
                 }
         }
 
@@ -331,7 +351,8 @@ public class CreditCustomerFlowService {
 
                                 whatsAppService.sendSimpleText(order.getCustomer().getWaPhoneNumber(),
                                                 customerMessageService.getPaymentLinkMessage(link,
-                                                                order.getTotalAmount().doubleValue(), admin.getName()));
+                                                                order.getTotalAmount().doubleValue(), admin.getName(),
+                                                                order.getId()));
                         }
                 } else if (buttonId.startsWith(PREFIX_CREDIT_PAY_QR)) {
                         Long orderId = Long.parseLong(buttonId.replace(PREFIX_CREDIT_PAY_QR, ""));

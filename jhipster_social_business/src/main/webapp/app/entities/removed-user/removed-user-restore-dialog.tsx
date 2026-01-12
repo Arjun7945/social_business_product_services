@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Translate } from 'react-jhipster';
+import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
@@ -28,8 +29,13 @@ export const RemovedUserRestoreDialog = () => {
     navigate(`/removed-user${pageLocation.search}`);
   };
 
+  const restoreResult = useAppSelector(state => state.removedUser.restoreResult);
+
   useEffect(() => {
     if (updateSuccess && loadModal) {
+      if (restoreResult) {
+        toast.success('User Restored Successfully! New ID: ' + restoreResult);
+      }
       handleClose();
       setLoadModal(false);
     }

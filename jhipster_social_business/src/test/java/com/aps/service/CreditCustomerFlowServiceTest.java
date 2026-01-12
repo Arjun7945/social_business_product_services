@@ -144,7 +144,7 @@ class CreditCustomerFlowServiceTest {
                 when(razorpayService.createPaymentLink(anyLong(), anyDouble(), any(Customer.class)))
                                 .thenReturn("http://link");
                 when(adminMessageService.getPaymentLinkGeneratedSuccess()).thenReturn("Link Sent");
-                when(customerMessageService.getPaymentLinkMessage(anyString(), anyDouble(), anyString()))
+                when(customerMessageService.getPaymentLinkMessage(anyString(), anyDouble(), anyString(), anyLong()))
                                 .thenReturn("Please pay");
 
                 creditCustomerFlowService.handleCreditOrderAction(admin, buttonId);

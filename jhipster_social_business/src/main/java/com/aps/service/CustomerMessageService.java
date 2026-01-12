@@ -12,7 +12,6 @@ public class CustomerMessageService {
     // CATEGORY 9: PAYMENT MESSAGES
     // ========================================
 
-    
     public String getPaymentQrCaption(double amount) {
         return String.format(
                 "📱 *സ്കാൻ ചെയ്ത് പണമടയ്ക്കുക* \n\n" + "\u20B9%.2f\n\n"
@@ -20,12 +19,14 @@ public class CustomerMessageService {
                 amount);
     }
 
-    public String getPaymentLinkMessage(String link, double amount, String senderName) {
+    public String getPaymentLinkMessage(String link, double amount, String senderName, Long orderId) {
         return String.format(
                 "🔗 *പേയ്മെന്റ് ലിങ്ക്* \n\n" +
+                        "ഓർഡർ #%d\n" +
                         "അയച്ചത്: *%s*\n" +
                         "തുക: \u20B9%.2f\n\n"
                         + "പേയ്മെൻ്റ് ചെയ്യാൻ താഴെ കാണുന്ന ലിങ്കിൽ ക്ലിക്ക് ചെയ്യുക: 👇\n%s",
+                orderId,
                 senderName,
                 amount,
                 link);
@@ -491,6 +492,25 @@ public class CustomerMessageService {
                         "ഇനി മുതൽ നിങ്ങൾക്ക് പേയ്മെന്റ് പിന്നീട് നൽകാം. 🤝\n" +
                         "ഞങ്ങളുമായുള്ള നിങ്ങളുടെ വിശ്വാസത്തിന് നന്ദി! ❤️",
                 customerName);
+    }
+
+    public String getCreditApprovedOnceMessageCustomer(String customerName, Long orderId) {
+        return String.format(
+                "✅ *അഡ്മിൻ അംഗീകരിച്ചു, %s!* 🙏\n\n" +
+                        "ഓർഡർ #%d-നുള്ള നിങ്ങളുടെ ക്രെഡിറ്റ് അഭ്യർത്ഥന അംഗീകരിച്ചു. ✨\n\n" +
+                        "ഈ ഓർഡർ പേയ്മെന്റ് ഇല്ലാതെ ഡെലിവർ ചെയ്യപ്പെടും. 🤝\n" +
+                        "ഞങ്ങളുമായുള്ള നിങ്ങളുടെ സഹകരണത്തിന് നന്ദി! ❤️",
+                customerName,
+                orderId);
+    }
+
+    public String getCreditDeniedMessageCustomer(String customerName, Long orderId) {
+        return String.format(
+                "😔 *ക്ഷമിക്കണം, %s!*\n\n" +
+                        "ഓർഡർ #%d-നുള്ള നിങ്ങളുടെ ക്രെഡിറ്റ് അഭ്യർത്ഥന അംഗീകരിക്കാനായില്ല. ❌\n\n" +
+                        "ദയവായി പേയ്മെന്റ് പൂർത്തിയാക്കാൻ ശ്രമിക്കുക. 🙏",
+                customerName,
+                orderId);
     }
 
 }
