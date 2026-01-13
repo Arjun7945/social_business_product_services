@@ -36,6 +36,11 @@ public class GeocodingService {
         // 2. Fallback to Nominatim Reverse Geocoding
         String fullAddress = getAddress(lat, lon);
         if (fullAddress != null) {
+            // New Step: Try to extract pincode from the full address
+            String extractedPincode = inputValidator.extractPincode(fullAddress);
+            if (extractedPincode != null) {
+                return extractedPincode;
+            }
             return fullAddress;
         }
 
