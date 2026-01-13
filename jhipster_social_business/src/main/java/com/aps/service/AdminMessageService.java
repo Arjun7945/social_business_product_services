@@ -142,4 +142,63 @@ public class AdminMessageService {
     public String getButtonDenyCredit() {
         return "Deny Request";
     }
+
+    // ===========================================================
+    // CATEGORY 13: DELIVERY PERSON MANAGEMENT (ENGLISH)
+    // ===========================================================
+
+    public String getDeleteDeliveryPersonHeader() {
+        return "🗑️ *Delete Delivery Person*\n\nSelect a delivery person to remove:";
+    }
+
+    public String getNoDeliveryPersonsFound() {
+        return "📋 *No delivery persons found.*";
+    }
+
+    public String getConfirmDeletionHeader(String name, Long id, String zone, String waPhone) {
+        return String.format(
+                "⚠️ *Confirm Deletion*\n\n" +
+                        "🆔 ID: %d\n" +
+                        "👤 Name: %s\n" +
+                        "📍 Zone: %s\n" +
+                        "📱 WhatsApp: %s\n\n" +
+                        "Are you sure you want to delete this delivery person?",
+                id, name, zone, waPhone);
+    }
+
+    public String getDeliveryPersonDeletedSuccess() {
+        return "✅ Delivery Person Deleted Successfully.";
+    }
+
+    public String getDeleteFailed(String error) {
+        return "❌ Delete Failed: " + error;
+    }
+
+    public String getButtonConfirmDelete() {
+        return "✅ Confirm & Delete";
+    }
+
+    public String getButtonCancel() {
+        return "❌ Cancel";
+    }
+
+    public String getPendingOrdersWarning(String name, long count) {
+        return String.format(
+                "⚠️ *Cannot Delete*\n\n" +
+                        "Delivery Person *%s* has *%d* assigned order(s) to complete.\n\n" +
+                        "You cannot remove this delivery person until they complete all their assigned orders.",
+                name, count);
+    }
+
+    public String getButtonGoBack() {
+        return "⬅️ Go Back";
+    }
+
+    public String getButtonReport() {
+        return "⚠️ Report";
+    }
+
+    public String getReportFeatureLocked() {
+        return "⚠️ This feature is locked. Please contact the developer to report this issue.";
+    }
 }

@@ -6,53 +6,65 @@
 * **License Directory:** `D:\MERGECODE\newcode\social_business_product_services\central-license-server`
 * **Standard:** No temporary fixes. All solutions must be solid, production-grade changes.
 
-## 2. TASK OF THE DAY (Feature Requirements & Logic)
-* **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code, follow the "Strict Error Resolution Protocol".
+## 2. TASK OF THE DAY (Admin Flow - Delete Delivery Person)
+* **Context:** Currently, selecting "Delete Delivery Person" incorrectly redirects to the main menu without any logic. This flow must be implemented as follows:
 
-### Admin Credit Request Flow (Communication)
-* **Customer Notification:** When the Admin processes a credit request (initiated by the Delivery Person upon declined payment), a separate notification must be sent directly to the **Customer** (in addition to the existing Delivery Person reply).
-* **Scenarios:** Handle all three Admin decision buttons:
-    1.  **Always Allow**
-    2.  **Allow for this Order**
-    3.  **Decline Request**
-* **Message Content:**
-    * Must be in **Malayalam**.
-    * Tone: Humble, respectful, and polite.
-    * Variables: Must include **Customer Name** and **Order ID**.
-    * Context: Clearly inform the customer of the Admin's decision regarding their credit request.
+### Step 1: Selection List
+* **Trigger:** Admin selects the "Delete Delivery Person" option.
+* **Action:** Send a **List View Message** (Interactive List) containing all registered Delivery Persons.
+* **Button/Row Format:**
+    * **Title:** `{Delivery Person Name}`
+    * **Description:** `ID: {id} | Zone: {zone_name} | Pending Orders: {count}`
 
-### Delivery Person Flow (Link/QR & Removal)
-* **Link/QR Message Update:**
-    * Update the server-to-customer message sent when a Delivery Person triggers "Send Link" or "Generate QR".
-    * **Content:** Make the Malayalam text more attractive, meaningful, and polite.
-    * **Variables:** Strictly include the **Order ID** in the message.
-* **Removal Safeguard (Backend & Frontend):**
-    * **Validation:** Before removing a Delivery Person (moving to removed/history tables), check the `chosen_orders` column.
-    * **Condition:** If the Delivery Person has pending orders, **block the removal**.
-    * **Error Message:** Return a detailed message stating: "Delivery Person {Name} has {Count} pending orders to complete. Please complete or reassign."
-    * **Details to Show:** Display the specific **Order IDs** and the **Total Amount** for each pending order.
-
-### Executive Flow (Data Integrity)
-* **Fix Missing Data:** When an Executive adds a customer, ensure the following columns are populated (currently empty):
-    1.  **Address:** Reuse existing logic/methods available in the codebase for address handling.
-    2.  **Zone:** Assign a default zone fetched from the `delivery_zone` table.
-    3.  **Added By:** Debug and ensure the `added_by` column is correctly recording the Executive's ID/Name.
-
-### Client-Side Notifications
-* **Restore User Alert:** When a user is successfully restored, trigger a standard JHipster UI notification.
-* **Content:** The message must display the **Restored User ID** and the **Table Name** to which they were restored.
+### Step 2: Confirmation & Details
+* **Trigger:** Admin selects a specific Delivery Person from the list.
+* **Action:** Display a detailed summary message.
+* **Content to Display:**
+    * **ID:** `{id}`
+    * **Name:** `{name}`
+    * **Zone:** `{zone}`
+    * **WhatsApp Number:** `{wanumber}`
+    * **Pending Orders:** List details from the `chosen_orders` column (if any).
+* **Interactive Buttons:**
+    1.  **Confirm and Delete** (Proceeds with removal logic).
+    2.  **Don't Delete** (Cancels operation).
 
 ## 3. General Requirements
-* **Localization:** All server messages to **Delivery Person**, **Credit Customer**, and **Regular Customer** must be in **Malayalam**.
+* **Localization:** All server messages sent to users (Admin, Delivery Person, Customers) must be in **Malayalam**.
+* **Code Architecture:** Keep logic modular. Do not clutter existing files; create dedicated service methods for this removal flow if necessary.
 
-## 4. STRICT Error Resolution Protocol
+## 4. STRICT RULES (General)
+1. **NO TEMPORARY FIXES:** Every line of code must be production-ready.
+2. **NO BOILERPLATE CODE:** Keep the codebase concise; use Lombok or utility methods where applicable.
+3. **NO COUPLED LOGIC:** Ensure modularity and separation of concerns.
+4. **NO REDUNDANT CODE:** DRY (Don't Repeat Yourself) principle must be enforced.
+5. **SENIOR STANDARDS:** Maintain the architectural integrity of a Senior Software Engineer.
+
+## 4. TECHNICAL STANDARDS (Java/Spring & React)
+* **Java/Spring Boot:**
+    1. **Logging:** NEVER use `System.out.println`. Use `SLF4J` loggers.
+    2. **Exception Handling:** No empty catch blocks. Throw custom exceptions or handle gracefully.
+    3. **Database:** Ensure JPA queries are optimized (avoid N+1 problems). Use DTOs, never expose Entities directly in REST APIs.
+* **React:**
+    1. **Modern Syntax:** Use Functional Components and Hooks exclusively (no Class components).
+    2. **State Management:** Keep state as local as possible; use Context or Redux only when necessary.
+    3. **Clean UI:** Ensure no hardcoded strings; use localization/constants.
+
+## 5. STRICT Error Resolution Protocol
 * **Trigger:** If you encounter ANY error, bug, or missing functionality in the New Code.
 * **Action:**
-    1.  **Legacy Code Analysis:** Always check the **Legacy Files** first if errors or issues are faced. Analyze the error in the new code, but retrieve the solution logic from the legacy code.
-    2.  **No Assumptions:** Do not make your own decisions regarding business logic; strictly follow the legacy implementation.
-    3.  **Fix:** Apply the fix immediately to the new code.
-    4.  **Testing:** Run all test cases. Ensure all pass and no test cases are pending.
-    5.  **New Features:** Ensure valid test cases are added for any new features implemented.
+    1. Analyze the error immediately.
+    2. Fix the issue completely before moving to the next step.
+    3. **Do not suppress errors** with `try-catch` without proper logging/handling.
+    4. **Legacy Code Analysis:** Always check the **Legacy Files** first if errors are faced. Retrieve solution logic from legacy code but implement it using modern standards.
+
+## 6. TESTING MANDATE
+1. **Unit Tests:** New logic must have accompanying unit tests (JUnit/Mockito for Backend, Jest/Testing Library for Frontend).
+2. **Regression:** Ensure new changes do not break existing build pipelines or tests.
+
+## 7. QUALITY ASSURANCE & RATING
+1. **Rate the Code (1-10):** Evaluate the changes based on the rules above.
+2. **Gap Analysis:** If the rating is below 10, provide a specific list of fixes required to reach a perfect score.
 
 ---
 **IMPORTANT:** Make sure the rules mentioned in the `@RULES.md` are properly followed while refactoring.

@@ -33,6 +33,7 @@ public enum AdminFlowStage {
     AWAITING_DELIVERY_STATUS,
     CONFIRMING_DELIVERY_ADD,
     AWAITING_DELETE_DELIVERY_ID, // Added for Phase B
+    AWAITING_DELETE_DELIVERY_SELECTION, // Added for Interactive List Flow
 
     // Executive Flow
     EXECUTIVE_MENU,

@@ -35,6 +35,8 @@ public class DeliveryPersonManagementService {
         private final BotSessionManager sessionManager;
         private final InputValidator inputValidator;
         private final UserRemovalService userRemovalService;
+        private final com.aps.service.AdminMessageService adminMessageService;
+        private final com.aps.repository.CustomerOrderRepository customerOrderRepository;
 
         public DeliveryPersonManagementService(
                         DeliveryPersonRepository deliveryPersonRepository,
@@ -42,13 +44,17 @@ public class DeliveryPersonManagementService {
                         WhatsAppService whatsAppService,
                         BotSessionManager sessionManager,
                         InputValidator inputValidator,
-                        UserRemovalService userRemovalService) {
+                        UserRemovalService userRemovalService,
+                        com.aps.service.AdminMessageService adminMessageService,
+                        com.aps.repository.CustomerOrderRepository customerOrderRepository) {
                 this.deliveryPersonRepository = deliveryPersonRepository;
                 this.deliveryZoneRepository = deliveryZoneRepository;
                 this.whatsAppService = whatsAppService;
                 this.sessionManager = sessionManager;
                 this.inputValidator = inputValidator;
                 this.userRemovalService = userRemovalService;
+                this.adminMessageService = adminMessageService;
+                this.customerOrderRepository = customerOrderRepository;
         }
 
         public void showDeliveryPersonMenu(TeamMember admin) {
@@ -257,55 +263,160 @@ public class DeliveryPersonManagementService {
 
         // --- Deletion Logic ---
 
-        public void startDeleteDeliveryPerson(TeamMember admin, BotSession session) {
-                whatsAppService.sendSimpleText(
-                                admin.getWaPhoneNumber(),
-                                "🗑️ *Delete Delivery Person*\n\n⚠️ This will Archive & Remove the user.\n" +
-                                                "🆔 Please enter the **Delivery Person ID** you wish to delete:");
+        // --- Deletion Logic ---
 
-                sessionManager.updateState(session, AdminFlowStage.AWAITING_DELETE_DELIVERY_ID.name());
+        public void startDeleteDeliveryPerson(TeamMember admin, BotSession session) {
+                // Fix N+1 problem by fetching eager relationships
+                List<DeliveryPerson> deliveryPersons = deliveryPersonRepository.findAllWithEagerRelationships();
+
+                if (deliveryPersons.isEmpty()) {
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                        adminMessageService.getNoDeliveryPersonsFound());
+                        showDeliveryPersonMenu(admin);
+                        return;
+                }
+
+                // Prepare list of pending statuses to check
+                List<com.aps.domain.enumeration.OrderStatus> pendingStatuses = java.util.Arrays
+                                .stream(com.aps.domain.enumeration.OrderStatus.values())
+                                .filter(s -> s != com.aps.domain.enumeration.OrderStatus.ORDER_DELIVERED_SUCESSFULLY
+                                                && s != com.aps.domain.enumeration.OrderStatus.ORDER_FAILED
+                                                && s != com.aps.domain.enumeration.OrderStatus.ORDER_NOT_TAKEN)
+                                .collect(java.util.stream.Collectors.toList());
+
+                List<WhatsAppMessageDto.RowDto> rows = deliveryPersons.stream()
+                                .map(dp -> {
+                                        Long pendingOrders = customerOrderRepository
+                                                        .countByDeliveryPersonIdAndStatusIn(dp.getId(),
+                                                                        pendingStatuses);
+                                        return WhatsAppMessageDto.RowDto.builder()
+                                                        .id("DELETE_DP_" + dp.getId())
+                                                        .title(dp.getName())
+                                                        .description(String.format(
+                                                                        "ID: %d | Zone: %s | Pending Orders: %d",
+                                                                        dp.getId(),
+                                                                        dp.getZone() != null
+                                                                                        ? dp.getZone().getZoneName()
+                                                                                        : "N/A",
+                                                                        pendingOrders))
+                                                        .build();
+                                })
+                                .collect(java.util.stream.Collectors.toList());
+
+                whatsAppService.sendInteractiveList(
+                                admin.getWaPhoneNumber(),
+                                adminMessageService.getDeleteDeliveryPersonHeader(),
+                                "View List",
+                                rows);
+
+                sessionManager.updateState(session, AdminFlowStage.AWAITING_DELETE_DELIVERY_SELECTION.name());
         }
 
-        public void handleDeleteDeliveryPersonInput(TeamMember admin, BotSession session, String text) {
+        public void handleDeleteDeliveryPersonSelection(TeamMember admin, BotSession session, String selectionId) {
+                if (selectionId.equals("CANCEL_OPERATION")) {
+                        showDeliveryPersonMenu(admin);
+                        return;
+                }
+
+                if (selectionId.equals("REPORT_ISSUE")) {
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                        adminMessageService.getReportFeatureLocked());
+                        showDeliveryPersonMenu(admin);
+                        return;
+                }
+
+                if (selectionId.equals("GO_BACK_TO_LIST")) {
+                        startDeleteDeliveryPerson(admin, session);
+                        return;
+                }
+
                 try {
-                        Long id = Long.parseLong(text.trim());
-                        Optional<DeliveryPerson> memberOpt = deliveryPersonRepository.findById(id);
+                        // Expected format "DELETE_DP_{id}"
+                        String idStr = selectionId.replace("DELETE_DP_", "");
+                        Long id = Long.parseLong(idStr);
+
+                        Optional<DeliveryPerson> memberOpt = deliveryPersonRepository.findOneWithToOneRelationships(id);
 
                         if (memberOpt.isEmpty()) {
                                 whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                                "❌ ID not found or not a Delivery Person. Try again:");
+                                                "❌ Selected Delivery Person not found.");
+                                showDeliveryPersonMenu(admin);
                                 return;
                         }
 
                         DeliveryPerson member = memberOpt.get();
+
+                        // Check for pending orders logic
+                        List<com.aps.domain.enumeration.OrderStatus> pendingStatuses = java.util.Arrays
+                                        .stream(com.aps.domain.enumeration.OrderStatus.values())
+                                        .filter(s -> s != com.aps.domain.enumeration.OrderStatus.ORDER_DELIVERED_SUCESSFULLY
+                                                        && s != com.aps.domain.enumeration.OrderStatus.ORDER_FAILED
+                                                        && s != com.aps.domain.enumeration.OrderStatus.ORDER_NOT_TAKEN)
+                                        .collect(java.util.stream.Collectors.toList());
+
+                        Long pendingCount = customerOrderRepository.countByDeliveryPersonIdAndStatusIn(id,
+                                        pendingStatuses);
+
+                        if (pendingCount > 0) {
+                                // Block Deletion
+                                List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
+                                                WhatsAppMessageDto.ButtonDto.builder()
+                                                                .type("reply")
+                                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                                                                .id("GO_BACK_TO_LIST")
+                                                                                .title(adminMessageService
+                                                                                                .getButtonGoBack())
+                                                                                .build())
+                                                                .build(),
+                                                WhatsAppMessageDto.ButtonDto.builder()
+                                                                .type("reply")
+                                                                .reply(WhatsAppMessageDto.ReplyDto.builder()
+                                                                                .id("REPORT_ISSUE")
+                                                                                .title(adminMessageService
+                                                                                                .getButtonReport())
+                                                                                .build())
+                                                                .build());
+
+                                whatsAppService.sendCartActionButtons(
+                                                admin.getWaPhoneNumber(),
+                                                adminMessageService.getPendingOrdersWarning(member.getName(),
+                                                                pendingCount),
+                                                buttons);
+                                return;
+                        }
 
                         List<WhatsAppMessageDto.ButtonDto> buttons = List.of(
                                         WhatsAppMessageDto.ButtonDto.builder()
                                                         .type("reply")
                                                         .reply(WhatsAppMessageDto.ReplyDto.builder()
                                                                         .id("CONFIRM_DELETE_DP_" + id)
-                                                                        .title("💥 Yes, DELETE").build())
+                                                                        .title(adminMessageService
+                                                                                        .getButtonConfirmDelete())
+                                                                        .build())
                                                         .build(),
                                         WhatsAppMessageDto.ButtonDto.builder()
                                                         .type("reply")
                                                         .reply(WhatsAppMessageDto.ReplyDto.builder()
-                                                                        .id("CANCEL_OPERATION").title("❌ Cancel")
+                                                                        .id("CANCEL_OPERATION")
+                                                                        .title(adminMessageService.getButtonCancel())
                                                                         .build())
                                                         .build());
 
+                        String summary = adminMessageService.getConfirmDeletionHeader(
+                                        member.getName(),
+                                        member.getId(),
+                                        member.getZone() != null ? member.getZone().getZoneName() : "N/A",
+                                        member.getWaPhoneNumber());
+
                         whatsAppService.sendCartActionButtons(
                                         admin.getWaPhoneNumber(),
-                                        String.format(
-                                                        "⚠️ *Confirm Deletion*\n\n"
-                                                                        + "Are you SURE you want to delete:\n"
-                                                                        + "👤 *%s* (ID: %d)?",
-                                                        member.getName(),
-                                                        id),
+                                        summary,
                                         buttons);
 
                 } catch (NumberFormatException e) {
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                        "❌ Invalid ID format. Please enter a number:");
+                                        "❌ Invalid Selection.");
+                        showDeliveryPersonMenu(admin);
                 }
         }
 
@@ -314,10 +425,11 @@ public class DeliveryPersonManagementService {
                         userRemovalService.removeDeliveryPerson(id,
                                         "Admin " + admin.getName() + " requested via WhatsApp");
                         whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
-                                        "✅ Delivery Person Deleted Successfully.");
+                                        adminMessageService.getDeliveryPersonDeletedSuccess());
                 } catch (Exception e) {
                         log.error("Delete failed", e);
-                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "❌ Delete Failed: " + e.getMessage());
+                        whatsAppService.sendSimpleText(admin.getWaPhoneNumber(),
+                                        adminMessageService.getDeleteFailed(e.getMessage()));
                 }
                 showDeliveryPersonMenu(admin);
         }

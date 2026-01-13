@@ -65,4 +65,6 @@ public interface CustomerOrderRepository
     List<CustomerOrder> findAllByStatusNot(OrderStatus status);
 
     List<CustomerOrder> findAllByCustomerWaPhoneNumber(String waPhoneNumber);
+
+    Long countByDeliveryPersonIdAndStatusIn(Long dpId, List<OrderStatus> statuses);
 }

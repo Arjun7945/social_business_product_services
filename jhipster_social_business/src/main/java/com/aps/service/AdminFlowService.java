@@ -163,8 +163,8 @@ public class AdminFlowService {
             case AWAITING_DELIVERY_STATUS:
                 deliveryPersonManagementService.handleDeliveryPersonStatusInput(admin, session, text);
                 break;
-            case AWAITING_DELETE_DELIVERY_ID:
-                deliveryPersonManagementService.handleDeleteDeliveryPersonInput(admin, session, text);
+            case AWAITING_DELETE_DELIVERY_SELECTION:
+                whatsAppService.sendSimpleText(admin.getWaPhoneNumber(), "Please select an option from the list.");
                 break;
             // Executive Management
             case AWAITING_EXEC_NAME:
@@ -274,6 +274,9 @@ public class AdminFlowService {
             case "SHOW_ALL_DELIVERY":
                 deliveryPersonManagementService.showAllDeliveryPersons(admin);
                 break;
+            case "DELETE_DELIVERY_MENU":
+                deliveryPersonManagementService.startDeleteDeliveryPerson(admin, session);
+                break;
             case "ADD_EXECUTIVE":
                 executiveManagementService.startAddExecutive(admin, session);
                 break;
@@ -380,6 +383,12 @@ public class AdminFlowService {
                     customerManagementService.handleUpdateFieldSelect(admin, session, buttonId);
                 } else if (buttonId.startsWith("ROLE_") || buttonId.startsWith("ZONE_")) {
                     customerManagementService.handleUpdateOptionSelection(admin, session, buttonId);
+                } else if (buttonId.startsWith("DELETE_DP_") || buttonId.equals("GO_BACK_TO_LIST")
+                        || buttonId.equals("REPORT_ISSUE")) {
+                    deliveryPersonManagementService.handleDeleteDeliveryPersonSelection(admin, session, buttonId);
+                } else if (buttonId.startsWith("CONFIRM_DELETE_DP_")) {
+                    Long id = Long.parseLong(buttonId.replace("CONFIRM_DELETE_DP_", ""));
+                    deliveryPersonManagementService.finalizeDeliveryPersonDelete(admin, id);
                 } else {
                     showMainMenu(admin, session);
                 }
