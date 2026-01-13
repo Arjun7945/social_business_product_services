@@ -185,25 +185,22 @@ public class UserRemovalService {
                         && s != com.aps.domain.enumeration.OrderStatus.ORDER_NOT_TAKEN)
                 .collect(java.util.stream.Collectors.toList());
 
-        List<Object[]> activeStats = customerOrderRepository.findStatsByDeliveryPersonIdAndStatus(
-                id,
-                activeStatuses);
+        List<com.aps.domain.CustomerOrder> activeOrders = customerOrderRepository
+                .findAllByDeliveryPersonIdAndStatusIn(id, activeStatuses);
 
-        long activeCount = 0;
-        double activeAmount = 0.0;
+        if (!activeOrders.isEmpty()) {
+            long activeCount = activeOrders.size();
+            double activeAmount = activeOrders.stream()
+                    .mapToDouble(o -> o.getTotalAmount() != null ? o.getTotalAmount().doubleValue() : 0.0)
+                    .sum();
 
-        if (!activeStats.isEmpty()) {
-            Object[] row = activeStats.get(0);
-            if (row[0] != null)
-                activeCount = (Long) row[0];
-            if (row[1] != null)
-                activeAmount = ((java.math.BigDecimal) row[1]).doubleValue();
-        }
+            String orderIds = activeOrders.stream()
+                    .map(o -> String.valueOf(o.getId()))
+                    .collect(java.util.stream.Collectors.joining(", "));
 
-        if (activeCount > 0) {
             throw new IllegalStateException(String.format(
-                    "Cannot remove %s. %d pending orders. Total Amount: \u20B9%.2f.",
-                    member.getName(), activeCount, activeAmount));
+                    "Delivery Person %s has %d pending orders to complete. Please complete or reassign. Orders: [%s]. Total Amount: \u20B9%.2f.",
+                    member.getName(), activeCount, orderIds, activeAmount));
         }
 
         // 1. Calculate Stats & Archive User - optimized DB stats

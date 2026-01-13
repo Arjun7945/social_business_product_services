@@ -25,7 +25,7 @@ export type FulfilledAction = ReturnType<GenericAsyncThunk['fulfilled']>;
 /**
  * Check if the async action type is rejected
  */
-export function isRejectedAction(action: UnknownAction) {
+export function isRejectedAction(action: UnknownAction): action is RejectedAction {
   return action.type.endsWith('/rejected');
 }
 
@@ -58,6 +58,15 @@ export const serializeAxiosError = (value: any): AxiosError | SerializedError =>
     for (const property of commonErrorProperties) {
       if (typeof value[property] === 'string') {
         simpleError[property] = value[property];
+      }
+    }
+
+    if (value.response?.data) {
+      const { title, detail } = value.response.data;
+      if (typeof detail === 'string' && detail !== '') {
+        simpleError.message = detail;
+      } else if (typeof title === 'string' && title !== '') {
+        simpleError.message = title;
       }
     }
 
@@ -118,7 +127,7 @@ export const createEntitySlice = <T, Reducers extends SliceCaseReducers<EntitySt
           state.loading = false;
           state.updating = false;
           state.updateSuccess = false;
-          state.errorMessage = null;
+          state.errorMessage = (action.error as SerializedError).message;
         });
       }
     },

@@ -69,12 +69,14 @@ export default () => next => action => {
           if (toastError) {
             const entityName = translate(`global.menu.entities.${param}`);
             addErrorAlert({ key: toastError, data: { entityName } });
-          } else if (problem?.message) {
+          } else if (problem?.message && problem.message !== 'error.http.400' && problem.message !== 'error.http.500') {
             addErrorAlert({ message: problem.detail, key: problem.message });
           } else if (typeof data === 'string' && data !== '') {
             addErrorAlert({ message: data });
           } else {
-            toast.error(data?.detail ?? data?.message ?? data?.error ?? data?.title ?? 'Unknown error!');
+            // Antigravity: Prefer Detail if available and message was generic
+            const msg = data?.detail ?? data?.title ?? data?.message ?? data?.error ?? 'Unknown error!';
+            toast.error(msg);
           }
         }
       }

@@ -218,7 +218,24 @@ public class DeliveryPersonResource {
     public ResponseEntity<Void> deleteDeliveryPerson(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete DeliveryPerson : {}", id);
         // Antigravity: Use UserRemovalService to safe delete/archive
-        userRemovalService.removeDeliveryPerson(id, "Deleted by Admin");
+        try {
+            userRemovalService.removeDeliveryPerson(id, "Deleted by Admin");
+        } catch (IllegalStateException e) {
+            // Use ErrorResponseException directly to avoid 'error.' prefix in message
+            // property
+            // which causes frontend translation lookup failure. We want to show the raw
+            // title.
+            tech.jhipster.web.rest.errors.ProblemDetailWithCause problem = tech.jhipster.web.rest.errors.ProblemDetailWithCause.ProblemDetailWithCauseBuilder
+                    .instance()
+                    .withStatus(org.springframework.http.HttpStatus.BAD_REQUEST.value())
+                    .withType(com.aps.web.rest.errors.ErrorConstants.DEFAULT_TYPE)
+                    .withTitle(e.getMessage())
+                    .withDetail(e.getMessage())
+                    .withProperty("params", ENTITY_NAME)
+                    .build();
+            throw new org.springframework.web.ErrorResponseException(org.springframework.http.HttpStatus.BAD_REQUEST,
+                    problem, null);
+        }
         return ResponseEntity.noContent()
                 .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
                 .build();

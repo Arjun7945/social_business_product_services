@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { deleteEntity, getEntity } from './delivery-person.reducer';
+import { toast } from 'react-toastify';
 
 export const DeliveryPersonDeleteDialog = () => {
   const dispatch = useAppDispatch();
@@ -23,6 +24,7 @@ export const DeliveryPersonDeleteDialog = () => {
 
   const deliveryPersonEntity = useAppSelector(state => state.deliveryPerson.entity);
   const updateSuccess = useAppSelector(state => state.deliveryPerson.updateSuccess);
+  const errorMessage = useAppSelector(state => state.deliveryPerson.errorMessage);
 
   const handleClose = () => {
     navigate(`/delivery-person${pageLocation.search}`);

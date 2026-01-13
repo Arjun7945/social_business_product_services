@@ -58,6 +58,8 @@ public interface CustomerOrderRepository
 
     List<CustomerOrder> findAllByOrderTimeBetween(java.time.Instant start, java.time.Instant end);
 
+    List<CustomerOrder> findAllByDeliveryPersonIdAndStatusIn(Long dpId, List<OrderStatus> statuses);
+
     List<CustomerOrder> findAllByStatus(OrderStatus status);
 
     List<CustomerOrder> findAllByStatusNot(OrderStatus status);
