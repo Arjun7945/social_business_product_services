@@ -4,12 +4,15 @@ import com.aps.domain.BotSession;
 import com.aps.domain.Customer;
 import com.aps.domain.enumeration.CustomerFlowStage;
 import com.aps.domain.enumeration.UserRole;
+import com.aps.domain.DeliveryZone;
 import com.aps.repository.CustomerRepository;
+import com.aps.repository.DeliveryZoneRepository;
 import com.aps.service.dto.WhatsAppMessageDto;
 import com.aps.service.dto.WhatsAppWebhookDto;
 import com.aps.service.util.InputValidator;
 import java.time.Instant;
 import java.util.List;
+import java.util.Random;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -25,6 +28,7 @@ public class UnknownCustomerFlowService {
     private final LocationValidationService locationValidationService;
     private final GeocodingService geocodingService;
     private final CustomerRepository customerRepository;
+    private final DeliveryZoneRepository deliveryZoneRepository;
     private final CustomerFlowService customerFlowService; // To transition to registered flow
 
     public UnknownCustomerFlowService(
@@ -34,6 +38,7 @@ public class UnknownCustomerFlowService {
             LocationValidationService locationValidationService,
             GeocodingService geocodingService,
             CustomerRepository customerRepository,
+            DeliveryZoneRepository deliveryZoneRepository,
             CustomerFlowService customerFlowService) {
         this.whatsAppService = whatsAppService;
         this.sessionManager = sessionManager;
@@ -41,6 +46,7 @@ public class UnknownCustomerFlowService {
         this.locationValidationService = locationValidationService;
         this.geocodingService = geocodingService;
         this.customerRepository = customerRepository;
+        this.deliveryZoneRepository = deliveryZoneRepository;
         this.customerFlowService = customerFlowService;
     }
 
@@ -161,18 +167,20 @@ public class UnknownCustomerFlowService {
             newCustomer.setIsPincodeValid(
                     locationValidationService.isWithinDeliveryRadius(location.getLatitude(), location.getLongitude()));
 
+            // Assign Random Zone
+            List<DeliveryZone> allZones = deliveryZoneRepository.findAll();
+            if (!allZones.isEmpty()) {
+                DeliveryZone randomZone = allZones.get(new Random().nextInt(allZones.size()));
+                newCustomer.setZone(randomZone);
+            }
+
             customerRepository.save(newCustomer);
 
-            // Extract pincode from address if available
-            String pincode = inputValidator.extractPincode(location.getAddress());
-            if (pincode == null) {
-                pincode = geocodingService.getPincode(location.getLatitude(), location.getLongitude());
-            }
-
-            if (pincode != null) {
-                newCustomer.setAddress(pincode);
-                customerRepository.save(newCustomer);
-            }
+            // Extract address using centralized service
+            String resolvedAddress = geocodingService.resolveAddress(location.getLatitude(), location.getLongitude(),
+                    location.getAddress());
+            newCustomer.setAddress(resolvedAddress);
+            customerRepository.save(newCustomer);
 
             // Clear temp session data? Optional.
 

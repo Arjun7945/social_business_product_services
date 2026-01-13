@@ -389,6 +389,9 @@ public class AdminFlowService {
                 } else if (buttonId.startsWith("CONFIRM_DELETE_DP_")) {
                     Long id = Long.parseLong(buttonId.replace("CONFIRM_DELETE_DP_", ""));
                     deliveryPersonManagementService.finalizeDeliveryPersonDelete(admin, id);
+                } else if (buttonId.startsWith("CONFIRM_DELETE_")) {
+                    Long id = Long.parseLong(buttonId.replace("CONFIRM_DELETE_", ""));
+                    customerManagementService.finalizeCustomerDelete(admin, id);
                 } else {
                     showMainMenu(admin, session);
                 }

@@ -38,6 +38,7 @@ public class CustomerManagementService {
     private final com.aps.repository.DeliveryZoneRepository deliveryZoneRepository;
     private final com.aps.service.CreditCustomerFlowService creditCustomerFlowService;
     private final com.aps.service.ExecutiveFlowService executiveFlowService;
+    private final com.aps.service.GeocodingService geocodingService;
 
     public CustomerManagementService(
             CustomerRepository customerRepository,
@@ -48,7 +49,8 @@ public class CustomerManagementService {
             UserRemovalService userRemovalService,
             com.aps.repository.DeliveryZoneRepository deliveryZoneRepository,
             @org.springframework.context.annotation.Lazy com.aps.service.CreditCustomerFlowService creditCustomerFlowService,
-            @org.springframework.context.annotation.Lazy com.aps.service.ExecutiveFlowService executiveFlowService) {
+            @org.springframework.context.annotation.Lazy com.aps.service.ExecutiveFlowService executiveFlowService,
+            com.aps.service.GeocodingService geocodingService) {
         this.customerRepository = customerRepository;
         this.whatsAppService = whatsAppService;
         this.locationValidationService = locationValidationService;
@@ -58,6 +60,7 @@ public class CustomerManagementService {
         this.deliveryZoneRepository = deliveryZoneRepository;
         this.creditCustomerFlowService = creditCustomerFlowService;
         this.executiveFlowService = executiveFlowService;
+        this.geocodingService = geocodingService;
     }
 
     public void showCustomerMenu(TeamMember admin) {
@@ -167,6 +170,13 @@ public class CustomerManagementService {
                 customerLon,
                 distance);
 
+        // --- Address Resolution Logic (Refactored) ---
+        String resolvedAddress = geocodingService.resolveAddress(customerLat, customerLon, location.getAddress());
+
+        sessionManager.setSessionData(session, "tempAddress", resolvedAddress);
+
+        summary += "\n\n📍 Address: " + resolvedAddress;
+
         sessionManager.setSessionData(session, "tempLat", String.valueOf(customerLat));
         sessionManager.setSessionData(session, "tempLon", String.valueOf(customerLon));
 
@@ -218,7 +228,13 @@ public class CustomerManagementService {
             newCustomer.setWaPhoneNumber(tempWaPhone);
             newCustomer.setLocationLat(lat);
             newCustomer.setLocationLon(lon);
-            newCustomer.setAddress(String.format("Location shared via WhatsApp: %.6f, %.6f", lat, lon));
+            newCustomer.setLocationLat(lat);
+            newCustomer.setLocationLon(lon);
+            String tempAddress = sessionManager.getSessionDataString(session, "tempAddress");
+            if (tempAddress == null) {
+                tempAddress = String.format("Location shared via WhatsApp: %.6f, %.6f", lat, lon);
+            }
+            newCustomer.setAddress(tempAddress);
             newCustomer.setDistanceFromBusinessKm(distance);
             newCustomer.setRole(UserRole.CUSTOMER);
             String targetRole = sessionManager.getSessionDataString(session, "targetRole");

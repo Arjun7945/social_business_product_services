@@ -16,14 +16,34 @@ public class GeocodingService {
 
     private final Logger log = LoggerFactory.getLogger(GeocodingService.class);
     private final RestTemplate restTemplate;
+    private final com.aps.service.util.InputValidator inputValidator;
 
     private static final String NOMINATIM_API_URL = "https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}";
 
-    public GeocodingService(RestTemplateBuilder restTemplateBuilder) {
+    public GeocodingService(RestTemplateBuilder restTemplateBuilder,
+            com.aps.service.util.InputValidator inputValidator) {
         this.restTemplate = restTemplateBuilder.build();
+        this.inputValidator = inputValidator;
     }
 
-    public String getPincode(double lat, double lon) {
+    public String resolveAddress(double lat, double lon, String rawAddressString) {
+        // 1. Try to extract Pincode from the raw message (if available)
+        String pincode = inputValidator.extractPincode(rawAddressString);
+        if (pincode != null) {
+            return pincode;
+        }
+
+        // 2. Fallback to Nominatim Reverse Geocoding
+        String fullAddress = getAddress(lat, lon);
+        if (fullAddress != null) {
+            return fullAddress;
+        }
+
+        // 3. Last Resort: Formatted format
+        return String.format("Location shared via WhatsApp: %.6f, %.6f", lat, lon);
+    }
+
+    public String getAddress(double lat, double lon) {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.set("User-Agent", "SocialBusinessApp/1.0");
@@ -41,14 +61,11 @@ public class GeocodingService {
                     uriVariables);
 
             if (response.getBody() != null) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> address = (Map<String, Object>) response.getBody().get("address");
-                if (address != null && address.containsKey("postcode")) {
-                    return (String) address.get("postcode");
-                }
+                // Return the full "display_name" which is the human readable address
+                return (String) response.getBody().get("display_name");
             }
         } catch (Exception e) {
-            log.error("Error fetching pincode from Nominatim", e);
+            log.error("Error fetching address from Nominatim", e);
         }
         return null;
     }

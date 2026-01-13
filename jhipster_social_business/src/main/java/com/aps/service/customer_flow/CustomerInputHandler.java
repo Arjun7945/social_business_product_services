@@ -89,15 +89,9 @@ public class CustomerInputHandler {
         customer.setLocationLat(customerLat);
         customer.setLocationLon(customerLon);
 
-        // Extract pincode from address if available
-        String pincode = inputValidator.extractPincode(location.getAddress());
-        if (pincode == null) {
-            pincode = geocodingService.getPincode(customerLat, customerLon);
-        }
-
-        if (pincode != null) {
-            customer.setAddress(pincode);
-        }
+        // Extract address or pincode
+        String resolvedAddress = geocodingService.resolveAddress(customerLat, customerLon, location.getAddress());
+        customer.setAddress(resolvedAddress);
 
         double distance = locationValidationService.getDistanceFromBusiness(customerLat, customerLon);
         customer.setDistanceFromBusinessKm(distance);
