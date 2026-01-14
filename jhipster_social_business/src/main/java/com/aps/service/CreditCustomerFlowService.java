@@ -284,7 +284,8 @@ public class CreditCustomerFlowService {
                         rows.add(WhatsAppMessageDto.RowDto.builder()
                                         .id(PREFIX_CREDIT_ORDER_DTL + order.getId())
                                         .title(order.getCustomer().getName())
-                                        .description(order.getCustomer().getWaPhoneNumber())
+                                        .description("WhatsApp Number: " + order.getCustomer().getWaPhoneNumber()
+                                                        + " | Order ID: " + order.getId())
                                         .build());
                 }
 

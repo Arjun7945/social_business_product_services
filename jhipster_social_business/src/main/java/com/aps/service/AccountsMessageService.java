@@ -39,4 +39,12 @@ public class AccountsMessageService {
     public String getFeatureComingSoon() {
         return "ℹ️ This feature is coming in Phase 2!";
     }
+
+    public String getCreditReportCaption() {
+        return "💳 Credit Orders Report";
+    }
+
+    public String getNoCreditOrdersMessage() {
+        return "ℹ️ No credit orders found.";
+    }
 }

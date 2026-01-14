@@ -100,6 +100,15 @@
                 <reportElement x="600" y="95" width="190" height="20" uuid="7a8b9c0d-1e2f-4a3b-4c5d-6e7f8a9b0c1d"/>
                 <textFieldExpression><![CDATA[$P{DateIssued}]]></textFieldExpression>
             </textField>
+
+            <!-- Dynamic Report Title (Below Header) -->
+            <textField>
+                <reportElement x="0" y="125" width="802" height="25" uuid="8b9c0d1e-2f3a-4b4c-5d6e-7f8a9b0c1d3e"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{ReportTitle}]]></textFieldExpression>
+            </textField>
         </band>
     </title>
     

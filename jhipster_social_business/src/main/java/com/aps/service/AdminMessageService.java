@@ -94,7 +94,7 @@ public class AdminMessageService {
     }
 
     public String getCodButtonTitle() {
-        return "💵 Marked COD";
+        return "💵 Mark COD";
     }
 
     public String getLinkButtonDesc() {
@@ -102,11 +102,11 @@ public class AdminMessageService {
     }
 
     public String getQrButtonDesc() {
-        return "Send QR Code";
+        return "Send Razorpay QR Code";
     }
 
     public String getCodButtonDesc() {
-        return "Mark as Paid (COD)";
+        return "Mark as Paid by Cash in hand";
     }
 
     public String getListOptionsButtonText() {

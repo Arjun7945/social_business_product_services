@@ -59,4 +59,15 @@ class ReportServiceTest {
         assertThatCode(() -> reportService.generateUnpaidOrdersReport("TestUser", "PDF"))
                 .doesNotThrowAnyException();
     }
+
+    @Test
+    void generateCreditOrdersReport_ShouldNotThrowException() {
+        CustomerOrder order = new CustomerOrder();
+        order.setTotalAmount(java.math.BigDecimal.TEN);
+
+        when(orderRepository.findAllByStatus(any())).thenReturn(Collections.singletonList(order));
+
+        assertThatCode(() -> reportService.generateCreditOrdersReport("TestUser", "PDF"))
+                .doesNotThrowAnyException();
+    }
 }

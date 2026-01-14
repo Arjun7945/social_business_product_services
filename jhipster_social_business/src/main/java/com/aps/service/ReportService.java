@@ -76,6 +76,17 @@ public class ReportService {
         }
     }
 
+    public byte[] generateCreditOrdersReport(String issueToName, String format) {
+        log.info("Generating Credit Orders Report ({})", format);
+        try {
+            List<CustomerOrder> orders = orderRepository.findAllByStatus(OrderStatus.ON_CREDIT_PURCHASE);
+            return generateReport(orders, "Credit Report", issueToName, format);
+        } catch (Exception e) {
+            log.error("Failed to generate Credit Orders report", e);
+            throw new RuntimeException("Report generation failed", e);
+        }
+    }
+
     private byte[] generateReport(List<CustomerOrder> orders, String title, String issueToName, String format)
             throws JRException, FileNotFoundException {
         if (orders == null || orders.isEmpty()) {
@@ -110,7 +121,7 @@ public class ReportService {
 
         // Parameters
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("ReportTitle", title);
+        parameters.put("ReportTitle", title != null ? title.toUpperCase() : "");
         parameters.put("IssueTo", "Accounts Team / " + issueToName);
         parameters.put("InvoiceNo", "INV-" + System.currentTimeMillis());
         parameters.put("DateIssued", LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")));
