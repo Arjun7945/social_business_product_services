@@ -143,6 +143,63 @@ public class WhatsAppMediaService {
         return null;
     }
 
+    public String uploadDocument(byte[] fileData, String mimeType, String filename) {
+        try {
+            log.info("Uploading document to WhatsApp: name={}, size={}, type={}", filename, fileData.length, mimeType);
+            String url = whatsAppConfig.getApiBaseUrl() + "/" + whatsAppConfig.getPhoneNumberId() + "/media";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(whatsAppConfig.getApiToken());
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+            // Create temp file for upload
+            Path tempFile = Files.createTempFile("upload_doc", "_" + filename);
+            Files.write(tempFile, fileData);
+
+            LinkedMultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+
+            // Create a file part with headers
+            HttpHeaders fileHeaders = new HttpHeaders();
+            fileHeaders.setContentType(MediaType.parseMediaType(mimeType));
+            // Important: Config resource to use filename
+            FileSystemResource resource = new FileSystemResource(tempFile.toFile()) {
+                @Override
+                public String getFilename() {
+                    return filename;
+                }
+            };
+
+            HttpEntity<FileSystemResource> fileEntity = new HttpEntity<>(resource, fileHeaders);
+
+            body.add("file", fileEntity);
+            body.add("messaging_product", "whatsapp");
+            body.add("type", mimeType);
+
+            HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
+
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    entity,
+                    new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {
+                    });
+
+            // Clean up temp file
+            Files.deleteIfExists(tempFile);
+
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                String mediaId = (String) response.getBody().get("id");
+                log.info("Document upload successful. Media ID: {}", mediaId);
+                return mediaId;
+            } else {
+                log.error("Document upload failed. Status: {}, Body: {}", response.getStatusCode(), response.getBody());
+            }
+        } catch (Exception e) {
+            log.error("Failed to upload document to WhatsApp", e);
+        }
+        return null; // Or throw custom exception
+    }
+
     private String dummyMediaId = null;
 
     public String getDummyImageMediaId() {

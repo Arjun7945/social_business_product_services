@@ -21,4 +21,6 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long>, J
     java.util.Optional<TeamMember> findByName(String name);
 
     List<TeamMember> findAllByRole(UserRole role);
+
+    List<TeamMember> findAllByRoleAndIsActiveTrue(UserRole role);
 }
